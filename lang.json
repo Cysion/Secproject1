@@ -1,0 +1,177 @@
+{
+    "%%dev_notes":[
+        "This file contains all the strings displayed on the web page, associated to keys",
+        "formatting of the strings displayed is done on the backend, only enter lower-case letters",
+        "unless special formatting precausions needs to be taken, in which case enter the key in the unformat list present at the top of each sub-section",
+        "use sparingly, as it might mess up the layout etc of the page",
+        "the exception is the long_texts section in each subsection which should be pre-formatted"
+    ],
+    "universal":{
+        "%%dev_note":"this subsection contains very small bits of info which will definitly be useful across all sections of the app",
+        "unformat":[],
+        "locale":"en_GB",
+        "12steps":"12 Steps",
+        "date":"date",
+        "text":"text",
+        "library":"library",
+        "contacts":"contacts",
+        "notes":"notes",
+        "name":"name",
+        "long_texts":{
+        }
+    },
+    "breathe":{
+        "unformat":[],
+        "title":"breathe",
+        "long_texts":{
+        }
+    },
+    "call":{
+        "unformat":[],
+        "title":"call",
+        "long_texts":{
+        }
+    },
+    "chat":{
+        "unformat":[],
+        "title":"chat",
+        "long_texts":{
+        }
+
+    },
+    "check":{
+        "unformat":[],
+        "title":"check",
+        "long_texts":{
+        }
+
+    },
+    "danger":{
+        "unformat":[],
+        "title":"danger",
+        "long_texts":{
+        }
+
+    },
+    "home":{
+        "unformat":[],
+        "title":"home",
+        "long_texts":{
+        }
+
+    },
+    "info":{
+        "unformat":[],
+        "title":"info",
+        "about":"about 12 steps",
+        "howto":"how to use 12 steps",
+        "privpol":"privacy policy and GDPR",
+        "vol":"volunteering",
+        "discl":"disclaimer",
+
+        "%%dev_note":"why is this here"
+        "wellind":"wellness index",
+        
+        "long_texts":{
+            "about":"see p.8 in presentation",
+            "howto":"see p.10 in presentation",
+            "privpol":"see p.12 in presentation",
+            "vol":"see p.13 in presentation",
+            "discl":"see p.13 in presentation"
+        }
+
+    },
+    "practice":{
+        "unformat":[],
+        "title":"practice",
+        "long_texts":{
+    },
+    "info":{
+        "unformat":[],
+        "title":"info",
+        "about":"about 12 steps",
+        "howto":"how to use 12 steps",
+        "privpol":"privacy policy and GDPR",
+        "vol":"volunteering",
+        "discl":"disclaimer",
+
+        "%%dev_note":"why is this here",
+        "wellind":"wellness index",
+        
+        "long_texts":{
+            "about":"see p.8 in presentation",
+            "howto":"see p.10 in presentation",
+            "privpol":"see p.12 in presentation",
+            "vol":"see p.13 in presentation",
+            "discl":"see p.13 in presentation"
+        }
+
+    },
+    "practice":{
+        "unformat":[],
+        "title":"practice",
+        "long_texts":{
+        }
+    },
+    "prepare":{
+        "unformat":[],
+        "title":"prepare",
+        "%%dev_note":"step list added in case the first, second, thirds etc paradigm is preferred to fractions. index 0 is concatenated with the following entries",
+        "steps":["step ","1/8", "2/8", "3/8", "4/8", "5/8", "6/8", "7/8", "8/8"],
+        "memory":"memory",
+        "memories":"memories",
+        "how_to":"how to use 12 steps",
+        "prac_breath":"practice breathing",
+        "good_mem":"my library for supportive memories",
+        "mem_cats":["music", "games", "videos", "chat", "images", "phrases", "memes", "stories", "awards", "themes"],
+        "bad_mem":"my rubbish bin for destructive memories",
+        "sup_con":"add support contacts",
+        "acc":"accessible at time",
+        "pref_con":"preferred means of contact",
+        "call_cisis":"where do i call in a crisis",
+        "diary":"diary",
+        "ther_notes":"Therapy notes",
+        "long_texts":{
+            "hotline_text":"see p.19 in presentation",
+            "ther_notes":"see p.21 in presentation"
+        }
+    },
+    "savemeplan":{
+        "unformat":[],
+        "title":"save.me plan",
+        "%%dev_note":"step list added in case another paradigm is preferred to a1, a2 etc. index 0 is concatenated a space with the following entries",
+        "steps":["step ", "a1", "a2", "a3", "a4", "b1", "b2", "b3", "b4", "c1", "c2", "c3", "c4"],
+        "tips":"tips",
+        "idprob":"identify your problem",
+        "mysit":"my situation",
+        "myemo":"my emotions",
+        "mytho":"my thoughts",
+        "mybeh":"my behaviors",
+        "sittext":"describe your problems",
+        "emotext":"describe how you are feeling",
+        "thotext":"describe what you are thinking",
+        "behtext":"describe what behaviours you want to change",
+        "calm":"calm",
+        "rout":"routines",
+        "repl":"replace",
+        "prot":"protect",
+        "calmtitle":"calm and distract",
+        "calmadd":"add a calming activity",
+        "calmtext":"write what you do to feel better without harming yourself",
+        "routtitle":"add a routine if you are ready",
+        "routadd":"add your routine",
+        "routtext":"name your new routine",
+        "repltitle":"replace dangerous habits with safe ones",
+        "repladd":"add more",
+        "long_texts":{
+            "sitrate":["Health problems", "Relations/Family", "Finances", "Study-related issues", "Work-related issues"],
+            "emorate":["I feel really bad and I suffer", "Depressed and lonely", "Anxious and insecure", "Angry and frustrated", "Guilty and ashamed"],
+            "thorate":["I see everything in \"black\"", "No meaning", "Nobody cares about me", "It will never get better", "I can't stand it any longer"],
+            "behrate":["I abuse a substance", "I harm myself", "I isolate myself", "I hate myself", "I hate others"],
+            "calrate":["I just breathe in and out", "I am mindful of my surroundings", "I listen to music", "I go for a walk", "I create a voo-doo doll"],
+            "rourate":["Notice one nice thing", "Give someone a smile", "Go for a walk", "Take a shower", "Call a friend"],
+            "repgood":["Water and juice", "Fruits and vegetables", "Virtual reality", "Make-up", "Trust"],
+            "repbad":["Alcohol", "Narcotics", "Firearms", "Blades", "Accusations"]
+        }
+    }
+}
