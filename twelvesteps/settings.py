@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'danger.apps.DangerConfig',
     'info.apps.InfoConfig',
+    'login.apps.LoginConfig',
     'practice.apps.PracticeConfig',
     'savemeplan.apps.SavemeplanConfig',
     'django.contrib.admin',
@@ -120,7 +121,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
-            'read_default_file': '/path/to/my.cnf',
+            'read_default_file': '/home/kevin/Programmering/Projekt/projekt_db.cnf',
         },
     }
 }
