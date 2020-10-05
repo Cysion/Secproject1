@@ -28,14 +28,24 @@ class User(models.Model):
     )
 
 class UserLogin(models.Model):
+    """
+    Stores users hashed password.
+    """
+
     UserId = models.OneToOneField(User, on_delete=models.CASCADE)
     Passhash = models.CharField(max_length=64, blank=False)
 
 class Type(models.Model):
+    """
+    What type of relationship it is. Example Researcher, friend and family.
+    """
+
     TypeId = models.IntegerField(primary_key=True)
     Description = models.CharField(max_length=16, blank=False)
 
 class Relationsships(models.Model):
+    """Relationship connection between two users."""
+
     RelationsshipsId = models.IntegerField(primary_key=True)
     UserA = models.ForeignKey(
         User,
@@ -50,10 +60,22 @@ class Relationsships(models.Model):
     TypeId = models.ForeignKey(Type, on_delete=models.CASCADE)
 
 class Action(models.Model):
+    """
+    Is connected to ResearchData.
+    The description will contain a descritive message about what a user has
+    done.
+    """
+
     ActionId = models.IntegerField(primary_key=True)
     Description = models.CharField(max_length=255)
 
 class ResearchData(models.Model):
+    """
+    Data researchers should have.
+    AnonymityCode = is a code which is generated from data from a users and
+    cannot be reversed.
+    """
+
     ResearchDataId = models.IntegerField(primary_key=True)
     ActionId = models.ForeignKey(Action, on_delete=models.CASCADE)
     AnonymityCode = models.CharField(max_length=64)
