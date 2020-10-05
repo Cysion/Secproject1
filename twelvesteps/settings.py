@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'danger.apps.DangerConfig',
     'info.apps.InfoConfig',
+    'login.apps.LoginConfig',
     'practice.apps.PracticeConfig',
     'savemeplan.apps.SavemeplanConfig',
     'django.contrib.admin',
