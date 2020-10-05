@@ -116,11 +116,16 @@ password = PASSWORD
 default-character-set = utf8
 """
 
+ABS_PATH = ""
+with open("abs_path.cnf") as inf:
+    ABS_PATH = inf.readlines()[0].strip()
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
-            'read_default_file': '/path/to/my.cnf',
+            'read_default_file': ABS_PATH,
         },
     }
 }

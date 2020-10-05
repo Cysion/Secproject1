@@ -1,0 +1,7 @@
+{
+    "logs":{
+        "%%dev_note":"all times in section are in days, sizes are in bytes",
+        "archived_for":730,
+        "max_raw_size":2048
+    }
+}
