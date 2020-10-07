@@ -1,0 +1,8 @@
+env/*
+db.cnf
+twelvesteps/settings.py
+*/__pycache__/*
+abs_path.cnf
+*/migrations/*
+logs/*.log
+logs/*.gz
