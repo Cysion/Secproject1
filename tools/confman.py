@@ -4,20 +4,30 @@ DEFAULT_PATH = "conf"
 
 
 def get_lang(path=DEFAULT_PATH + "lang.json", sections = []) -> dict:
-    """Returns language file as dict
+    """Returns language file as dict, returns dict if successful, returns Exception is failed
     Keyword arguments:
     path = path to lang.json file, defaults to "conf/lang.json", useful for using multiple language files
     sections = list of sections in the json file to return, ex ["universal", "home"] 
-               which can somewhat mimize memory usage for large language files"""
+               which can somewhat mimize memory usage for large language files,
+               defaults to all sections"""
     langdict = {}
     try:
         with open(path) as langfile:
-            langdict = json.load(langfile)
+            loaddict = json.load(langfile)
             assert type(sections) == type([])
-            for section in sections:
+            if sections:
+                for section in sections:
+                    langdict[section] = loaddict[section]
+            else:
+                langdict = loaddict
+    except AssertionError as e:
+        return e
 
-    except AssertionError:
+    except KeyError as e:
+        return e
 
+    except FileNotFoundError as e:
+        return e
         
     return langdict
 
@@ -31,10 +41,21 @@ def get_conf(path=DEFAULT_PATH + "conf.json", sections = []):
     confdict = {}
     try:
         with open(path) as conffile:
-            confdict = json.load(conffile)
+            loaddict = json.load(conffile)
             assert type(sections) == type([])
-            for section in sections:
+            if sections:
+                for section in sections:
+                    confdict[section] = loaddict[section]
+            else:
+                confdict = loaddict
 
-    except AssertionError:
+    except AssertionError as e:
+        return e
+
+    except KeyError as e:
+        return e
+
+    except FileNotFoundError as e:
+        return e
         
     return confdict
