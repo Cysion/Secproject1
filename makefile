@@ -31,7 +31,7 @@ dev:
 	@echo  --- making persistent files ---
 	$(TOUCH) db.cnf
 	$(TOUCH) abs_path.cnf
-	$(PAUSE)"Verify your .cnf files are filled in properly!"
+
 
 run:
 	@echo  --- starting server ---
@@ -65,4 +65,3 @@ clean:
 	$(RMRF) env
 	$(RMRF) */migrations
 	$(RMRF) */__pycache__
-	
