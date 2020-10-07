@@ -2,7 +2,7 @@ ifeq ($(OS), Windows_NT)
 	EXECUTE := py
 	TOUCH := type nul >>
 	RMRF := deltree
-	PAUSE := set /P pausevar=
+	PAUSE := echo 
 	ACTIVATE := $(./env/bin/activate)
 else 
 	EXECUTE := python

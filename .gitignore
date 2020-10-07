@@ -6,3 +6,4 @@ abs_path.cnf
 */migrations/*
 logs/*.log
 logs/*.gz
+.vscode
