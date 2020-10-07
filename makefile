@@ -2,30 +2,30 @@ ifeq ($(OS), Windows_NT)
 	EXECUTE := py
 	TOUCH := type nul >>
 	RMRF := deltree
-	PAUSE := set /P pausevar
+	PAUSE := set /P pausevar=
+	ACTIVATE := $(./env/bin/activate)
 else 
 	EXECUTE := python
 	TOUCH := touch
 	RMRF := rm -rf
 	PAUSE := read -n 1 -p 
+	ACTIVATE := $(source env/bin/activate)
 endif
 MANAGE = $(EXECUTE) manage.py
 MAKEMIGRATION = $(MANAGE) makemigrations
 
 
-all: upgrade env activate deps dev makemigration_all migrate 
+all: upgrade env deps dev makemigration_all migrate 
 
 env:
 	@echo  --- generating virtual environment --- 
 	$(EXECUTE) -m venv --clear env
-
-activate:
-	@echo  --- activating environment ---
-	$(source /env/bin/activate)
+	
+	
 
 deps:
 	@echo  --- installing dependencies ---
-	pip install --upgrade pip
+	python -m pip install --upgrade pip
 	pip install -r requirements.txt
 
 dev:
