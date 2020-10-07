@@ -20,8 +20,7 @@ all: upgrade env deps dev makemigration_all migrate
 env:
 	@echo  --- generating virtual environment --- 
 	$(EXECUTE) -m venv --clear env
-	
-	
+	$(ACTIVATE)
 
 deps:
 	@echo  --- installing dependencies ---
