@@ -5,6 +5,7 @@ from django.contrib import admin
 from .models import *
 
 admin.site.register(User)
-admin.site.register(UserLogin)
-admin.site.register(Type)
-admin.site.register(Relationsships)
+admin.site.register(RelationTo)
+admin.site.register(RelationFrom)
+admin.site.register(ResearchData)
+admin.site.register(Action)
