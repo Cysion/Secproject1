@@ -21,43 +21,58 @@ class User(models.Model):
     Email = models.CharField(
         max_length=64,
         blank=False,
+        unique=True
     )
-    Secret = models.CharField(
+    Pubkey = models.CharField(
         max_length=64,
         blank=False,
     )
 
-class UserLogin(models.Model):
+    Role_Choices = [
+        ('User', 'User'),
+        ('Caretaker', 'Caretaker'),
+        ('Admin', 'Admin')
+    ]
+    Role = models.CharField(
+        max_length=9,
+        choices=Role_Choices
+    ) # This might not be needed
+    Symkey = models.CharField(max_length=256) # This might not be needed
+
+class RelationFrom(models.Model):
+    """User relation table. This table is for users to see which relationship
+    the user have with other users (Friend or therapist for example).
+
+    UserIdTo: Friend, Family or therapist user id.
+    AnonymityIdFrom: The current user. To see which this user have
+    relationsships to.
+    Permission: a bit string where 0 says no permission and 1 says
+    got permission for each permission entry.
+    Key: The public key of the UserIdTo.
     """
-    Stores users hashed password.
+    RelationFromId = models.IntegerField(primary_key=True)
+    AnonymityIdFrom = models.IntegerField(blank=False)
+    UserIdTo = models.ForeignKey(User, on_delete=models.CASCADE)
+    Permission = models.CharField(max_length=4)
+    Key = models.CharField(max_length=64)
+
+class RelationTo(models.Model):
+    """User relation table. This table is for users to see which relationship
+    the user have with other users (Friend or therapist for example).
+
+    UserIdTo: Friend, Family or therapist user id.
+    AnonymityIdFrom: The current user. To see which this user have
+    relationsships to.
+    Permission: a bit string where 0 says no permission and 1 says
+    got permission for each permission entry.
+    Key: The public key of the AnonymityIdTo.
     """
+    RelationToId = models.IntegerField(primary_key=True)
+    UserIdFrom = models.ForeignKey(User, on_delete=models.CASCADE)
+    AnonymityIdTo = models.IntegerField(blank=False)
+    Permission = models.CharField(max_length=4)
+    Key = models.CharField(max_length=64)
 
-    UserId = models.OneToOneField(User, on_delete=models.CASCADE)
-    Passhash = models.CharField(max_length=64, blank=False)
-
-class Type(models.Model):
-    """
-    What type of relationship it is. Example Researcher, friend and family.
-    """
-
-    TypeId = models.IntegerField(primary_key=True)
-    Description = models.CharField(max_length=16, blank=False)
-
-class Relationsships(models.Model):
-    """Relationship connection between two users."""
-
-    RelationsshipsId = models.IntegerField(primary_key=True)
-    UserA = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='UserA'
-    )
-    UserB = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='UserB'
-    )
-    TypeId = models.ForeignKey(Type, on_delete=models.CASCADE)
 
 class Action(models.Model):
     """
