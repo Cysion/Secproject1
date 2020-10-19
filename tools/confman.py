@@ -1,13 +1,13 @@
 import json
 
-DEFAULT_PATH = "conf"
+DEFAULT_PATH = "conf/"
 
 
 def get_lang(path=DEFAULT_PATH + "lang.json", sections = []) -> dict:
     """Returns language file as dict, returns dict if successful, returns Exception is failed
     Keyword arguments:
     path = path to lang.json file, defaults to "conf/lang.json", useful for using multiple language files
-    sections = list of sections in the json file to return, ex ["universal", "home"] 
+    sections = list of sections in the json file to return, ex ["universal", "home"]
                which can somewhat mimize memory usage for large language files,
                defaults to all sections"""
     langdict = {}
@@ -28,14 +28,14 @@ def get_lang(path=DEFAULT_PATH + "lang.json", sections = []) -> dict:
 
     except FileNotFoundError as e:
         return e
-        
+
     return langdict
 
 
 def get_conf(path=DEFAULT_PATH + "conf.json", sections = []):
     """Returns config file as dict
     path = path to conf.json file, defaults to "conf/conf.json", useful for using multiple language files
-    sections = list of sections in the json file to return, ex ["logs", "misc"] 
+    sections = list of sections in the json file to return, ex ["logs", "misc"]
                which can somewhat mimize memory usage for large config files,
                but mostly to make it easier to only use one section of the config"""
     confdict = {}
@@ -57,5 +57,5 @@ def get_conf(path=DEFAULT_PATH + "conf.json", sections = []):
 
     except FileNotFoundError as e:
         return e
-        
+
     return confdict
