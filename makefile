@@ -63,5 +63,5 @@ makemigration_all:
 clean:
 	@echo  --- cleaning up ---
 	$(RMRF) env
-	$(RMRF) */migrations
+	#$(RMRF) */migrations
 	$(RMRF) */__pycache__
