@@ -3,7 +3,7 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<form action="/login/" class="was-validated" method="POST"></form>
+<form action="/login/" class="was-validated" method="POST">
   {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
   <div class="form-group">
     <label for="email">{{ form.email }}: </label>
@@ -11,9 +11,17 @@
     <div class="invalid-feedback">{{ form.invalid_feedback }} {{ form.email }}</div>
   </div>
   <div class="form-group">
-    <label for="email">{{ form.password }}: </label>
+    <label for="password">{{ form.password }}: </label>
     <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.password }}..." id="password" name="password" required>
     <div class="invalid-feedback">{{ form.invalid_feedback_pwd }} {{form.password}}.</div>
+  </div>
+  {% if wrong_login_enterd %}
+  <div class="alert alert-danger">
+    #<strong>{{ alerts.warning }}!</strong> {{ alerts.relogin }}
+  </div>
+  {% endif %}
+  <div class="form-group">
+    <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.login }}" style="margin-top:10px;">
   </div>
 </form>
 

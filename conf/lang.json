@@ -89,6 +89,7 @@
         "email":"Email",
         "password":"Password",
         "register":"Register",
+        "login":"Login",
         "repassword":"Password again.",
         "agree_terms":"I agree to 12 Steps ",
         "terms":"terms"
@@ -97,7 +98,8 @@
         "alerts":{
             "warning":"Warning",
             "email_already_exists":"Email already exists! Please enter another email.",
-            "repassword":"Passwords are not the same!"
+            "repassword":"Passwords are not the same!",
+            "relogin":"Login credentials incorrect!"
         }
       }
     },
