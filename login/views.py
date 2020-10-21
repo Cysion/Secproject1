@@ -5,6 +5,7 @@ from datetime import date
 # Create your views here.
 
 from login.models import User
+from tools.cryptoexperiments import gen_rsa, secret_scrambler
 
 
 from tools.confman import get_lang
@@ -27,17 +28,18 @@ def RegisterView(request):
         password - Users entered non hashed password
         repassword - reentered password to dubble check that user entered the
             right one.
-        agree_terms - Värdet ska vara 'accept'
+        agree_terms - Värdet ska vara "accept"
     '''
 
     login_lang = get_lang(sections=["login"])  # Get language text for form.
-    wrong_password_enterd = False  # ROBIN!!!!!! TITTA HÄR!!! Ändra denna till true om lösenordet är fel
-
     # Check if a user have submitted a form.
     if request.method == 'POST':
-        registerUser()
-
-        return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
+        statusCheck = registerUser(request.POST)
+        if True not in statusCheck:
+            return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
+        
+        wrong_password_enterd = statusCheck[0]
+        email_exists = statusCheck[0]
     today_date = str(date.today())
 
     args = {
@@ -46,12 +48,27 @@ def RegisterView(request):
         'date': today_date,  # Limit birthday to a maximum of today.
         'form': login_lang["login"]["form"],
         'alerts': login_lang['login']['long_texts']['alerts'],
-        'wrong_password_enterd': wrong_password_enterd  # A check if right password was entered
+        'wrong_password_enterd': wrong_password_enterd,  # A check if right password was entered
+        'email_already_exists': email_exists
     }
     return render(request, 'login/register.html', args)
 
+def getUidFromEmail(newMail):
+    result = User.objects.filter(Email=newMail).values('UserId')
+    if result:
+        return result[0]["UserId"]
+    return False
+
 
 def registerUser(postData): # Place function somewere else.
+    if postData["password"] != postData["repassword"]:
+        if getUidFromEmail(postData["email"]):
+            return (True, True)
+        else:
+            return (True, False)
+    if getUidFromEmail(postData["email"]):
+            return (False, True)
+
     user1 = User(
             Gender=postData["sex"],
             FirstName=postData["first_name"],
@@ -61,7 +78,9 @@ def registerUser(postData): # Place function somewere else.
             Pubkey='asd',
         )
     user1.save()
-    return None
+
+
+    return (False, False)
 
 def LoginView(request):
     login_lang = get_lang(sections=["login"])
