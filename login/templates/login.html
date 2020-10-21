@@ -4,6 +4,7 @@
 
 {% block content %}
 <form action="/login/" class="was-validated" method="POST"></form>
+  {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
   <div class="form-group">
     <label for="email">{{ form.email }}: </label>
     <input type="email" class="form-control" placeholder="{{ form.placeholder }} {{ form.email }}..." id="email" name="email" required>
