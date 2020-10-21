@@ -5,7 +5,7 @@ from datetime import date
 # Create your views here.
 
 from login.models import User
-from tools.cryptoexperiments import gen_rsa, secret_scrambler
+from tools.crypto import gen_rsa, secret_scrambler
 
 
 from tools.confman import get_lang
@@ -30,6 +30,8 @@ def RegisterView(request):
             right one.
         agree_terms - Värdet ska vara "accept"
     '''
+    wrong_password_enterd = False
+    email_exists = False
 
     login_lang = get_lang(sections=["login"])  # Get language text for form.
     # Check if a user have submitted a form.
@@ -39,7 +41,7 @@ def RegisterView(request):
             return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
         
         wrong_password_enterd = statusCheck[0]
-        email_exists = statusCheck[0]
+        email_exists = statusCheck[1]
     today_date = str(date.today())
 
     args = {
@@ -62,15 +64,12 @@ def getUidFromEmail(newMail):
 
 def registerUser(postData): # Place function somewere else.
     if postData["password"] != postData["repassword"]:
-        if getUidFromEmail(postData["email"]):
-            return (True, True)
-        else:
-            return (True, False)
+            return (True, getUidFromEmail(postData["email"]))
     if getUidFromEmail(postData["email"]):
             return (False, True)
 
     user1 = User(
-            Gender=postData["sex"],
+            Gender=postData["gender"],
             FirstName=postData["first_name"],
             LastName=postData["last_name"],
             DateOfBirth=postData["date_of_birth"],
