@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Home title {% endblock %}
+
+{% block content %}
+
+{% if result  %}
+<h1>{{ result.FirstName }}</h1>
+<ul>
+  <li>id={{ result.UserId }}</li>
+  <li>Birthday={{ result.DateOfBirth }}</li>
+  </ul>
+{% else %}
+<h1>Test</h1>
+{% endif %}
+{% endblock %}
