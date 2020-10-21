@@ -7,3 +7,4 @@ abs_path.cnf
 logs/*.log
 logs/*.gz
 .vscode
+testdata/*.blob
