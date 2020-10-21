@@ -25,7 +25,7 @@
               </a>
             </div>
             <div class="menu-title">
-              Info
+              {{ menu_titles.0 }}
             </div>
           </li>
           <li class="nav-item">
@@ -35,7 +35,7 @@
               </a>
             </div>
             <div class="menu-title">
-              Chat
+              {{ menu_titles.1 }}
             </div>
           </li>
           <li class="nav-item">
@@ -45,30 +45,32 @@
               </a>
             </div>
             <div class="menu-title">
-              Call
+              {{ menu_titles.2 }}
             </div>
           </li>
           <li class="nav-item">
             <div class="menu-item rounded-circle" style="border:3px solid #fa3e3e;">
               <a class="nav-link" href="/">
-                112
+                {% block menu_danger_nr %} 112 {% endblock %}
               </a>
             </div>
             <div class="menu-title">
-              In a danger
+              {{ menu_titles.3 }}
             </div>
           </li>
         </div>
       </ul>
     </nav>
-    {% block content %}{% endblock %}
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
     <nav class="navbar navbar-expand-sm navbar-dark
       fixed-bottom justify-content-center">
       <ul class="navbar-nav">
         <div class="row">
           <li class="nav-item">
             <div class="menu-title">
-              Home
+              {{ menu_titles.4 }}
             </div>
             <div class="menu-item rounded-circle" style="border:3px solid #013d07;">
               <a class="nav-link" href="/">
@@ -78,7 +80,7 @@
           </li>
           <li class="nav-item">
             <div class="menu-title">
-              Prepare
+              {{ menu_titles.5 }}
             </div>
             <div class="menu-item rounded-circle" style="border:3px solid #00e1ff;">
               <a class="nav-link" href="/">
@@ -88,7 +90,7 @@
           </li>
           <li class="nav-item">
             <div class="menu-title">
-              Save.Me
+              {{ menu_titles.6 }}
             </div>
             <div class="menu-item rounded-circle" style="border:3px solid #ff40e5;">
               <a class="nav-link" href="/">
@@ -98,7 +100,7 @@
           </li>
           <li class="nav-item">
             <div class="menu-title">
-              Check
+              {{ menu_titles.7 }}
             </div>
             <div class="menu-item rounded-circle" style="border:3px solid #22ba8c;">
               <a class="nav-link" href="/">
