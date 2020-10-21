@@ -59,8 +59,8 @@
     <div class="invalid-feedback">{{ form.invalid_feedback_pwd }} {{form.password}}.</div>
   </div>
   <div class="form-group">
-    <label for="repassword">{{ form.password }}: </label>
-    <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.password }}..." id="repassword" name="repassword" required>
+    <label for="repassword">{{ form.repassword }}: </label>
+    <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.repassword }}..." id="repassword" name="repassword" required>
     <div class="invalid-feedback">{{ form.invalid_feedback }} {{form.repassword}}.</div>
   </div>
   {% if wrong_password_enterd %}
