@@ -48,7 +48,11 @@
       id="email" name="email" {% if POST %} value="{{POST.email}}" {% endif %} required>
     <div class="invalid-feedback">{{ form.invalid_feedback }} {{ form.email }}</div>
   </div>
-
+  {% if email_already_exists %}
+  <div class="alert alert-danger">
+    <strong>{{ alerts.warning }}!</strong> {{ alerts.email_already_exists }}
+  </div>
+  {% endif %}
   <div class="form-group">
     <label for="password">{{ form.password }}: </label>
     <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.password }}..." id="password" name="password" required>
