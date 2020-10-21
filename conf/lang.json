@@ -96,6 +96,7 @@
       "long_texts":{
         "alerts":{
             "warning":"Warning",
+            "email_already_exists":"Email already exists! Please enter another email.",
             "repassword":"Passwords are not the same!"
         }
       }
