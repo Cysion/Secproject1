@@ -51,3 +51,16 @@ def RegisterView(request):
 
 def registerUser(): # Place function somewere else.
     return None
+
+def LoginView(request):
+    login_lang = get_lang(sections=["login"])
+    wrong_password_enterd = False
+    args = {
+        'post': request.POST,
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'form': login_lang["login"]["form"],
+        'alerts': login_lang['login']['long_texts']['alerts'],
+        'wrong_password_enterd': wrong_password_enterd  # A check if right password was entered
+    }
+
+    return render(request, 'login.html', args)
