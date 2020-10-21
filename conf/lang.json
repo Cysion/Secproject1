@@ -17,6 +17,18 @@
         "contacts":"contacts",
         "notes":"notes",
         "name":"name",
+        "titles":[
+          "Info",
+          "Chat",
+          "Call",
+          "In a Danger",
+          "Home",
+          "Prepare",
+          "Save.Me",
+          "Check",
+          "Practice",
+          "Breathe"
+        ],
         "long_texts":{
         }
     },
@@ -60,27 +72,49 @@
         }
 
     },
-    "info":{
-        "unformat":[],
-        "title":"info",
-        "about":"about 12 steps",
-        "howto":"how to use 12 steps",
-        "privpol":"privacy policy and GDPR",
-        "vol":"volunteering",
-        "discl":"disclaimer",
+    "login":{
+      "unformat":[],
+      "title":"login",
+      "form":{
+        "placeholder":"Enter your",
+        "placeholder_pwd":"Enter a",
+        "invalid_feedback":"Please enter your",
+        "invalid_feedback_pwd":"Please enter a",
+        "first_name":"First Name",
+        "last_name":"Last Name",
+        "date_of_birth":"Date of birth",
+        "gender":"Gender",
+        "female":"Female",
+        "male":"Male",
+        "email":"Email",
+        "password":"Password",
+        "register":"Register"
+      },
+      "long_texts":{
 
-        "%%dev_note":"why is this here",
-        "wellind":"wellness index",
-        
-        "long_texts":{
-            "about":"see p.8 in presentation",
-            "howto":"see p.10 in presentation",
-            "privpol":"see p.12 in presentation",
-            "vol":"see p.13 in presentation",
-            "discl":"see p.13 in presentation"
-        }
-
+      }
     },
+    "info":{
+    "unformat":[],
+    "title":"info",
+    "about":"about 12 steps",
+    "howto":"how to use 12 steps",
+    "privpol":"privacy policy and GDPR",
+    "vol":"volunteering",
+    "discl":"disclaimer",
+
+    "%%dev_note":"why is this here"
+    "wellind":"wellness index",
+
+    "long_texts":{
+        "about":"see p.8 in presentation",
+        "howto":"see p.10 in presentation",
+        "privpol":"see p.12 in presentation",
+        "vol":"see p.13 in presentation",
+        "discl":"see p.13 in presentation"
+    }
+
+},
     "practice":{
         "unformat":[],
         "title":"practice",

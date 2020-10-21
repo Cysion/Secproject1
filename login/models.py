@@ -6,7 +6,7 @@ class User(models.Model):
     '''
     This is the User model which will have information about the user.
     '''
-    UserId = models.IntegerField(primary_key=True)
+    UserId = models.AutoField(primary_key=True)
     Gender_Choices = [
         ('Male', 'Male'),
         ('Female', 'Female')
@@ -33,6 +33,7 @@ class User(models.Model):
         ('Caretaker', 'Caretaker'),
         ('Admin', 'Admin')
     ]
+
     Role = models.CharField(
         max_length=9,
         choices=Role_Choices
