@@ -6,4 +6,5 @@ app_name = 'home'
 urlpatterns = [
     # ex: /polls/
     path('', views.IndexView, name='index'),
+    path('showcase/', views.ShowcaseView, name='Showcase'),
 ]
