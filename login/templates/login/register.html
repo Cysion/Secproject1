@@ -27,18 +27,18 @@
     <div class="invalid-feedback">{{ form.invalid_feedback }} {{ form.date_of_birth }}.</div>
   </div>
 
-  <label>{{ form.sex }}</label>
+  <label>{{ form.gender }}</label>
   <div class="form-check">
     <label class="form-check-label">
-      <input type="radio" class="form-check-input" id="sex" name="sex" value="Female"
-        {% if POST and POST.sex and POST.sex == "Female" %} checked
-        {% elif not POST or not POST.sex %} checked {% endif %}>{{ form.female }} {# Django cant prioritize with () #}
+      <input type="radio" class="form-check-input" id="gender" name="gender" value="Female"
+        {% if POST and POST.gender and POST.gender == "Female" %} checked
+        {% elif not POST or not POST.gender %} checked {% endif %}>{{ form.female }} {# Django cant prioritize with () #}
     </label>
   </div>
   <div class="form-check">
     <label class="form-check-label">
-      <input type="radio" class="form-check-input" id="sex" name="sex" value="Male"
-        {% if POST and POST.sex and POST.sex == "Male" %}checked {% endif %}>{{ form.male }}
+      <input type="radio" class="form-check-input" id="gender" name="gender" value="Male"
+        {% if POST and POST.gender and POST.gender == "Male" %}checked {% endif %}>{{ form.male }}
     </label>
   </div>
 

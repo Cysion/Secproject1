@@ -27,6 +27,7 @@ def RegisterView(request):
         password - Users entered non hashed password
         repassword - reentered password to dubble check that user entered the
             right one.
+        agree_terms - Värdet ska vara 'accept'
     '''
 
     login_lang = get_lang(sections=["login"])  # Get language text for form.
@@ -34,13 +35,13 @@ def RegisterView(request):
 
     # Check if a user have submitted a form.
     if request.method == 'POST':
-        registerUser(request.POST)
-        
-        return HttpResponseRedirect(reverse('home:index'))  # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
+        registerUser()
+
+        return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
     today_date = str(date.today())
 
     args = {
-        'post': request.POST,
+        'POST': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'date': today_date,  # Limit birthday to a maximum of today.
         'form': login_lang["login"]["form"],

@@ -83,13 +83,15 @@
         "first_name":"First Name",
         "last_name":"Last Name",
         "date_of_birth":"Date of birth",
-        "sex":"Sex",
+        "gender":"Gender",
         "female":"Female",
         "male":"Male",
         "email":"Email",
         "password":"Password",
         "register":"Register",
-        "repassword":"Password again."
+        "repassword":"Password again.",
+        "agree_terms":"I agree to 12 Steps ",
+        "terms":"terms"
       },
       "long_texts":{
         "alerts":{
