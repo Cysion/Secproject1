@@ -63,4 +63,4 @@ def LoginView(request):
         'wrong_password_enterd': wrong_password_enterd  # A check if right password was entered
     }
 
-    return render(request, 'login.html', args)
+    return render(request, 'login/login.html', args)
