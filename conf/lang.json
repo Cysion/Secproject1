@@ -83,15 +83,19 @@
         "first_name":"First Name",
         "last_name":"Last Name",
         "date_of_birth":"Date of birth",
-        "gender":"Gender",
+        "sex":"Sex",
         "female":"Female",
         "male":"Male",
         "email":"Email",
         "password":"Password",
-        "register":"Register"
+        "register":"Register",
+        "repassword":"Password again."
       },
       "long_texts":{
-
+        "alerts":{
+            "warning":"Warning",
+            "repassword":"Passwords are not the same!"
+        }
       }
     },
     "info":{
