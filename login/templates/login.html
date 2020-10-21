@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<form action="/login/" class="was-validated" method="POST"></form>
+  <div class="form-group">
+    <label for="email">{{ form.email }}: </label>
+    <input type="email" class="form-control" placeholder="{{ form.placeholder }} {{ form.email }}..." id="email" name="email" required>
+    <div class="invalid-feedback">{{ form.invalid_feedback }} {{ form.email }}</div>
+  </div>
+  <div class="form-group">
+    <label for="email">{{ form.password }}: </label>
+    <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.password }}..." id="password" name="password" required>
+    <div class="invalid-feedback">{{ form.invalid_feedback_pwd }} {{form.password}}.</div>
+  </div>
+</form>
+
+{% endblock %}
