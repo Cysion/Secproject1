@@ -4,6 +4,8 @@ from django.urls import reverse
 from datetime import date
 # Create your views here.
 
+from login.models import User
+
 
 from tools.confman import get_lang
 
@@ -32,10 +34,9 @@ def RegisterView(request):
 
     # Check if a user have submitted a form.
     if request.method == 'POST':
-        registerUser()
-        if repassword == password:
-
-                    return HttpResponseRedirect(reverse('home:index'))  # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
+        registerUser(request.POST)
+        
+        return HttpResponseRedirect(reverse('home:index'))  # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
     today_date = str(date.today())
 
     args = {
@@ -49,5 +50,14 @@ def RegisterView(request):
     return render(request, 'login/register.html', args)
 
 
-def registerUser(): # Place function somewere else.
+def registerUser(postData): # Place function somewere else.
+    user1 = User(
+            Gender=postData["sex"],
+            FirstName=postData["first_name"],
+            LastName=postData["last_name"],
+            DateOfBirth=postData["date_of_birth"],
+            Email=postData["email"],
+            Pubkey='asd',
+        )
+    user1.save()
     return None
