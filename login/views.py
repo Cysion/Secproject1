@@ -32,6 +32,9 @@ def RegisterView(request):
     '''
     wrong_password_enterd = False
     email_exists = False
+    badCharacter = set("!@#$%^&*\";,.:_|<>")
+    
+
 
     login_lang = get_lang(sections=["login"])  # Get language text for form.
     # Check if a user have submitted a form.
@@ -44,6 +47,7 @@ def RegisterView(request):
         email_exists = statusCheck[1]
     today_date = str(date.today())
 
+
     args = {
         'POST': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -51,7 +55,8 @@ def RegisterView(request):
         'form': login_lang["login"]["form"],
         'alerts': login_lang['login']['long_texts']['alerts'],
         'wrong_password_enterd': wrong_password_enterd,  # A check if right password was entered
-        'email_already_exists': email_exists
+        'email_already_exists': email_exists,
+        'alert': "a"
     }
     return render(request, 'login/register.html', args)
 
@@ -70,14 +75,16 @@ def registerUser(postData): # Place function somewere else.
 
     user1 = User(
             Gender=postData["gender"],
-            FirstName=postData["first_name"],
-            LastName=postData["last_name"],
+            FirstName=postData["first_name"].capitalize(),
+            LastName=postData["last_name"].capitalize(),
             DateOfBirth=postData["date_of_birth"],
-            Email=postData["email"],
-            Pubkey='asd',
+            Email=postData["email"]
         )
     user1.save()
 
+    user1.Pubkey=gen_rsa(secret_scrambler(postData["password"], user1.UserId)).publickey().export_key()
+
+    user1.save()
 
     return (False, False)
 

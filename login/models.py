@@ -24,7 +24,7 @@ class User(models.Model):
         unique=True
     )
     Pubkey = models.CharField(
-        max_length=64,
+        max_length=500,
         blank=False,
     )
 
