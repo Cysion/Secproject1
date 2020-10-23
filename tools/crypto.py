@@ -4,17 +4,20 @@ from Crypto.Random import get_random_bytes
 import random
 from os import urandom
 import hashlib
+from confman import get_conf
 
 
-def gen_rsa(secret) -> RSA.RsaKey:
+def gen_rsa(secret:bytes, bits=2048) -> RSA.RsaKey:
     """DETERMINISTICALLY generates and returns an rsa key pair from the seed "secret"
     secret = seed for psrng. needs to be 128 bytes or longer. Any type accepted by
-    random.seed will function. bytes preferred.
+    random.seed will function. bytes strong preference for speed.
+    bits = how large key size to use, any larger than default (2048) results in long-term
+    database issues.
     """
     assert len(secret) >= 128
     det_getrandbytes = lambda x: random.getrandbits(8*x).to_bytes(x,"little")
     random.seed(secret) #<----- needs to be scrypted
-    key = RSA.generate(2048, randfunc=det_getrandbytes)
+    key = RSA.generate(bits, randfunc=det_getrandbytes)
     return key
 
 
@@ -35,7 +38,7 @@ def qdigest(longstr):
     return sha1.hexdigest()
 
 
-def rsa_encrypt(pub_key, data):
+def rsa_encrypt(pub_key:str, data) -> bytes:
     """encrypts data with pub_key. warning: slower than using symcrypto
     pub_key = rsa public key in str form. is imported by RSA.import_key()
     data = data to be encrypted
@@ -44,7 +47,7 @@ def rsa_encrypt(pub_key, data):
     return cipher_rsa.encrypt(data)
 
 
-def rsa_decrypt(priv_key, data):
+def rsa_decrypt(priv_key:str, data) -> bytes:
     """decrypts data with priv_key. warning: slower than using symcrypto
     priv_key = rsa private key in str form. is imported by RSA.import_key()
     data = data to be encrypted
@@ -52,9 +55,17 @@ def rsa_decrypt(priv_key, data):
     cipher_rsa = PKCS1_OAEP.new(RSA.import_key(priv_key))
     return cipher_rsa.decrypt(data)
 
+
+def gen_anon_id(uid: int, birthday: str, blen=256):
+    """generates anonymous one-way id from uid and birthday.
+    uid - user identity direct from database. used as salt
+    """
+    return hashlib.scrypt(birthday.encode("utf-8"),salt=uid.to_bytes(24,"little"),dklen=blen,n=2,r=4,p=1)
+
+
 if __name__ == "__main__":
     import json
-    sections = (1,1,1,1)
+    sections = (1,0,0,0)
     print("this is a short presentation of the crypro functions for this project")
     if sections[0]:
         print("create a fake user!")
@@ -66,6 +77,7 @@ if __name__ == "__main__":
         print("random will be seeded with: ", qdigest(scram), " for rsa keygen")
         key = gen_rsa(scram)
         print("priv key: ",qdigest(key.export_key()),"\npub_key: ",qdigest(key.publickey().export_key()))
+        print("len of real priv key: ", len(key.export_key()),"len of real pub key: ", len(key.publickey().export_key()))
     if sections[1]:
         print("now we will make a mock-up user entry file")
         with open("user.txt", "w") as userfile:
