@@ -72,7 +72,7 @@
   <div class="form-group">
     <label for="repassword">{{ form.repassword }}: </label>
     <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.repassword }}..." id="repassword" name="repassword"
-    pattern="[a-zA-Z!@#$%^&*]{1}" required>
+    pattern="[a-zA-Z!@#$%^&*]{1,}" required>
     <div class="invalid-feedback">{{ pattern }} !,@,#,$,%,^,&,* </div>
   </div>
   {% if wrong_password_enterd %}
