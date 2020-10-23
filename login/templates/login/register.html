@@ -9,21 +9,23 @@
   <div class="form-group">
     <label for="first_name">{{ form.first_name }}: </label>
     <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.first_name }}..."
-      maxlength="64" id="first_name" name="first_name" {% if POST %} value="{{POST.first_name}}" {% endif %}{# If post already has been submitted #} required>
-    <div class="invalid-feedback">{{ form.invalid_feedback }} {{ form.first_name }} </div> {# Give feedback if this field is empty #}
+      maxlength="64" id="first_name" name="first_name" {% if POST %} value="{{POST.first_name}}" {% endif %}{# If post already has been submitted #}
+      pattern="[a-zA-Z-]{1,}" required>
+    <div class="invalid-feedback">{{ pattern }} - </div> {# Give feedback if this field contain chars not in pattern #}
   </div>
 
   <div class="form-group">
     <label for="last_name">{{ form.last_name }}: </label>
     <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.last_name }}..."
-      maxlength="64" id="last_name" name="last_name" {% if POST %} value="{{POST.last_name}}" {% endif %} required>
-    <div class="invalid-feedback">{{ form.invalid_feedback }} {{ form.last_name }}.</div>
+      maxlength="64" id="last_name" name="last_name" {% if POST %} value="{{POST.last_name}}" {% endif %}
+      pattern="[a-zA-Z-]{1-64}" required>
+    <div class="invalid-feedback">{{ pattern }} - </div>
   </div>
 
   <div class="form-group">
     <label for="date_of_birth">{{ form.date_of_birth }}: </label>
     <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
-      max="{{ date }}" {% if POST %} value="{{POST.date_of_birth}}" {% endif %} required>
+      min="1850-01-01" max="{% now "Y-m-d" %}" {% if POST %} value="{{POST.date_of_birth}}" {% endif %} required>
     <div class="invalid-feedback">{{ form.invalid_feedback }} {{ form.date_of_birth }}.</div>
   </div>
 
@@ -41,12 +43,20 @@
         {% if POST and POST.gender and POST.gender == "Male" %}checked {% endif %}>{{ form.male }}
     </label>
   </div>
+  <div class="form-check">
+    <label class="form-check-label">
+      <input type="radio" class="form-check-input" id="gender" name="gender" value="Other"
+        {% if POST and POST.gender and POST.gender == "Other" %}checked {% endif %}>
+        <input type="text" class="form-control" style="height: 30px;" id="gender_other" name="gender_other"
+          {% if POST %} value="{{POST.gender_other}}" {% endif %} maxlength="32">
+    </label>
+  </div>
 
   <div class="form-group">
     <label for="email">{{ form.email }}: </label>
     <input type="email" class="form-control" placeholder="{{ form.placeholder }} {{ form.email }}..."
       id="email" name="email" {% if POST %} value="{{POST.email}}" {% endif %} required>
-    <div class="invalid-feedback">{{ form.invalid_feedback }} {{ form.email }}</div>
+    <div class="invalid-feedback">{{ form.invalid_feedback }}</div>
   </div>
   {% if email_already_exists %}
   <div class="alert alert-danger">
@@ -55,13 +65,15 @@
   {% endif %}
   <div class="form-group">
     <label for="password">{{ form.password }}: </label>
-    <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.password }}..." id="password" name="password" required>
-    <div class="invalid-feedback">{{ form.invalid_feedback_pwd }} {{form.password}}.</div>
+    <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.password }}..." id="password" name="password"
+    pattern="[a-zA-Z!@#$%^&*]{1-64}" required>
+    <div class="invalid-feedback">{{ pattern }} !,@,#,$,%,^,&,* </div>
   </div>
   <div class="form-group">
     <label for="repassword">{{ form.repassword }}: </label>
-    <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.repassword }}..." id="repassword" name="repassword" required>
-    <div class="invalid-feedback">{{ form.invalid_feedback }} {{form.repassword}}.</div>
+    <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.repassword }}..." id="repassword" name="repassword"
+    pattern="[a-zA-Z!@#$%^&*]{1}" required>
+    <div class="invalid-feedback">{{ pattern }} !,@,#,$,%,^,&,* </div>
   </div>
   {% if wrong_password_enterd %}
   <div class="alert alert-danger">
