@@ -90,7 +90,8 @@
         "login":"Login",
         "repassword":"Password again",
         "agree_terms":"I agree to 12 Steps ",
-        "terms":"terms"
+        "terms":"terms",
+        "not_registered":"No account? Register here"
       },
       "long_texts":{
         "allowed_chars":"Can contain letters, capital letters and special character(s)",
