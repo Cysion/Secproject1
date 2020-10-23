@@ -18,9 +18,11 @@ def RegisterView(request):
         first_name - Users first name
         last_name - Users last name
         date_of_birth - When user was born
-        sex - Gender of the user. Is one of the following
+        gender - Gender of the user. Is one of the following
             Male
             Female
+            Other
+        gender_other - If user choose gender=Other this will contain a text.
         email - Users email.
         password - Users entered non hashed password
         repassword - reentered password to dubble check that user entered the
@@ -29,21 +31,20 @@ def RegisterView(request):
     '''
 
     login_lang = get_lang(sections=["login"])  # Get language text for form.
-    wrong_password_enterd = False  # ROBIN!!!!!! TITTA HÄR!!! Ändra denna till true om lösenordet är fel
+    wrong_password_enterd = True  # ROBIN!!!!!! TITTA HÄR!!! Ändra denna till true om lösenordet är fel
 
     # Check if a user have submitted a form.
     if request.method == 'POST':
         registerUser()
 
         return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
-    today_date = str(date.today())
 
     args = {
         'POST': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-        'date': today_date,  # Limit birthday to a maximum of today.
         'form': login_lang["login"]["form"],
         'alerts': login_lang['login']['long_texts']['alerts'],
+        'pattern': login_lang['login']['long_texts']['allowed_chars'],
         'wrong_password_enterd': wrong_password_enterd  # A check if right password was entered
     }
     return render(request, 'login/register.html', args)
