@@ -78,8 +78,6 @@
       "form":{
         "placeholder":"Enter your",
         "placeholder_pwd":"Enter a",
-        "invalid_feedback":"Please enter your",
-        "invalid_feedback_pwd":"Please enter a",
         "first_name":"First Name",
         "last_name":"Last Name",
         "date_of_birth":"Date of birth",
@@ -90,12 +88,13 @@
         "password":"Password",
         "register":"Register",
         "login":"Login",
-        "repassword":"Password again.",
+        "repassword":"Password again",
         "agree_terms":"I agree to 12 Steps ",
         "terms":"terms",
         "not_registered":"No account? Register here"
       },
       "long_texts":{
+        "allowed_chars":"Can contain letters, capital letters and special character(s)",
         "alerts":{
             "warning":"Warning",
             "email_already_exists":"Email already exists! Please enter another email.",
