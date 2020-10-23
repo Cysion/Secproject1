@@ -4,7 +4,7 @@ from Crypto.Random import get_random_bytes
 import random
 from os import urandom
 import hashlib
-from confman import get_conf
+from tools.confman import get_conf
 
 
 def gen_rsa(secret:bytes, bits=2048) -> RSA.RsaKey:
@@ -109,8 +109,3 @@ if __name__ == "__main__":
             print(f"you are {neuid}")
         else:
             print(f"you are not {neuid}")
-
-        
-
-
-
