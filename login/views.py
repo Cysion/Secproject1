@@ -34,7 +34,7 @@ def RegisterView(request):
     '''
     wrong_password_enterd = False
     email_exists = False
-    badCharacter = set("!@#$%^&*\";,.:_|<>")
+    badCharacter = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3")
 
 
 
