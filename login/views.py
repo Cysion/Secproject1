@@ -104,25 +104,6 @@ def registerUser(postData): # Place function somewere else.
     return user1.UserId ,pubkey
 
 def LoginView(request):
-<<<<<<< HEAD
-    #Kollar om data är ok
-    #om ok logga in
-    #return HttpResponseRedirect(reverse('home:index'))
-
-    #om inte ok:
-
-    login_lang = get_lang(sections=["login"])
-    wrong_login_enterd = False
-    args = {
-        'post': request.POST,
-        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-        'form': login_lang["login"]["form"],
-        'alerts': login_lang['login']['long_texts']['alerts'],
-        'wrong_password_enterd': wrong_login_enterd  # A check if right login was entered
-    }
-
-    return render(request, 'login/login.html', args)
-=======
     if not request.session['UserId']:
         loginFail = False
         if request.method == 'POST':
@@ -154,5 +135,4 @@ def LoginView(request):
 
         return render(request, 'login/login.html', args)
     return HttpResponseRedirect(reverse('home:index'))
->>>>>>> 3c5d37c0bef3ab75ab955f3ee2681d4774322e7c
 
