@@ -2,6 +2,11 @@
 
 {% block title %}Profile{% endblock %}
 
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "userprofile/profile.css" %}">
+{% endblock %}
+
 {% block content %}
 
 <div class="col-sm-12">
