@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from datetime import date
 # Create your views here.
 
 from login.models import User
@@ -137,10 +136,3 @@ def LoginView(request):
         return render(request, 'login/login.html', args)
     return HttpResponseRedirect(reverse('home:index'))
 
-
-def ProfileView(request):
-    args = {
-        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-    }
-
-    return render(request, 'login/profile.html', args)
