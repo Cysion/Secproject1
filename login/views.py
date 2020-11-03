@@ -34,21 +34,30 @@ def RegisterView(request):
     '''
     wrong_password_enterd = False
     email_exists = False
-    badCharacter = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3")
+    alerts = {}
+    
 
 
 
     login_lang = get_lang(sections=["login"])  # Get language text for form.
     # Check if a user have submitted a form.
     if request.method == 'POST':
-        statusCheck = registerUser(request.POST)
-        if True not in statusCheck:
+        for index in ['first_name','last_name','gender','gender_other', 'email']:
+            exceptions = ''
+            if index == 'email':
+                exceptions = '1234567890@'
+            if containsBadChar(request.POST[index], exceptions):
+                alerts[index] = "badChar"
+
+        if request.POST["password"] != request.POST["repassword"]:
+            alerts['repassword'] = "repassword"
+        if getUidFromEmail(request.POST["email"]):
+            alerts['email'] = 'email_already_exists'
+
+        if not alerts:
             return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
 
-        wrong_password_enterd = statusCheck[0]
-        email_exists = statusCheck[1]
     today_date = str(date.today())
-
 
     args = {
         'POST': request.POST,
@@ -56,11 +65,14 @@ def RegisterView(request):
         'form': login_lang["login"]["form"],
         'alerts': login_lang['login']['long_texts']['alerts'],
         'pattern': login_lang['login']['long_texts']['allowed_chars'],
-        'wrong_password_enterd': wrong_password_enterd,  # A check if right password was entered
-        'email_already_exists': email_exists,
-        'alert': "a"
+        'alert': alerts
     }
     return render(request, 'login/register.html', args)
+
+def containsBadChar(stringToCheck:str, exceptions:str = ''):
+    badChar = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3").difference(set(exceptions))
+    return True if set(stringToCheck).intersection(badChar) else False
+
 
 def getUidFromEmail(newMail):
     result = User.objects.filter(Email=newMail).values('UserId')
