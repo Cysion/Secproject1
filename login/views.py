@@ -35,7 +35,7 @@ def RegisterView(request):
     wrong_password_enterd = False
     email_exists = False
     alerts = {}
-    
+
 
 
 
@@ -64,7 +64,6 @@ def RegisterView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'form': login_lang["login"]["form"],
         'alerts': login_lang['login']['long_texts']['alerts'],
-        'pattern': login_lang['login']['long_texts']['allowed_chars'],
         'alert': alerts
     }
     return render(request, 'login/register.html', args)
@@ -114,3 +113,11 @@ def LoginView(request):
     }
 
     return render(request, 'login/login.html', args)
+
+
+def ProfileView(request):
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+    }
+
+    return render(request, 'login/profile.html', args)

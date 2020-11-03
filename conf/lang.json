@@ -91,10 +91,12 @@
         "repassword":"Password again",
         "agree_terms":"I agree to 12 Steps ",
         "terms":"terms",
-        "not_registered":"No account? Register here"
+        "not_registered":"No account? Register here",
+        "characters":"characters.",
+        "required":"This field is required",
+        "field_requirements":"and cannot be more then"
       },
       "long_texts":{
-        "allowed_chars":"Can contain letters, capital letters and special character(s)",
         "alerts":{
             "warning":"Warning",
             "email_already_exists":"Email already exists! Please enter another email.",
