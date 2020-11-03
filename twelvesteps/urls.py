@@ -31,4 +31,5 @@ urlpatterns = [
     path('practice/', include('practice.urls')),
     path('prepare/', include('prepare.urls')),
     path('savemeplan/', include('savemeplan.urls')),
+    path('userprofile/', include('userprofile.urls')),
 ]
