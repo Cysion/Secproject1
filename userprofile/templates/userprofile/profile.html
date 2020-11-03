@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "userprofile/profile.css" %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-12">
+  <div class="profile">
+    <h1>Name</h1>
+     <a type="button" class="btn btn-primary btn-block" href="#">{{ profile.edit }}</a>
+     <a type="button" class="btn btn-primary btn-block" href="#">{{ profile.save_backup }}</a>
+     <a type="button" class="btn btn-success btn-block" href="#">{{ profile.relation }}</a>
+     <a type="button" class="btn btn-warning btn-block" href="#">GDPR</a>
+     <a type="button" class="btn btn-danger btn-block" href="#">{{ profile.logout }}</a>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -108,25 +108,35 @@
         "failed_login":"Wrong email or password entered"
       }
     },
+    "userprofile":{
+      "unformat":[],
+      "title":"userprofile",
+      "long_texts":{
+        "edit":"Edit your info or change password",
+        "save_backup":"Save backup key",
+        "relation": "Edit your relations",
+        "logout":"Logout"
+      }
+    },
     "info":{
-    "unformat":[],
-    "title":"info",
-    "about":"about 12 steps",
-    "howto":"how to use 12 steps",
-    "privpol":"privacy policy and GDPR",
-    "vol":"volunteering",
-    "discl":"disclaimer",
+      "unformat":[],
+      "title":"info",
+      "about":"about 12 steps",
+      "howto":"how to use 12 steps",
+      "privpol":"privacy policy and GDPR",
+      "vol":"volunteering",
+      "discl":"disclaimer",
 
-    "%%dev_note":"why is this here",
-    "wellind":"wellness index",
+      "%%dev_note":"why is this here",
+      "wellind":"wellness index",
 
-    "long_texts":{
-        "about":"see p.8 in presentation",
-        "howto":"see p.10 in presentation",
-        "privpol":"see p.12 in presentation",
-        "vol":"see p.13 in presentation",
-        "discl":"see p.13 in presentation"
-    }
+      "long_texts":{
+          "about":"see p.8 in presentation",
+          "howto":"see p.10 in presentation",
+          "privpol":"see p.12 in presentation",
+          "vol":"see p.13 in presentation",
+          "discl":"see p.13 in presentation"
+      }
 
 },
     "practice":{

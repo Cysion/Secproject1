@@ -10,7 +10,7 @@ class User(models.Model):
     Gender = models.CharField(max_length=32)
     FirstName = models.CharField(max_length=64, blank=False)
     LastName = models.CharField(max_length=64, blank=False)
-    DateOfBirth = models.DateField(blank=False)
+    DateOfBirth = models.CharField(max_length=12, blank=False)
     Email = models.CharField(
         max_length=64,
         blank=False,
@@ -30,8 +30,8 @@ class User(models.Model):
     Role = models.CharField(
         max_length=9,
         choices=Role_Choices
-    ) # This might not be needed
-    Symkey = models.CharField(max_length=256) # This might not be needed
+    )
+    Symkey = models.CharField(max_length=256)
 
 class RelationFrom(models.Model):
     """User relation table. This table is for users to see which relationship
