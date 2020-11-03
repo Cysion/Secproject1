@@ -39,7 +39,7 @@ def RegisterView(request):
         for index in ['first_name','last_name','gender','gender_other', 'email']:
             exceptions = ''
             if index == 'email':
-                exceptions = '1234567890@'
+                exceptions = '1234567890@!#$%&*+-/=?^_`{|}~.'
             if containsBadChar(request.POST[index], exceptions):
                 alerts[index] = "badChar"
 
@@ -49,7 +49,7 @@ def RegisterView(request):
             alerts['email'] = 'email_already_exists'
 
         if not alerts:
-            registerUser()
+            registerUser(request.POST)
             return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
 
     args = {
@@ -91,11 +91,21 @@ def registerUser(postData): # Place function somewere else.
     return publicKey
 
 def LoginView(request):
-    #Kollar om data är ok
-    #om ok logga in
-    #return HttpResponseRedirect(reverse('home:index'))
+    loginFail = False
+    if request.method == 'POST':
+        
+        result = User.objects.filter(Email=request.POST['email']).values('UserId', 'Pubkey')
 
-    #om inte ok:
+        if result:
+            print(result[0]['UserId'])
+            key = gen_rsa(secret_scrambler(request.POST["password"], result[0]['UserId']))
+            if str(key.publickey().export_key()) == str(result[0]['Pubkey']):
+                print("Jippeie yaay login successful!")
+                return HttpResponseRedirect(reverse('home:index'))
+            else:
+                loginFail = True
+        else:
+            loginFail = True
 
     login_lang = get_lang(sections=["login"])
     wrong_login_enterd = False
@@ -104,7 +114,7 @@ def LoginView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'form': login_lang["login"]["form"],
         'alerts': login_lang['login']['long_texts']['alerts'],
-        'wrong_password_enterd': wrong_login_enterd  # A check if right login was entered
+        'wrong_password_enterd': loginFail  # A check if right login was entered
     }
 
     return render(request, 'login/login.html', args)
