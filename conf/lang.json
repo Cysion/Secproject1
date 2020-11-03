@@ -104,7 +104,8 @@
             "relogin":"Login credentials incorrect!",
             "badChar":"Field contains illegal character(s)"
 
-        }
+        },
+        "failed_login":"Wrong email or password entered"
       }
     },
     "info":{
