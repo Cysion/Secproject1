@@ -19,3 +19,7 @@ def ProfileView(request):
     }
 
     return render(request, 'userprofile/profile.html', args)
+
+def EditProfileView(request):
+
+    return render(request, 'userprofile/edit.html')
