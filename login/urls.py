@@ -7,4 +7,5 @@ urlpatterns = [
     # ex: /polls/
     path('', views.LoginView, name='Login'),
     path('register/', views.RegisterView, name='Register'),
+    path('profile/edit/', views.EditProfileView, name='Edit profile'),
 ]

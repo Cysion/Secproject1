@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from datetime import date
 # Create your views here.
 
 from login.models import User
@@ -52,8 +51,6 @@ def RegisterView(request):
         if not alerts:
             registerUser()
             return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
-
-    today_date = str(date.today())
 
     args = {
         'POST': request.POST,
