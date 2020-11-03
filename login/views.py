@@ -112,3 +112,7 @@ def LoginView(request):
     }
 
     return render(request, 'login/login.html', args)
+
+def EditProfileView(request):
+
+    return render(request, 'login/edit.html')
