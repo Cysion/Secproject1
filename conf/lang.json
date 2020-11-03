@@ -99,7 +99,9 @@
             "warning":"Warning",
             "email_already_exists":"Email already exists! Please enter another email.",
             "repassword":"Passwords are not the same!",
-            "relogin":"Login credentials incorrect!"
+            "relogin":"Login credentials incorrect!",
+            "badChar":"Field contains illegal character(s)"
+
         }
       }
     },
