@@ -6,4 +6,5 @@ app_name = 'userprofile'
 urlpatterns = [
     # ex: /polls/
     path('', views.ProfileView, name='Profile'),
+    path('edit/', views.EditProfileView, name='Edit profile')
 ]
