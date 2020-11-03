@@ -32,12 +32,7 @@ def RegisterView(request):
             right one.
         agree_terms - Värdet ska vara "accept"
     '''
-    wrong_password_enterd = False
-    email_exists = False
     alerts = {}
-    
-
-
 
     login_lang = get_lang(sections=["login"])  # Get language text for form.
     # Check if a user have submitted a form.
@@ -55,6 +50,7 @@ def RegisterView(request):
             alerts['email'] = 'email_already_exists'
 
         if not alerts:
+            registerUser()
             return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
 
     today_date = str(date.today())
@@ -82,11 +78,6 @@ def getUidFromEmail(newMail):
 
 
 def registerUser(postData): # Place function somewere else.
-    if postData["password"] != postData["repassword"]:
-            return (True, getUidFromEmail(postData["email"]))
-    if getUidFromEmail(postData["email"]):
-            return (False, True)
-
     user1 = User(
             Gender=postData["gender"],
             FirstName=postData["first_name"].capitalize(),
@@ -100,9 +91,16 @@ def registerUser(postData): # Place function somewere else.
 
     user1.save()
 
-    return (False, False)
+    publicKey = ""
+    return publicKey
 
 def LoginView(request):
+    #Kollar om data är ok
+    #om ok logga in
+    #return HttpResponseRedirect(reverse('home:index'))
+
+    #om inte ok:
+
     login_lang = get_lang(sections=["login"])
     wrong_login_enterd = False
     args = {
