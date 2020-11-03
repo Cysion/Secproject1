@@ -4,7 +4,7 @@ from django.urls import reverse
 # Create your views here.
 
 from login.models import User
-from tools.crypto import gen_rsa, secret_scrambler
+from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
 
 
 from tools.confman import get_lang
@@ -31,35 +31,41 @@ def RegisterView(request):
             right one.
         agree_terms - Värdet ska vara "accept"
     '''
-    alerts = {}
+    if not request.session['UserId']:
+        alerts = {}
 
-    login_lang = get_lang(sections=["login"])  # Get language text for form.
-    # Check if a user have submitted a form.
-    if request.method == 'POST':
-        for index in ['first_name','last_name','gender','gender_other', 'email']:
-            exceptions = ''
-            if index == 'email':
-                exceptions = '1234567890@'
-            if containsBadChar(request.POST[index], exceptions):
-                alerts[index] = "badChar"
+        login_lang = get_lang(sections=["login"])  # Get language text for form.
+        # Check if a user have submitted a form.
+        if request.method == 'POST':
+            for index in ['first_name','last_name','gender','gender_other', 'email']:
+                exceptions = ''
+                if index == 'email':
+                    exceptions = '1234567890@!#$%&*+-/=?^_`{|}~.'
+                if containsBadChar(request.POST[index], exceptions):
+                    alerts[index] = "badChar"
 
-        if request.POST["password"] != request.POST["repassword"]:
-            alerts['repassword'] = "repassword"
-        if getUidFromEmail(request.POST["email"]):
-            alerts['email'] = 'email_already_exists'
+            if request.POST["password"] != request.POST["repassword"]:
+                alerts['repassword'] = "repassword"
+            if getUidFromEmail(request.POST["email"]):
+                alerts['email'] = 'email_already_exists'
 
-        if not alerts:
-            registerUser()
-            return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
+            if not alerts:
+                sessionsData = registerUser(request.POST)
+                request.session['UserId'] = sessionsData[0]
+                request.session['privKey'] = sessionsData[1]
+                return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
 
-    args = {
-        'POST': request.POST,
-        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-        'form': login_lang["login"]["form"],
-        'alerts': login_lang['login']['long_texts']['alerts'],
-        'alert': alerts
-    }
-    return render(request, 'login/register.html', args)
+        today_date = str(date.today())
+
+        args = {
+            'POST': request.POST,
+            'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+            'form': login_lang["login"]["form"],
+            'alerts': login_lang['login']['long_texts']['alerts'],
+            'alert': alerts
+        }
+        return render(request, 'login/register.html', args)
+    return HttpResponseRedirect(reverse('home:index'))
 
 def containsBadChar(stringToCheck:str, exceptions:str = ''):
     badChar = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3").difference(set(exceptions))
@@ -75,22 +81,30 @@ def getUidFromEmail(newMail):
 
 def registerUser(postData): # Place function somewere else.
     user1 = User(
-            Gender=postData["gender"],
-            FirstName=postData["first_name"].capitalize(),
-            LastName=postData["last_name"].capitalize(),
-            DateOfBirth=postData["date_of_birth"],
+            Gender='temp',
+            FirstName='temp',
+            LastName='temp',
+            DateOfBirth='temp',
             Email=postData["email"]
         )
     user1.save()
 
-    user1.Pubkey=gen_rsa(secret_scrambler(postData["password"], user1.UserId)).publickey().export_key()
+    key = gen_rsa(secret_scrambler(postData["password"], user1.UserId))
+    pubkey=key.publickey().export_key()
+
+    user1.Pubkey = pubkey
+    user1.Gender=rsa_encrypt(pubkey, postData["gender"])
+    user1.FirstName=rsa_encrypt(pubkey, postData["first_name"].capitalize())
+    user1.LastName=rsa_encrypt(pubkey, postData["last_name"].capitalize())
+    user1.DateOfBirth=rsa_encrypt(pubkey, postData["date_of_birth"])
+
 
     user1.save()
 
-    publicKey = ""
-    return publicKey
+    return user1.UserId ,pubkey
 
 def LoginView(request):
+<<<<<<< HEAD
     #Kollar om data är ok
     #om ok logga in
     #return HttpResponseRedirect(reverse('home:index'))
@@ -108,4 +122,37 @@ def LoginView(request):
     }
 
     return render(request, 'login/login.html', args)
+=======
+    if not request.session['UserId']:
+        loginFail = False
+        if request.method == 'POST':
+            
+            result = User.objects.filter(Email=request.POST['email']).values('UserId', 'Pubkey')
+
+            if result:
+                print(result[0]['UserId'])
+                key = gen_rsa(secret_scrambler(request.POST["password"], result[0]['UserId']))
+                if str(key.publickey().export_key()) == str(result[0]['Pubkey']):
+                    print("Jippeie yaay login successful!")
+                    request.session['UserId'] = result[0]['UserId']
+                    request.session['privKey'] = key.privatekey().export_key()
+                    return HttpResponseRedirect(reverse('home:index'))
+                else:
+                    loginFail = True
+            else:
+                loginFail = True
+
+        login_lang = get_lang(sections=["login"])
+        wrong_login_enterd = False
+        args = {
+            'post': request.POST,
+            'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+            'form': login_lang["login"]["form"],
+            'alerts': login_lang['login']['long_texts']['alerts'],
+            'wrong_password_enterd': loginFail  # A check if right login was entered
+        }
+
+        return render(request, 'login/login.html', args)
+    return HttpResponseRedirect(reverse('home:index'))
+>>>>>>> 3c5d37c0bef3ab75ab955f3ee2681d4774322e7c
 
