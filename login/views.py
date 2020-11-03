@@ -40,7 +40,7 @@ def RegisterView(request):
         for index in ['first_name','last_name','gender','gender_other', 'email']:
             exceptions = ''
             if index == 'email':
-                exceptions = '1234567890@'
+                exceptions = '1234567890@!#$%&*+-/=?^_`{|}~.'
             if containsBadChar(request.POST[index], exceptions):
                 alerts[index] = "badChar"
 
@@ -49,7 +49,7 @@ def RegisterView(request):
         if getUidFromEmail(request.POST["email"]):
             alerts['email'] = 'email_already_exists'
 
-        if alerts:
+        if not alerts:
             registerUser(request.POST)
             return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
 
