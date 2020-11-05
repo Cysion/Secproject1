@@ -10,7 +10,7 @@
     <div class="form-group">
       <label for="first_name">{{ form.first_name }}: </label>
       <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.first_name }}..."
-        maxlength="64" id="first_name" name="first_name" {% if POST %} value="{{POST.first_name}}" {% endif %}{# If post already has been submitted #} required>
+        maxlength="64" id="first_name" name="first_name" value="{{ account.firstName }}" {% if POST %} value="{{POST.first_name}}" {% endif %}{# If post already has been submitted #} required>
       <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
     </div>
     {% if alert.first_name %}
@@ -22,7 +22,7 @@
     <div class="form-group">
       <label for="last_name">{{ form.last_name }}: </label>
       <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.last_name }}..."
-        maxlength="64" id="last_name" name="last_name" {% if POST %} value="{{POST.last_name}}" {% endif %} required>
+        maxlength="64" id="last_name" name="last_name" value="{{ account.lastName }}" {% if POST %} value="{{POST.last_name}}" {% endif %} required>
       <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }}</div>
     </div>
     {% if alert.last_name %}
@@ -34,7 +34,7 @@
     <div class="form-group">
       <label for="date_of_birth">{{ form.date_of_birth }}: </label>
       <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
-        min="1850-01-01" max="{% now "Y-m-d" %}" {% if POST %} value="{{POST.date_of_birth}}" {% endif %} required>
+        min="1850-01-01" max="{% now "Y-m-d" %}" value="{{ account.dateOfBirth }}" {% if POST %} value="{{POST.date_of_birth}}" {% endif %} required>
       <div class="invalid-feedback">{{ form.required }}.</div>
     </div>
   
@@ -42,6 +42,7 @@
     <div class="form-check">
       <label class="form-check-label">
         <input type="radio" class="form-check-input" id="gender" name="gender" value="Female"
+          {% if account.gender == "Female" %} checked {% endif %}
           {% if POST and POST.gender and POST.gender == "Female" %} checked
           {% elif not POST or not POST.gender %} checked {% endif %}>{{ form.female }} {# Django cant prioritize with () #}
       </label>
@@ -49,15 +50,18 @@
     <div class="form-check">
       <label class="form-check-label">
         <input type="radio" class="form-check-input" id="gender" name="gender" value="Male"
+          {% if account.gender == "Male" %} checked {% endif %}
           {% if POST and POST.gender and POST.gender == "Male" %}checked {% endif %}>{{ form.male }}
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label">
         <input type="radio" class="form-check-input" id="gender" name="gender" value="Other"
-          {% if POST and POST.gender and POST.gender == "Other" %}checked {% endif %}>
+          {% if account.gender == "Other" %} checked {% endif %}
+          {% if POST and POST.gender and POST.gender == "Other" %} checked {% endif %}>
           <input type="text" class="form-control" style="height: 30px; margin-bottom: 10px;" id="gender_other" name="gender_other"
-            {% if POST %} value="{{POST.gender_other}}" {% endif %} maxlength="32">
+          {% if account.gender == "Other" %} value="{{ account.gender }}" {% endif %}
+          {% if POST %} value="{{POST.gender_other}}" {% endif %} maxlength="32">
       </label>
     </div>
     {% if alert.gender or alert.gender_other %}
@@ -69,7 +73,7 @@
     <div class="form-group">
       <label for="email">{{ form.email }}: </label>
       <input type="email" class="form-control" placeholder="{{ form.placeholder }} {{ form.email }}..."
-        id="email" name="email" {% if POST and not alert.email %} value="{{POST.email}}" {% endif %} required>
+        id="email" name="email" value="{{ account.email }}" {% if POST and not alert.email %} value="{{POST.email}}" {% endif %} required>
       <div class="invalid-feedback">{{ form.required }}.</div>
     </div>
   
@@ -103,7 +107,6 @@
     <div class="form-group">
       <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.save }}" style="margin-top:10px;">
     </div>
-  </form>
-
+</form>
 
 {% endblock %}
