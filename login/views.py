@@ -77,21 +77,26 @@ def getUidFromEmail(newMail):
     return False
 
 
+def registerUserData(uId, postData):
+    user = User.objects.filter(UserId=uId)[0]
+    user.setGender(postData['gender'])
+    user.setFirstName(postData['first_name'])
+    user.setLastName(postData['last_name'])
+    user.setDateOfBirth(postData['date_of_birth'])
+    user.save()
+
+
 def registerUser(postData): # Place function somewere else.
-    user1 = User(Email=postData["email"])
-    user1.save()
+    user = User(Email=postData["email"])
+    user.save()
 
-    key = gen_rsa(secret_scrambler(postData["password"], user1.UserId))
-    pubkey=key.publickey().export_key()
+    key = gen_rsa(secret_scrambler(postData["password"], user.UserId))
+    user.setPubKey(key.publickey().export_key().decode("utf-8"))
+    user.save()
 
-    user1.Pubkey = pubkey
-    user1.Gender=rsa_encrypt(pubkey, postData["gender"].encode("utf-8"))
-    user1.FirstName=rsa_encrypt(pubkey, postData["first_name"].capitalize().encode("utf-8"))
-    user1.LastName=rsa_encrypt(pubkey, postData["last_name"].capitalize().encode("utf-8"))
-    user1.DateOfBirth=rsa_encrypt(pubkey, postData["date_of_birth"].encode("utf-8"))
-    user1.save()
+    registerUserData(user.UserId, postData)
 
-    return user1.UserId, key.export_key()
+    return user.UserId, key.export_key()
 
 def LoginView(request):
     if 'UserId' not in request.session:

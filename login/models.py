@@ -55,44 +55,38 @@ class User(models.Model):
 
     def setPubKey(self, pubKey):
         self.Pubkey=pubKey
-        self.save()
         return 0
 
     def setGender(self, gender):
         if self.Pubkey:
-            self.Gender=rsa_encrypt(self.Pubkey, gender.encode("utf-8"))
-            self.save()
+            self.Gender=rsa_encrypt(self.Pubkey.encode("utf-8"), gender.encode("utf-8"))
             return 0
         else:
             return 1
 
     def setFirstName(self, firstName):
         if self.Pubkey:
-            self.FirstName=rsa_encrypt(self.Pubkey, firstName.encode("utf-8"))
-            self.save()
+            self.FirstName=rsa_encrypt(self.Pubkey.encode("utf-8"), firstName.encode("utf-8"))
             return 0
         else:
             return 1
 
     def setLastName(self, lastName):
         if self.Pubkey:
-            self.LastName=rsa_encrypt(self.Pubkey, lastName.encode("utf-8"))
-            self.save()
+            self.LastName=rsa_encrypt(self.Pubkey.encode("utf-8"), lastName.encode("utf-8"))
             return 0
         else:
             return 1
 
     def setDateOfBirth(self, dateOfBirth):
         if self.Pubkey:
-            self.DateOfBirth=rsa_encrypt(self.Pubkey, dateOfBirth.encode("utf-8)"))
-            self.save()
+            self.DateOfBirth=rsa_encrypt(self.Pubkey.encode("utf-8"), dateOfBirth.encode("utf-8)"))
             return 0
         else:
             return 1
 
     def setEmail(self, email):
         self.Email = email
-        self.save()
         return 0
     
     def createSymkey(self):
