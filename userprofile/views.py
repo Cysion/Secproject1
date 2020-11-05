@@ -66,13 +66,13 @@ def EditProfileView(request):
 def changePassView(request):
     profile_lang = get_lang(sections=["userprofile"])
     login_lang = get_lang(sections=["login"])
-    
+
     if request.method == 'GET':
         if 'logout' in request.GET.keys():
             request.session.flush()
             return HttpResponseRedirect(reverse('login:Login'))
-    
-    
+
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'form': login_lang["login"]["form"],
@@ -82,6 +82,7 @@ def changePassView(request):
 
     return render(request, 'userprofile/edit.html', args)
 
+
 def changePass(uId, privKey, newPassword):
     user1=User.objects.filter(UserId=uId)[0]
     firstName=user1.getFirstName(privKey)
@@ -89,7 +90,7 @@ def changePass(uId, privKey, newPassword):
     gender=user1.getGender(privKey)
     dateOfBirth=user1.getdateOfBirth(privKey)
     symKey=user1.getSymKey(privKey)
-    
+
     key = gen_rsa(secret_scrambler(newPassword, uId))
     pubkey=key.publickey().export_key()
     with transaction.atomic():
@@ -105,3 +106,18 @@ def changePass(uId, privKey, newPassword):
 
 def checkPassword(uId, privKey, password):
     return gen_rsa(secret_scrambler(password, uId)).export_key().decode("utf-8") == privKey
+
+def BackupKeyView(request):
+    if not 'UserId' in request.session.keys():
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    profile_lang = get_lang(sections=["userprofile"])
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
+        'privkey': request.session['privKey']
+    }
+
+    return render(request, 'userprofile/backupkey.html', args)
