@@ -1,0 +1,19 @@
+
+from django.test import SimpleTestCase
+from django.urls import reverse, resolve
+from login.views import LoginView, RegisterView
+
+
+class TestUrls(SimpleTestCase):
+
+    def test_Login_resolves(self):
+        """ Asserts that URL for view 'Login' resolves """
+        url = reverse('login:Login')
+        self.assertEquals(resolve(url).func, LoginView)
+
+
+    def test_Register_resolves(self):
+        """ Asserts that URL for view 'Register' resolves """
+        url = reverse('login:Register')
+        self.assertEquals(resolve(url).func, RegisterView)
+

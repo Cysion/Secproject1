@@ -96,7 +96,9 @@
         "characters":"characters.",
         "required":"This field is required",
         "field_requirements":"and cannot be more then",
-        "save":"Save changes"
+        "save":"Save changes",
+        "current_password":"Current password",
+        "current_repassword":"Current password again"
       },
       "long_texts":{
         "alerts":{
