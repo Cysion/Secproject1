@@ -11,12 +11,12 @@
 
 <div class="col-sm-12">
   <div class="profile">
-    <h1>Name</h1>
-     <a type="button" class="btn btn-primary btn-block" href="#">{{ profile.edit }}</a>
+    <h1>{{ first_name }} {{ last_name }}</h1>
+     <a type="button" class="btn btn-primary btn-block" href="edit/">{{ profile.edit }}</a>
      <a type="button" class="btn btn-primary btn-block" href="#">{{ profile.save_backup }}</a>
      <a type="button" class="btn btn-success btn-block" href="#">{{ profile.relation }}</a>
      <a type="button" class="btn btn-warning btn-block" href="#">GDPR</a>
-     <a type="button" class="btn btn-danger btn-block" href="#">{{ profile.logout }}</a>
+     <a type="button" class="btn btn-danger btn-block" name="logout" value="1" href="?logout=1">{{ profile.logout }}</a>
   </div>
 
 </div>
