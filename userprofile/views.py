@@ -51,7 +51,7 @@ def EditProfileView(request):
         }
 
         if request.method == 'POST':
-            
+            checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password'])
             return HttpResponseRedirect(reverse('userprofile:Profile'))
             
 
