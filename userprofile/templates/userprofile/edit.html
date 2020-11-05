@@ -1,8 +1,109 @@
 {% extends "base.html" %}
 
-{% block title %}Home title {% endblock %}
+{% block title %}Edit User Profile{% endblock %}
 
 {% block content %}
-<h1>Hello, world</h1>
+<h1>Edit User Profile</h1>
+
+<form action="/userprofile/edit/" class="was-validated" method="POST">
+    {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
+    <div class="form-group">
+      <label for="first_name">{{ form.first_name }}: </label>
+      <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.first_name }}..."
+        maxlength="64" id="first_name" name="first_name" {% if POST %} value="{{POST.first_name}}" {% endif %}{# If post already has been submitted #} required>
+      <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
+    </div>
+    {% if alert.first_name %}
+    <div class="alert alert-danger">
+      <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+    </div>
+    {% endif %}
+  
+    <div class="form-group">
+      <label for="last_name">{{ form.last_name }}: </label>
+      <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.last_name }}..."
+        maxlength="64" id="last_name" name="last_name" {% if POST %} value="{{POST.last_name}}" {% endif %} required>
+      <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }}</div>
+    </div>
+    {% if alert.last_name %}
+    <div class="alert alert-danger">
+      <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+    </div>
+    {% endif %}
+  
+    <div class="form-group">
+      <label for="date_of_birth">{{ form.date_of_birth }}: </label>
+      <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
+        min="1850-01-01" max="{% now "Y-m-d" %}" {% if POST %} value="{{POST.date_of_birth}}" {% endif %} required>
+      <div class="invalid-feedback">{{ form.required }}.</div>
+    </div>
+  
+    <label>{{ form.gender }}</label>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" id="gender" name="gender" value="Female"
+          {% if POST and POST.gender and POST.gender == "Female" %} checked
+          {% elif not POST or not POST.gender %} checked {% endif %}>{{ form.female }} {# Django cant prioritize with () #}
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" id="gender" name="gender" value="Male"
+          {% if POST and POST.gender and POST.gender == "Male" %}checked {% endif %}>{{ form.male }}
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" id="gender" name="gender" value="Other"
+          {% if POST and POST.gender and POST.gender == "Other" %}checked {% endif %}>
+          <input type="text" class="form-control" style="height: 30px; margin-bottom: 10px;" id="gender_other" name="gender_other"
+            {% if POST %} value="{{POST.gender_other}}" {% endif %} maxlength="32">
+      </label>
+    </div>
+    {% if alert.gender or alert.gender_other %}
+    <div class="alert alert-danger">
+      <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+    </div>
+    {% endif %}
+  
+    <div class="form-group">
+      <label for="email">{{ form.email }}: </label>
+      <input type="email" class="form-control" placeholder="{{ form.placeholder }} {{ form.email }}..."
+        id="email" name="email" {% if POST and not alert.email %} value="{{POST.email}}" {% endif %} required>
+      <div class="invalid-feedback">{{ form.required }}.</div>
+    </div>
+  
+    {% if alert.email == "badChar" %}
+    <div class="alert alert-danger">
+      <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+    </div>
+  
+    {% elif alert.email == "email_already_exists" %}
+    <div class="alert alert-danger">
+      <strong>{{ alerts.warning }}!</strong> {{ alerts.email_already_exists }}
+    </div>
+    {% endif %}
+    <div class="form-group">
+      <label for="password">{{ form.password }}: </label>
+      <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.password }}..."
+      maxlength="64" id="password" name="password" required>
+      <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div>
+    </div>
+    <div class="form-group">
+      <label for="repassword">{{ form.repassword }}: </label>
+      <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.repassword }}..."
+      maxlength="64" id="repassword" name="repassword" required>
+      <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }}</div>
+    </div>
+    {% if alert.repassword %}
+    <div class="alert alert-danger">
+      <strong>{{ alerts.warning }}!</strong> {{ alerts.repassword }}
+    </div>
+    {% endif %}
+    <div class="form-group">
+      <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.save }}" style="margin-top:10px;">
+    </div>
+  </form>
+
 
 {% endblock %}
