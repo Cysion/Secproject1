@@ -66,6 +66,13 @@ def EditProfileView(request):
 def changePassView(request):
     profile_lang = get_lang(sections=["userprofile"])
     login_lang = get_lang(sections=["login"])
+
+    if request.method == 'GET':
+        if 'logout' in request.GET.keys():
+            request.session.flush()
+            return HttpResponseRedirect(reverse('login:Login'))
+
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'form': login_lang["login"]["form"],
@@ -96,6 +103,9 @@ def changePass(uId, privKey, newPassword):
         return key.export_key()
 
     return 0
+
+def checkPassword(uId, privKey, password):
+    return gen_rsa(secret_scrambler(password, uId)).export_key().decode("utf-8") == privKey
 
 def BackupKeyView(request):
     if not 'UserId' in request.session.keys():
