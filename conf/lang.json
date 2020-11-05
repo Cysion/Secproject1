@@ -97,8 +97,9 @@
         "required":"This field is required",
         "field_requirements":"and cannot be more then",
         "save":"Save changes",
-        "current_password":"Current password",
-        "current_repassword":"Current password again"
+        "current":"Current",
+        "new":"New",
+        "change":"Change"
       },
       "long_texts":{
         "alerts":{
