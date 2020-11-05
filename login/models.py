@@ -47,6 +47,12 @@ class User(models.Model):
     def getDateOfBirth(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.DateOfBirth).decode("utf-8")
 
+    def getSymKey(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.DateOfBirth).decode("utf-8")
+    
+    def email(self):
+        return self.Email
+
     
 
     
