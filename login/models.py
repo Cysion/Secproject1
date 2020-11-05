@@ -1,4 +1,6 @@
 from django.db import models
+from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
+
 
 # Create your models here.
 
@@ -32,6 +34,10 @@ class User(models.Model):
         choices=Role_Choices
     )
     Symkey = models.CharField(max_length=256)
+
+    def getFirstName(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.FirstName).decode("utf-8")
+    
 
 class RelationFrom(models.Model):
     """User relation table. This table is for users to see which relationship

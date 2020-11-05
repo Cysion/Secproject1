@@ -52,7 +52,7 @@ def RegisterView(request):
             if not alerts:
                 sessionsData = registerUser(request.POST)
                 request.session['UserId'] = sessionsData[0]
-                #request.session['privKey'] = sessionsData[1]
+                request.session['privKey'] = sessionsData[1].decode("utf-8")
                 return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
 
         args = {
@@ -94,7 +94,7 @@ def registerUser(postData): # Place function somewere else.
     return user1.UserId, key.export_key()
 
 def LoginView(request):
-    if not request.session['UserId']:
+    if 'UserId' not in request.session:
         loginFail = False
         if request.method == 'POST':
             
@@ -106,7 +106,7 @@ def LoginView(request):
                 if str(key.publickey().export_key()) == str(result[0]['Pubkey']):
                     print("Jippeie yaay login successful!")
                     request.session['UserId'] = result[0]['UserId']
-                    #request.session['privKey'] = key.privatekey().export_key()
+                    request.session['privKey'] = result[0].decode("utf-8")
                     return HttpResponseRedirect(reverse('home:index'))
                 else:
                     loginFail = True
