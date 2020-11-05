@@ -53,7 +53,7 @@ def EditProfileView(request):
         if request.method == 'POST':
             checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password'])
             return HttpResponseRedirect(reverse('userprofile:Profile'))
-            
+
 
 
 
@@ -70,12 +70,27 @@ def EditProfileView(request):
         return render(request, 'userprofile/edit.html', args)
 
 def changePassView(request):
+    """
+    A interface for changeing password.
+
+    Post variables:
+        current_password = Users current password. Used for verification.
+        new_password = Users new password.
+        new_repassword = Users new password reentered.
+    """
+
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('userprofile:Profile'))
 
+    alerts = {}  # Dict containing input name as key and alert text key as value
+    login_lang = get_lang(sections=["login"])
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'form': login_lang["login"]["form"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'alerts': login_lang['login']['long_texts']['alerts'],
+        'alert': alerts
     }
 
 
