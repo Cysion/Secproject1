@@ -46,3 +46,18 @@ def EditProfileView(request):
 
 
     return render(request, 'userprofile/edit.html', args)
+
+def BackupKeyView(request):
+    if not 'UserId' in request.session.keys():
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    profile_lang = get_lang(sections=["userprofile"])
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
+        'privkey': request.session['privKey']
+    }
+
+    return render(request, 'userprofile/backupkey.html', args)
