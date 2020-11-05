@@ -63,7 +63,7 @@ def EditProfileView(request):
 
     return render(request, 'userprofile/edit.html', args)
 
-def EditProfileView(request):
+def changePassView(request):
     profile_lang = get_lang(sections=["userprofile"])
     login_lang = get_lang(sections=["login"])
     args = {
