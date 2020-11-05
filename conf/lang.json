@@ -94,7 +94,8 @@
         "not_registered":"No account? Register here",
         "characters":"characters.",
         "required":"This field is required",
-        "field_requirements":"and cannot be more then"
+        "field_requirements":"and cannot be more then",
+        "save":"Save changes"
       },
       "long_texts":{
         "alerts":{

@@ -34,3 +34,15 @@ def ProfileView(request):
     }
 
     return render(request, 'userprofile/profile.html', args)
+
+def EditProfileView(request):
+    profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'form': login_lang["login"]["form"],
+        'profile': profile_lang["userprofile"]["long_texts"]
+    }
+
+
+    return render(request, 'userprofile/edit.html', args)
