@@ -63,7 +63,7 @@ def RegisterView(request):
             'alert': alerts
         }
         return render(request, 'login/register.html', args)
-    return HttpResponseRedirect(reverse('home:index'))
+    return HttpResponseRedirect(reverse('userprofile:Profile'))
 
 def containsBadChar(stringToCheck:str, exceptions:str = ''):
     badChar = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3").difference(set(exceptions))
