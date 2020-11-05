@@ -101,12 +101,10 @@ def LoginView(request):
             result = User.objects.filter(Email=request.POST['email']).values('UserId', 'Pubkey')
 
             if result:
-                print(result[0]['UserId'])
                 key = gen_rsa(secret_scrambler(request.POST["password"], result[0]['UserId']))
                 if str(key.publickey().export_key()) == str(result[0]['Pubkey']):
-                    print("Jippeie yaay login successful!")
                     request.session['UserId'] = result[0]['UserId']
-                    request.session['privKey'] = result[0].decode("utf-8")
+                    request.session['privKey'] = key.export_key().decode("utf-8")
                     return HttpResponseRedirect(reverse('home:index'))
                 else:
                     loginFail = True
