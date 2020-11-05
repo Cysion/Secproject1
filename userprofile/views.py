@@ -41,12 +41,15 @@ def EditProfileView(request):
     lastName=user1.getLastName(request.session['privKey'])
     dateOfBirth=user1.getDateOfBirth(request.session['privKey'])
     gender=user1.getGender(request.session['privKey'])
+    email = user1.getEmail()
 
     account = {
         "firstName":firstName,
         "lastName":lastName,
         "dateOfBirth":dateOfBirth,
-        "gender":gender
+        "gender":gender,
+        "email":email
+
     }
 
     profile_lang = get_lang(sections=["userprofile"])
