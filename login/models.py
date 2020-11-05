@@ -50,7 +50,7 @@ class User(models.Model):
     def getSymKey(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.DateOfBirth).decode("utf-8")
     
-    def email(self):
+    def getEmail(self):
         return self.Email
 
     
