@@ -64,19 +64,12 @@ def EditProfileView(request):
     return render(request, 'userprofile/edit.html', args)
 
 def changePassView(request):
-    profile_lang = get_lang(sections=["userprofile"])
-    login_lang = get_lang(sections=["login"])
-
-    if request.method == 'GET':
-        if 'logout' in request.GET.keys():
-            request.session.flush()
-            return HttpResponseRedirect(reverse('login:Login'))
+    if not 'UserId' in request.session.keys():
+        return HttpResponseRedirect(reverse('login:Login'))
 
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-        'form': login_lang["login"]["form"],
-        'profile': profile_lang["userprofile"]["long_texts"]
     }
 
 
