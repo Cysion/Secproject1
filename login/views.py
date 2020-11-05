@@ -58,6 +58,7 @@ def RegisterView(request):
         args = {
             'POST': request.POST,
             'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+            'back': UNIVERSAL_LANG['universal']['back'],
             'form': login_lang["login"]["form"],
             'alerts': login_lang['login']['long_texts']['alerts'],
             'alert': alerts
