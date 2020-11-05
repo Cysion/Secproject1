@@ -35,8 +35,20 @@ class User(models.Model):
     )
     Symkey = models.CharField(max_length=256)
 
+    def getGender(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.Gender).decode("utf-8")
+        
     def getFirstName(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.FirstName).decode("utf-8")
+    
+    def getLastName(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.LastName).decode("utf-8")
+
+    def getDateOfBirth(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.DateOfBirth).decode("utf-8")
+
+    
+
     
 
 class RelationFrom(models.Model):
