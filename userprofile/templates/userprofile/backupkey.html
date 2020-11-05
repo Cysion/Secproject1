@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Your backupkey for password recovery{% endblock %}
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "userprofile/profile.css" %}">
+{% endblock %}
+
+{% block content %}
+<div class="backup">
+  <p>{{ backup }}</p>
+  <a type="button" class="btn btn-danger btn-block" href="/userprofile/">{{ back }}</a>
+  <div class="form-group">
+    <textarea class="form-control privkey" rows="80">{{ privkey }}</textarea>
+  </div>
+</div>
+
+
+{% endblock %}

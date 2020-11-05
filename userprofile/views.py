@@ -79,7 +79,7 @@ def changePassView(request):
     }
 
 
-    return render(request, 'userprofile/edit.html', args)
+    return render(request, 'userprofile/changepassword.html', args)
 
 
 def changePass(uId, privKey, newPassword):
