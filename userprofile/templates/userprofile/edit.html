@@ -18,7 +18,7 @@
       <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
     </div>
     {% endif %}
-  
+
     <div class="form-group">
       <label for="last_name">{{ form.last_name }}: </label>
       <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.last_name }}..."
@@ -30,7 +30,7 @@
       <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
     </div>
     {% endif %}
-  
+
     <label>{{ form.gender }}</label>
     <div class="form-check">
       <label class="form-check-label">
@@ -62,19 +62,19 @@
       <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
     </div>
     {% endif %}
-  
+
     <div class="form-group">
       <label for="email">{{ form.email }}: </label>
       <input type="email" class="form-control" placeholder="{{ form.placeholder }} {{ form.email }}..."
         id="email" name="email" value="{{ account.email }}" {% if POST and not alert.email %} value="{{POST.email}}" {% endif %} required>
       <div class="invalid-feedback">{{ form.required }}.</div>
     </div>
-  
+
     {% if alert.email == "badChar" %}
     <div class="alert alert-danger">
       <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
     </div>
-  
+
     {% elif alert.email == "email_already_exists" %}
     <div class="alert alert-danger">
       <strong>{{ alerts.warning }}!</strong> {{ alerts.email_already_exists }}
@@ -84,24 +84,12 @@
       <label for="password">{{ form.current_password }}: </label>
       <input type="password" class="form-control" placeholder="{{ form.placeholder }} {{ form.current_password }}..."
       maxlength="64" id="password" name="password" required>
-      <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div>
     </div>
-    <div class="form-group">
-      <label for="repassword">{{ form.current_repassword }}: </label>
-      <input type="password" class="form-control" placeholder="{{ form.placeholder }} {{ form.current_repassword }}..."
-      maxlength="64" id="repassword" name="repassword" required>
-      <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }}</div>
-    </div>
-    {% if alert.repassword %}
-    <div class="alert alert-danger">
-      <strong>{{ alerts.warning }}!</strong> {{ alerts.repassword }}
-    </div>
-    {% endif %}
     <div class="form-group">
       <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.save }}" style="margin-top:10px;">
     </div>
 </form>
 
-<a type="button" class="btn btn-primary btn-block" href="#">{{ back }}</a>
+<a type="button" class="btn btn-primary btn-block" href="/userprofile/">{{ back }}</a>
 
 {% endblock %}
