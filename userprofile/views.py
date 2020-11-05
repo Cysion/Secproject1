@@ -56,6 +56,7 @@ def EditProfileView(request):
     login_lang = get_lang(sections=["login"])
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
         'form': login_lang["login"]["form"],
         'profile': profile_lang["userprofile"]["long_texts"],
         "account":account
