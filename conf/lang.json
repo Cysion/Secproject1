@@ -17,6 +17,7 @@
         "contacts":"contacts",
         "notes":"notes",
         "name":"name",
+        "back":"Back",
         "titles":[
           "Info",
           "Chat",
@@ -116,7 +117,8 @@
         "edit":"Edit your info or change password",
         "save_backup":"Save backup key",
         "relation": "Edit your relations",
-        "logout":"Logout"
+        "logout":"Logout",
+        "backupkey":"This is your backup key if you forgot your password. Please save this on a save place!. Without this it's impossible to recover your password! This is because of how our encryptionsystem works."
       }
     },
     "info":{

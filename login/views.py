@@ -53,7 +53,7 @@ def RegisterView(request):
                 sessionsData = registerUser(request.POST)
                 request.session['UserId'] = sessionsData[0]
                 request.session['privKey'] = sessionsData[1].decode("utf-8")
-                return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
+                return HttpResponseRedirect(reverse('userprofile:Backupkey')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
 
         args = {
             'POST': request.POST,
@@ -97,7 +97,7 @@ def LoginView(request):
     if 'UserId' not in request.session:
         loginFail = False
         if request.method == 'POST':
-            
+
             result = User.objects.filter(Email=request.POST['email']).values('UserId', 'Pubkey')
 
             if result:
@@ -123,4 +123,3 @@ def LoginView(request):
 
         return render(request, 'login/login.html', args)
     return HttpResponseRedirect(reverse('home:index'))
-
