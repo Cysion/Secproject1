@@ -105,7 +105,7 @@ def LoginView(request):
                 if str(key.publickey().export_key()) == str(result[0]['Pubkey']):
                     request.session['UserId'] = result[0]['UserId']
                     request.session['privKey'] = key.export_key().decode("utf-8")
-                    return HttpResponseRedirect(reverse('home:index'))
+                    return HttpResponseRedirect(reverse('userprofile:Profile'))
                 else:
                     loginFail = True
             else:
@@ -122,4 +122,4 @@ def LoginView(request):
         }
 
         return render(request, 'login/login.html', args)
-    return HttpResponseRedirect(reverse('home:index'))
+    return HttpResponseRedirect(reverse('userprofile:Profile'))
