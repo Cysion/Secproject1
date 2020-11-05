@@ -63,6 +63,11 @@
       </ul>
     </nav>
     <div class="container">
+      {% for alert in global_alerts %}
+      <div class="alert alert-{{ alert.color }}">
+        <strong>{{ alert.title }}!</strong> {{ alert.message }}
+      </div>
+      {% endfor %}
       {% block content %}{% endblock %}
     </div>
     <nav class="navbar navbar-expand-sm navbar-dark

@@ -118,13 +118,12 @@ def LoginView(request):
                 loginFail = True
 
         login_lang = get_lang(sections=["login"])
-        wrong_login_enterd = False
         args = {
             'post': request.POST,
             'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
             'form': login_lang["login"]["form"],
             'alerts': login_lang['login']['long_texts']['alerts'],
-            'wrong_password_enterd': loginFail  # A check if right login was entered
+            'wrong_login_enterd': loginFail  # A check if right login was entered
         }
 
         return render(request, 'login/login.html', args)
