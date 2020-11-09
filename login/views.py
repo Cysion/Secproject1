@@ -152,25 +152,26 @@ def forgotPasswordView(request):
     """
     login_lang = get_lang(sections=["login"])
     alerts = dict()
-    
+
     if 'UserId' in request.session:
         return HttpResponseRedirect(reverse('userprofile:Profile'))
     
     if request.method == 'POST':
-        if request.POST['new_password'] == request.POST['new_repassword']:
+        if request.POST['password'] == request.POST['repassword']:
             user = User.objects.filter(Email=request.POST['email'])[0]
             if user:
                 try:
-                    account = {}
-                    account['firstName']=user.getFirstName(request.POST['priv_key'])
-                    account['lastName']=user.getLastName(request.POST['priv_key'])
-                    account['gender']=user.getGender(request.POST['priv_key'])
+                    request.session['UserId'] = user.getUid()
+                    request.session['privKey']=changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
                 except ValueError as keyError:
-                    pass
+                    alerts["auth"] = "auth"
+                return HttpResponseRedirect(reverse('userprofile:Backupkey'))
             else:
                 alerts["auth"] = "auth"
         else:
             alerts["repassword"] = "repassword"
+
+        
 
 
 

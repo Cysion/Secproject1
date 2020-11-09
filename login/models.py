@@ -35,6 +35,9 @@ class User(models.Model):
     )
     Symkey = models.CharField(max_length=256)
 
+    def getUid(self):
+        return self.UserId
+
     def getGender(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.Gender).decode("utf-8")
         
