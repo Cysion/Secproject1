@@ -64,7 +64,7 @@ def EditProfileView(request):
             return HttpResponseRedirect(reverse('userprofile:Profile'))
         else:
             wrong_pass = True
-        
+
 
 
 
