@@ -51,21 +51,28 @@ def RegisterView(request):
 
             if not alerts:
                 sessionsData = registerUser(request.POST)
+<<<<<<< HEAD
                 #request.session['UserId'] = sessionsData[0]
                 #request.session['privKey'] = sessionsData[1]
                 return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
 
         #today_date = str(date.today())
+=======
+                request.session['UserId'] = sessionsData[0]
+                request.session['privKey'] = sessionsData[1].decode("utf-8")
+                return HttpResponseRedirect(reverse('userprofile:Backupkey')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
+>>>>>>> e3d13733f978480aac2a26cd4e3cab2ee9c9ebfa
 
         args = {
             'POST': request.POST,
             'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+            'back': UNIVERSAL_LANG['universal']['back'],
             'form': login_lang["login"]["form"],
             'alerts': login_lang['login']['long_texts']['alerts'],
             'alert': alerts
         }
         return render(request, 'login/register.html', args)
-    return HttpResponseRedirect(reverse('home:index'))
+    return HttpResponseRedirect(reverse('userprofile:Profile'))
 
 def containsBadChar(stringToCheck:str, exceptions:str = ''):
     badChar = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3").difference(set(exceptions))
@@ -79,6 +86,7 @@ def getUidFromEmail(newMail):
     return False
 
 
+<<<<<<< HEAD
 def registerUser(postData): # Place function somewere else.
     user1 = User(Email=postData["email"])
     user1.save()
@@ -90,42 +98,55 @@ def registerUser(postData): # Place function somewere else.
     user1.FirstName=rsa_encrypt(pubkey, postData["first_name"].capitalize().encode("utf-8"))
     user1.LastName=rsa_encrypt(pubkey, postData["last_name"].capitalize().encode("utf-8"))
     user1.DateOfBirth=rsa_encrypt(pubkey, postData["date_of_birth"].encode("utf-8"))
+=======
+def registerUserData(uId, postData):
+    user = User.objects.filter(UserId=uId)[0]
+    user.setGender(postData['gender'])
+    user.setFirstName(postData['first_name'])
+    user.setLastName(postData['last_name'])
+    user.setDateOfBirth(postData['date_of_birth'])
+    user.save()
 
 
-    user1.save()
+def registerUser(postData): # Place function somewere else.
+    user = User(Email=postData["email"])
+    user.save()
+>>>>>>> e3d13733f978480aac2a26cd4e3cab2ee9c9ebfa
 
-    return user1.UserId ,pubkey
+    key = gen_rsa(secret_scrambler(postData["password"], user.UserId))
+    user.setPubKey(key.publickey().export_key().decode("utf-8"))
+    user.save()
+
+    registerUserData(user.UserId, postData)
+
+    return user.UserId, key.export_key()
 
 def LoginView(request):
-    if not request.session['UserId']:
+    if 'UserId' not in request.session:
         loginFail = False
         if request.method == 'POST':
-            
+
             result = User.objects.filter(Email=request.POST['email']).values('UserId', 'Pubkey')
 
             if result:
-                print(result[0]['UserId'])
                 key = gen_rsa(secret_scrambler(request.POST["password"], result[0]['UserId']))
                 if str(key.publickey().export_key()) == str(result[0]['Pubkey']):
-                    print("Jippeie yaay login successful!")
                     request.session['UserId'] = result[0]['UserId']
-                    request.session['privKey'] = key.privatekey().export_key()
-                    return HttpResponseRedirect(reverse('home:index'))
+                    request.session['privKey'] = key.export_key().decode("utf-8")
+                    return HttpResponseRedirect(reverse('userprofile:Profile'))
                 else:
                     loginFail = True
             else:
                 loginFail = True
 
         login_lang = get_lang(sections=["login"])
-        wrong_login_enterd = False
         args = {
             'post': request.POST,
             'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
             'form': login_lang["login"]["form"],
             'alerts': login_lang['login']['long_texts']['alerts'],
-            'wrong_password_enterd': loginFail  # A check if right login was entered
+            'wrong_login_enterd': loginFail  # A check if right login was entered
         }
 
         return render(request, 'login/login.html', args)
-    return HttpResponseRedirect(reverse('home:index'))
-
+    return HttpResponseRedirect(reverse('userprofile:Profile'))

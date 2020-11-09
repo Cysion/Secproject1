@@ -34,3 +34,7 @@ body{
   text-align: center;
   color: white;
 }
+
+.alert {
+  text-align: center !important;
+}
