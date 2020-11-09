@@ -31,7 +31,7 @@ def RegisterView(request):
             right one.
         agree_terms - Värdet ska vara "accept"
     '''
-    if not request.session['UserId']:
+    if 'UserId' not in request.session:
         alerts = {}
 
         login_lang = get_lang(sections=["login"])  # Get language text for form.
@@ -51,11 +51,11 @@ def RegisterView(request):
 
             if not alerts:
                 sessionsData = registerUser(request.POST)
-                request.session['UserId'] = sessionsData[0]
-                request.session['privKey'] = sessionsData[1]
+                #request.session['UserId'] = sessionsData[0]
+                #request.session['privKey'] = sessionsData[1]
                 return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
 
-        today_date = str(date.today())
+        #today_date = str(date.today())
 
         args = {
             'POST': request.POST,
@@ -80,23 +80,16 @@ def getUidFromEmail(newMail):
 
 
 def registerUser(postData): # Place function somewere else.
-    user1 = User(
-            Gender='temp',
-            FirstName='temp',
-            LastName='temp',
-            DateOfBirth='temp',
-            Email=postData["email"]
-        )
+    user1 = User(Email=postData["email"])
     user1.save()
-
     key = gen_rsa(secret_scrambler(postData["password"], user1.UserId))
     pubkey=key.publickey().export_key()
 
     user1.Pubkey = pubkey
-    user1.Gender=rsa_encrypt(pubkey, postData["gender"])
-    user1.FirstName=rsa_encrypt(pubkey, postData["first_name"].capitalize())
-    user1.LastName=rsa_encrypt(pubkey, postData["last_name"].capitalize())
-    user1.DateOfBirth=rsa_encrypt(pubkey, postData["date_of_birth"])
+    user1.Gender=rsa_encrypt(pubkey, postData["gender"].encode("utf-8"))
+    user1.FirstName=rsa_encrypt(pubkey, postData["first_name"].capitalize().encode("utf-8"))
+    user1.LastName=rsa_encrypt(pubkey, postData["last_name"].capitalize().encode("utf-8"))
+    user1.DateOfBirth=rsa_encrypt(pubkey, postData["date_of_birth"].encode("utf-8"))
 
 
     user1.save()
