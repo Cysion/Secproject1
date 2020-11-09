@@ -17,12 +17,16 @@
         "contacts":"contacts",
         "notes":"notes",
         "name":"name",
+        "back":"Back",
+        "success":"Success",
+        "warning":"Warning",
+        "error":"Error",
         "titles":[
           "Info",
           "Chat",
           "Call",
           "In a Danger",
-          "Home",
+          "Profile",
           "Prepare",
           "Save.Me",
           "Check",
@@ -94,7 +98,11 @@
         "not_registered":"No account? Register here",
         "characters":"characters.",
         "required":"This field is required",
-        "field_requirements":"and cannot be more then"
+        "field_requirements":"and cannot be more then",
+        "save":"Save changes",
+        "current":"Current",
+        "new":"New",
+        "change":"Change"
       },
       "long_texts":{
         "alerts":{
@@ -112,10 +120,17 @@
       "unformat":[],
       "title":"userprofile",
       "long_texts":{
-        "edit":"Edit your info or change password",
+        "edit":"Edit your info",
+        "change_pass":"Change password",
         "save_backup":"Save backup key",
         "relation": "Edit your relations",
-        "logout":"Logout"
+        "logout":"Logout",
+        "backupkey":"This is your backup key if you forgot your password. Please save this on a save place!. Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
+        "change_password_text":"When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
+        "alerts": {
+          "alert_changed_password":"You successfully changed your password",
+          "alert_error":"Something went wrong when trying to encrypt your data"
+        }
       }
     },
     "info":{
