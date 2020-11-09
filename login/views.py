@@ -131,9 +131,6 @@ def LoginView(request):
 
 def forgotPasswordView(request):
 
-    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
-        return HttpResponseRedirect(reverse('login:Login'))
-
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
