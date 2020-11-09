@@ -6,7 +6,6 @@ from os import urandom
 import hashlib
 from tools.confman import get_conf
 
-
 def gen_rsa(secret:bytes, bits=2048) -> RSA.RsaKey:
     """DETERMINISTICALLY generates and returns an rsa key pair from the seed "secret"
     secret = seed for psrng. needs to be 128 bytes or longer. Any type accepted by
@@ -63,8 +62,12 @@ def gen_anon_id(uid: int, birthday: str, blen=256):
     return hashlib.scrypt(birthday.encode("utf-8"),salt=uid.to_bytes(24,"little"),dklen=blen,n=2,r=4,p=1)
 
 
-def sym_key_keygen(keysize=126) -> bytes:
-    return urandom.getrandbits(keysize)
+def sym_key_keygen(keysize=128) -> bytes:
+    """uses os urandom to generate a keysize-bit key (defaults to 128 bit). returns keysize bits
+    binary object
+    keysize = size of key to be generated, must be divisible by 8"""
+    assert not keysize%8
+    return urandom(keysize/8)
 
 
 
