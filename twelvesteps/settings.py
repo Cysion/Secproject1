@@ -125,8 +125,9 @@ with open("abs_path.cnf") as inf:
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'OPTIONS': {
+            'autocommit': True,
             'read_default_file': ABS_PATH,
         },
     }

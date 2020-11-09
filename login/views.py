@@ -51,17 +51,9 @@ def RegisterView(request):
 
             if not alerts:
                 sessionsData = registerUser(request.POST)
-<<<<<<< HEAD
-                #request.session['UserId'] = sessionsData[0]
-                #request.session['privKey'] = sessionsData[1]
-                return HttpResponseRedirect(reverse('home:index')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
-
-        #today_date = str(date.today())
-=======
                 request.session['UserId'] = sessionsData[0]
                 request.session['privKey'] = sessionsData[1].decode("utf-8")
                 return HttpResponseRedirect(reverse('userprofile:Backupkey')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
->>>>>>> e3d13733f978480aac2a26cd4e3cab2ee9c9ebfa
 
         args = {
             'POST': request.POST,
@@ -86,19 +78,6 @@ def getUidFromEmail(newMail):
     return False
 
 
-<<<<<<< HEAD
-def registerUser(postData): # Place function somewere else.
-    user1 = User(Email=postData["email"])
-    user1.save()
-    key = gen_rsa(secret_scrambler(postData["password"], user1.UserId))
-    pubkey=key.publickey().export_key()
-
-    user1.Pubkey = pubkey
-    user1.Gender=rsa_encrypt(pubkey, postData["gender"].encode("utf-8"))
-    user1.FirstName=rsa_encrypt(pubkey, postData["first_name"].capitalize().encode("utf-8"))
-    user1.LastName=rsa_encrypt(pubkey, postData["last_name"].capitalize().encode("utf-8"))
-    user1.DateOfBirth=rsa_encrypt(pubkey, postData["date_of_birth"].encode("utf-8"))
-=======
 def registerUserData(uId, postData):
     user = User.objects.filter(UserId=uId)[0]
     user.setGender(postData['gender'])
@@ -111,7 +90,6 @@ def registerUserData(uId, postData):
 def registerUser(postData): # Place function somewere else.
     user = User(Email=postData["email"])
     user.save()
->>>>>>> e3d13733f978480aac2a26cd4e3cab2ee9c9ebfa
 
     key = gen_rsa(secret_scrambler(postData["password"], user.UserId))
     user.setPubKey(key.publickey().export_key().decode("utf-8"))
