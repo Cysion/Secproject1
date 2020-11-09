@@ -13,24 +13,24 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 # Create your views here.
 
 def ProfileView(request):
-    if not 'UserId' in request.session.keys():
+    if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
-    if request.method == 'GET':
+    if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
         if 'logout' in request.GET.keys():
             request.session.flush()
             return HttpResponseRedirect(reverse('login:Login'))
 
     login_lang = get_lang(sections=["userprofile"])
-    user1=User.objects.filter(UserId=request.session['UserId'])[0]
-    first_name=user1.getFirstName(request.session['privKey'])
-    last_name=user1.getLastName(request.session['privKey'])
+    user1 = User.objects.filter(UserId=request.session['UserId'])[0]
+    first_name = user1.getFirstName(request.session['privKey'])
+    last_name = user1.getLastName(request.session['privKey'])
 
-    global_alerts = []
+    global_alerts = []  # The variable which is sent to template
 
-    if "global_alerts" in request.session.keys():
-        global_alerts = request.session["global_alerts"]
-        request.session["global_alerts"] = []
+    if "global_alerts" in request.session.keys():  # Check if global_elerts is in session allready.
+        global_alerts = request.session["global_alerts"]  # Retrive global alerts.
+        request.session["global_alerts"] = []  # Reset
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -43,38 +43,42 @@ def ProfileView(request):
     return render(request, 'userprofile/profile.html', args)
 
 def EditProfileView(request):
-    if 'UserId' in request.session:
-        user1=User.objects.filter(UserId=request.session['UserId'])[0]
-        firstName=user1.getFirstName(request.session['privKey'])
-        lastName=user1.getLastName(request.session['privKey'])
-        gender=user1.getGender(request.session['privKey'])
-        email = user1.getEmail()
+    if not 'UserId' in request.session.keys():
+        return HttpResponseRedirect(reverse('login:Login'))
+    wrong_pass = False
+    account = {}
+    user1=User.objects.filter(UserId=request.session['UserId'])[0]
+    account['firstName']=user1.getFirstName(request.session['privKey'])
+    account['lastName']=user1.getLastName(request.session['privKey'])
+    account['gender']=user1.getGender(request.session['privKey'])
+    account['email'] = user1.getEmail()
 
-        account = {
-            "firstName":firstName,
-            "lastName":lastName,
-            "gender":gender,
-            "email":email
-        }
-
-        if request.method == 'POST':
-            checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password'])
+    if request.method == 'POST':
+        if checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password']):
+            user = User.objects.filter(UserId=request.session['UserId'])[0]
+            user.setGender(request.POST['gender'])
+            user.setFirstName(request.POST['first_name'])
+            user.setLastName(request.POST['last_name'])
+            user.save()
             return HttpResponseRedirect(reverse('userprofile:Profile'))
+        else:
+            wrong_pass = True
+        
 
 
 
+    profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'form': login_lang["login"]["form"],
+        'profile': profile_lang["userprofile"]["long_texts"],
+        "account":account,
+        'wrong_pass':wrong_pass
+    }
 
-        profile_lang = get_lang(sections=["userprofile"])
-        login_lang = get_lang(sections=["login"])
-        args = {
-            'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-            'back': UNIVERSAL_LANG["universal"]["back"],
-            'form': login_lang["login"]["form"],
-            'profile': profile_lang["userprofile"]["long_texts"],
-            "account":account
-        }
-
-        return render(request, 'userprofile/edit.html', args)
+    return render(request, 'userprofile/edit.html', args)
 
 def changePassView(request):
     """
@@ -86,7 +90,7 @@ def changePassView(request):
         new_repassword = Users new password reentered.
     """
 
-    if not 'UserId' in request.session.keys():
+    if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
     alerts = {}  # Dict containing input name as key and alert text key as value
@@ -94,9 +98,11 @@ def changePassView(request):
     profile_lang = get_lang(sections=["userprofile"])
 
     if request.method == "POST":
+
         if checkPassword(request.session['UserId'], request.session['privKey'], request.POST["current_password"]):
             if request.POST['new_password'] == request.POST['new_repassword']:
                 privkey = changePass(request.session['UserId'], request.session['privKey'], request.POST["new_password"]).decode('utf-8')
+
                 if privkey:  # Check if changing password succeded
                     request.session['privKey'] = privkey
                     alert = {
@@ -131,7 +137,6 @@ def changePassView(request):
             else:  # new_password and new_repasswords are not the same
                 alerts["repassword"] = "repassword"
         else:  # current_password is not the right one
-            print(request.POST["current_password"])
             alerts["current_password"] = "relogin"
 
     global_alerts = []
