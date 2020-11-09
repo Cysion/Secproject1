@@ -59,6 +59,7 @@ def EditProfileView(request):
             user.setGender(request.POST['gender'])
             user.setFirstName(request.POST['first_name'])
             user.setLastName(request.POST['last_name'])
+            user.setEmail(request.POST['email'])
             user.save()
             return HttpResponseRedirect(reverse('userprofile:Profile'))
         else:
