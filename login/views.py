@@ -58,12 +58,13 @@ def RegisterView(request):
         args = {
             'POST': request.POST,
             'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+            'back': UNIVERSAL_LANG['universal']['back'],
             'form': login_lang["login"]["form"],
             'alerts': login_lang['login']['long_texts']['alerts'],
             'alert': alerts
         }
         return render(request, 'login/register.html', args)
-    return HttpResponseRedirect(reverse('home:index'))
+    return HttpResponseRedirect(reverse('userprofile:Profile'))
 
 def containsBadChar(stringToCheck:str, exceptions:str = ''):
     badChar = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3").difference(set(exceptions))
@@ -110,21 +111,20 @@ def LoginView(request):
                 if str(key.publickey().export_key()) == str(result[0]['Pubkey']):
                     request.session['UserId'] = result[0]['UserId']
                     request.session['privKey'] = key.export_key().decode("utf-8")
-                    return HttpResponseRedirect(reverse('home:index'))
+                    return HttpResponseRedirect(reverse('userprofile:Profile'))
                 else:
                     loginFail = True
             else:
                 loginFail = True
 
         login_lang = get_lang(sections=["login"])
-        wrong_login_enterd = False
         args = {
             'post': request.POST,
             'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
             'form': login_lang["login"]["form"],
             'alerts': login_lang['login']['long_texts']['alerts'],
-            'wrong_password_enterd': loginFail  # A check if right login was entered
+            'wrong_login_enterd': loginFail  # A check if right login was entered
         }
 
         return render(request, 'login/login.html', args)
-    return HttpResponseRedirect(reverse('home:index'))
+    return HttpResponseRedirect(reverse('userprofile:Profile'))
