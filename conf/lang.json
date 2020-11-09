@@ -112,7 +112,7 @@
             "repassword":"Passwords are not the same!",
             "relogin":"Login credentials incorrect!",
             "wrong_pass":"Password is incorrect!",
-            "badChar":"Field contains illegal character(s)",
+            "badChar":"Field contains illegal character(s)"
 
         },
         "failed_login":"Wrong email or password entered"
