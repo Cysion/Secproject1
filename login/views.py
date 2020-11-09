@@ -128,3 +128,17 @@ def LoginView(request):
 
         return render(request, 'login/login.html', args)
     return HttpResponseRedirect(reverse('userprofile:Profile'))
+
+def forgotPasswordView(request):
+
+    global_alerts = []  # The variable which is sent to template
+    if "global_alerts" in request.session.keys():  # Check if there is global alerts
+        global_alerts = request.session["global_alerts"]  # Retrive global alerts.
+        request.session["global_alerts"] = []  # Reset
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
+        'global_alerts': global_alerts,  # Sending the alerts to template.
+    }
+
+    return render(request, 'login/forgotpassword.html', args)
