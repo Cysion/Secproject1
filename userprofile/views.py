@@ -75,6 +75,7 @@ def EditProfileView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'form': login_lang["login"]["form"],
         'profile': profile_lang["userprofile"]["long_texts"],
+        'alerts': login_lang['login']['long_texts']['alerts'],
         "account":account,
         'wrong_pass':wrong_pass
     }
