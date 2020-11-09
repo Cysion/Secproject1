@@ -81,10 +81,16 @@
     </div>
     {% endif %}
     <div class="form-group">
-      <label for="password">{{ form.current_password }}: </label>
-      <input type="password" class="form-control" placeholder="{{ form.placeholder }} {{ form.current_password }}..."
+      <label for="password">{{ form.password }}: </label>
+      <input type="password" class="form-control" placeholder="{{ form.placeholder }} {{ form.password }}..."
       maxlength="64" id="password" name="password" required>
     </div>
+    {% if wrong_pass %}
+    <div class="alert alert-danger">
+      <strong>{{ alerts.warning }}!</strong> {{ alerts.wrong_pass }}
+    </div>
+    {% endif %}
+
     <div class="form-group">
       <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.save }}" style="margin-top:10px;">
     </div>
