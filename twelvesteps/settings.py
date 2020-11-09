@@ -33,15 +33,11 @@ readable for everyone.
 Change to a new SECRET_KEY on deployment server
 """
 
-"""
-CHANGE THIS DURING DEPLOYMENT!
-with open('path/to/secret_key.txt') as f:
+with open('/home/infograf/12stepsapp/conf/secret_key') as f:
     SECRET_KEY = f.read().strip()
-"""
-SECRET_KEY = 'e0j0kpn!q!uxh6+tdswx+5@40h!gs)!#uew=kr4*w!-4tjl0=%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -118,17 +114,12 @@ password = PASSWORD
 default-character-set = utf8
 """
 
-ABS_PATH = ""
-with open("abs_path.cnf") as inf:
-    ABS_PATH = inf.readlines()[0].strip()
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
         'OPTIONS': {
             'autocommit': True,
-            'read_default_file': ABS_PATH,
+            'read_default_file': "/home/infograf/12stepsapp/conf/db.conf",
         },
     }
 }
