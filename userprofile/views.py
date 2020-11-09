@@ -43,38 +43,42 @@ def ProfileView(request):
     return render(request, 'userprofile/profile.html', args)
 
 def EditProfileView(request):
-    if 'UserId' in request.session:
-        user1=User.objects.filter(UserId=request.session['UserId'])[0]
-        firstName=user1.getFirstName(request.session['privKey'])
-        lastName=user1.getLastName(request.session['privKey'])
-        gender=user1.getGender(request.session['privKey'])
-        email = user1.getEmail()
+    if not 'UserId' in request.session.keys():
+        return HttpResponseRedirect(reverse('login:Login'))
+    wrong_pass = False
+    account = {}
+    user1=User.objects.filter(UserId=request.session['UserId'])[0]
+    account['firstName']=user1.getFirstName(request.session['privKey'])
+    account['lastName']=user1.getLastName(request.session['privKey'])
+    account['gender']=user1.getGender(request.session['privKey'])
+    account['email'] = user1.getEmail()
 
-        account = {
-            "firstName":firstName,
-            "lastName":lastName,
-            "gender":gender,
-            "email":email
-        }
+    if request.method == 'POST':
+        if checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password']):
+            user = User.objects.filter(UserId=request.session['UserId'])[0]
+            user.setGender(request.POST['gender'])
+            user.setFirstName(request.POST['first_name'])
+            user.setLastName(request.POST['last_name'])
+            user.save()
+            return HttpResponseRedirect(reverse('userprofile:Profile'))
+        else:
+            wrong_pass = True
+        
 
-        if request.method == 'POST':
-            if checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password']):
-               return HttpResponseRedirect(reverse('userprofile:Profile'))
-            
 
 
+    profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'form': login_lang["login"]["form"],
+        'profile': profile_lang["userprofile"]["long_texts"],
+        "account":account,
+        'wrong_pass':wrong_pass
+    }
 
-        profile_lang = get_lang(sections=["userprofile"])
-        login_lang = get_lang(sections=["login"])
-        args = {
-            'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-            'back': UNIVERSAL_LANG["universal"]["back"],
-            'form': login_lang["login"]["form"],
-            'profile': profile_lang["userprofile"]["long_texts"],
-            "account":account
-        }
-
-        return render(request, 'userprofile/edit.html', args)
+    return render(request, 'userprofile/edit.html', args)
 
 def changePassView(request):
     """
