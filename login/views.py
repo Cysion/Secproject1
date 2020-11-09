@@ -132,6 +132,27 @@ def LoginView(request):
     
 
 def forgotPasswordView(request):
+    """
+    Page when user forgot their password.
+
+    POST keys:
+        email = users email.
+        password = Users new password.
+        repassword = Repeated password.
+        priv_key = Users backup key / private key used for decrypt of data.
+
+    Alerts for email
+        email_dont_exists
+
+    alerts for password
+        repassword
+
+    alerts for priv_key
+        priv_key
+    """
+    login_lang = get_lang(sections=["login"])
+    alerts = dict()
+    
     if 'UserId' in request.session:
         return HttpResponseRedirect(reverse('userprofile:Profile'))
     
@@ -153,6 +174,9 @@ def forgotPasswordView(request):
 
 
 
+
+    
+
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
@@ -161,6 +185,11 @@ def forgotPasswordView(request):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
+        'form': login_lang["login"]["form"],
+        'alert': alerts,
+        'alerts': login_lang["login"]["long_texts"]["alerts"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'POST': request.POST
     }
 
     return render(request, 'login/forgotpassword.html', args)
