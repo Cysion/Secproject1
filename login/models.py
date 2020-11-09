@@ -7,10 +7,10 @@ class User(models.Model):
     This is the User model which will have information about the user.
     '''
     UserId = models.AutoField(primary_key=True)
-    Gender = models.CharField(max_length=32)
-    FirstName = models.CharField(max_length=64, blank=False)
-    LastName = models.CharField(max_length=64, blank=False)
-    DateOfBirth = models.CharField(max_length=12, blank=False)
+    Gender = models.BinaryField(max_length=32)
+    FirstName = models.BinaryField(max_length=64, blank=False)
+    LastName = models.BinaryField(max_length=64, blank=False)
+    DateOfBirth = models.BinaryField(max_length=12, blank=False)
     Email = models.CharField(
         max_length=64,
         blank=False,

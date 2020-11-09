@@ -63,7 +63,24 @@ def gen_anon_id(uid: int, birthday: str, blen=256):
     return hashlib.scrypt(birthday.encode("utf-8"),salt=uid.to_bytes(24,"little"),dklen=blen,n=2,r=4,p=1)
 
 
+def sym_key_keygen(keysize=126) -> bytes:
+    return urandom.getrandbits(keysize)
+
+
+
+def aes_encrypt(sym_key:bytes, data) -> bytes:
+    """simple wrapper function that encrypts data with aes-256
+    returns tuple of encrypted data and a checksum tag that CAN be used for integrity control
+    sym_key = key to use for encryption. must be bytes-like.
+    data = data to be encrypted. bytes like preferred"""
+    cipher = AES.new(sym_key, AES.MODE_EAX)
+
+    
+
+
 if __name__ == "__main__":
+
+    #WHAT FOLLOWS IS A USAGE DEMO FOR ABOVE FUNCTIONS
     import json
     sections = (1,0,0,0)
     print("this is a short presentation of the crypro functions for this project")
