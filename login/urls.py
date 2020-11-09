@@ -7,4 +7,5 @@ urlpatterns = [
     # ex: /polls/
     path('', views.LoginView, name='Login'),
     path('register/', views.RegisterView, name='Register'),
+    path('forgotpassword/', views.forgotPasswordView, 'Forgot-Password')
 ]
