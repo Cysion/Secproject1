@@ -112,8 +112,6 @@
             "repassword":"Passwords are not the same!",
             "relogin":"Login credentials incorrect!",
             "badChar":"Field contains illegal character(s)",
-            "priv_key":"Your backup key is incorrect!",
-            "email_dont_exists": "This email address do not exist!"
 
         },
         "failed_login":"Wrong email or password entered"
