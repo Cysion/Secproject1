@@ -1,5 +1,6 @@
 from django.db import models
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
+import uuid
 
 
 # Create your models here.
@@ -19,28 +20,31 @@ class User(models.Model):
         unique=True
     )
     Pubkey = models.CharField(
-        max_length=500,
+        max_length=512,
         blank=False,
     )
 
     Role_Choices = [
         ('User', 'User'),
-        ('Caretaker', 'Caretaker'),
+        ('professional', 'professional'),
         ('Admin', 'Admin')
     ]
 
     Role = models.CharField(
-        max_length=9,
+        max_length=12,
         choices=Role_Choices
     )
     Symkey = models.CharField(max_length=256)
 
+    def getUid(self):
+        return self.UserId
+
     def getGender(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.Gender).decode("utf-8")
-        
+
     def getFirstName(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.FirstName).decode("utf-8")
-    
+
     def getLastName(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.LastName).decode("utf-8")
 
@@ -49,7 +53,7 @@ class User(models.Model):
 
     def getSymKey(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.DateOfBirth).decode("utf-8")
-    
+
     def getEmail(self):
         return self.Email
 
@@ -88,11 +92,11 @@ class User(models.Model):
     def setEmail(self, email):
         self.Email = email
         return 0
-    
+
     def createSymkey(self):
         pass
 
-    
+
 
 class RelationFrom(models.Model):
     """User relation table. This table is for users to see which relationship
@@ -105,11 +109,11 @@ class RelationFrom(models.Model):
     got permission for each permission entry.
     Key: The public key of the UserIdTo.
     """
-    RelationFromId = models.IntegerField(primary_key=True)
+    RelationFromId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     AnonymityIdFrom = models.IntegerField(blank=False)
     UserIdTo = models.ForeignKey(User, on_delete=models.CASCADE)
     Permission = models.CharField(max_length=4)
-    Key = models.CharField(max_length=64)
+    UserIdFromEncrypted = models.BinaryField(max_length=512)
 
 class RelationTo(models.Model):
     """User relation table. This table is for users to see which relationship
@@ -122,11 +126,12 @@ class RelationTo(models.Model):
     got permission for each permission entry.
     Key: The public key of the AnonymityIdTo.
     """
-    RelationToId = models.IntegerField(primary_key=True)
+    RelationToId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     UserIdFrom = models.ForeignKey(User, on_delete=models.CASCADE)
     AnonymityIdTo = models.IntegerField(blank=False)
     Permission = models.CharField(max_length=4)
-    Key = models.CharField(max_length=64)
+    UserIdToEncrypted = models.BinaryField(max_length=512)
+    FromPrivEncrypted = models.BinaryField(max_length=512)
 
 
 class Action(models.Model):

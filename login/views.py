@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from login.models import User
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
-
+from userprofile.views import checkPassword, changePass
 
 from tools.confman import get_lang
 
@@ -72,9 +72,9 @@ def containsBadChar(stringToCheck:str, exceptions:str = ''):
 
 
 def getUidFromEmail(newMail):
-    result = User.objects.filter(Email=newMail).values('UserId')
-    if result:
-        return result[0]["UserId"]
+    user = User.objects.filter(Email=newMail).values('UserId')
+    if user:
+        return user[0]["UserId"]
     return False
 
 
@@ -100,34 +100,36 @@ def registerUser(postData): # Place function somewere else.
     return user.UserId, key.export_key()
 
 def LoginView(request):
-    if 'UserId' not in request.session:
-        loginFail = False
-        if request.method == 'POST':
+    if 'UserId' in request.session:
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
+        
+    loginFail = False
+    if request.method == 'POST':
 
-            result = User.objects.filter(Email=request.POST['email']).values('UserId', 'Pubkey')
-
-            if result:
-                key = gen_rsa(secret_scrambler(request.POST["password"], result[0]['UserId']))
-                if str(key.publickey().export_key()) == str(result[0]['Pubkey']):
-                    request.session['UserId'] = result[0]['UserId']
-                    request.session['privKey'] = key.export_key().decode("utf-8")
-                    return HttpResponseRedirect(reverse('userprofile:Profile'))
-                else:
-                    loginFail = True
+        user = User.objects.filter(Email=request.POST['email']).values('UserId', 'Pubkey')
+        print(user[0]['UserId'])
+        if user:
+            key = gen_rsa(secret_scrambler(request.POST["password"], user[0]['UserId']))
+            if str(key.publickey().export_key().decode("utf-8")) == str(user[0]['Pubkey']):
+                request.session['UserId'] = user[0]['UserId']
+                request.session['privKey'] = key.export_key().decode("utf-8")
+                return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
                 loginFail = True
+        else:
+            loginFail = True
 
-        login_lang = get_lang(sections=["login"])
-        args = {
-            'post': request.POST,
-            'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-            'form': login_lang["login"]["form"],
-            'alerts': login_lang['login']['long_texts']['alerts'],
-            'wrong_login_enterd': loginFail  # A check if right login was entered
-        }
+    login_lang = get_lang(sections=["login"])
+    args = {
+        'post': request.POST,
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'form': login_lang["login"]["form"],
+        'alerts': login_lang['login']['long_texts']['alerts'],
+        'wrong_login_enterd': loginFail  # A check if right login was entered
+    }
 
-        return render(request, 'login/login.html', args)
-    return HttpResponseRedirect(reverse('userprofile:Profile'))
+    return render(request, 'login/login.html', args)
+    
 
 def forgotPasswordView(request):
     """
@@ -148,9 +150,33 @@ def forgotPasswordView(request):
     alerts for priv_key
         priv_key
     """
-
     login_lang = get_lang(sections=["login"])
     alerts = dict()
+
+    if 'UserId' in request.session:
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
+    
+    if request.method == 'POST':
+        if request.POST['password'] == request.POST['repassword']:
+            user = User.objects.filter(Email=request.POST['email'])[0]
+            if user:
+                try:
+                    request.session['UserId'] = user.getUid()
+                    request.session['privKey']=changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
+                except ValueError as keyError:
+                    alerts["auth"] = "auth"
+                return HttpResponseRedirect(reverse('userprofile:Backupkey'))
+            else:
+                alerts["auth"] = "auth"
+        else:
+            alerts["repassword"] = "repassword"
+
+        
+
+
+
+
+    
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
