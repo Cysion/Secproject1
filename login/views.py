@@ -107,14 +107,17 @@ def LoginView(request):
     loginFail = False
     if request.method == 'POST':
 
-        user = User.objects.filter(Email=request.POST['email']).values('UserId', 'Pubkey')
-        print(user[0]['UserId'])
+        user = User.objects.filter(Email=request.POST['email'])[0]
         if user:
-            key = gen_rsa(secret_scrambler(request.POST["password"], user[0]['UserId']))
-            if str(key.publickey().export_key().decode("utf-8")) == str(user[0]['Pubkey']):
-                request.session['UserId'] = user[0]['UserId']
+            key = gen_rsa(secret_scrambler(request.POST["password"], user.getUid()))
+            if str(key.publickey().export_key().decode("utf-8")) == str(user.getPubkey()):
+                request.session['UserId'] = user.getUid()
                 request.session['privKey'] = key.export_key().decode("utf-8")
-                return HttpResponseRedirect(reverse('userprofile:Profile'))
+                request.session['Role'] = user.getRole()
+                if user.getRole() == 'User':
+                    return HttpResponseRedirect(reverse('userprofile:Profile'))
+                elif user.getRole() == 'Professional':
+                    return HttpResponseRedirect(reverse('userprofile:Profile')) #Change to professional view
             else:
                 loginFail = True
         else:
