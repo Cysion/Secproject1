@@ -20,18 +20,18 @@ class User(models.Model):
         unique=True
     )
     Pubkey = models.CharField(
-        max_length=500,
+        max_length=512,
         blank=False,
     )
 
     Role_Choices = [
         ('User', 'User'),
-        ('Caretaker', 'Caretaker'),
+        ('professional', 'professional'),
         ('Admin', 'Admin')
     ]
 
     Role = models.CharField(
-        max_length=9,
+        max_length=12,
         choices=Role_Choices
     )
     Symkey = models.CharField(max_length=256)
