@@ -4,7 +4,7 @@ from Crypto.Random import get_random_bytes
 import random
 from os import urandom
 import hashlib
-from tools.confman import get_conf
+from confman import get_conf
 
 def gen_rsa(secret:bytes, bits=2048) -> RSA.RsaKey:
     """DETERMINISTICALLY generates and returns an rsa key pair from the seed "secret"
@@ -62,21 +62,34 @@ def gen_anon_id(uid: int, birthday: str, blen=256):
     return hashlib.scrypt(birthday.encode("utf-8"),salt=uid.to_bytes(24,"little"),dklen=blen,n=2,r=4,p=1)
 
 
-def sym_key_keygen(keysize=128) -> bytes:
+def gen_aes(keysize=128) -> bytes:
     """uses os urandom to generate a keysize-bit key (defaults to 128 bit). returns keysize bits
     binary object
     keysize = size of key to be generated, must be divisible by 8"""
     assert not keysize%8
-    return urandom(keysize/8)
+    return urandom(keysize//8)
 
 
 
 def aes_encrypt(sym_key:bytes, data) -> bytes:
-    """simple wrapper function that encrypts data with aes-256
-    returns tuple of encrypted data and a checksum tag that CAN be used for integrity control
+    """simple wrapper function that encrypts data with aes
+    returns object where the first 16 bytes is nonce, next 16 is tag, rest is ciphertext
     sym_key = key to use for encryption. must be bytes-like.
     data = data to be encrypted. bytes like preferred"""
     cipher = AES.new(sym_key, AES.MODE_EAX)
+    ciphertext, tag = cipher.encrypt_and_digest(data)
+    return b''.join([cipher.nonce, tag, ciphertext])
+
+
+def aes_decrypt(sym_key:bytes, data) -> bytes:
+    """simple wrapper function that decrypts data with aes
+    uses structure left by aes_encrypt to read cleartext from nonce, tag and cipher. returns cleartext
+    sym_key = key to use for encryption. must be bytes-like.
+    data = data to be decrypted. bytes like preferred"""
+    nonce, tag, ciphertext = data[:16], data[16:32], data[32:]
+    cipher = AES.new(sym_key, AES.MODE_EAX, nonce)
+    cleartext = cipher.decrypt_and_verify(ciphertext, tag)
+    return cleartext
 
     
 
@@ -85,7 +98,7 @@ if __name__ == "__main__":
 
     #WHAT FOLLOWS IS A USAGE DEMO FOR ABOVE FUNCTIONS
     import json
-    sections = (1,0,0,0)
+    sections = (0,0,0,0,1)
     print("this is a short presentation of the crypro functions for this project")
     if sections[0]:
         print("create a fake user!")
@@ -129,3 +142,12 @@ if __name__ == "__main__":
             print(f"you are {neuid}")
         else:
             print(f"you are not {neuid}")
+    if sections[4]:
+        print("now we encrypt and decrypt with aes key")
+        key = gen_aes(128)
+        print("your key is ", key)
+        print("the string 'testing' will be encrypted with the key")
+        blob = aes_encrypt(key, "testing".encode("utf-8"))
+        print("the blob is ", blob)
+        dec = aes_decrypt(key, blob)
+        print("decrypted is ", dec.decode("utf-8"))
