@@ -103,7 +103,8 @@
         "current":"Current",
         "new":"New",
         "change":"Change",
-        "forgot_password":"Forgot password? Reset here!"
+        "forgot_password":"Forgot password? Reset here!",
+        "professional":"Register as a professional"
       },
       "long_texts":{
         "alerts":{
