@@ -64,7 +64,7 @@ def EditProfileView(request):
             return HttpResponseRedirect(reverse('userprofile:Profile'))
         else:
             wrong_pass = True
-        
+
 
 
 
@@ -75,6 +75,7 @@ def EditProfileView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'form': login_lang["login"]["form"],
         'profile': profile_lang["userprofile"]["long_texts"],
+        'alerts': login_lang['login']['long_texts']['alerts'],
         "account":account,
         'wrong_pass':wrong_pass
     }
@@ -167,9 +168,9 @@ def changePass(uId, privKey, newPassword):
     symKey=user1.getSymKey(privKey)
 
     key = gen_rsa(secret_scrambler(newPassword, uId))
-    pubkey=key.publickey().export_key()
+    pubkey=key.publickey().export_key().decode("utf-8")
     with transaction.atomic():
-        user1.Pubkey = pubkey
+        user1.setPubKey(pubkey)
         user1.Gender=rsa_encrypt(pubkey, gender.encode("utf-8"))
         user1.FirstName=rsa_encrypt(pubkey, firstName.capitalize().encode("utf-8"))
         user1.LastName=rsa_encrypt(pubkey, lastName.capitalize().encode("utf-8"))
