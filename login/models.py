@@ -25,7 +25,7 @@ class User(models.Model):
 
     Role_Choices = [
         ('User', 'User'),
-        ('professional', 'professional'),
+        ('Professional', 'Professional'),
         ('Admin', 'Admin')
     ]
 
@@ -94,6 +94,9 @@ class User(models.Model):
     
     def createSymkey(self):
         pass
+
+    def setRole(self, role):
+        self.Role=role
 
     
 
