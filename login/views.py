@@ -84,6 +84,7 @@ def registerUserData(uId, postData):
     user.setFirstName(postData['first_name'])
     user.setLastName(postData['last_name'])
     user.setDateOfBirth(postData['date_of_birth'])
+    user.setRole('professional') if 'Professional' in postData else user.setRole('User')
     user.save()
 
 
