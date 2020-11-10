@@ -1,5 +1,5 @@
 from django.db import models
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
+from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes
 import uuid
 
 
@@ -57,6 +57,12 @@ class User(models.Model):
     def getEmail(self):
         return self.Email
 
+    def getPubkey(self):
+        return self.Pubkey
+
+    def getRole(self):
+        return self.Role
+
     def setPubKey(self, pubKey):
         self.Pubkey=pubKey
         return 0
@@ -93,8 +99,12 @@ class User(models.Model):
         self.Email = email
         return 0
 
-    def createSymkey(self):
-        pass
+    def setSymkey(self):
+        if self.Pubkey:
+            self.Symkey=rsa_encrypt(self.Pubkey.encode("utf-8"), gen_aes())
+            return 0
+        else:
+            return 1
 
     def setRole(self, role):
         self.Role=role
