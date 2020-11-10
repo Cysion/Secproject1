@@ -4,7 +4,7 @@ from Crypto.Random import get_random_bytes
 import random
 from os import urandom
 import hashlib
-from confman import get_conf
+from tools.confman import get_conf
 
 def gen_rsa(secret:bytes, bits=2048) -> RSA.RsaKey:
     """DETERMINISTICALLY generates and returns an rsa key pair from the seed "secret"
@@ -91,7 +91,7 @@ def aes_decrypt(sym_key:bytes, data) -> bytes:
     cleartext = cipher.decrypt_and_verify(ciphertext, tag)
     return cleartext
 
-    
+
 
 
 if __name__ == "__main__":
