@@ -4,6 +4,9 @@ from django.urls import reverse
 # Create your views here.
 
 from login.models import User
+from login.models import RelationFrom
+from login.models import RelationTo
+from django.db import transaction
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
 from userprofile.views import checkPassword, changePass
 
@@ -50,10 +53,19 @@ def RegisterView(request):
                 alerts['email'] = 'email_already_exists'
 
             if not alerts:
-                sessionsData = registerUser(request.POST)
-                request.session['UserId'] = sessionsData[0]
-                request.session['privKey'] = sessionsData[1].decode("utf-8")
-                return HttpResponseRedirect(reverse('userprofile:Backupkey')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
+                try:
+                    with transaction.atomic():
+                        sessionsData = registerUser(request.POST)
+                except AttributeError:
+                    alerts['database'] = 'Database error'
+                else:
+                    request.session['UserId'] = sessionsData[0]
+                    request.session['privKey'] = sessionsData[1].decode("utf-8")
+                    request.session['Role'] = sessionsData[2]
+                    if request.session['Role'] == 'User':
+                        return HttpResponseRedirect(reverse('userprofile:Backupkey'))
+                    elif request.session['Role'] == 'Professional':
+                        return HttpResponseRedirect(reverse('userprofile:Backupkey')) #Change to professional view
 
         args = {
             'POST': request.POST,
@@ -77,28 +89,24 @@ def getUidFromEmail(newMail):
         return user[0]["UserId"]
     return False
 
-
-def registerUserData(uId, postData):
-    user = User.objects.filter(UserId=uId)[0]
-    user.setGender(postData['gender'])
+def registerUser(postData): # Place function somewere else.
+    user = User(Email=postData["email"])
+    user.save()
+    key = gen_rsa(secret_scrambler(postData["password"], user.UserId))
+    
+    user.setPubKey(key.publickey().export_key())
+    if postData['gender'] == 'Other':
+        user.setGender(postData['gender_other'])
+    else:
+        user.setGender(postData['gender'])
     user.setFirstName(postData['first_name'])
     user.setLastName(postData['last_name'])
     user.setDateOfBirth(postData['date_of_birth'])
     user.setRole('professional') if 'Professional' in postData else user.setRole('User')
+    user.setAnonId(key.export_key().decode("utf-8"))
     user.save()
-
-
-def registerUser(postData): # Place function somewere else.
-    user = User(Email=postData["email"])
-    user.save()
-
-    key = gen_rsa(secret_scrambler(postData["password"], user.UserId))
-    user.setPubKey(key.publickey().export_key().decode("utf-8"))
-    user.save()
-
-    registerUserData(user.UserId, postData)
-
-    return user.UserId, key.export_key()
+    return user.getUid(), key.export_key(), user.getRole()
+    
 
 def LoginView(request):
     if 'UserId' in request.session:
@@ -110,7 +118,7 @@ def LoginView(request):
         user = User.objects.filter(Email=request.POST['email'])[0]
         if user:
             key = gen_rsa(secret_scrambler(request.POST["password"], user.getUid()))
-            if str(key.publickey().export_key().decode("utf-8")) == str(user.getPubkey()):
+            if str(key.publickey().export_key()) == str(user.getPubkey()):
                 request.session['UserId'] = user.getUid()
                 request.session['privKey'] = key.export_key().decode("utf-8")
                 request.session['Role'] = user.getRole()
@@ -175,13 +183,7 @@ def forgotPasswordView(request):
         else:
             alerts["repassword"] = "repassword"
 
-        
-
-
-
-
-    
-
+   
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
@@ -198,3 +200,14 @@ def forgotPasswordView(request):
     }
 
     return render(request, 'login/forgotpassword.html', args)
+
+
+
+def createRelation(uId, privKey, recieverEmail):
+    user = User.objects.filter(UserId=uId)[0]
+    reciever = User.objects.filter(Email=recieverEmail)[0]
+    RelationFromEntry = RelationFrom(
+        AnonymityIdFrom = user.getAnonId()#,
+        #UserIdToEncrypted = rsa_encrypt( reciever.getPubkey() user.getUid
+    )
+    
