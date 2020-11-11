@@ -1,5 +1,5 @@
 from django.db import models
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes
+from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes, gen_anon_id
 import uuid
 
 
@@ -19,7 +19,7 @@ class User(models.Model):
         blank=False,
         unique=True
     )
-    Pubkey = models.CharField(
+    Pubkey = models.BinaryField(
         max_length=512,
         blank=False,
     )
@@ -35,6 +35,7 @@ class User(models.Model):
         choices=Role_Choices
     )
     Symkey = models.CharField(max_length=256)
+    AnonId = models.BinaryField(max_length=512)
 
     def getUid(self):
         return self.UserId
@@ -63,34 +64,38 @@ class User(models.Model):
     def getRole(self):
         return self.Role
 
+    def getAnonId(self):
+        return self.AnonId
+
+
     def setPubKey(self, pubKey):
         self.Pubkey=pubKey
         return 0
 
     def setGender(self, gender):
         if self.Pubkey:
-            self.Gender=rsa_encrypt(self.Pubkey.encode("utf-8"), gender.encode("utf-8"))
+            self.Gender=rsa_encrypt(self.Pubkey, gender.encode("utf-8"))
             return 0
         else:
             return 1
 
     def setFirstName(self, firstName):
         if self.Pubkey:
-            self.FirstName=rsa_encrypt(self.Pubkey.encode("utf-8"), firstName.encode("utf-8"))
+            self.FirstName=rsa_encrypt(self.Pubkey, firstName.encode("utf-8"))
             return 0
         else:
             return 1
 
     def setLastName(self, lastName):
         if self.Pubkey:
-            self.LastName=rsa_encrypt(self.Pubkey.encode("utf-8"), lastName.encode("utf-8"))
+            self.LastName=rsa_encrypt(self.Pubkey, lastName.encode("utf-8"))
             return 0
         else:
             return 1
 
     def setDateOfBirth(self, dateOfBirth):
         if self.Pubkey:
-            self.DateOfBirth=rsa_encrypt(self.Pubkey.encode("utf-8"), dateOfBirth.encode("utf-8)"))
+            self.DateOfBirth=rsa_encrypt(self.Pubkey, dateOfBirth.encode("utf-8)"))
             return 0
         else:
             return 1
@@ -101,13 +106,16 @@ class User(models.Model):
 
     def setSymkey(self):
         if self.Pubkey:
-            self.Symkey=rsa_encrypt(self.Pubkey.encode("utf-8"), gen_aes())
+            self.Symkey=rsa_encrypt(self.Pubkey, gen_aes())
             return 0
         else:
             return 1
 
     def setRole(self, role):
         self.Role=role
+
+    def setAnonId(self, privKey):
+        self.AnonId=gen_anon_id(self.UserId, self.getDateOfBirth(privKey))
 
     
 

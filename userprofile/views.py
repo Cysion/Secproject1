@@ -47,16 +47,20 @@ def EditProfileView(request):
         return HttpResponseRedirect(reverse('login:Login'))
     wrong_pass = False
     account = {}
-    user1=User.objects.filter(UserId=request.session['UserId'])[0]
-    account['firstName']=user1.getFirstName(request.session['privKey'])
-    account['lastName']=user1.getLastName(request.session['privKey'])
-    account['gender']=user1.getGender(request.session['privKey'])
-    account['email'] = user1.getEmail()
+    user=User.objects.filter(UserId=request.session['UserId'])[0]
+    account['firstName']=user.getFirstName(request.session['privKey'])
+    account['lastName']=user.getLastName(request.session['privKey'])
+    account['gender']=user.getGender(request.session['privKey'])
+    account['email'] = user.getEmail()
+    print(account['gender'])
 
     if request.method == 'POST':
         if checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password']):
             user = User.objects.filter(UserId=request.session['UserId'])[0]
-            user.setGender(request.POST['gender'])
+            if request.POST['gender'] == 'Other':
+                user.setGender(request.POST['gender_other'])
+            else:
+                user.setGender(request.POST['gender'])
             user.setFirstName(request.POST['first_name'])
             user.setLastName(request.POST['last_name'])
             user.setEmail(request.POST['email'])
@@ -168,7 +172,7 @@ def changePass(uId, privKey, newPassword):
     symKey=user1.getSymKey(privKey)
 
     key = gen_rsa(secret_scrambler(newPassword, uId))
-    pubkey=key.publickey().export_key().decode("utf-8")
+    pubkey=key.publickey().export_key()
     with transaction.atomic():
         user1.setPubKey(pubkey)
         user1.Gender=rsa_encrypt(pubkey, gender.encode("utf-8"))
