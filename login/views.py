@@ -3,9 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 # Create your views here.
 
-from login.models import User
-from login.models import RelationFrom
-from login.models import RelationTo
+from login.models import User, RelationFrom, RelationTo
 from django.db import transaction
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
 from userprofile.views import checkPassword, changePass
@@ -203,11 +201,54 @@ def forgotPasswordView(request):
 
 
 
-def createRelation(uId, privKey, recieverEmail):
+def createRelation(uId, privKey, recieverEmail, permissions):
+    """Returns 1 if relation is added or 0 if it failed."""
     user = User.objects.filter(UserId=uId)[0]
     reciever = User.objects.filter(Email=recieverEmail)[0]
-    RelationFromEntry = RelationFrom(
-        AnonymityIdFrom = user.getAnonId()#,
-        #UserIdToEncrypted = rsa_encrypt( reciever.getPubkey() user.getUid
-    )
     
+    try:
+        with transaction.atomic:
+            relationFromEntry = RelationFrom(
+                AnonymityIdFrom = user.getAnonId(),
+                UserIdTo = reciever.getUid(),
+                Permission = permissions,
+                UserIdFromEncrypted = rsa_encrypt( reciever.getPubkey(), user.getUid())
+            )
+
+            relationToEntry = RelationTo(
+                UserIdFrom = user.getUid(),
+                Permission = permissions,
+                UserIdToEncrypted = rsa_encrypt(reciever.getPubkey(),reciever.getUid()),
+                FromPrivEncrypted = rsa_encrypt(reciever.getPubkey(), privKey.encode("utf-8"))
+            )
+    except: #Possible exceptions here
+        return 0
+    else:
+        return 1
+
+def updateRelationTo(recieverUId, recieverPrivKey):
+    reciever = User.objects.filter(UserId=recieverUId)[0]
+    relationsFrom = RelationFrom.objects.filter(UserIdTo=recieverUId)
+    relationsTo = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId())
+    if(len(relationsFrom) != len(relationsTo)):
+        diff = abs(len(relationsFrom) != len(relationsTo))
+        for relationFrom in relationsFrom:
+            relationFrom.getUserIdFromDecrypted(recieverPrivKey)
+            for relationTo in relationsTo:
+                try:
+                    uIdTo = relationTo.getUserIdToDecrypted(recieverPrivKey)
+                except:#Possible exceptions here
+                    pass
+                else:
+                    if uIdTo == reciever.getUid():
+                        if relationTo.getAnonymityIdTo() != reciever.getAnonId():
+                            relationTo.setAnonymityIdTo(reciever.getAnonId())
+                            diff -= 1
+                            if not diff:
+                                return 1
+
+        return 0
+    else:
+        return 1
+
+

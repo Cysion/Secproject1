@@ -136,6 +136,9 @@ class RelationFrom(models.Model):
     Permission = models.CharField(max_length=4)
     UserIdFromEncrypted = models.BinaryField(max_length=512)
 
+    def getUserIdFromDecrypted(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.UserIdFromEncrypted)
+
 class RelationTo(models.Model):
     """User relation table. This table is for users to see which relationship
     the user have with other users (Friend or therapist for example).
@@ -153,6 +156,15 @@ class RelationTo(models.Model):
     Permission = models.CharField(max_length=4)
     UserIdToEncrypted = models.BinaryField(max_length=512)
     FromPrivEncrypted = models.BinaryField(max_length=512)
+
+    def getUserIdToDecrypted(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.UserIdToEncrypted)
+    
+    def getAnonymityIdTo(self):
+        return self.AnonymityIdTo
+
+    def setAnonymityIdTo(self, anonId):
+        self.AnonymityIdTo = anonId
 
 
 class Action(models.Model):
