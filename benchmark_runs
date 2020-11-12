@@ -1,0 +1,982 @@
+starting tests
+testing AES
+test  1  of  54
+test  2  of  54
+test  3  of  54
+test  4  of  54
+test  5  of  54
+test  6  of  54
+test  7  of  54
+test  8  of  54
+test  9  of  54
+test  10  of  54
+test  11  of  54
+test  12  of  54
+test  13  of  54
+test  14  of  54
+test  15  of  54
+test  16  of  54
+test  17  of  54
+test  18  of  54
+test  19  of  54
+test  20  of  54
+test  21  of  54
+test  22  of  54
+test  23  of  54
+test  24  of  54
+test  25  of  54
+test  26  of  54
+test  27  of  54
+test  28  of  54
+test  29  of  54
+test  30  of  54
+test  31  of  54
+test  32  of  54
+test  33  of  54
+test  34  of  54
+test  35  of  54
+test  36  of  54
+test  37  of  54
+test  38  of  54
+test  39  of  54
+test  40  of  54
+test  41  of  54
+test  42  of  54
+test  43  of  54
+test  44  of  54
+test  45  of  54
+test  46  of  54
+test  47  of  54
+test  48  of  54
+test  49  of  54
+test  50  of  54
+test  51  of  54
+test  52  of  54
+test  53  of  54
+test  54  of  54
+aes_times
+------------------------------
+specs  :  128 bit key
+data: 1M
+level 1 compression
+encrypt  :  0.03403759002685547
+decrypt  :  0.006409883499145508
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\\k6\x80}\xe3\\\xf2M\x9e\xc7e\xe4l\x0f\x88\xf8\x8e~\xa4', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 1M
+level 2 compression
+encrypt  :  0.031032085418701172
+decrypt  :  0.005834341049194336
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\xe0S2!~\xc3V,\xe4\xf8\xa0\xfd\x03\x00%{\xcb\xd3-\x9f', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 1M
+level 3 compression
+encrypt  :  0.031148433685302734
+decrypt  :  0.0059051513671875
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\x81g\x13>\x00\xed\xd7\xa98Z\xd1{L\xb4\xe9\xc9P\xff\xe1\xeb', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 1M
+level 4 compression
+encrypt  :  0.03299593925476074
+decrypt  :  0.0056955814361572266
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\xb2a\x9d\xe5\xe7\xa6\x19\xe79)\xd5\xe6\x02\xeb\xb8i|\xa1\x9e`', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 1M
+level 5 compression
+encrypt  :  0.03300762176513672
+decrypt  :  0.005610466003417969
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'e\xe6\xca`"\xbaxQ\x88",\xef\x04\xfa\x91l\x19\xb4\t\x84', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 1M
+level 6 compression
+encrypt  :  0.03284049034118652
+decrypt  :  0.005669832229614258
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\x0bR"\xf3W!\xc5\xd1\xb2\xcf\x15\x08\x02\x00rT\xc2_\x1c\x05', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 1M
+level 7 compression
+encrypt  :  0.03247880935668945
+decrypt  :  0.005571842193603516
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'4\x1f\xa2\xcd\x12\x94\xd3\x17h\xb0L\xd0rI\xf2V\xaf\x9dt\xd7', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 1M
+level 8 compression
+encrypt  :  0.03233194351196289
+decrypt  :  0.005608081817626953
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\xa2z\x9a$^\x98\xb6[\xf0\x8fNe\x82\xca\x92\xbb\xa0\x12\xb12', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 1M
+level 9 compression
+encrypt  :  0.0321652889251709
+decrypt  :  0.005669355392456055
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\x1a\xc5\t<\xbc^\xc4\xb7\xf1s\xa0^\xba<\xa6o\xfc\xc281', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 10M
+level 1 compression
+encrypt  :  0.3117713928222656
+decrypt  :  0.061473846435546875
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'Dq\xeb\xe4\xd0\x1b\x96<\x90\xe8\xe9\x9c\xd2\xed\xafC\xfb\xf9\xe2@', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 10M
+level 2 compression
+encrypt  :  0.3113372325897217
+decrypt  :  0.054061174392700195
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b';\xdbS4\x1f4\xf4\xd9\x10\x83,\x98P\xc1\x7f\xab\xbbV\x9b\x9c', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 10M
+level 3 compression
+encrypt  :  0.3123204708099365
+decrypt  :  0.0543065071105957
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'\x18R\xfc\x89a\xfbw~/\xc8J\xfe\n$7<\xa0\x8bX\xfe', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 10M
+level 4 compression
+encrypt  :  0.3265702724456787
+decrypt  :  0.05387234687805176
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'\xa3\xdf9Zx\x84Y\x01p\xf4&GZc\xc4}\xd2\x85\x18\x0e', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 10M
+level 5 compression
+encrypt  :  0.3244016170501709
+decrypt  :  0.0543365478515625
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'\xba\x95\xe4]\xa2\x8bJ\xc9\x80\xa1\xf2\x89T\x1c1\xee\xe8\x8f^\xaa', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 10M
+level 6 compression
+encrypt  :  0.32618188858032227
+decrypt  :  0.0541994571685791
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b"[l\x02o\xc8\xd6V\xde\xcb\xf0\xbfL\t0\r'0E*\x0e", b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 10M
+level 7 compression
+encrypt  :  0.33321261405944824
+decrypt  :  0.057712554931640625
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b"\xae\x11\xc6(ne\x1d/\x83\x91\x04J\xc6'\x03\x07\xc0\x18V\r", b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 10M
+level 8 compression
+encrypt  :  0.3266587257385254
+decrypt  :  0.05480170249938965
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'\xece\xb3`\xbcg\x83\xc4\xd1\x01F\xdb\x9d\xfa3\xcf\\\xfe\xd6\xe1', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 10M
+level 9 compression
+encrypt  :  0.3255295753479004
+decrypt  :  0.053960561752319336
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'!\xa7\tf\xa1sIE\x1e\x98\x1e\x07!r\xc7\xe1\xca\xfc\x84\x9d', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 100M
+level 1 compression
+encrypt  :  3.1784236431121826
+decrypt  :  0.6896533966064453
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'Y\xef\x809\x88\xed\xbb]\xbeZ\rR\xe0o\xf8r\x83l\x93\xb2', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 100M
+level 2 compression
+encrypt  :  3.1508939266204834
+decrypt  :  0.6864144802093506
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\x05\x05t3\x9d\xd1\xe3H?xu\xf8\x17H|?Z\xb3\xa5\x03', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 100M
+level 3 compression
+encrypt  :  3.1798503398895264
+decrypt  :  0.6856710910797119
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\x88\xb5\xe8\xb6\xbc\n\xa8\xf29\x08.P\x85\xdbv}\xb0\xd2\xf1k', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 100M
+level 4 compression
+encrypt  :  3.319761276245117
+decrypt  :  0.6819248199462891
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\x15\xf0\xfd\x18\xd4\x89\xef\x08\xe3\x9f\x9a\xc3Fv@\x16\xb1\x0c\xb4\xcd', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 100M
+level 5 compression
+encrypt  :  3.2829108238220215
+decrypt  :  0.6804428100585938
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b's\xc4\r\x7f\xa4\xe8\xd3[\x04\xa0\x96)\xbaOdWw9\x04\n', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 100M
+level 6 compression
+encrypt  :  3.282655954360962
+decrypt  :  0.6796789169311523
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'G-\xe0==\xcd\xe2\x1a\x8d\x17\xff(^\xa0\xb9\x190\xc9F\xa8', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 100M
+level 7 compression
+encrypt  :  3.291775703430176
+decrypt  :  0.680133581161499
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\xa9\xe7F_\xe5\x1a\xab\xc9s\x1cP\xbamB\x9a\xb4G\xe8(\x91', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 100M
+level 8 compression
+encrypt  :  3.2925612926483154
+decrypt  :  0.6812498569488525
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\x18\xaa2\xbeV\x7f\x12&\xc7\xf6P $\xbe\x1f\x89\x0f\x81\xb1\xe5', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  128 bit key
+data: 100M
+level 9 compression
+encrypt  :  3.3543686866760254
+decrypt  :  0.6827492713928223
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b"\x8dF\x17\x023@\xfe\x7f\x0f\x9f\x9e\xa9\x0f\xdf\xda\x92'\xa6\xc10", b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 1M
+level 1 compression
+encrypt  :  0.03040933609008789
+decrypt  :  0.0052967071533203125
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'sY\xdb\x0f\xc2\x148}4\x03`\xe1\xb9\x15\xf7BM-\xb6\xd8', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 1M
+level 2 compression
+encrypt  :  0.030161142349243164
+decrypt  :  0.005660057067871094
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\xa1\xbb\xb2\xb3\xb9|\xd5VR!\xa1\x94\x90&\xce\x96\x9a\x99H\x94', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 1M
+level 3 compression
+encrypt  :  0.03013134002685547
+decrypt  :  0.005414485931396484
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b"gz\xb6\x81\x9b%\xf4\xe4\xedJ\x10\xb2 \x9bN;\x83\xb8'\r", b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 1M
+level 4 compression
+encrypt  :  0.03137373924255371
+decrypt  :  0.0053522586822509766
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'm|\xa8\xb2\xa6\xcd\xff8\xae\x1b[UX\xf7c\xfb\xa3\x8e\xdf/', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 1M
+level 5 compression
+encrypt  :  0.0314328670501709
+decrypt  :  0.005455970764160156
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\xa5\x8b\x80\xabya\xed\xe1>\x04\xe7\xf8N\x94\xb6:\x9b\xb4\xc9>', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 1M
+level 6 compression
+encrypt  :  0.03172421455383301
+decrypt  :  0.005463123321533203
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\xed\xb5m\xe4\xf7\xba\x9e\xfd\x1c9\xf8Y\xb3Z-\xf2\xa0\x8b\xb6\xa7', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 1M
+level 7 compression
+encrypt  :  0.03170585632324219
+decrypt  :  0.0053806304931640625
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b"\xbc\xfd/\xb9\xf5\xbd!\x850e{\xb1\x88Mo9%'\xa2*", b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 1M
+level 8 compression
+encrypt  :  0.031455278396606445
+decrypt  :  0.005353212356567383
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\x15\xc4\xeb0{\x8eM\x02\xff O\x0c\xf9\xe8^\xf9\xcc\xf5[5', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 1M
+level 9 compression
+encrypt  :  0.031533002853393555
+decrypt  :  0.005366802215576172
+hashes  :  [b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85', b'\xac\x86p\x18\xbd\x96[~\x14\x1e\xa8\xd1\x16\x00\xb4\x1a5\xaf0\n', b'\xa8\xcf\x05\xbc_\xe4zI\x8f\xb9@Zh\xde\xc4U\xe7.\x97\x85']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 10M
+level 1 compression
+encrypt  :  0.32185983657836914
+decrypt  :  0.06351256370544434
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b"\xda\x12D\xa8\xdb\x8f\xef\x9cR\r\xc2z\xaa\xf9@'\x93\xe1<B", b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 10M
+level 2 compression
+encrypt  :  0.3225884437561035
+decrypt  :  0.06440091133117676
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'\xf2__+\x8a\xf1\xdf>qH\xa4.\xc8\xed~v>\xb9\xc5\x89', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 10M
+level 3 compression
+encrypt  :  0.320831298828125
+decrypt  :  0.06350326538085938
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'\x95=\xe3\xbeG\xb1O\xa8\xd8\x11Y%\xb9\x93z\xf2\x8b\x00_\x95', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 10M
+level 4 compression
+encrypt  :  0.34471583366394043
+decrypt  :  0.06292080879211426
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b't,h\xf2\x0c\xea>P\x0b\x08\x89r@\x1b1\xdc\xbbk\xed\xbd', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 10M
+level 5 compression
+encrypt  :  0.3337695598602295
+decrypt  :  0.06293487548828125
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'\xe9/\x1c\xc8\xe5\x8ao\xde>\x0c\x15\xc2"\x16,+K\x8bE\xfc', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 10M
+level 6 compression
+encrypt  :  0.3344240188598633
+decrypt  :  0.06321406364440918
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'v\xb0z\xe8\xfa\xe6\x05E\xef,v&\xbc\xebR\x87\xde\xff\x1b\x92', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 10M
+level 7 compression
+encrypt  :  0.3444843292236328
+decrypt  :  0.06334543228149414
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'ev\x9fvzC\x9e\xa1G\xfcH\x98\x1cs\xe7n\x99\xa3e\xa0', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 10M
+level 8 compression
+encrypt  :  0.34377384185791016
+decrypt  :  0.06268858909606934
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'\x85\r\xc0\xb80\x1f8R\xd69\x99\xed8\xcc\xe7\x18Y1\xbc\xed', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 10M
+level 9 compression
+encrypt  :  0.3436164855957031
+decrypt  :  0.06284618377685547
+hashes  :  [b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1', b'$$P\xd7\xd0\xba\xb5\\7\xeb\x1d\x9bi\x82UP`\x04\xad\x9f', b'R\x8f\x9d\x10\x00\x1e H`\x1c\x85\xccR\x1b\x07\x86M,\xd4\xa1']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 100M
+level 1 compression
+encrypt  :  3.1974904537200928
+decrypt  :  0.7234673500061035
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\x8c/5\xc5/\xddn\x9f\x9c\x81\x9b\xae\xceE\xceB\x02\x9c\x03\x91', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 100M
+level 2 compression
+encrypt  :  3.1956589221954346
+decrypt  :  0.7298338413238525
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b']\x05\xc5\x84x\x95\xc7\xc1\xfd\x82=KZg\x89\xa0w0&\xd8', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 100M
+level 3 compression
+encrypt  :  3.204420804977417
+decrypt  :  0.7252926826477051
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\x13\x87=N\xa5\xce%EHY\xbcW\xe2\xa1\xc5f\xac7\xe2\xc3', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 100M
+level 4 compression
+encrypt  :  3.3267228603363037
+decrypt  :  0.7200055122375488
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'G5\x16\xe6\x87\x86M\nIE\x0b\xb8\xa5\x05\xfb\x9b\xd7Y#\xaf', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 100M
+level 5 compression
+encrypt  :  3.33479905128479
+decrypt  :  0.723132848739624
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\xb2\xc9\x06\xa4\xff\x93r\xbej\xb3\xbf\xd7\xed\xc1F\xb2\x06\xc7(\x97', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 100M
+level 6 compression
+encrypt  :  3.326447010040283
+decrypt  :  0.7202794551849365
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\x89S\x15\xbc\xd0\xd3\x02\xadEA\x1aR:09C\x95\xd4\xf9\xfe', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 100M
+level 7 compression
+encrypt  :  3.328650951385498
+decrypt  :  0.7211189270019531
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'\xff\x84I\x80?\x04\xb2\x90\x94\xae\x11\xaf\x89\x10\xddih2\x94\x9b', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 100M
+level 8 compression
+encrypt  :  3.3410120010375977
+decrypt  :  0.720564603805542
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'-\x17\x03\x83o\x00B\xb3\x17\x1f\xa2\x9c\x97!Y\xc2.H\xfcu', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+------------------------------
+specs  :  256 bit key
+data: 100M
+level 9 compression
+encrypt  :  3.3475022315979004
+decrypt  :  0.7185311317443848
+hashes  :  [b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC', b'Z \xce\xcb\r\xda\x08A\x8c\x9f\xffV\xc9\xd6\xe8\xcbL\xf7\x8cn', b'\x03r\t\xc2\x01\x9b|\xece\xd4\xf6\xcbc/\xfc\xa1]\x95\x8fC']
+------------------------------
+
+
+
+test  1  of  54
+test  2  of  54
+test  3  of  54
+test  4  of  54
+test  5  of  54
+test  6  of  54
+test  7  of  54
+test  8  of  54
+test  9  of  54
+test  10  of  54
+test  11  of  54
+test  12  of  54
+test  13  of  54
+test  14  of  54
+test  15  of  54
+test  16  of  54
+test  17  of  54
+test  18  of  54
+test  19  of  54
+test  20  of  54
+test  21  of  54
+test  22  of  54
+test  23  of  54
+test  24  of  54
+test  25  of  54
+test  26  of  54
+test  27  of  54
+test  28  of  54
+test  29  of  54
+test  30  of  54
+test  31  of  54
+test  32  of  54
+test  33  of  54
+test  34  of  54
+test  35  of  54
+test  36  of  54
+test  37  of  54
+test  38  of  54
+test  39  of  54
+test  40  of  54
+test  41  of  54
+test  42  of  54
+test  43  of  54
+test  44  of  54
+test  45  of  54
+test  46  of  54
+test  47  of  54
+test  48  of  54
+test  49  of  54
+test  50  of  54
+test  51  of  54
+test  52  of  54
+test  53  of  54
+test  54  of  54
+rsa times
+------------------------------
+specs  :  1024 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 1 compression
+encrypt  :  0.0011856555938720703
+decrypt  :  0.02270197868347168
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\x107eR\xbd|P\x01\xbe\xf6\x08\xb6R`\x9b\xd0\xb5jP\xe0', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 2 compression
+encrypt  :  0.0007543563842773438
+decrypt  :  0.02234959602355957
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\xd1\xd6\xb8,mj|\xd4\x1e%\x8e4\\\xd2\xd3\xa9\xfb\x195q', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 3 compression
+encrypt  :  0.0007245540618896484
+decrypt  :  0.022681236267089844
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\xf0xn\xdc\x84\xe7d\x13f<\xaes\x9d\x9efr\xfa\r\x80\xd1', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 4 compression
+encrypt  :  0.0007164478302001953
+decrypt  :  0.022708892822265625
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b"=\xdd\xe9\xd3\x8b\xa8\n\xac'\x00~\xe67\t\xb7\xc0.\xb1\xe8\xef", b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 5 compression
+encrypt  :  0.0007607936859130859
+decrypt  :  0.022652387619018555
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'6s\x18+~\xad3\x81\xa1\x04p\x81:\xf6|\x1bf*5\xf1', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 6 compression
+encrypt  :  0.0007507801055908203
+decrypt  :  0.022626638412475586
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\x16\x06\x04\xae\xaa\x95%\xf2`\xd4\xda\xe4i\xc1"L\xbf[\xe3\xbc', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 7 compression
+encrypt  :  0.0007205009460449219
+decrypt  :  0.02253556251525879
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\xe7\x06Z#I\xd1\x86\x93\xfdQ\x06\xf1T\xd9\xa9K\xfd\x87\x9b\xd2', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 8 compression
+encrypt  :  0.0007305145263671875
+decrypt  :  0.022281885147094727
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b"\x17\xd0H\xac\xeb\x00\x84q\x85.\xaf\x8ae`\xfe\xea'a\x8b2", b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 9 compression
+encrypt  :  0.0007140636444091797
+decrypt  :  0.023247957229614258
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\x89|\x1c\x91\x90S\xdf\x98\x80\x84n\x97^\xc0\x9b\xb0XF\xd6*', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 1 compression
+encrypt  :  0.0008754730224609375
+decrypt  :  0.02250957489013672
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x0f\x16\x19\xff]G\x1eu\x13\xdfb+\xb3\xb7\x11\xfa\xa2.5:', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 2 compression
+encrypt  :  0.0007379055023193359
+decrypt  :  0.02310919761657715
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\xec!b\x06\x9bO%\xd1k\x18\x8a7>X\x16\xbb\x80Y\x89=', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 3 compression
+encrypt  :  0.0007336139678955078
+decrypt  :  0.02283954620361328
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'(^~v1\xf4s\xf0\n\xccT@7\x85\x03\xa9?\xde{d', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 4 compression
+encrypt  :  0.0007281303405761719
+decrypt  :  0.022299528121948242
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\xb2\xed\x14\xd6\x8c\xa7a\xc64\xbd\xb1\xa8\x92|\x1d9K\xc3\x11\x06', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 5 compression
+encrypt  :  0.0007181167602539062
+decrypt  :  0.02251601219177246
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\xda{5C\xfa\xfff\xfc5\x91r\x99+-h\xd8PEK\xdb', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 6 compression
+encrypt  :  0.0007257461547851562
+decrypt  :  0.022927522659301758
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x13\xbb\xa2NE\x1eC\xf5\x94\t\xf9\xd7\xed?\xf6<\xa86\xedW', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 7 compression
+encrypt  :  0.0007164478302001953
+decrypt  :  0.022376298904418945
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x1brJ\x1e\x11\xb4\x1c\xd3Y[M\xc4\xea\xb4m%\xc1\x8e\xf5\x9a', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 8 compression
+encrypt  :  0.0007431507110595703
+decrypt  :  0.022261381149291992
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x85\xd3[\xe0\xb7~\x7f\xa1|$\xd4\xae[\xec\xbc\xdd\xd1i@\x81', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  1024 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 9 compression
+encrypt  :  0.0006937980651855469
+decrypt  :  0.022200822830200195
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'l9\x1f\xc7\x94NLk\x16!\xcf\x8dMWQ\x07\xadcC[', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 1 compression
+encrypt  :  0.0010793209075927734
+decrypt  :  0.04504513740539551
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\x9d\x82\xbc\x0ez\x8a\xd6\xf8\xc9\xcb\xc8\x9c\n}>\x89\xf4Nr\xc3', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 2 compression
+encrypt  :  0.0010862350463867188
+decrypt  :  0.04576587677001953
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\x1erY#\x86\xc6+\xa2\xc6\x06\xb9\xf2\x1b\xb7`\x93\x17tPi', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 3 compression
+encrypt  :  0.0010716915130615234
+decrypt  :  0.04632735252380371
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'jV\xd1\x0e\x9azO\x96N\x8ew%g\x07\xed\xf1o\x17*s', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 4 compression
+encrypt  :  0.0010464191436767578
+decrypt  :  0.0464930534362793
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\xc4-\x7f\xfc\xafX[\x7f\xcf\xaben\xf8\xdb\xc9\x18\x92ba\xd8', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 5 compression
+encrypt  :  0.0010759830474853516
+decrypt  :  0.04630589485168457
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'Y\x84\xa5P\xcb8)\xd2\xe1\xf4\x1f1\xf2\xa6\x88F\xc2\x8c\x07\xe4', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 6 compression
+encrypt  :  0.0010848045349121094
+decrypt  :  0.04598379135131836
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\xbc\x8e_\x8c\x94\n\tRtt\n\xeb\xf2:\xb3\x13\xaa\x88\xd7Q', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 7 compression
+encrypt  :  0.0010426044464111328
+decrypt  :  0.046399593353271484
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'A\x95\xcaf\xdd=\xd8;l\xc7\xe9\xa1\xdd\xa7+\x9cw\x85Z\xcf', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 8 compression
+encrypt  :  0.0010602474212646484
+decrypt  :  0.045653581619262695
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b"+\x83\xe3\x10t\xab\xaf\x00'\xed\xac\x8b3 \x82k<*\xcd\xd1", b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 9 compression
+encrypt  :  0.001065969467163086
+decrypt  :  0.046086788177490234
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'i\xa3VC\xb6\x9a\xb1QTGB\xa5\x80\x1dp_\xd37y\xf7', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 1 compression
+encrypt  :  0.0010380744934082031
+decrypt  :  0.046118736267089844
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\xf1<0vY\x94\xb6\xc0y\xd8@l\xed/]\xc8#1<\xfd', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 2 compression
+encrypt  :  0.001058816909790039
+decrypt  :  0.0460355281829834
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'M&\xfb\xa2\x9c\xaa,=\x9bQ\xe1\xc5]\x9d\x9b\x1f3\xd7\xc3\xee', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 3 compression
+encrypt  :  0.0010743141174316406
+decrypt  :  0.045382022857666016
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\xf1k\xdc\xff\xbc\x0f+\xca8\xd2\xc9\xce\n\x9c\x95\x14\xeeY\x89\xf2', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 4 compression
+encrypt  :  0.0010647773742675781
+decrypt  :  0.045542001724243164
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b"L-f\xc8\x90\xed\xf8}ac\x85v\x02'\xdb\xf3\xae\x91G\x1f", b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 5 compression
+encrypt  :  0.0010623931884765625
+decrypt  :  0.0457606315612793
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x19\xde\xdbQ\x06#\x8e\xcc\x15c\no4u{\x16\xce\xaa\xd4(', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 6 compression
+encrypt  :  0.0010306835174560547
+decrypt  :  0.045130014419555664
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b"\x13\x0cKZ\xb8\x7fkt'\x1b\xc3\x8f\x1dG\x8f\x10\x1b\x13\xcff", b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 7 compression
+encrypt  :  0.0010352134704589844
+decrypt  :  0.0454249382019043
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'.k\xf3\xba\xb1RB\xbf=\x0bg\x15\xebW\t&\xb8\x0cF\xb8', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 8 compression
+encrypt  :  0.0010712146759033203
+decrypt  :  0.04595041275024414
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\xc0\xbf\xd7\x97\xf9"\x16\xb4\n\xe0\xe4!\x89d\xfb~\x1f\xca\xfcN', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  2048 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 9 compression
+encrypt  :  0.0010433197021484375
+decrypt  :  0.04564046859741211
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x05"\xa2\xb7\xce\xaf\x00`+\xe4=\x90\xa4\xf5\xa5Y\x81Z1\xa7', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 1 compression
+encrypt  :  0.001983165740966797
+decrypt  :  0.10928988456726074
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'r\xda\xf6<og\xd2\x9b\x08\xf1\xc0y\xeb\xfc\xca\xe7Co\xab\x08', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 2 compression
+encrypt  :  0.002028942108154297
+decrypt  :  0.10929512977600098
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'>c\xf2F\xd8E(\xfb\xd5\x187\x03J{5\xb9\x05\xec\xf0\r', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 3 compression
+encrypt  :  0.001959562301635742
+decrypt  :  0.10970592498779297
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\xba\xb2x8\xa6vt#`*:\xe1\xd01\x06\x90I\x19\xc7Z', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 4 compression
+encrypt  :  0.0019664764404296875
+decrypt  :  0.10899496078491211
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\x07\xea|\x95\x9bR\x8b^\x80\x82\x04\xe7{\x1b\xccxC\xc0U2', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 5 compression
+encrypt  :  0.0019636154174804688
+decrypt  :  0.1108858585357666
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'zl\xc9\xc5\xec\xc2EB\xe4\x9c\xeb\x0e\xeb\x96@:\xd0\x82M\xf8', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 6 compression
+encrypt  :  0.002065420150756836
+decrypt  :  0.11024332046508789
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\xe9;\xc0\x93\x0fV!\xa7\x8d\xf6iG\x0e\xf4]\xbc\x104\x97u', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 7 compression
+encrypt  :  0.002068042755126953
+decrypt  :  0.11376476287841797
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\xd9\xc0\xe1(k\x0cT\x98\x05\xd3Z\xe1x\xc8\x8fYd\x01\xa6&', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 8 compression
+encrypt  :  0.0020232200622558594
+decrypt  :  0.11112141609191895
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\xb4n|\xd2O\xfd\xf5l\xd2%L\xab\x9a\x91W\x01\xd8\x03K0', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b'\xe3\x8c\xa5\xa1x\x0cd\x01\xf3\xe1\xadi\xf4.\xabT'
+level 9 compression
+encrypt  :  0.0019683837890625
+decrypt  :  0.10864472389221191
+hashes  :  [b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[', b'\x8f\xf3OT\x90C\xf9-\xd1qf\xb3_\x16\x9e\xf3\xf2\x0b\x9a\xb2', b'\x1f\x9a\xf0+\xad\x11\x1a\x06\xf7\xae\x99d)\xf3\xbf\xbc1>\xca[']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 1 compression
+encrypt  :  0.002023935317993164
+decrypt  :  0.1098635196685791
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\xba\x9c\xbe\xa74"\xac8fW (s\x1cnF*\xa7\xf5\xad', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 2 compression
+encrypt  :  0.0020008087158203125
+decrypt  :  0.10988736152648926
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x8b\x02(%\x92|\x07\r\xae"\xd0;!\xf7\x08\xbe\xa2Gx\x9f', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 3 compression
+encrypt  :  0.0019698143005371094
+decrypt  :  0.10967087745666504
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\xbf`H\x10\xe8\xce*I\xc1w\xb8\xdeQ\xe5!\x02O\xd3u\x08', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 4 compression
+encrypt  :  0.0019707679748535156
+decrypt  :  0.10815954208374023
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\xafG\x11\xca\x93\x1bC\x1d\x16\xfc\x0b\xb8\x0f4\xc4\xd3\xaaIB\xe7', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 5 compression
+encrypt  :  0.001981973648071289
+decrypt  :  0.10887360572814941
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'%\xc8\xb1\xf3\xc1\xdd\xdd\xc6\xaek\x13\x92\xa4\x9bT\xde\xc6def', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 6 compression
+encrypt  :  0.001953125
+decrypt  :  0.10969066619873047
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x99\xad!\xcd\x87\xd6FsS\xf7\xe5$\x92d\x8d\x81,P\x9c\xbc', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 7 compression
+encrypt  :  0.0019791126251220703
+decrypt  :  0.10988306999206543
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x9e\x82(j\xaeI\xb1\xdc\xc2OY%z\xdflmS\x9c\x10\x8a', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 8 compression
+encrypt  :  0.0020372867584228516
+decrypt  :  0.10729551315307617
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x1d \xca\xd0ixDL\xa9\xb3\xa8}\xf7\xdf\xd2\x1a\xfb\x9dQo', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+------------------------------
+specs  :  4096 bit key
+data: b"\x1d\x01\xcb\x91h\x07\xbfg\x8a\xe1\x04\xdc'\xcb\xf8 B_V\xbb\xe4\x15S&DQ:\xe7\th1g"
+level 9 compression
+encrypt  :  0.0019600391387939453
+decrypt  :  0.11084961891174316
+hashes  :  [b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD', b'\x9e\x98q\xa8\x08\xc6\xd5b\t\xb8\x98\xda\xdac2>\x03b\x06C', b'2\xd3\x8b\xf8\xc4%\x13V\x9f\x91s7\nm\x83\x1a\xb9MlD']
+------------------------------
+
+
+
