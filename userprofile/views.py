@@ -33,12 +33,18 @@ def ProfileView(request):
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
+    if request.session["Role"] == "User":
+        template = "base.html"
+    else:
+        template = "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'global_alerts': global_alerts,
         'profile': login_lang["userprofile"]["long_texts"],
         'first_name': first_name,
-        'last_name': last_name
+        'last_name': last_name,
+        'template': template
     }
 
     return render(request, 'userprofile/profile.html', args)
@@ -71,7 +77,10 @@ def EditProfileView(request):
             wrong_pass = True
 
 
-
+    if request.session["Role"] == "User":
+        template = "base.html"
+    else:
+        template = "base_professionals.html"
 
     profile_lang = get_lang(sections=["userprofile"])
     login_lang = get_lang(sections=["login"])
@@ -82,7 +91,8 @@ def EditProfileView(request):
         'profile': profile_lang["userprofile"]["long_texts"],
         'alerts': login_lang['login']['long_texts']['alerts'],
         "account":account,
-        'wrong_pass':wrong_pass
+        'wrong_pass':wrong_pass,
+        'template': template
     }
 
     return render(request, 'userprofile/edit.html', args)
@@ -151,6 +161,11 @@ def changePassView(request):
         global_alerts = request.session["global_alerts"]
         request.session["global_alerts"] = []
 
+    if request.session["Role"] == "User":
+        template = "base.html"
+    else:
+        template = "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'global_alerts': global_alerts,
@@ -158,7 +173,8 @@ def changePassView(request):
         'form': login_lang["login"]["form"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'alerts': login_lang['login']['long_texts']['alerts'],
-        'alert': alerts
+        'alert': alerts,
+        'template': template
     }
 
     return render(request, 'userprofile/changepassword.html', args)
@@ -198,11 +214,18 @@ def BackupKeyView(request):
 
     profile_lang = get_lang(sections=["userprofile"])
 
+    if request.session["Role"] == "User":
+        template = "base.html"
+    else:
+        template = "base_professionals.html"
+
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
-        'privkey': request.session['privKey']
+        'privkey': request.session['privKey'],
+        'template': template
     }
 
     return render(request, 'userprofile/backupkey.html', args)
@@ -226,7 +249,7 @@ def relationsView(request):
     #profile_lang = get_lang(sections=["userprofile"])
     login_lang = get_lang(sections=["login"])
     profile_lang = get_lang(sections=["userprofile"])
-    
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
@@ -267,7 +290,7 @@ def createRelation(uId:int, privKey, recieverEmail:str, permissions:str):
     """
     user = User.objects.filter(UserId=uId)[0]
     reciever = User.objects.filter(Email=recieverEmail)[0]
-    
+
     try:
         with transaction.atomic:
             relationFromEntry = RelationFrom(
@@ -345,9 +368,8 @@ def showAllRelationsFrom(recieverUId, recieverPrivKey):
 def removeRelation(uId, privKey, recieverEmail):
     user = User.objects.filter(UserId=uId)[0]
     reciever = User.objects.filter(Email=recieverEmail)[0]
-    
+
     with transaction.atomic:
         RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(), UserIdTo=reciever.getUid()).delete()
         relationsTo = RelationTo.object.filter(UserIdFrom=user.getUid())
         relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), reciever.getUid())).delete()
-    
