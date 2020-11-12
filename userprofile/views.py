@@ -241,7 +241,16 @@ def relationsView(request):
     return render(request, 'userprofile/relations.html', args)
 
 def addRelationsView(request):
+    if 'UserId' not in request.session.keys():  # Check if user is logged in
+        return HttpResponseRedirect(reverse('login:Login'))
+
     profile_lang = get_lang(sections=["userprofile"])
+
+    if request.method == 'POST':
+        user=User.objects.filter(UserId=request.session['UserId'])[0]
+        for key in request.POST:
+            print(key)
+        
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
