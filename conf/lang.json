@@ -156,7 +156,7 @@
           "discl":"see p.13 in presentation"
       }
 
-},
+    },
     "practice":{
         "unformat":[],
         "title":"practice",
@@ -184,6 +184,14 @@
         "long_texts":{
             "hotline_text":"see p.19 in presentation",
             "ther_notes":"see p.21 in presentation"
+        }
+    },
+    "professionals":{
+        "unformat":[],
+        "title":"professionals",
+        "media":"Media",
+        "long_texts":{
+          "no_clients":"You don't have any clients who share data with you"
         }
     },
     "savemeplan":{
