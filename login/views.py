@@ -50,7 +50,6 @@ def RegisterView(request):
                 alerts['repassword'] = "repassword"
             if getUidFromEmail(request.POST["email"]):
                 alerts['email'] = 'email_already_exists'
-            print (request.POST)
             if not alerts:
                 try:
                     with transaction.atomic():
