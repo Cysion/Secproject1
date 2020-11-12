@@ -5,7 +5,5 @@ from django.contrib import admin
 from .models import *
 
 admin.site.register(User)
-admin.site.register(RelationTo)
-admin.site.register(RelationFrom)
 admin.site.register(ResearchData)
 admin.site.register(Action)
