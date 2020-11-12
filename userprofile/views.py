@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 # Create your views here.
 
+from userprofile.models import RelationFrom, RelationTo
 from login.models import User
 from tools.crypto import gen_rsa, secret_scrambler
 from tools.confman import get_lang
@@ -47,16 +48,20 @@ def EditProfileView(request):
         return HttpResponseRedirect(reverse('login:Login'))
     wrong_pass = False
     account = {}
-    user1=User.objects.filter(UserId=request.session['UserId'])[0]
-    account['firstName']=user1.getFirstName(request.session['privKey'])
-    account['lastName']=user1.getLastName(request.session['privKey'])
-    account['gender']=user1.getGender(request.session['privKey'])
-    account['email'] = user1.getEmail()
+    user=User.objects.filter(UserId=request.session['UserId'])[0]
+    account['firstName']=user.getFirstName(request.session['privKey'])
+    account['lastName']=user.getLastName(request.session['privKey'])
+    account['gender']=user.getGender(request.session['privKey'])
+    account['email'] = user.getEmail()
+    print(account['gender'])
 
     if request.method == 'POST':
         if checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password']):
             user = User.objects.filter(UserId=request.session['UserId'])[0]
-            user.setGender(request.POST['gender'])
+            if request.POST['gender'] == 'Other':
+                user.setGender(request.POST['gender_other'])
+            else:
+                user.setGender(request.POST['gender'])
             user.setFirstName(request.POST['first_name'])
             user.setLastName(request.POST['last_name'])
             user.setEmail(request.POST['email'])
@@ -159,28 +164,32 @@ def changePassView(request):
     return render(request, 'userprofile/changepassword.html', args)
 
 
-def changePass(uId, privKey, newPassword):
-    user1=User.objects.filter(UserId=uId)[0]
-    firstName=user1.getFirstName(privKey)
-    lastName=user1.getLastName(privKey)
-    gender=user1.getGender(privKey)
-    dateOfBirth=user1.getDateOfBirth(privKey)
-    symKey=user1.getSymKey(privKey)
+def changePass(uId:int, privKey, newPassword:str):
+    user=User.objects.filter(UserId=uId)[0]
+    firstName=user.getFirstName(privKey)
+    lastName=user.getLastName(privKey)
+    gender=user.getGender(privKey)
+    dateOfBirth=user.getDateOfBirth(privKey)
+    symKey=user.getSymKey(privKey)
 
     key = gen_rsa(secret_scrambler(newPassword, uId))
-    pubkey=key.publickey().export_key().decode("utf-8")
+    pubkey=key.publickey().export_key()
     with transaction.atomic():
-        user1.setPubKey(pubkey)
-        user1.Gender=rsa_encrypt(pubkey, gender.encode("utf-8"))
-        user1.FirstName=rsa_encrypt(pubkey, firstName.capitalize().encode("utf-8"))
-        user1.LastName=rsa_encrypt(pubkey, lastName.capitalize().encode("utf-8"))
-        user1.DateOfBirth=rsa_encrypt(pubkey, dateOfBirth.encode("utf-8"))
-        user1.save()
+        user.setPubKey(pubkey)
+        user.Gender=rsa_encrypt(pubkey, gender.encode("utf-8"))
+        user.FirstName=rsa_encrypt(pubkey, firstName.capitalize().encode("utf-8"))
+        user.LastName=rsa_encrypt(pubkey, lastName.capitalize().encode("utf-8"))
+        user.DateOfBirth=rsa_encrypt(pubkey, dateOfBirth.encode("utf-8"))
+        user.save()
+
+        relationsTo = RelationTo.object.filter(UserIdFrom=user.getUid())
+        for relation in relationsTo:
+            relation.setFromPrivEncrypted(User.objects.filter(AnonId=relation.getAnonymityIdTo())[0].getPubkey(), key.export_key().decode("utf-8"))
         return key.export_key()
 
     return 0
 
-def checkPassword(uId, privKey, password):
+def checkPassword(uId:int, privKey, password:str):
     return gen_rsa(secret_scrambler(password, uId)).export_key().decode("utf-8") == privKey
 
 def BackupKeyView(request):
@@ -197,3 +206,148 @@ def BackupKeyView(request):
     }
 
     return render(request, 'userprofile/backupkey.html', args)
+
+def relationsView(request):
+    testuser0 = {
+        'FirstName': 'Ludwig',
+        'LastName': 'Wideskar',
+        'Role': 'User'
+    }
+    testuser1 = {
+        'FirstName': 'Kevin',
+        'LastName': 'Engstrom',
+        'Role': 'Professional'
+    }
+    testuser2 = {
+        'FirstName': 'Joakim',
+        'LastName': 'Karlsson',
+        'Role': 'Admin'
+    }
+    #profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
+    profile_lang = get_lang(sections=["userprofile"])
+    
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'relations': profile_lang["userprofile"]["relations"],
+        #'profile': profile_lang,
+        'testuser0': testuser0,
+        'testuser1': testuser1,
+        'testuser2': testuser2
+    }
+
+
+    return render(request, 'userprofile/relations.html', args)
+
+def addRelationsView(request):
+    profile_lang = get_lang(sections=["userprofile"])
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'relations': profile_lang["userprofile"]["relations"],
+        'form': profile_lang["userprofile"]["relations"]["form"]
+    }
+
+    return render(request, 'userprofile/addrelations.html', args)
+
+def manageRelationsView(request):
+    return render(request, 'userprofile/managerelations.html')
+
+
+def createRelation(uId:int, privKey, recieverEmail:str, permissions:str):
+    """Returns 1 if relation is added or 0 if it failed.
+    permissions is a binary string containing 5 bits representing
+    Profile
+    SaveMePlan
+    Check
+    Prepare
+    Media
+    """
+    user = User.objects.filter(UserId=uId)[0]
+    reciever = User.objects.filter(Email=recieverEmail)[0]
+    
+    try:
+        with transaction.atomic:
+            relationFromEntry = RelationFrom(
+                AnonymityIdFrom = user.getAnonId(),
+                UserIdTo = reciever.getUid(),
+                Permission = permissions,
+                UserIdFromEncrypted = rsa_encrypt( reciever.getPubkey(), user.getUid())
+            )
+
+            relationToEntry = RelationTo(
+                UserIdFrom = user.getUid(),
+                Permission = permissions,
+                UserIdToEncrypted = rsa_encrypt(reciever.getPubkey(),reciever.getUid()),
+                FromPrivEncrypted = rsa_encrypt(reciever.getPubkey(), privKey.encode("utf-8"))
+            )
+    except: #Possible exceptions here
+        return 0
+    else:
+        return 1
+
+def updateRelationTo(recieverUId:int, recieverPrivKey):
+    """Because a user sharing data cannot complete the RelationTo entry, it has to be updated by the reciever.
+    Returns 1 on success, 0 on failure"""
+    reciever = User.objects.filter(UserId=recieverUId)[0]
+    relationsFrom = RelationFrom.objects.filter(UserIdTo=recieverUId)
+    relationsTo = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId())
+    if(len(relationsFrom) != len(relationsTo)):
+        diff = abs(len(relationsFrom) != len(relationsTo))
+        for relationFrom in relationsFrom:
+            relationFrom.getUserIdFromDecrypted(recieverPrivKey)
+            for relationTo in relationsTo:
+                try:
+                    uIdTo = relationTo.getUserIdToDecrypted(recieverPrivKey)
+                except:#Possible exceptions here
+                    pass
+                else:
+                    if uIdTo == reciever.getUid():
+                        if relationTo.getAnonymityIdTo() != reciever.getAnonId():
+                            relationTo.setAnonymityIdTo(reciever.getAnonId())
+                            diff -= 1
+                            if not diff:
+                                return 1
+
+        return 0
+    else:
+        return 1
+
+
+def showAllRelationsTo(uId, privKey):
+    """Returns the email address of everyone who the user shares data with"""
+    user = User.objects.filter(UserId=uId)[0]
+    relationsFrom = RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId())
+    return [User.objects.filter(UserId=relation.getUserIdTo)[0].getEmail() for relation in relationsFrom]
+
+
+def showAllRelationsFrom(recieverUId, recieverPrivKey):
+    reciever = User.objects.filter(UserId=recieverUId)[0]
+    relationsTo = RelationTo.object.filter(AnonymityIdTo=reciever.getAnonId())
+    toReturn = []
+    for relation in relationsTo:
+        userDict = dict()
+        userDict['FirstName'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getFirstName(relation.getFromPrivDecrypted(recieverPrivKey))
+        userDict['LastName'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getLastName(relation.getFromPrivDecrypted(recieverPrivKey))
+        userDict['UserId'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getUid()
+        permissions = dict()
+        permissions['Profile'] = int(relation.getPermission([0]))
+        permissions['SaveMePlan'] = int(relation.getPermission([1]))
+        permissions['Check'] = int(relation.getPermission([2]))
+        permissions['Prepare'] = int(relation.getPermission([3]))
+        permissions['Media'] = int(relation.getPermission([4]))
+        userDict['Permissions'] = permissions
+        toReturn.append(userDict)
+    return toReturn
+
+def removeRelation(uId, privKey, recieverEmail):
+    user = User.objects.filter(UserId=uId)[0]
+    reciever = User.objects.filter(Email=recieverEmail)[0]
+    
+    with transaction.atomic:
+        RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(), UserIdTo=reciever.getUid()).delete()
+        relationsTo = RelationTo.object.filter(UserIdFrom=user.getUid())
+        relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), reciever.getUid())).delete()
+    
