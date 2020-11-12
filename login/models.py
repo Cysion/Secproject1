@@ -81,14 +81,14 @@ class User(models.Model):
 
     def setFirstName(self, firstName):
         if self.Pubkey:
-            self.FirstName=rsa_encrypt(self.Pubkey, firstName.encode("utf-8"))
+            self.FirstName=rsa_encrypt(self.Pubkey, firstName.capitalize().encode("utf-8"))
             return 0
         else:
             return 1
 
     def setLastName(self, lastName):
         if self.Pubkey:
-            self.LastName=rsa_encrypt(self.Pubkey, lastName.encode("utf-8"))
+            self.LastName=rsa_encrypt(self.Pubkey, lastName.capitalize().encode("utf-8"))
             return 0
         else:
             return 1
