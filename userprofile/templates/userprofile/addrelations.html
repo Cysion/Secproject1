@@ -7,14 +7,14 @@
 <h1> {{ relations.add_new }} </h1>
 <form action="/userprofile/relations/add/" class="was-validated" method="POST">
     {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
-  
+
     <div class="form-group">
         <label for="email">{{ form.email }}: </label>
         <input type="email" class="form-control" placeholder="{{ form.email }}..."
           id="email" name="email" {% if POST and not alert.email %} value="{{POST.email}}" {% endif %} required>
         <div class="invalid-feedback">{{ form.required }}</div>
     </div>
-    
+
     {% if alert.email == "badChar" %}
     <div class="alert alert-danger">
         <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
@@ -28,27 +28,27 @@
         <strong>{{ alerts.warning }}!</strong> {{ alerts.email_already_exists }}
     </div>
     {% endif %}
-    
+
     <div class="form-group" name="share_data">
         <label for="share_data">{{ form.share_data }}:</label>
         <div class="form-check">
             <label class="form-check-label">
-                <input type="checkbox" class="form-check-input" id="share_profile" value="1"> {{ form.profile }}
+                <input type="checkbox" class="form-check-input" id="share_profile" name="share_profile" value="1"> {{ form.profile }}
             </label>
         </div>
         <div class="form-check">
             <label class="form-check-label">
-                <input type="checkbox" class="form-check-input" id="share_savemeplan" value="1"> {{ form.savemeplan }}
+                <input type="checkbox" class="form-check-input" id="share_savemeplan" name="share_profile" value="1"> {{ form.savemeplan }}
             </label>
         </div>
         <div class="form-check">
             <label class="form-check-label">
-                <input type="checkbox" class="form-check-input" id="share_check" value="1"> {{ form.check }}
+                <input type="checkbox" class="form-check-input" id="share_check" name="share_profile"value="1"> {{ form.check }}
             </label>
         </div>
         <div class="form-check">
             <label class="form-check-label">
-                <input type="checkbox" class="form-check-input" id="share_prepare" value="1"> {{ form.prepare }}
+                <input type="checkbox" class="form-check-input" id="share_prepare" name="share_profile" value="1"> {{ form.prepare }}
             </label>
         </div>
         <div class="form-check">
@@ -56,7 +56,7 @@
                 <input type="checkbox" class="form-check-input" id="share_media" name="share_data" value="1"> {{ form.media }}
             </label>
         </div>
-    
+
         <div class="form-group">
             <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.send_request }}" style="margin-top:10px;">
         </div>
