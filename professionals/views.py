@@ -12,6 +12,7 @@ def ClientsView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
+    clients_lang = get_lang(sections=["professionals"])
     # YOUR CODE HERE
 
     global_alerts = []  # The variable which is sent to template
@@ -19,9 +20,14 @@ def ClientsView(request):
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
+    clients = []
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
+        'no_clients': clients_lang["professionals"]["long_texts"]["no_clients"],
+        'clients': clients,
+        'media': clients_lang["professionals"]["media"]
     }
 
     return render(request, 'professionals/clients.html', args)
