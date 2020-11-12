@@ -50,11 +50,11 @@
     <div class="form-check">
       <label class="form-check-label">
         <input type="radio" class="form-check-input" id="gender" name="gender" value="Other"
-          {% if account.gender == "Other" %} checked {% endif %}
-          {% if POST and POST.gender and POST.gender == "Other" %} checked {% endif %}>
+          {% if account.gender != "Female" and account.gender != "Male" %} checked {% endif %}
+          {% if POST and POST.gender and POST.gender != "Female" and POST.gender != "Male" %} checked {% endif %}>
           <input type="text" class="form-control" style="height: 30px; margin-bottom: 10px;" id="gender_other" name="gender_other"
-          {% if account.gender == "Other" %} value="{{ account.gender }}" {% endif %}
-          {% if POST %} value="{{POST.gender_other}}" {% endif %} maxlength="32">
+          {% if account.gender != "Female" and account.gender != "Male" %} value="{{ account.gender }}" {% endif %}
+          {% if POST %} value="{{POST.gender}}" {% endif %} maxlength="32">
       </label>
     </div>
     {% if alert.gender or alert.gender_other %}

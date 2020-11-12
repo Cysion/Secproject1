@@ -1,6 +1,6 @@
 from django.db import models
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
-import uuid
+from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes, gen_anon_id
+
 
 
 # Create your models here.
@@ -19,14 +19,14 @@ class User(models.Model):
         blank=False,
         unique=True
     )
-    Pubkey = models.CharField(
+    Pubkey = models.BinaryField(
         max_length=512,
         blank=False,
     )
 
     Role_Choices = [
         ('User', 'User'),
-        ('professional', 'professional'),
+        ('Professional', 'Professional'),
         ('Admin', 'Admin')
     ]
 
@@ -35,6 +35,7 @@ class User(models.Model):
         choices=Role_Choices
     )
     Symkey = models.CharField(max_length=256)
+    AnonId = models.BinaryField(max_length=512)
 
     def getUid(self):
         return self.UserId
@@ -57,34 +58,44 @@ class User(models.Model):
     def getEmail(self):
         return self.Email
 
+    def getPubkey(self):
+        return self.Pubkey
+
+    def getRole(self):
+        return self.Role
+
+    def getAnonId(self):
+        return self.AnonId
+
+
     def setPubKey(self, pubKey):
         self.Pubkey=pubKey
         return 0
 
     def setGender(self, gender):
         if self.Pubkey:
-            self.Gender=rsa_encrypt(self.Pubkey.encode("utf-8"), gender.encode("utf-8"))
+            self.Gender=rsa_encrypt(self.Pubkey, gender.encode("utf-8"))
             return 0
         else:
             return 1
 
     def setFirstName(self, firstName):
         if self.Pubkey:
-            self.FirstName=rsa_encrypt(self.Pubkey.encode("utf-8"), firstName.encode("utf-8"))
+            self.FirstName=rsa_encrypt(self.Pubkey, firstName.capitalize().encode("utf-8"))
             return 0
         else:
             return 1
 
     def setLastName(self, lastName):
         if self.Pubkey:
-            self.LastName=rsa_encrypt(self.Pubkey.encode("utf-8"), lastName.encode("utf-8"))
+            self.LastName=rsa_encrypt(self.Pubkey, lastName.capitalize().encode("utf-8"))
             return 0
         else:
             return 1
 
     def setDateOfBirth(self, dateOfBirth):
         if self.Pubkey:
-            self.DateOfBirth=rsa_encrypt(self.Pubkey.encode("utf-8"), dateOfBirth.encode("utf-8)"))
+            self.DateOfBirth=rsa_encrypt(self.Pubkey, dateOfBirth.encode("utf-8)"))
             return 0
         else:
             return 1
@@ -93,46 +104,20 @@ class User(models.Model):
         self.Email = email
         return 0
 
-    def createSymkey(self):
-        pass
+    def setSymkey(self):
+        if self.Pubkey:
+            self.Symkey=rsa_encrypt(self.Pubkey, gen_aes())
+            return 0
+        else:
+            return 1
 
+    def setRole(self, role):
+        self.Role=role
 
+    def setAnonId(self, privKey):
+        self.AnonId=gen_anon_id(self.UserId, self.getDateOfBirth(privKey))
 
-class RelationFrom(models.Model):
-    """User relation table. This table is for users to see which relationship
-    the user have with other users (Friend or therapist for example).
-
-    UserIdTo: Friend, Family or therapist user id.
-    AnonymityIdFrom: The current user. To see which this user have
-    relationsships to.
-    Permission: a bit string where 0 says no permission and 1 says
-    got permission for each permission entry.
-    Key: The public key of the UserIdTo.
-    """
-    RelationFromId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    AnonymityIdFrom = models.IntegerField(blank=False)
-    UserIdTo = models.ForeignKey(User, on_delete=models.CASCADE)
-    Permission = models.CharField(max_length=4)
-    UserIdFromEncrypted = models.BinaryField(max_length=512)
-
-class RelationTo(models.Model):
-    """User relation table. This table is for users to see which relationship
-    the user have with other users (Friend or therapist for example).
-
-    UserIdTo: Friend, Family or therapist user id.
-    AnonymityIdFrom: The current user. To see which this user have
-    relationsships to.
-    Permission: a bit string where 0 says no permission and 1 says
-    got permission for each permission entry.
-    Key: The public key of the AnonymityIdTo.
-    """
-    RelationToId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    UserIdFrom = models.ForeignKey(User, on_delete=models.CASCADE)
-    AnonymityIdTo = models.IntegerField(blank=False)
-    Permission = models.CharField(max_length=4)
-    UserIdToEncrypted = models.BinaryField(max_length=512)
-    FromPrivEncrypted = models.BinaryField(max_length=512)
-
+    
 
 class Action(models.Model):
     """
