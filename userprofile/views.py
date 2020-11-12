@@ -201,3 +201,51 @@ def BackupKeyView(request):
     }
 
     return render(request, 'userprofile/backupkey.html', args)
+
+def relationsView(request):
+    testuser0 = {
+        'FirstName': 'Ludwig',
+        'LastName': 'Wideskar',
+        'Role': 'User'
+    }
+    testuser1 = {
+        'FirstName': 'Kevin',
+        'LastName': 'Engstrom',
+        'Role': 'Professional'
+    }
+    testuser2 = {
+        'FirstName': 'Joakim',
+        'LastName': 'Karlsson',
+        'Role': 'Admin'
+    }
+    #profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
+    profile_lang = get_lang(sections=["userprofile"])
+    
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'relations': profile_lang["userprofile"]["relations"],
+        #'profile': profile_lang,
+        'testuser0': testuser0,
+        'testuser1': testuser1,
+        'testuser2': testuser2
+    }
+
+
+    return render(request, 'userprofile/relations.html', args)
+
+def addRelationsView(request):
+    profile_lang = get_lang(sections=["userprofile"])
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'relations': profile_lang["userprofile"]["relations"],
+        'form': profile_lang["userprofile"]["relations"]["form"]
+    }
+
+    return render(request, 'userprofile/addrelations.html', args)
+
+def manageRelationsView(request):
+    return render(request, 'userprofile/managerelations.html')
