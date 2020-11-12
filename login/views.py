@@ -268,6 +268,7 @@ def showAllRelationsFrom(recieverUId, recieverPrivKey):
         userDict = dict()
         userDict['FirstName'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getFirstName(relation.getFromPrivDecrypted(recieverPrivKey))
         userDict['LastName'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getLastName(relation.getFromPrivDecrypted(recieverPrivKey))
+        userDict['UserId'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getUid()
         permissions = dict()
         permissions['Profile'] = int(relation.getPermission([0]))
         permissions['SaveMePlan'] = int(relation.getPermission([1]))
