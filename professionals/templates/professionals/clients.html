@@ -1,12 +1,37 @@
 {% extends "base.html" %}
 
-{% block title %}Change your password{% endblock %}
+{% block title %}List of clients who share data with you.{% endblock %}
 
 {% block statics %}
 {% load static %}
-<!-- <link rel="stylesheet" href="{% static "userprofile/profile.css" %}"> -->
+<link rel="stylesheet" href="{% static "professionals/clients.css" %}">
 {% endblock %}
 
 {% block content %}
+
+{% for user in clients %}
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">{{ user.FirstName }} {{ user.LastName }}</h4>
+    {% for app, permission in user.Permissions %}
+      {% if permission == 1 %}
+        {% if app == "Profile" %}
+          <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ menu_titles.4 }}</a>
+        {% elif app == "SaveMePlan" %}
+          <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ menu_titles.6 }}</a>
+          {% elif app == "Check" %}
+            <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ menu_titles.7 }}</a>
+          {% elif app == "Prepare" %}
+            <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ menu_titles.5 }}</a>
+            {% elif app == "Media" %}
+              <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ media }}</a>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% empty %}
+  <h4 style="text-align: center;">{{ no_clients }}!</h4>
+{% endfor %}
 
 {% endblock %}
