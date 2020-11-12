@@ -60,5 +60,5 @@ class RelationTo(models.Model):
     def setAnonymityIdTo(self, anonId):
         self.AnonymityIdTo = anonId
 
-
-# Create your models here.
+    def setFromPrivEncrypted(self, toPub, fromPriv):
+        self.rsa_encrypt(toPub, fromPriv.encode("utf-8"))
