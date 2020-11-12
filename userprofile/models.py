@@ -21,6 +21,9 @@ class RelationFrom(models.Model):
     Permission = models.CharField(max_length=4)
     UserIdFromEncrypted = models.BinaryField(max_length=512)
 
+    def getUserIdTo(self):
+        return self.UserIdTo
+
     def getUserIdFromDecrypted(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.UserIdFromEncrypted)
 
@@ -38,15 +41,21 @@ class RelationTo(models.Model):
     RelationToId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     UserIdFrom = models.ForeignKey(User, on_delete=models.CASCADE)
     AnonymityIdTo = models.IntegerField(blank=False)
-    Permission = models.CharField(max_length=4)
+    Permission = models.CharField(max_length=5)
     UserIdToEncrypted = models.BinaryField(max_length=512)
     FromPrivEncrypted = models.BinaryField(max_length=512)
 
-    def getUserIdToDecrypted(self, privKey):
-        return rsa_decrypt(privKey.encode("utf-8"), self.UserIdToEncrypted)
+    def getUserIdToDecrypted(self, toPrivKey):
+        return rsa_decrypt(toPrivKey.encode("utf-8"), self.UserIdToEncrypted)
+
+    def getPermission(self):
+        return self.Permission
     
     def getAnonymityIdTo(self):
         return self.AnonymityIdTo
+
+    def getFromPrivDecrypted(self, toPrivKey):
+        return rsa_decrypt(toPrivKey.encode("utf-8"), self.FromPrivEncrypted)
 
     def setAnonymityIdTo(self, anonId):
         self.AnonymityIdTo = anonId
