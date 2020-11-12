@@ -5,7 +5,7 @@
 {% block content %}
 
 <h1> {{ relations.add_new }} </h1>
-<form action="/relations/add/" class="was-validated" method="POST">
+<form action="/userprofile/relations/add/" class="was-validated" method="POST">
     {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
   
     <div class="form-group">
