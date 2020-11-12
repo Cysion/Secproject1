@@ -3,7 +3,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 # Create your views here.
 
-from login.models import User, RelationFrom, RelationTo
+from userprofile.models import RelationFrom, RelationTo
+from login.models import User
 from django.db import transaction
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
 from userprofile.views import checkPassword, changePass
