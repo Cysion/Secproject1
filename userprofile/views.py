@@ -233,20 +233,23 @@ def BackupKeyView(request):
 def relationsView(request):
     testuser0 = {
         'FirstName': 'Ludwig',
-        'LastName': 'Wideskar',
-        'Role': 'User'
+        'LastName': 'Wideskär',
+        'Role': 'User',
+        'PhoneNr': '+46 708 123456'
     }
     testuser1 = {
         'FirstName': 'Kevin',
-        'LastName': 'Engstrom',
-        'Role': 'Professional'
+        'LastName': 'Engström',
+        'Role': 'Professional',
+        'PhoneNr': '+46 708 345612'
     }
     testuser2 = {
         'FirstName': 'Joakim',
         'LastName': 'Karlsson',
-        'Role': 'Admin'
+        'Role': 'Admin',
+        'PhoneNr': '+46 708 561234'
     }
-    #profile_lang = get_lang(sections=["userprofile"])
+    users = [testuser0, testuser1, testuser2]
     login_lang = get_lang(sections=["login"])
     profile_lang = get_lang(sections=["userprofile"])
 
@@ -254,10 +257,7 @@ def relationsView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'relations': profile_lang["userprofile"]["relations"],
-        #'profile': profile_lang,
-        'testuser0': testuser0,
-        'testuser1': testuser1,
-        'testuser2': testuser2
+        'users': users
     }
 
 
