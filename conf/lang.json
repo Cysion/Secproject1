@@ -127,6 +127,7 @@
         "manage": "Manage",
         "call": "Call",
         "add_new": "Add a new relation",
+        "my_relations": "My relations",
         "form": {  
           "required":"This field is required",
           "email":"Email",
@@ -143,7 +144,7 @@
         "edit":"Edit your info",
         "change_pass":"Change password",
         "save_backup":"Save backup key",
-        "relation": "Edit your relations",
+        "relations": "Relations",
         "logout":"Logout",
         "backupkey":"This is your backup key if you forgot your password. Please save this on a save place!. Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
         "change_password_text":"When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
