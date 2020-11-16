@@ -231,26 +231,12 @@ def BackupKeyView(request):
     return render(request, 'userprofile/backupkey.html', args)
 
 def relationsView(request):
-    testuser0 = {
-        'FirstName': 'Ludwig',
-        'LastName': 'Wideskär',
-        'Role': 'User',
-        'PhoneNr': '+46 708 123456'
-    }
-    testuser1 = {
-        'FirstName': 'Kevin',
-        'LastName': 'Engström',
-        'Role': 'Professional',
-        'PhoneNr': '+46 708 345612'
-    }
-    testuser2 = {
-        'FirstName': 'Joakim',
-        'LastName': 'Karlsson',
-        'Role': 'Admin',
-        'PhoneNr': '+46 708 561234'
-    }
-    users = [testuser0, testuser1, testuser2]
-    login_lang = get_lang(sections=["login"])
+    if not 'UserId' in request.session.keys():
+        return HttpResponseRedirect(reverse('login:Login'))
+    
+    
+    users = showAllRelationsTo(request.session['UserId'], request.session['privKey'])
+
     profile_lang = get_lang(sections=["userprofile"])
 
     args = {
@@ -301,7 +287,26 @@ def addRelationsView(request):
     return render(request, 'userprofile/addrelations.html', args)
 
 def manageRelationsView(request):
-    return render(request, 'userprofile/managerelations.html')
+    profile_lang = get_lang(sections=["userprofile"])
+
+    testuser = {
+        'FirstName': 'Ludwig',
+        'LastName': 'Wideskär',
+        'Role': 'User',
+        'PhoneNumber': '+46 708 123456'
+    }
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'relations': profile_lang["userprofile"]["relations"],
+        'form': profile_lang["userprofile"]["relations"]["form"],
+        'user': testuser
+    }
+
+    
+
+    return render(request, 'userprofile/managerelations.html', args)
 
 
 def createRelation(uId:int, privKey, recieverEmail:str, permissions:str):
@@ -342,23 +347,30 @@ def updateRelationTo(recieverUId:int, recieverPrivKey):
     """Because a user sharing data cannot complete the RelationTo entry, it has to be updated by the reciever.
     Returns 1 on success, 0 on failure"""
     reciever = User.objects.filter(UserId=recieverUId)[0]
-    relationsFrom = RelationFrom.objects.filter(UserIdTo=recieverUId)
-    relationsTo = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId())
-    if(len(relationsFrom) != len(relationsTo)):
-        diff = abs(len(relationsFrom) != len(relationsTo))
+    relationsFrom = RelationFrom.objects.filter(UserIdTo=reciever)
+    relationsToReciever = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId())
+    if(len(relationsFrom) != len(relationsToReciever)):
+        diff = abs(len(relationsFrom) - len(relationsToReciever))
         for relationFrom in relationsFrom:
             relationFrom.getUserIdFromDecrypted(recieverPrivKey)
+            relationsTo = RelationTo.objects.filter(UserIdFrom=User.objects.filter(AnonId=relationFrom.getAnonymityIdFrom())[0])
             for relationTo in relationsTo:
+                print(relationTo)
                 try:
                     uIdTo = relationTo.getUserIdToDecrypted(recieverPrivKey)
                 except:#Possible exceptions here
                     pass
                 else:
+                    print("else")
                     if uIdTo == reciever.getUid():
+                        print("true")
                         if relationTo.getAnonymityIdTo() != reciever.getAnonId():
+                            print("supertrue")
                             relationTo.setAnonymityIdTo(reciever.getAnonId())
+                            relationTo.save()
                             diff -= 1
                             if not diff:
+
                                 return 1
 
         return 0
@@ -370,24 +382,26 @@ def showAllRelationsTo(uId, privKey):
     """Returns the email address of everyone who the user shares data with"""
     user = User.objects.filter(UserId=uId)[0]
     relationsFrom = RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId())
-    return [User.objects.filter(UserId=relation.getUserIdTo)[0].getEmail() for relation in relationsFrom]
+    return [relation.getUserIdTo().getEmail() for relation in relationsFrom]
 
 
 def showAllRelationsFrom(recieverUId, recieverPrivKey):
     reciever = User.objects.filter(UserId=recieverUId)[0]
-    relationsTo = RelationTo.object.filter(AnonymityIdTo=reciever.getAnonId())
+    relationsTo = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId())
     toReturn = []
     for relation in relationsTo:
+        print("inne")
         userDict = dict()
-        userDict['FirstName'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getFirstName(relation.getFromPrivDecrypted(recieverPrivKey))
-        userDict['LastName'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getLastName(relation.getFromPrivDecrypted(recieverPrivKey))
-        userDict['UserId'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getUid()
+        userDict['FirstName'] = relation.getUserIdFrom().getFirstName(relation.getFromPrivDecrypted(recieverPrivKey).decode("utf-8"))
+        userDict['LastName'] = relation.getUserIdFrom().getLastName(relation.getFromPrivDecrypted(recieverPrivKey).decode("utf-8"))
+        userDict['UserId'] = relation.getUserIdFrom().getUid()
+        print (userDict['FirstName'])
         permissions = dict()
-        permissions['Profile'] = int(relation.getPermission([0]))
-        permissions['SaveMePlan'] = int(relation.getPermission([1]))
-        permissions['Check'] = int(relation.getPermission([2]))
-        permissions['Prepare'] = int(relation.getPermission([3]))
-        permissions['Media'] = int(relation.getPermission([4]))
+        permissions['Profile'] = int(relation.getPermission()[0])
+        permissions['SaveMePlan'] = int(relation.getPermission()[1])
+        permissions['Check'] = int(relation.getPermission()[2])
+        permissions['Prepare'] = int(relation.getPermission()[3])
+        permissions['Media'] = int(relation.getPermission()[4])
         userDict['Permissions'] = permissions
         toReturn.append(userDict)
     return toReturn
