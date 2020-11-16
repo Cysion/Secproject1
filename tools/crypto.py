@@ -47,7 +47,7 @@ def rsa_encrypt(pub_key:bytes, data:bytes) -> bytes:
 
 
 def rsa_encrypt_long(pub_key:bytes, data) -> bytes:
-    """Used to encrypt bigger datablobs with RSA. it splits the data in chunks of 
+    """Used to encrypt bigger datablobs with RSA. it splits the data in chunks of
     180 bytes and encrypts them piecemeal then concatenates the result
     pub_key = rsa public key in str form. is imported by RSA.import_key()
     data = data to be encrypted"""
@@ -59,7 +59,7 @@ def rsa_encrypt_long(pub_key:bytes, data) -> bytes:
 
 
 def rsa_decrypt_long(priv_key:bytes, data) -> bytes:
-    """Used to decrypt bigger datablobs with RSA. it splits the data in chunks of 
+    """Used to decrypt bigger datablobs with RSA. it splits the data in chunks of
     256 bytes and decrypts them piecemeal then concatenates the result
     pub_key = rsa public key in str form. is imported by RSA.public_key.import_key()
     data = data to be encrypted"""
@@ -179,5 +179,5 @@ if __name__ == "__main__":
             text += "i"
         cryptogram = rsa_encrypt_long(key.publickey().export_key(), text.encode("utf-8"))
         text2 = rsa_decrypt_long(key.export_key(), cryptogram).decode("utf-8")
-        
+
         assert text==text2
