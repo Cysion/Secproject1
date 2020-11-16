@@ -20,7 +20,7 @@
         </div>
         <div class="col-md">
             <div class="my-1">
-                <a type="button" class="btn btn-lg btn-info btn-block" href="#">{{ relations.manage }}</a>
+                <a type="button" class="btn btn-lg btn-info btn-block" href="manage">{{ relations.manage }}</a>
             </div>
             <div class="my-1">
                 <a type="button" class="btn btn-lg btn-success btn-block" href="#">{{ relations.call }}</a>
@@ -30,5 +30,7 @@
     {% endfor %}
 </div>
 <a type="button" class="btn btn-lg btn-warning btn-block" href="add">{{ relations.add_new }}</a>
+
+<a type="button" class="btn btn-lg btn-primary btn-block" href="/userprofile">{{ back }}</a>
 
 {% endblock %}
