@@ -409,5 +409,17 @@ def removeRelation(uId, privKey, recieverEmail):
 
     with transaction.atomic:
         RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(), UserIdTo=reciever.getUid()).delete()
-        relationsTo = RelationTo.object.filter(UserIdFrom=user.getUid())
+        relationsTo = RelationTo.object.filter(UserIdFrom=user)
         relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), reciever.getUid())).delete()
+        return 0
+    return 1
+
+def modifyRelation(uId, privKey, recieverEmail, permission):
+    user = User.objects.filter(UserId=uId)[0]
+    reciever = User.objects.filter(Email=recieverEmail.lower())[0]
+    with transaction.atomic:
+        RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(), UserIdTo=reciever.getUid())[0].setPermission(permission)
+        relationsTo = RelationTo.object.filter(UserIdFrom=user)
+        relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), reciever.getUid()))[0].setPermission(permission)
+        return 0
+    return 1
