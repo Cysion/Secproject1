@@ -1,5 +1,5 @@
 from django.db import models
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes, gen_anon_id
+from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes, gen_anon_id,  rsa_encrypt_long, rsa_decrypt_long
 import uuid
 from login.models import User
 
@@ -27,6 +27,9 @@ class RelationFrom(models.Model):
     def getUserIdFromDecrypted(self, privKey):
         return int(rsa_decrypt(privKey.encode("utf-8"), self.UserIdFromEncrypted).decode("utf-8"))
 
+    def getAnonymityIdFrom(self):
+        return self.AnonymityIdFrom
+
 class RelationTo(models.Model):
     """User relation table. This table is for users to see which relationship
     the user have with other users (Friend or therapist for example).
@@ -45,6 +48,9 @@ class RelationTo(models.Model):
     UserIdToEncrypted = models.BinaryField(max_length=512)
     FromPrivEncrypted = models.BinaryField(max_length=512)
 
+    def getUserIdFrom(self):
+        return self.UserIdFrom
+
     def getUserIdToDecrypted(self, toPrivKey):
         return int(rsa_decrypt(toPrivKey.encode("utf-8"), self.UserIdToEncrypted).decode("utf-8"))
 
@@ -55,7 +61,7 @@ class RelationTo(models.Model):
         return self.AnonymityIdTo
 
     def getFromPrivDecrypted(self, toPrivKey):
-        return rsa_decrypt(toPrivKey.encode("utf-8"), self.FromPrivEncrypted)
+        return rsa_decrypt_long(toPrivKey.encode("utf-8"), self.FromPrivEncrypted)
 
     def setAnonymityIdTo(self, anonId):
         self.AnonymityIdTo = anonId
