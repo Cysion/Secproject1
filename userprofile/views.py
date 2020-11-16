@@ -8,7 +8,7 @@ from login.models import User
 from tools.crypto import gen_rsa, secret_scrambler
 from tools.confman import get_lang
 from django.db import transaction
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
+from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 # Create your views here.
@@ -264,13 +264,38 @@ def relationsView(request):
     return render(request, 'userprofile/relations.html', args)
 
 def addRelationsView(request):
+    if 'UserId' not in request.session.keys():  # Check if user is logged in
+        return HttpResponseRedirect(reverse('login:Login'))
+
     profile_lang = get_lang(sections=["userprofile"])
+
+    alerts=dict()
+    if request.method == 'POST':
+        if User.objects.filter(Email=request.POST['email'].lower()):
+            recieverEmail= request.POST['email'].lower()
+        else:
+            alerts['email'] = 'email_does_not_exist'
+
+        if not alerts:
+            user=User.objects.filter(UserId=request.session['UserId'])[0]
+            permissions = '1'
+            permissions+='1' if 'share_savemeplan' in request.POST else '0'
+            permissions+='1' if 'share_check' in request.POST else '0'
+            permissions+='1' if 'share_prepare' in request.POST else '0'
+            permissions+='1' if 'share_media' in request.POST else '0'
+            
+            if not createRelation(user.getUid(), request.session['privKey'], recieverEmail, permissions):
+                return HttpResponseRedirect(reverse('userprofile:Profile'))
+            else:
+                alerts['database'] = 'database_error'
+        
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'relations': profile_lang["userprofile"]["relations"],
-        'form': profile_lang["userprofile"]["relations"]["form"]
+        'form': profile_lang["userprofile"]["relations"]["form"],
+        'alerts': alerts
     }
 
     return render(request, 'userprofile/addrelations.html', args)
@@ -289,27 +314,29 @@ def createRelation(uId:int, privKey, recieverEmail:str, permissions:str):
     Media
     """
     user = User.objects.filter(UserId=uId)[0]
-    reciever = User.objects.filter(Email=recieverEmail)[0]
+    reciever = User.objects.filter(Email=recieverEmail.lower())[0]
+    
+    #try:
+    with transaction.atomic():
+        relationFromEntry = RelationFrom(
+            AnonymityIdFrom = user.getAnonId(),
+            UserIdTo = reciever,
+            Permission = permissions,
+            UserIdFromEncrypted = rsa_encrypt( reciever.getPubkey(), str(user.getUid()).encode("utf-8"))
+        )
+        relationFromEntry.save()
 
-    try:
-        with transaction.atomic:
-            relationFromEntry = RelationFrom(
-                AnonymityIdFrom = user.getAnonId(),
-                UserIdTo = reciever.getUid(),
-                Permission = permissions,
-                UserIdFromEncrypted = rsa_encrypt( reciever.getPubkey(), user.getUid())
-            )
-
-            relationToEntry = RelationTo(
-                UserIdFrom = user.getUid(),
-                Permission = permissions,
-                UserIdToEncrypted = rsa_encrypt(reciever.getPubkey(),reciever.getUid()),
-                FromPrivEncrypted = rsa_encrypt(reciever.getPubkey(), privKey.encode("utf-8"))
-            )
-    except: #Possible exceptions here
-        return 0
-    else:
-        return 1
+        relationToEntry = RelationTo(
+            UserIdFrom = user,
+            Permission = permissions,
+            UserIdToEncrypted = rsa_encrypt(reciever.getPubkey(),str(reciever.getUid()).encode("utf-8")),
+            FromPrivEncrypted = rsa_encrypt_long(reciever.getPubkey(), privKey.encode("utf-8"))
+        )
+        relationToEntry.save()
+    #except: #Exeption as e: #Possible exceptions here
+        #return 1
+    #else:
+    return 0
 
 def updateRelationTo(recieverUId:int, recieverPrivKey):
     """Because a user sharing data cannot complete the RelationTo entry, it has to be updated by the reciever.
@@ -367,7 +394,7 @@ def showAllRelationsFrom(recieverUId, recieverPrivKey):
 
 def removeRelation(uId, privKey, recieverEmail):
     user = User.objects.filter(UserId=uId)[0]
-    reciever = User.objects.filter(Email=recieverEmail)[0]
+    reciever = User.objects.filter(Email=recieverEmail.lower())[0]
 
     with transaction.atomic:
         RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(), UserIdTo=reciever.getUid()).delete()
