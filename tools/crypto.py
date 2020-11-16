@@ -46,7 +46,25 @@ def rsa_encrypt(pub_key:bytes, data:bytes) -> bytes:
     return cipher_rsa.encrypt(data)
 
 
-def rsa_decrypt(priv_key:bytes, data:bytes) -> bytes:
+def rsa_encrypt_long(pub_key:bytes, data) -> bytes:
+    """Boring text"""
+    cryptogram = b""
+    for i in range(0, len(data), 180):
+        cryptogram += rsa_encrypt(pub_key, data[i:i+180])
+    return cryptogram
+    #return b"".join([rsa_encrypt(pub_key, data[i:i+180].encode("utf-8")) for i in range(0, len(data), 180)])
+
+
+def rsa_decrypt_long(priv_key:bytes, data) -> bytes:
+    """Boring text"""
+    plain_text = b""
+    for i in range(0, len(data), 256):
+        plain_text += rsa_decrypt(priv_key, data[i:i+256])
+    return plain_text
+    #return b"".join([rsa_decrypt(priv_key, text[i:i+256].encode("utf-8")) for i in range(0, len(data), 256)])
+
+
+def rsa_decrypt(priv_key:bytes, data) -> bytes:
     """decrypts data with priv_key. warning: slower than using symcrypto
     priv_key = rsa private key in str form. is imported by RSA.import_key()
     data = data to be encrypted
@@ -96,7 +114,7 @@ if __name__ == "__main__":
 
     #WHAT FOLLOWS IS A USAGE DEMO FOR ABOVE FUNCTIONS
     import json
-    sections = (0,0,0,0,1)
+    sections = (1,0,0,0,0,1)
     print("this is a short presentation of the crypro functions for this project")
     if sections[0]:
         print("create a fake user!")
@@ -149,3 +167,11 @@ if __name__ == "__main__":
         print("the blob is ", blob)
         dec = aes_decrypt(key, blob)
         print("decrypted is ", dec.decode("utf-8"))
+    if sections[5]:
+        text="lång jävla sträng!"
+        for i in range(1600):
+            text += "i"
+        cryptogram = rsa_encrypt_long(key.publickey().export_key(), text.encode("utf-8"))
+        text2 = rsa_decrypt_long(key.export_key(), cryptogram).decode("utf-8")
+        
+        assert text==text2

@@ -50,7 +50,6 @@ def RegisterView(request):
                 alerts['repassword'] = "repassword"
             if getUidFromEmail(request.POST["email"]):
                 alerts['email'] = 'email_already_exists'
-
             if not alerts:
                 try:
                     with transaction.atomic():
@@ -89,10 +88,10 @@ def getUidFromEmail(newMail):
     return False
 
 def registerUser(postData): # Place function somewere else.
-    user = User(Email=postData["email"])
+    user = User(Email=postData["email"].lower())
     user.save()
     key = gen_rsa(secret_scrambler(postData["password"], user.UserId))
-    
+
     user.setPubKey(key.publickey().export_key())
     if postData['gender'] == 'Other':
         user.setGender(postData['gender_other'])
@@ -101,20 +100,20 @@ def registerUser(postData): # Place function somewere else.
     user.setFirstName(postData['first_name'])
     user.setLastName(postData['last_name'])
     user.setDateOfBirth(postData['date_of_birth'])
-    user.setRole('professional') if 'Professional' in postData else user.setRole('User')
+    user.setRole('professional') if 'professional' in postData else user.setRole('User')
     user.setAnonId(key.export_key().decode("utf-8"))
     user.save()
     return user.getUid(), key.export_key(), user.getRole()
-    
+
 
 def LoginView(request):
     if 'UserId' in request.session:
         return HttpResponseRedirect(reverse('userprofile:Profile'))
-        
+
     loginFail = False
     if request.method == 'POST':
 
-        user = User.objects.filter(Email=request.POST['email'])[0]
+        user = User.objects.filter(Email=request.POST['email'].lower())[0]
         if user:
             key = gen_rsa(secret_scrambler(request.POST["password"], user.getUid()))
             if str(key.publickey().export_key()) == str(user.getPubkey()):
@@ -140,7 +139,7 @@ def LoginView(request):
     }
 
     return render(request, 'login/login.html', args)
-    
+
 
 def forgotPasswordView(request):
     """
@@ -166,7 +165,7 @@ def forgotPasswordView(request):
 
     if 'UserId' in request.session:
         return HttpResponseRedirect(reverse('userprofile:Profile'))
-    
+
     if request.method == 'POST':
         if request.POST['password'] == request.POST['repassword']:
             user = User.objects.filter(Email=request.POST['email'])[0]
@@ -182,7 +181,7 @@ def forgotPasswordView(request):
         else:
             alerts["repassword"] = "repassword"
 
-   
+
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
@@ -199,5 +198,3 @@ def forgotPasswordView(request):
     }
 
     return render(request, 'login/forgotpassword.html', args)
-
-
