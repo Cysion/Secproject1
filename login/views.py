@@ -88,7 +88,7 @@ def getUidFromEmail(newMail):
     return False
 
 def registerUser(postData): # Place function somewere else.
-    user = User(Email=postData["email"])
+    user = User(Email=postData["email"].lower())
     user.save()
     key = gen_rsa(secret_scrambler(postData["password"], user.UserId))
 
@@ -113,7 +113,7 @@ def LoginView(request):
     loginFail = False
     if request.method == 'POST':
 
-        user = User.objects.filter(Email=request.POST['email'])[0]
+        user = User.objects.filter(Email=request.POST['email'].lower())[0]
         if user:
             key = gen_rsa(secret_scrambler(request.POST["password"], user.getUid()))
             if str(key.publickey().export_key()) == str(user.getPubkey()):
