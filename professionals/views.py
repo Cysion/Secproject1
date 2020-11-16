@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+from userprofile.views import showAllRelationsFrom, updateRelationTo
+
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
@@ -14,17 +16,19 @@ def ClientsView(request):
 
     clients_lang = get_lang(sections=["professionals"])
     # YOUR CODE HERE
+    """ Clients should be a list with dicts. With following keys:
+    FirstName (string), LastName (string),
+    Permissions (dict) with key as Profile, SaveMePlan, Check, Prepare or Media
+    Values as 1 or 0 where 1 is got access and 0 denied access."""
+
+    updateRelationTo(request.session['UserId'], request.session['privKey'])
+    clients = showAllRelationsFrom(request.session['UserId'], request.session['privKey'])
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
-    """ Clients should be a list with dicts. With following keys:
-    FirstName (string), LastName (string),
-    Permissions (dict) with key as Profile, SaveMePlan, Check, Prepare or Media
-    Values as 1 or 0 where 1 is got access and 0 denied access."""
-    clients = []
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
