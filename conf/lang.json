@@ -140,11 +140,13 @@
           "prepare":"Prepare",
           "media":"Media",
           "send_request":"Send relation request",
-          "name":"Name",
-          "phone_number":"Phone number",
-          "user_type":"User type",
           "save_changes":"Save changes",
           "remove_relation":"Remove this relation"
+        },
+        "modal": {
+          "confirm_action":"Confirm your action",
+          "confirm_remove_relation":"Are you sure that you want to remove this relation?",
+          "close":"Close"
         }
       },
       "long_texts":{
