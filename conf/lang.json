@@ -125,9 +125,12 @@
       "title":"userprofile",
       "relations": {
         "manage": "Manage",
+        "manage_relation":"Manage relation",
         "call": "Call",
         "add_new": "Add a new relation",
-        "form": {  
+        "my_relations": "My relations",
+        "form": {
+          "enter_phone_number":"Enter a phone number",
           "required":"This field is required",
           "email":"Email",
           "share_data":"Select data that you want to share",
@@ -136,14 +139,19 @@
           "check":"Check",
           "prepare":"Prepare",
           "media":"Media",
-          "send_request":"Send relation request"
+          "send_request":"Send relation request",
+          "name":"Name",
+          "phone_number":"Phone number",
+          "user_type":"User type",
+          "save_changes":"Save changes",
+          "remove_relation":"Remove this relation"
         }
       },
       "long_texts":{
         "edit":"Edit your info",
         "change_pass":"Change password",
         "save_backup":"Save backup key",
-        "relation": "Edit your relations",
+        "relations": "Relations",
         "logout":"Logout",
         "backupkey":"This is your backup key if you forgot your password. Please save this on a save place!. Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
         "change_password_text":"When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",

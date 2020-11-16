@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Manage relations{% endblock %}
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "userprofile/relations.css" %}">
+{% endblock %}
+
+{% block content %}
+<h1>{{ relations.manage_relation }}</h1>
+
+<form action="/userprofile/relations/manage/" class="was-validated" method="POST">
+    {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
+    <div class="container">
+
+        <div class="relations my-1 row">
+            <div class="col-md">
+                <p><strong>{{ form.name }}:</strong><br>
+                {{ user.FirstName }} {{ user.LastName }}</p>
+                <p><strong>{{ form.user_type }}:</strong><br>
+                {{ user.Role }}</p>
+                <label><strong>{{ form.phone_number }}:</strong>
+                    <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="{{ form.enter_phone_number }}..." maxlength="64"
+                    value="{{ user.PhoneNumber }}" {% if POST %} value="{{POST.PhoneNumber}}" {% endif %}{# If post already has been submitted #} required>
+                </label>
+            </div>
+
+            <div class="form-group col-md" name="share_data">
+                <label for="share_data"><strong>{{ form.share_data }}:</strong></label>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" id="share_profile" name="share_profile" value="1" checked disabled> {{ form.profile }}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" id="share_savemeplan" name="share_profile" value="1"> {{ form.savemeplan }}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" id="share_check" name="share_profile"value="1"> {{ form.check }}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" id="share_prepare" name="share_profile" value="1"> {{ form.prepare }}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" id="share_media" name="share_data" value="1"> {{ form.media }}
+                    </label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.save_changes }}" style="margin-top:10px;">
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn btn-lg btn-danger btn-block" value="{{ form.remove_relation }}" style="margin-top:10px;">
+    </div>
+</form>
+
+
+<a type="button" class="btn btn-lg btn-primary btn-block" href="/userprofile/relations">{{ back }}</a>
+
+{% endblock %}

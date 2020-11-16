@@ -56,7 +56,7 @@ class User(models.Model):
         return rsa_decrypt(privKey.encode("utf-8"), self.DateOfBirth).decode("utf-8")
 
     def getEmail(self):
-        return self.Email
+        return self.Email.lower()
 
     def getPubkey(self):
         return self.Pubkey

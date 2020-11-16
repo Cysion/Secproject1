@@ -1,5 +1,5 @@
 from django.db import models
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes, gen_anon_id
+from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes, gen_anon_id,  rsa_encrypt_long, rsa_decrypt_long
 import uuid
 from login.models import User
 
@@ -16,16 +16,19 @@ class RelationFrom(models.Model):
     Key: The public key of the UserIdTo.
     """
     RelationFromId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    AnonymityIdFrom = models.IntegerField(blank=False)
+    AnonymityIdFrom = models.BinaryField(blank=False)
     UserIdTo = models.ForeignKey(User, on_delete=models.CASCADE)
-    Permission = models.CharField(max_length=4)
+    Permission = models.CharField(max_length=5)
     UserIdFromEncrypted = models.BinaryField(max_length=512)
 
     def getUserIdTo(self):
         return self.UserIdTo
 
     def getUserIdFromDecrypted(self, privKey):
-        return rsa_decrypt(privKey.encode("utf-8"), self.UserIdFromEncrypted)
+        return int(rsa_decrypt(privKey.encode("utf-8"), self.UserIdFromEncrypted).decode("utf-8"))
+
+    def getAnonymityIdFrom(self):
+        return self.AnonymityIdFrom
 
 class RelationTo(models.Model):
     """User relation table. This table is for users to see which relationship
@@ -40,13 +43,16 @@ class RelationTo(models.Model):
     """
     RelationToId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     UserIdFrom = models.ForeignKey(User, on_delete=models.CASCADE)
-    AnonymityIdTo = models.IntegerField(blank=False)
+    AnonymityIdTo = models.BinaryField(blank=False)
     Permission = models.CharField(max_length=5)
     UserIdToEncrypted = models.BinaryField(max_length=512)
     FromPrivEncrypted = models.BinaryField(max_length=512)
 
+    def getUserIdFrom(self):
+        return self.UserIdFrom
+
     def getUserIdToDecrypted(self, toPrivKey):
-        return rsa_decrypt(toPrivKey.encode("utf-8"), self.UserIdToEncrypted)
+        return int(rsa_decrypt(toPrivKey.encode("utf-8"), self.UserIdToEncrypted).decode("utf-8"))
 
     def getPermission(self):
         return self.Permission
@@ -55,7 +61,7 @@ class RelationTo(models.Model):
         return self.AnonymityIdTo
 
     def getFromPrivDecrypted(self, toPrivKey):
-        return rsa_decrypt(toPrivKey.encode("utf-8"), self.FromPrivEncrypted)
+        return rsa_decrypt_long(toPrivKey.encode("utf-8"), self.FromPrivEncrypted)
 
     def setAnonymityIdTo(self, anonId):
         self.AnonymityIdTo = anonId
