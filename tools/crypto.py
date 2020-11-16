@@ -37,7 +37,7 @@ def qdigest(longstr):
     return sha1.hexdigest()
 
 
-def rsa_encrypt(pub_key:bytes, data) -> bytes:
+def rsa_encrypt(pub_key:bytes, data:bytes) -> bytes:
     """encrypts data with pub_key. warning: slower than using symcrypto
     pub_key = rsa public key in str form. is imported by RSA.import_key()
     data = data to be encrypted
@@ -88,7 +88,6 @@ def gen_aes(keysize=128) -> bytes:
     return urandom(keysize//8)
 
 
-
 def aes_encrypt(sym_key:bytes, data) -> bytes:
     """simple wrapper function that encrypts data with aes
     returns object where the first 16 bytes is nonce, next 16 is tag, rest is ciphertext
@@ -96,6 +95,7 @@ def aes_encrypt(sym_key:bytes, data) -> bytes:
     data = data to be encrypted. bytes like preferred"""
     cipher = AES.new(sym_key, AES.MODE_EAX)
     ciphertext, tag = cipher.encrypt_and_digest(data)
+    del data
     return b''.join([cipher.nonce, tag, ciphertext])
 
 
@@ -108,8 +108,6 @@ def aes_decrypt(sym_key:bytes, data) -> bytes:
     cipher = AES.new(sym_key, AES.MODE_EAX, nonce)
     cleartext = cipher.decrypt_and_verify(ciphertext, tag)
     return cleartext
-
-
 
 
 if __name__ == "__main__":
