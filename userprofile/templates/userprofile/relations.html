@@ -2,10 +2,33 @@
 
 {% block title %}Relations{% endblock %}
 
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "userprofile/relations.css" %}">
+{% endblock %}
+
 {% block content %}
-
-<h1> test</h1>
-
-<a type="button" class="btn btn-lg btn-warning btn-block" href="add">Add relation</a>
+<h1>{{ relations.my_relations }}</h1>
+<div class="container">
+    {% for i in users %}
+    <div class="relations my-1 row">
+        
+        <div class="col-md">
+            <p class=""><strong>{{ i.FirstName }} {{ i.LastName }}</strong><br>
+                <small>{{ i.Role }}</small><br>
+                {{ i.PhoneNr }}</p>
+        </div>
+        <div class="col-md">
+            <div class="my-1">
+                <a type="button" class="btn btn-lg btn-info btn-block" href="#">{{ relations.manage }}</a>
+            </div>
+            <div class="my-1">
+                <a type="button" class="btn btn-lg btn-success btn-block" href="#">{{ relations.call }}</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<a type="button" class="btn btn-lg btn-warning btn-block" href="add">{{ relations.add_new }}</a>
 
 {% endblock %}
