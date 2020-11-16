@@ -231,6 +231,11 @@ def BackupKeyView(request):
     return render(request, 'userprofile/backupkey.html', args)
 
 def relationsView(request):
+    testuser0 = "a@a.se"
+    testuser1 = "b@b.se"
+    testuser2 = "c@c.se"
+    users = [testuser0, testuser1, testuser2]
+
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
     
@@ -245,7 +250,6 @@ def relationsView(request):
         'relations': profile_lang["userprofile"]["relations"],
         'users': users
     }
-
 
     return render(request, 'userprofile/relations.html', args)
 
@@ -289,25 +293,18 @@ def addRelationsView(request):
 def manageRelationsView(request):
     profile_lang = get_lang(sections=["userprofile"])
 
-    testuser = {
-        'FirstName': 'Ludwig',
-        'LastName': 'Wideskär',
-        'Role': 'User',
-        'PhoneNumber': '+46 708 123456'
-    }
+    testuser = "a@a.se"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'relations': profile_lang["userprofile"]["relations"],
         'form': profile_lang["userprofile"]["relations"]["form"],
+        'modal': profile_lang["userprofile"]["relations"]["modal"],
         'user': testuser
     }
 
-    
-
     return render(request, 'userprofile/managerelations.html', args)
-
 
 def createRelation(uId:int, privKey, recieverEmail:str, permissions:str):
     """Returns 1 if relation is added or 0 if it failed.
@@ -412,5 +409,17 @@ def removeRelation(uId, privKey, recieverEmail):
 
     with transaction.atomic:
         RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(), UserIdTo=reciever.getUid()).delete()
-        relationsTo = RelationTo.object.filter(UserIdFrom=user.getUid())
+        relationsTo = RelationTo.object.filter(UserIdFrom=user)
         relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), reciever.getUid())).delete()
+        return 0
+    return 1
+
+def modifyRelation(uId, privKey, recieverEmail, permission):
+    user = User.objects.filter(UserId=uId)[0]
+    reciever = User.objects.filter(Email=recieverEmail.lower())[0]
+    with transaction.atomic:
+        RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(), UserIdTo=reciever.getUid())[0].setPermission(permission)
+        relationsTo = RelationTo.object.filter(UserIdFrom=user)
+        relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), reciever.getUid()))[0].setPermission(permission)
+        return 0
+    return 1
