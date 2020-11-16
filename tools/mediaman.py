@@ -153,8 +153,11 @@ def header_and_file(infile:IOBase, bytesio=False, only_header=False) -> tuple:
     return (header.decode("ascii"), None if only_header else retfile)
 
 
-def delete_file(filename:str, rootdir = CONF["media_base_dir"], exists_error=True):
-
+def delete_file(filename:str, rootdir = CONF["media_base_dir"], exists_error=False):
+    """Permanently deletes filename from storage
+    filename = name of file to be deleted
+    rootdir = the root of all media storage sent to the default_storage class
+    exists_error = throw FileNotFoundError if filename doesnt exist"""
     if default_storage.exists(f"{rootdir}/{filename}"):
         default_storage.delete(f"{rootdir}/{filename}")
     elif exists_error:
@@ -164,6 +167,12 @@ def delete_file(filename:str, rootdir = CONF["media_base_dir"], exists_error=Tru
 
     
 def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CONF["media_base_dir"]):
+    """reencrypts all files in anonid directory with new_key. the new key is returned.
+    anonid = anonid of the directory whose files are to be reencrypted
+    old_key = key currently used to encrypt files
+    new_key = the key to be used for encryption (if left empty will be generated)
+    rootdir = the root of all media storage sent to the default_storage class
+    """
     
     dirname = get_sha1(anonid)
     files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
@@ -176,6 +185,11 @@ def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CON
 
 
 def open_all_files(key:bytes, anonid, rootdir = CONF["media_base_dir"], decompress=True):
+    """returns a list of tuples containing the headers and data of an entire user directory.
+    Very memory inefficient
+    key = symkey for decryption
+    anonid = anonid of the directory whose files are to be fetched
+    rootdir = the root of all media storage sent to the default_storage class"""
     files_data = []
     dirname = get_sha1(anonid)
     files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
@@ -186,6 +200,9 @@ def open_all_files(key:bytes, anonid, rootdir = CONF["media_base_dir"], decompre
     
 
 def delete_all_files(anonid, rootdir = CONF["media_base_dir"]):
+    """used to IRREVERSIBLY clear all data from a user. will completely purse the directory of given anonid
+    anonid = anonid of the directory to be purged
+    rootdir = the root of all media storage sent to the default_storage class"""
     files_data = []
     dirname = get_sha1(anonid)
     files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
