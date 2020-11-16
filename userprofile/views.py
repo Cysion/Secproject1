@@ -342,23 +342,30 @@ def updateRelationTo(recieverUId:int, recieverPrivKey):
     """Because a user sharing data cannot complete the RelationTo entry, it has to be updated by the reciever.
     Returns 1 on success, 0 on failure"""
     reciever = User.objects.filter(UserId=recieverUId)[0]
-    relationsFrom = RelationFrom.objects.filter(UserIdTo=recieverUId)
-    relationsTo = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId())
-    if(len(relationsFrom) != len(relationsTo)):
-        diff = abs(len(relationsFrom) != len(relationsTo))
+    relationsFrom = RelationFrom.objects.filter(UserIdTo=reciever)
+    relationsToReciever = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId())
+    if(len(relationsFrom) != len(relationsToReciever)):
+        diff = abs(len(relationsFrom) - len(relationsToReciever))
         for relationFrom in relationsFrom:
             relationFrom.getUserIdFromDecrypted(recieverPrivKey)
+            relationsTo = RelationTo.objects.filter(UserIdFrom=User.objects.filter(AnonId=relationFrom.getAnonymityIdFrom())[0])
             for relationTo in relationsTo:
+                print(relationTo)
                 try:
                     uIdTo = relationTo.getUserIdToDecrypted(recieverPrivKey)
                 except:#Possible exceptions here
                     pass
                 else:
+                    print("else")
                     if uIdTo == reciever.getUid():
+                        print("true")
                         if relationTo.getAnonymityIdTo() != reciever.getAnonId():
+                            print("supertrue")
                             relationTo.setAnonymityIdTo(reciever.getAnonId())
+                            relationTo.save()
                             diff -= 1
                             if not diff:
+
                                 return 1
 
         return 0
@@ -375,19 +382,21 @@ def showAllRelationsTo(uId, privKey):
 
 def showAllRelationsFrom(recieverUId, recieverPrivKey):
     reciever = User.objects.filter(UserId=recieverUId)[0]
-    relationsTo = RelationTo.object.filter(AnonymityIdTo=reciever.getAnonId())
+    relationsTo = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId())
     toReturn = []
     for relation in relationsTo:
+        print("inne")
         userDict = dict()
-        userDict['FirstName'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getFirstName(relation.getFromPrivDecrypted(recieverPrivKey))
-        userDict['LastName'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getLastName(relation.getFromPrivDecrypted(recieverPrivKey))
-        userDict['UserId'] = User.objects.filter(UserId=relation.getUserIdTo)[0].getUid()
+        userDict['FirstName'] = relation.getUserIdFrom().getFirstName(relation.getFromPrivDecrypted(recieverPrivKey).decode("utf-8"))
+        userDict['LastName'] = relation.getUserIdFrom().getLastName(relation.getFromPrivDecrypted(recieverPrivKey).decode("utf-8"))
+        userDict['UserId'] = relation.getUserIdFrom().getUid()
+        print (userDict['FirstName'])
         permissions = dict()
-        permissions['Profile'] = int(relation.getPermission([0]))
-        permissions['SaveMePlan'] = int(relation.getPermission([1]))
-        permissions['Check'] = int(relation.getPermission([2]))
-        permissions['Prepare'] = int(relation.getPermission([3]))
-        permissions['Media'] = int(relation.getPermission([4]))
+        permissions['Profile'] = int(relation.getPermission()[0])
+        permissions['SaveMePlan'] = int(relation.getPermission()[1])
+        permissions['Check'] = int(relation.getPermission()[2])
+        permissions['Prepare'] = int(relation.getPermission()[3])
+        permissions['Media'] = int(relation.getPermission()[4])
         userDict['Permissions'] = permissions
         toReturn.append(userDict)
     return toReturn
