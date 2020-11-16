@@ -200,7 +200,8 @@
         "how_to":"how to use 12 steps",
         "prac_breath":"practice breathing",
         "good_mem":"my library for supportive memories",
-        "mem_cats":["music", "games", "videos", "chat", "images", "phrases", "memes", "stories", "awards", "themes"],
+        "mem_cats":["Music", "Games", "Videos", "Chat", "Images", "Phrases", "Memes", "Stories", "Awards", "Themes"],
+        "mem_cats_single":["Music", "Game", "Video", "Chat", "Image", "Phrase", "Meme", "Story", "Award", "Theme"],
         "bad_mem":"my rubbish bin for destructive memories",
         "sup_con":"add support contacts",
         "acc":"accessible at time",
@@ -208,9 +209,23 @@
         "call_cisis":"where do i call in a crisis",
         "diary":"diary",
         "ther_notes":"Therapy notes",
+        "title":"Title",
+        "text":"Text",
+        "upload":"Upload file here",
+        "file":"File",
+        "link":"Link",
+        "add_memory":"Add memory",
+        "placeholder":"Enter a",
         "long_texts":{
             "hotline_text":"see p.19 in presentation",
-            "ther_notes":"see p.21 in presentation"
+            "ther_notes":"see p.21 in presentation",
+            "media_info":"Do you want to attach a media to your memory? Press one of the following buttons.",
+            "link_info":"Link can be a youtube link.",
+            "file_info":"File can be photo, video or music.",
+            "memory_type":"What type of memory is it?",
+            "alerts":{
+
+            }
         }
     },
     "professionals":{
