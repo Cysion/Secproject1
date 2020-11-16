@@ -8,3 +8,5 @@ logs/*.log
 logs/*.gz
 .vscode
 testdata/*.blob
+media/*
+test*
