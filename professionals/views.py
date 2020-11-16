@@ -20,6 +20,10 @@ def ClientsView(request):
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
+    """ Clients should be a list with dicts. With following keys:
+    FirstName (string), LastName (string),
+    Permissions (dict) with key as Profile, SaveMePlan, Check, Prepare or Media
+    Values as 1 or 0 where 1 is got access and 0 denied access."""
     clients = []
 
     args = {
