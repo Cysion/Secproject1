@@ -235,22 +235,21 @@ def relationsView(request):
         'FirstName': 'Ludwig',
         'LastName': 'Wideskär',
         'Role': 'User',
-        'PhoneNr': '+46 708 123456'
+        'PhoneNumber': '+46 708 123456'
     }
     testuser1 = {
         'FirstName': 'Kevin',
         'LastName': 'Engström',
         'Role': 'Professional',
-        'PhoneNr': '+46 708 345612'
+        'PhoneNumber': '+46 708 345612'
     }
     testuser2 = {
         'FirstName': 'Joakim',
         'LastName': 'Karlsson',
         'Role': 'Admin',
-        'PhoneNr': '+46 708 561234'
+        'PhoneNumber': '+46 708 561234'
     }
     users = [testuser0, testuser1, testuser2]
-    login_lang = get_lang(sections=["login"])
     profile_lang = get_lang(sections=["userprofile"])
 
     args = {
@@ -276,7 +275,26 @@ def addRelationsView(request):
     return render(request, 'userprofile/addrelations.html', args)
 
 def manageRelationsView(request):
-    return render(request, 'userprofile/managerelations.html')
+    profile_lang = get_lang(sections=["userprofile"])
+
+    testuser = {
+        'FirstName': 'Ludwig',
+        'LastName': 'Wideskär',
+        'Role': 'User',
+        'PhoneNumber': '+46 708 123456'
+    }
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'relations': profile_lang["userprofile"]["relations"],
+        'form': profile_lang["userprofile"]["relations"]["form"],
+        'user': testuser
+    }
+
+    
+
+    return render(request, 'userprofile/managerelations.html', args)
 
 
 def createRelation(uId:int, privKey, recieverEmail:str, permissions:str):

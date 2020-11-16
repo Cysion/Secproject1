@@ -125,10 +125,12 @@
       "title":"userprofile",
       "relations": {
         "manage": "Manage",
+        "manage_relation":"Manage relation",
         "call": "Call",
         "add_new": "Add a new relation",
         "my_relations": "My relations",
-        "form": {  
+        "form": {
+          "enter_phone_number":"Enter a phone number",
           "required":"This field is required",
           "email":"Email",
           "share_data":"Select data that you want to share",
@@ -137,7 +139,12 @@
           "check":"Check",
           "prepare":"Prepare",
           "media":"Media",
-          "send_request":"Send relation request"
+          "send_request":"Send relation request",
+          "name":"Name",
+          "phone_number":"Phone number",
+          "user_type":"User type",
+          "save_changes":"Save changes",
+          "remove_relation":"Remove this relation"
         }
       },
       "long_texts":{
