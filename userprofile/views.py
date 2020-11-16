@@ -271,8 +271,8 @@ def addRelationsView(request):
 
     alerts=dict()
     if request.method == 'POST':
-        if User.objects.filter(Email=request.POST['email']):
-            recieverEmail= request.POST['email']
+        if User.objects.filter(Email=request.POST['email'].lower()):
+            recieverEmail= request.POST['email'].lower()
         else:
             alerts['email'] = 'email_does_not_exist'
 
@@ -314,7 +314,7 @@ def createRelation(uId:int, privKey, recieverEmail:str, permissions:str):
     Media
     """
     user = User.objects.filter(UserId=uId)[0]
-    reciever = User.objects.filter(Email=recieverEmail)[0]
+    reciever = User.objects.filter(Email=recieverEmail.lower())[0]
     
     #try:
     with transaction.atomic():
@@ -394,7 +394,7 @@ def showAllRelationsFrom(recieverUId, recieverPrivKey):
 
 def removeRelation(uId, privKey, recieverEmail):
     user = User.objects.filter(UserId=uId)[0]
-    reciever = User.objects.filter(Email=recieverEmail)[0]
+    reciever = User.objects.filter(Email=recieverEmail.lower())[0]
 
     with transaction.atomic:
         RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(), UserIdTo=reciever.getUid()).delete()
