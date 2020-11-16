@@ -30,6 +30,9 @@ class RelationFrom(models.Model):
     def getAnonymityIdFrom(self):
         return self.AnonymityIdFrom
 
+    def setPermission(self, permission):
+        self.Permission = permission
+
 class RelationTo(models.Model):
     """User relation table. This table is for users to see which relationship
     the user have with other users (Friend or therapist for example).
@@ -68,3 +71,6 @@ class RelationTo(models.Model):
 
     def setFromPrivEncrypted(self, toPub, fromPriv):
         self.rsa_encrypt(toPub, fromPriv.encode("utf-8"))
+
+    def setPermission(self, permission):
+        self.Permission = permission
