@@ -13,7 +13,7 @@
 <div class="card">
   <div class="card-body">
     <h4 class="card-title">{{ user.FirstName }} {{ user.LastName }}</h4>
-    {% for app, permission in user.Permissions %}
+    {% for app, permission in user.Permissions.items %}
       {% if permission == 1 %}
         {% if app == "Profile" %}
           <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ menu_titles.4 }}</a>
@@ -33,5 +33,16 @@
 {% empty %}
   <h4 style="text-align: center;">{{ no_clients }}!</h4>
 {% endfor %}
+
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">Kalle Svensson</h4>
+        <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ menu_titles.4 }}</a>
+        <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ menu_titles.6 }}</a>
+        <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ menu_titles.7 }}</a>
+        <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ menu_titles.5 }}</a>
+        <a href="{{ user.UserId }}/{{ app|lower }}/" class="btn btn-primary">{{ media }}</a>
+  </div>
+</div>
 
 {% endblock %}
