@@ -4,7 +4,7 @@ from Crypto.Random import get_random_bytes
 import random
 from os import urandom
 import hashlib
-from tools.confman import get_conf
+from confman import get_conf
 
 def gen_rsa(secret:bytes, bits=2048) -> RSA.RsaKey:
     """DETERMINISTICALLY generates and returns an rsa key pair from the seed "secret"
@@ -47,7 +47,10 @@ def rsa_encrypt(pub_key:bytes, data:bytes) -> bytes:
 
 
 def rsa_encrypt_long(pub_key:bytes, data) -> bytes:
-    """Boring text"""
+    """Used to encrypt bigger datablobs with RSA. it splits the data in chunks of 
+    180 bytes and encrypts them piecemeal then concatenates the result
+    pub_key = rsa public key in str form. is imported by RSA.import_key()
+    data = data to be encrypted"""
     cryptogram = b""
     for i in range(0, len(data), 180):
         cryptogram += rsa_encrypt(pub_key, data[i:i+180])
@@ -56,7 +59,10 @@ def rsa_encrypt_long(pub_key:bytes, data) -> bytes:
 
 
 def rsa_decrypt_long(priv_key:bytes, data) -> bytes:
-    """Boring text"""
+    """Used to decrypt bigger datablobs with RSA. it splits the data in chunks of 
+    256 bytes and decrypts them piecemeal then concatenates the result
+    pub_key = rsa public key in str form. is imported by RSA.public_key.import_key()
+    data = data to be encrypted"""
     plain_text = b""
     for i in range(0, len(data), 256):
         plain_text += rsa_decrypt(priv_key, data[i:i+256])
