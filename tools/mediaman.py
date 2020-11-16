@@ -20,7 +20,21 @@ def get_filetype(filename: str) -> str:
     return filetype
 
 
-def save_file(key: bytes, clearfile: bytes, anonid, maxsize = None, upload_name = None, filetype_override = None, rootdir = CONF["media_base_dir"], exists_error=True, comp_level = 6) -> tuple:
+def get_sha1(obj: IOBase) -> str:
+    """A function to get sha1 in a memory efficient way. returns hexdigest of obj
+    obj = io object to digest"""
+    hashhold = hashlib.sha1()
+    try:
+        for chunk in iter(lambda: obj.read(4096), b""):
+                hashhold.update(chunk)
+        obj.seek(0)
+    except AttributeError:
+        hashhold.update(obj)
+    return hashhold.hexdigest()
+    
+
+
+def save_file(key: bytes, clearfile: bytes, anonid, maxsize = None, upload_name = None, filetype_override = None, rootdir = CONF["media_base_dir"], exists_error=True, comp_level = 6, compress = True) -> tuple:
     """A function to save files into the default system. default method is to save files in rootdir/anonid/filesha1
     The function encrypts the file and prepends a header with information about the file. The header starts with ---BEGIN HEADER---
     and ends with ---END HEADER---. it also compresses the file with gzip compression before encrypting
@@ -41,37 +55,27 @@ def save_file(key: bytes, clearfile: bytes, anonid, maxsize = None, upload_name 
         if orig_size > maxsize:
             raise RuntimeError("File too large!")
 
-    compfile = gzip.compress(clearfile, compresslevel=comp_level)
-    del clearfile
+    if compress:
+        clearfile = gzip.compress(clearfile, compresslevel=comp_level)
 
     #encrypt file and purge original
-    encfile = BytesIO(crypto.aes_encrypt(key, compfile))
-    del compfile
-
+    encfile = crypto.aes_encrypt(key, clearfile)
+    del clearfile
     #add header to file
-    datasig = hashlib.sha1()
-    for i in range(0, -1, 1024):
-        datasig.update(encfile.read(1024))
     header = f"""---BEGIN HEADER---
 filetype:{filetype_override or get_filetype(upload_name)}
-checksumsha1:{datasig.hexdigest()}
 crypto:AES{len(key)*8}bit
 compression:gzip
 orig_size:{orig_size}
+half_key_hash:{get_sha1(key)}
 ---END HEADER---\n""".encode("ascii")
-    encfile.seek(0)
-    encfile.write(header)
-    encfile.seek(0)
+    encfile = header + encfile
 
     #hash file with header
-    fullsig = hashlib.sha1()
-    for i in range(0, -1, 1024):
-        fullsig.update(encfile.read(1024))
-    
+    fullsig = get_sha1(encfile)
     #decide name
-    namesig = hashlib.sha1()
-    namesig.update(anonid)
-    newname = f"{namesig.hexdigest()}/{fullsig.hexdigest()}"
+    namesig = get_sha1(anonid)
+    newname = f"{namesig}/{fullsig}"
     save_path = f"{rootdir}/{newname}"
 
     #check if file already saved
@@ -79,42 +83,37 @@ orig_size:{orig_size}
         raise FileExistsError
     
     #save file
-    default_storage.save(save_path, ContentFile(encfile.read(-1)))
+    default_storage.save(save_path, ContentFile(encfile))
     return (newname, default_storage.size(save_path))
 
 
-def open_file(key:bytes, filename:str, rootdir = CONF["media_base_dir"], decompress=True) -> tuple:
+def open_file(key:bytes, filename:str, rootdir = CONF["media_base_dir"], decompress=True, header_check=True) -> tuple:
     """opens the file at filename with key to decrypt. checks both checksums and raises RuntimeError if any fails
     if the checksums clear, a tuple of the file header(str) and the file data(bytes) is returned
     root_dir = the root of all media storage sent to the default_storage class
     decompress = return decompressed file. faster if only to be re-encrypted
     """
-    
     #open the file
     infile = default_storage.open(f"{rootdir}/{filename}")
-    
     #verify full file integrity
     checksum = filename.split("/")[-1]
-    fullsum = hashlib.sha1()
-    for i in range(0, -1, 1024):
-        fullsum.update(infile.read(1024))
-    if checksum != fullsum.hexdigest():
-        raise RuntimeError("checksum for full file not verified!")
-
+    fullsum = get_sha1(infile)
+    if checksum != fullsum:
+        raise RuntimeError("Checksum for file not verified!")
+    infile.seek(0)
     #extract header
-    header, opened = header_and_file(infile, bytesio=False)
+    opened = infile.read()
+    header, opened = header_and_file(infile, bytesio=False)    
     infile.close()
-    #verify partial file integrity
-    partsum = hashlib.sha1()
-    for i in range(0, -1, 1024):
-        partsum.update(infile.read(1024))
-    for line in header.split("\n"):
-        splitline = line.split(":")
-        if splitline[0] == "checksumsha1":
-            if splitline[1] != partsum.hexdigest():
-                raise RuntimeError("checksum for encrypted file not verified!")
-    
-    #decrypt and decompress file
+    checkfor = {
+        "half_key_hash":get_sha1(key)
+    }
+    if header_check:
+        for line in header.split("\n"):
+            splitline = line.split(":")
+            if splitline[0] in checkfor:
+                if splitline[1] != checkfor[splitline[0]]:
+                    raise RuntimeError(f"{splitline[0]} failed to check out for file: {filename}")
     outfile = crypto.aes_decrypt(key, opened)
     if decompress:
         outfile = gzip.decompress(outfile)
@@ -142,7 +141,7 @@ def header_and_file(infile:IOBase, bytesio=False, only_header=False) -> tuple:
     while addnext != b"---END HEADER---\n":
         addnext = infile.readline()
         header += addnext
-    
+    ptr = infile.tell()
     #add the rest of the file to retfile
     if not only_header:
         if bytesio:
@@ -155,21 +154,81 @@ def header_and_file(infile:IOBase, bytesio=False, only_header=False) -> tuple:
 
 
 def delete_file(filename:str, rootdir = CONF["media_base_dir"], exists_error=True):
-    pass
+
+    if default_storage.exists(f"{rootdir}/{filename}"):
+        default_storage.delete(f"{rootdir}/{filename}")
+    elif exists_error:
+        raise FileNotFoundError
+    else:
+        return
 
     
-def reencrypt_user():
-    pass
+def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CONF["media_base_dir"]):
+    
+    dirname = get_sha1(anonid)
+    files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
+    for file in files:
+        fullpath = f"{dirname}/{file}"
+        filedata = open_file(old_key, fullpath, decompress=False, header_check=False)[1]
+        delete_file(fullpath, exists_error=True)
+        save_file(new_key, filedata, anonid, compress=False)
+    return new_key
+
+
+def open_all_files(key:bytes, anonid, rootdir = CONF["media_base_dir"], decompress=True):
+    files_data = []
+    dirname = get_sha1(anonid)
+    files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
+    for file in files:
+        fullpath = f"{dirname}/{file}"
+        files_data.append(open_file(key, fullpath, rootdir=rootdir, decompress=decompress))
+    return files_data
+    
+
+def delete_all_files(anonid, rootdir = CONF["media_base_dir"]):
+    files_data = []
+    dirname = get_sha1(anonid)
+    files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
+    for file in files:
+        fullpath = f"{dirname}/{file}"
+        delete_file(fullpath)
 
 
 if __name__ == "__main__":
     import django.core.files.storage
     django.core.files.storage.settings.configure()
     key = crypto.gen_aes(256)
+    anonid = crypto.gen_anon_id(1234,"longbirthdaystring")
+    delete_all_files(anonid)
+    #test encryption and decryption
     with open("testdata/testimg.png", "rb") as inf:
-        sf = save_file(key, inf.read(), crypto.gen_anon_id(1234,"longbirthdaystring"), exists_error=False)
-    header, outfile= open_file(key, sf[0])
-    with open("test", "wb") as outf:
-        outfile.write(outfile)
+        sf = save_file(key, inf.read(), anonid)
+    header, outfile = open_file(key, sf[0])
+    with open("test.png", "wb") as outf:
+        outf.write(outfile)
+    delete_file(sf[0])
+    #test re-encryption
+    newkey = crypto.gen_aes(256)
+    #fill with sloth
 
+    #generate encrypted sloths
+    with open("testdata/testimg.png", "rb") as inf:
+        dat = inf.read()
+        for i in range(9):
+            save_file(key, dat, anonid, exists_error=False)
+    
+    reencrypt_user(anonid, key, newkey)
+    try:
+        open_all_files(key, anonid)
+    except RuntimeError:
+        print("WRONG KEY DINGUS!")
+    i = 0
+    all_data = open_all_files(newkey, anonid)
+    for file_data in all_data:
+        i += 1
+        with open(f"test{i}.png", "wb") as auss:
+            auss.write(file_data[1])
+
+    input()
+    delete_all_files(anonid)
 
