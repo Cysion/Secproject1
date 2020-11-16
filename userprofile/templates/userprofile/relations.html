@@ -14,11 +14,11 @@
     <div class="relations my-1 row">
         
         <div class="col-md">
-            <p><strong>{{ user }}</strong></p>
+            <p><strong>{{ user.Email }}</strong></p>
         </div>
         <div class="col-md">
             <div class="my-1">
-                <a type="button" class="btn btn-info btn-block" href="manage">{{ relations.manage }}</a>
+                <a type="button" class="btn btn-info btn-block" href="manage/?Id={{user.RelationFrom}}">{{ relations.manage }}</a>
             </div>
         </div>
     </div>
