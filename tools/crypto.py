@@ -50,9 +50,9 @@ def rsa_encrypt_long(pub_key:bytes, data) -> bytes:
     """Boring text"""
     cryptogram = b""
     for i in range(0, len(data), 180):
-        cryptogram += rsa_encrypt(key.publickey().export_key(), data[i:i+180])
+        cryptogram += rsa_encrypt(pub_key, data[i:i+180])
     return cryptogram
-    #return b"".join([rsa_encrypt(key.publickey().export_key(), data[i:i+180].encode("utf-8")) for i in range(0, len(data), 180)])
+    #return b"".join([rsa_encrypt(pub_key, data[i:i+180].encode("utf-8")) for i in range(0, len(data), 180)])
 
 
 def rsa_decrypt_long(priv_key:bytes, data) -> bytes:
