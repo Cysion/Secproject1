@@ -231,11 +231,6 @@ def BackupKeyView(request):
     return render(request, 'userprofile/backupkey.html', args)
 
 def relationsView(request):
-    testuser0 = "a@a.se"
-    testuser1 = "b@b.se"
-    testuser2 = "c@c.se"
-    users = [testuser0, testuser1, testuser2]
-
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
     
@@ -293,7 +288,8 @@ def addRelationsView(request):
 def manageRelationsView(request):
     profile_lang = get_lang(sections=["userprofile"])
 
-    testuser = "a@a.se"
+    testuser=request.GET['Id']
+    
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -379,7 +375,7 @@ def showAllRelationsTo(uId, privKey):
     """Returns the email address of everyone who the user shares data with"""
     user = User.objects.filter(UserId=uId)[0]
     relationsFrom = RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId())
-    return [relation.getUserIdTo().getEmail() for relation in relationsFrom]
+    return [{'Email':relation.getUserIdTo().getEmail(), 'RelationFrom': relation.getRelationFromId()} for relation in relationsFrom]
 
 
 def showAllRelationsFrom(recieverUId, recieverPrivKey):

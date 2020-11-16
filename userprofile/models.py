@@ -21,6 +21,9 @@ class RelationFrom(models.Model):
     Permission = models.CharField(max_length=5)
     UserIdFromEncrypted = models.BinaryField(max_length=512)
 
+    def getRelationFromId(self):
+        return self.RelationFromId
+
     def getUserIdTo(self):
         return self.UserIdTo
 
