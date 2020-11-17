@@ -304,6 +304,7 @@ def manageRelationsView(request):
             if 'delete' in request.POST:
                 print("delete")
                 removeRelation(request.session['UserId'], request.session['privKey'], email)
+                return HttpResponseRedirect(reverse('userprofile:Relations'))
             elif 'save' in request.POST:
                 print("modify")
                 relationFrom = RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
@@ -312,10 +313,9 @@ def manageRelationsView(request):
                 permission['Check'] = '1' if 'share_check' in request.POST else '0'
                 permission['Prepare'] = '1' if 'share_prepare' in request.POST else '0'
                 permission['Media'] = '1' if 'share_media' in request.POST else '0'
-                relationData['Permission']=permission
                 modifyRelation(request.session['UserId'], request.session['privKey'], email, permission)
-
-
+                relationData['Permission']=permission
+                
             
     
 
@@ -373,14 +373,15 @@ def updateRelationTo(recieverUId:int, recieverPrivKey):
     relationsToReciever = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
     if(len(relationsFrom) != len(relationsToReciever)):
         diff = abs(len(relationsFrom) - len(relationsToReciever))
+        print(diff)
         for relationFrom in relationsFrom:
             relationFrom.getUserIdFromDecrypted(recieverPrivKey)
             relationsTo = RelationTo.objects.filter(UserIdFrom=User.objects.filter(UserId=relationFrom.getUserIdFromDecrypted(recieverPrivKey))[0])
             for relationTo in relationsTo:
                 print(relationTo)
                 try:
-                    uIdTo = relationTo.getUserIdToDecrypted(recieverPrivKey)
-                except:#Possible exceptions here
+                    uIdTo = relationTo.getUserIdToDecryptedTo(recieverPrivKey)
+                except ValueError:
                     pass
                 else:
                     if uIdTo == reciever.getUid():
