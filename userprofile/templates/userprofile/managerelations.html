@@ -15,7 +15,7 @@
     {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
     <div>
         <p><strong>{{ form.email }}:</strong><br>
-            {{ user }}</p>
+            {{ user.Email }}</p>
 
         <div class="form-group" name="share_data">
             <label for="share_data"><strong>{{ form.share_data }}:</strong></label>
