@@ -6,5 +6,8 @@
     },
     "media":{
         "media_base_dir":"media"
+    },
+    "sessions":{
+        "time_to_live":21600
     }
 }
