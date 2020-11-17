@@ -5,8 +5,12 @@ import confman
 import hashlib
 from io import BytesIO, IOBase
 import gzip
+import logman
+
 
 CONF = confman.get_conf()["media"]
+LOGGER = logman.get_logger("mediaman")
+
 
 def get_filetype(filename: str) -> str:
     """simple function that handles exceptions thrown by trying to read the filetype from filename
@@ -67,7 +71,7 @@ filetype:{filetype_override or get_filetype(upload_name)}
 crypto:AES{len(key)*8}bit
 compression:gzip
 orig_size:{orig_size}
-half_key_hash:{get_sha1(key)}
+half_key_hash:{get_sha1(key[:len(key)//2])}
 ---END HEADER---\n""".encode("ascii")
     encfile = header + encfile
 
@@ -84,6 +88,7 @@ half_key_hash:{get_sha1(key)}
     
     #save file
     default_storage.save(save_path, ContentFile(encfile))
+    LOGGER.info(f"saved file at {save_path}")
     return (newname, default_storage.size(save_path))
 
 
@@ -106,17 +111,19 @@ def open_file(key:bytes, filename:str, rootdir = CONF["media_base_dir"], decompr
     header, opened = header_and_file(infile, bytesio=False)    
     infile.close()
     checkfor = {
-        "half_key_hash":get_sha1(key)
+        "half_key_hash":get_sha1(key[:len(key)//2])
     }
     if header_check:
         for line in header.split("\n"):
             splitline = line.split(":")
             if splitline[0] in checkfor:
                 if splitline[1] != checkfor[splitline[0]]:
+                    LOGGER.warning(f"failed to retrive file at {filename} - failed to check out {splitline[0]}")
                     raise RuntimeError(f"{splitline[0]} failed to check out for file: {filename}")
     outfile = crypto.aes_decrypt(key, opened)
     if decompress:
         outfile = gzip.decompress(outfile)
+    LOGGER.info(f"retrieved file at {filename}")
     return (header, outfile)
 
 
@@ -248,4 +255,3 @@ if __name__ == "__main__":
 
     input()
     delete_all_files(anonid)
-
