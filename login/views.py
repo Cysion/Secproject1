@@ -102,6 +102,7 @@ def registerUser(postData): # Place function somewere else.
     user.setDateOfBirth(postData['date_of_birth'])
     user.setRole('professional') if 'professional' in postData else user.setRole('User')
     user.setAnonId(key.export_key().decode("utf-8"))
+    user.setSymkey()
     user.save()
     return user.getUid(), key.export_key(), user.getRole()
 
