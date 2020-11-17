@@ -270,7 +270,7 @@ def addRelationsView(request):
             permissions+='1' if 'share_media' in request.POST else '0'
             
             if not createRelation(user.getUid(), request.session['privKey'], recieverEmail, permissions):
-                return HttpResponseRedirect(reverse('userprofile:Profile'))
+                return HttpResponseRedirect(reverse('userprofile:Relations'))
             else:
                 alerts['database'] = 'database_error'
         
