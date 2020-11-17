@@ -291,9 +291,10 @@ def manageRelationsView(request):
     if request.GET:
         relationFrom = RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
         permission = relationFrom.getPermission()
+        permissions = dict()
         user = relationFrom.getUserIdTo()
         email = user.getEmail()
-        relationData = {'Email':email, 'RelationFrom':request.GET['Id']}
+        relationData = {'Email':email, 'RelationFrom':request.GET['Id'], 'Permission':permission}
 
         print(request.POST)
 
@@ -387,7 +388,6 @@ def updateRelationTo(recieverUId:int, recieverPrivKey):
                             if not diff:
 
                                 return 1
-
         return 0
     else:
         return 1
