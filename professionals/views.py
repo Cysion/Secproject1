@@ -23,13 +23,6 @@ def ClientsView(request):
 
     updateRelationTo(request.session['UserId'], request.session['privKey'])
     clients = showAllRelationsFrom(request.session['UserId'], request.session['privKey'])
-    for i in clients:
-        print(clients)
-
-
-
-
-
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
