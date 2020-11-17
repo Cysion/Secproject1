@@ -32,6 +32,9 @@ class RelationFrom(models.Model):
 
     def getAnonymityIdFrom(self):
         return self.AnonymityIdFrom
+    
+    def getPermission(self):
+        return self.Permission
 
     def setPermission(self, permission):
         self.Permission = permission

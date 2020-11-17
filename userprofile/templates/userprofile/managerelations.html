@@ -11,7 +11,7 @@
 {% block content %}
 <h1>{{ relations.manage_relation }}</h1>
 
-<form action="/userprofile/relations/manage/" class="was-validated" method="POST">
+<form action="/userprofile/relations/manage/?Id={{user.RelationFrom}}" class="was-validated" method="POST">
     {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
     <div>
         <p><strong>{{ form.email }}:</strong><br>
