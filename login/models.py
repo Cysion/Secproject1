@@ -34,7 +34,7 @@ class User(models.Model):
         max_length=12,
         choices=Role_Choices
     )
-    Symkey = models.BinaryField(max_length=256)
+    Symkey = models.BinaryField(max_length=512)
     AnonId = models.BinaryField(max_length=512)
 
     def getUid(self):
@@ -53,6 +53,7 @@ class User(models.Model):
         return rsa_decrypt(privKey.encode("utf-8"), self.DateOfBirth).decode("utf-8")
 
     def getSymKey(self, privKey):
+        """PrivKey är decodad"""
         return rsa_decrypt(privKey.encode("utf-8"), self.Symkey)
 
     def getEmail(self):
