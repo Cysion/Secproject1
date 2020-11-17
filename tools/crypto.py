@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
     #WHAT FOLLOWS IS A USAGE DEMO FOR ABOVE FUNCTIONS
     import json
-    sections = (1,0,0,0,0,1)
+    sections = (0,0,0,0,0,0,1)
     print("this is a short presentation of the crypro functions for this project")
     if sections[0]:
         print("create a fake user!")
@@ -181,3 +181,13 @@ if __name__ == "__main__":
         text2 = rsa_decrypt_long(key.export_key(), cryptogram).decode("utf-8")
         
         assert text==text2
+    if sections[6]:
+        #lets test deterministic encryption of data
+        data = b":)"*80
+        keys = gen_rsa(secret_scrambler("fungus",1337))
+        ciphertext = rsa_encrypt(keys.publickey().export_key(), data)
+        ciphers = []
+        for i in range(1000):
+            print(i)
+            ciphers.append(rsa_encrypt(keys.publickey().export_key(), data))
+        assert ciphertext in ciphers
