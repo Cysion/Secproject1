@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 # Create your views here.
 
 from login.models import User
@@ -9,7 +11,20 @@ from tools.confman import get_lang
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 def IndexView(request):
-    arg = {'menu_titles': UNIVERSAL_LANG["universal"]["titles"]}
+    if 'UserId' not in request.session.keys():  # Check if user is logged in
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
+        if 'logout' in request.GET.keys():
+            request.session.flush()
+            return HttpResponseRedirect(reverse('login:Login'))
+
+
+    login_lang = get_lang(sections=["userprofile"])
+
+    arg = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"], 'profile': login_lang["userprofile"]["long_texts"]
+    }
     return render(request, 'home/index.html', arg)
 
 def ShowcaseView(request):

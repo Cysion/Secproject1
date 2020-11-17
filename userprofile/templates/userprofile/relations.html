@@ -10,20 +10,15 @@
 {% block content %}
 <h1>{{ relations.my_relations }}</h1>
 <div class="container">
-    {% for i in users %}
+    {% for user in users %}
     <div class="relations my-1 row">
         
         <div class="col-md">
-            <p class=""><strong>{{ i.FirstName }} {{ i.LastName }}</strong><br>
-                <small>{{ i.Role }}</small><br>
-                {{ i.PhoneNr }}</p>
+            <p><strong>{{ user.Email }}</strong></p>
         </div>
         <div class="col-md">
             <div class="my-1">
-                <a type="button" class="btn btn-lg btn-info btn-block" href="manage">{{ relations.manage }}</a>
-            </div>
-            <div class="my-1">
-                <a type="button" class="btn btn-lg btn-success btn-block" href="#">{{ relations.call }}</a>
+                <a type="button" class="btn btn-info btn-block" href="manage/?Id={{user.RelationFrom}}">{{ relations.manage }}</a>
             </div>
         </div>
     </div>

@@ -21,6 +21,9 @@ class RelationFrom(models.Model):
     Permission = models.CharField(max_length=5)
     UserIdFromEncrypted = models.BinaryField(max_length=512)
 
+    def getRelationFromId(self):
+        return self.RelationFromId
+
     def getUserIdTo(self):
         return self.UserIdTo
 
@@ -29,6 +32,12 @@ class RelationFrom(models.Model):
 
     def getAnonymityIdFrom(self):
         return self.AnonymityIdFrom
+    
+    def getPermission(self):
+        return self.Permission
+
+    def setPermission(self, permission):
+        self.Permission = permission
 
 class RelationTo(models.Model):
     """User relation table. This table is for users to see which relationship
@@ -45,14 +54,23 @@ class RelationTo(models.Model):
     UserIdFrom = models.ForeignKey(User, on_delete=models.CASCADE)
     AnonymityIdTo = models.BinaryField(blank=False)
     Permission = models.CharField(max_length=5)
-    UserIdToEncrypted = models.BinaryField(max_length=512)
+    UserIdToEncryptedTo = models.BinaryField(max_length=512)
+    UserIdToEncryptedFrom = models.BinaryField(max_length=512)
     FromPrivEncrypted = models.BinaryField(max_length=512)
+
+
+    def getRelationToId(self):
+        return self.RelationToId
 
     def getUserIdFrom(self):
         return self.UserIdFrom
 
-    def getUserIdToDecrypted(self, toPrivKey):
-        return int(rsa_decrypt(toPrivKey.encode("utf-8"), self.UserIdToEncrypted).decode("utf-8"))
+    def getUserIdToDecryptedTo(self, toPrivKey):
+        return int(rsa_decrypt(toPrivKey.encode("utf-8"), self.UserIdToEncryptedTo).decode("utf-8"))
+
+    def getUserIdToDecryptedFrom(self, fromPrivKey):
+        return int(rsa_decrypt(fromPrivKey.encode("utf-8"), self.UserIdToEncryptedFrom).decode("utf-8"))
+
 
     def getPermission(self):
         return self.Permission
@@ -68,3 +86,6 @@ class RelationTo(models.Model):
 
     def setFromPrivEncrypted(self, toPub, fromPriv):
         self.rsa_encrypt(toPub, fromPriv.encode("utf-8"))
+
+    def setPermission(self, permission):
+        self.Permission = permission
