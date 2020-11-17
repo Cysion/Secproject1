@@ -1,5 +1,5 @@
 from django.db import models
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes, gen_anon_id
+from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes, gen_anon_id, rsa_encrypt_long, rsa_decrypt_long
 
 
 
@@ -64,8 +64,8 @@ class User(models.Model):
     def getRole(self):
         return self.Role
 
-    def getAnonId(self):
-        return self.AnonId
+    def getAnonId(self, privKey):
+        return rsa_decrypt_long(privKey, self.AnonId)
 
 
     def setPubKey(self, pubKey):
@@ -115,7 +115,7 @@ class User(models.Model):
         self.Role=role
 
     def setAnonId(self, privKey):
-        self.AnonId=gen_anon_id(self.UserId, self.getDateOfBirth(privKey))
+        self.AnonId=rsa_encrypt_long(self.Pubkey, gen_anon_id(self.UserId, self.getDateOfBirth(privKey)))
 
     
 
