@@ -26,22 +26,22 @@
             </div>
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="checkbox" class="form-check-input" id="share_savemeplan" name="share_savemeplan" value="1" {% if POST and POST.share_savemeplan == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.savemeplan }}
+                    <input type="checkbox" class="form-check-input" id="share_savemeplan" name="share_savemeplan" value="1" {% if user.Permission.SaveMePlan == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.savemeplan }}
                 </label>
             </div>
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="checkbox" class="form-check-input" id="share_check" name="share_check"value="1" {% if POST and POST.share_check == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.check }}
+                    <input type="checkbox" class="form-check-input" id="share_check" name="share_check"value="1" {% if user.Permission.Check == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.check }}
                 </label>
             </div>
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="checkbox" class="form-check-input" id="share_prepare" name="share_prepare" value="1" {% if POST and POST.share_prepare == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.prepare }}
+                    <input type="checkbox" class="form-check-input" id="share_prepare" name="share_prepare" value="1" {% if user.Permission.Prepare == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.prepare }}
                </label>
             </div>
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="checkbox" class="form-check-input" id="share_media" name="share_media" value="1" {% if POST and POST.share_media == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.media }}
+                    <input type="checkbox" class="form-check-input" id="share_media" name="share_media" value="1" {% if user.Permission.Media == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.media }}
                 </label>
             </div>
 
