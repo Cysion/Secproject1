@@ -294,7 +294,12 @@ def manageRelationsView(request):
         permissions = dict()
         user = relationFrom.getUserIdTo()
         email = user.getEmail()
-        relationData = {'Email':email, 'RelationFrom':request.GET['Id'], 'Permission':permission}
+        permissions['Profile'] = int(relationFrom.getPermission()[0])
+        permissions['SaveMePlan'] = int(relationFrom.getPermission()[1])
+        permissions['Check'] = int(relationFrom.getPermission()[2])
+        permissions['Prepare'] = int(relationFrom.getPermission()[3])
+        permissions['Media'] = int(relationFrom.getPermission()[4])
+        relationData = {'Email':email, 'RelationFrom':request.GET['Id'], 'Permission':permissions}
 
         print(request.POST)
 
@@ -377,11 +382,8 @@ def updateRelationTo(recieverUId:int, recieverPrivKey):
                 except:#Possible exceptions here
                     pass
                 else:
-                    print("else")
                     if uIdTo == reciever.getUid():
-                        print("true")
                         if relationTo.getAnonymityIdTo() != reciever.getAnonId(recieverPrivKey):
-                            print("supertrue")
                             relationTo.setAnonymityIdTo(reciever.getAnonId(recieverPrivKey))
                             relationTo.save()
                             diff -= 1
@@ -428,7 +430,7 @@ def removeRelation(uId, privKey, recieverEmail):
     with transaction.atomic():
         RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privKey), UserIdTo=reciever.getUid()).delete()
         relationsTo = RelationTo.objects.filter(UserIdFrom=user)
-        relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), str(reciever.getUid()))).delete()
+        relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), str(reciever.getUid()).encode("utf-8"))).delete()
         return 0
     return 1
 
@@ -438,6 +440,9 @@ def modifyRelation(uId, privKey, recieverEmail, permission):
     with transaction.atomic():
         RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privKey), UserIdTo=reciever.getUid())[0].setPermission(permission)
         relationsTo = RelationTo.objects.filter(UserIdFrom=user)
-        relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), str(reciever.getUid())))[0].setPermission(permission)
+        print(reciever.getUid())
+        relationTo = relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), str(reciever.getUid()).encode("utf-8")))[0].setPermission(permission)
+        relationTo.setPermission(permission)
+        relationTo.save()
         return 0
     return 1
