@@ -290,7 +290,6 @@ def manageRelationsView(request):
     relationData = dict()
     if request.GET:
         relationFrom = RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
-        permission = relationFrom.getPermission()
         permissions = dict()
         user = relationFrom.getUserIdTo()
         email = user.getEmail()
@@ -301,20 +300,20 @@ def manageRelationsView(request):
         permissions['Media'] = int(relationFrom.getPermission()[4])
         relationData = {'Email':email, 'RelationFrom':request.GET['Id'], 'Permission':permissions}
 
-        print(request.POST)
-
         if request.method == 'POST':
-            print("hej")
-            if 'remove' in request.POST:
+            if 'delete' in request.POST:
+                print("delete")
                 removeRelation(request.session['UserId'], request.session['privKey'], email)
-            relationFrom = RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
-            permissions = '1'
-            permissions+='1' if 'share_savemeplan' in request.POST else '0'
-            permissions+='1' if 'share_check' in request.POST else '0'
-            permissions+='1' if 'share_prepare' in request.POST else '0'
-            permissions+='1' if 'share_media' in request.POST else '0'
+            elif 'save' in request.POST:
+                print("modify")
+                relationFrom = RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
+                permission = '1'
+                permission+='1' if 'share_savemeplan' in request.POST else '0'
+                permission+='1' if 'share_check' in request.POST else '0'
+                permission+='1' if 'share_prepare' in request.POST else '0'
+                permission+='1' if 'share_media' in request.POST else '0'
 
-            modifyRelation(request.session['UserId'], request.session['privKey'], email, permission)
+                modifyRelation(request.session['UserId'], request.session['privKey'], email, permission)
 
             
     
@@ -351,7 +350,7 @@ def createRelation(uId:int, privKey, recieverEmail:str, permissions:str):
             UserIdFromEncrypted = rsa_encrypt( reciever.getPubkey(), str(user.getUid()).encode("utf-8"))
         )
         relationFromEntry.save()
-
+        print(reciever)
         relationToEntry = RelationTo(
             UserIdFrom = user,
             Permission = permissions,
@@ -374,7 +373,7 @@ def updateRelationTo(recieverUId:int, recieverPrivKey):
         diff = abs(len(relationsFrom) - len(relationsToReciever))
         for relationFrom in relationsFrom:
             relationFrom.getUserIdFromDecrypted(recieverPrivKey)
-            relationsTo = RelationTo.objects.filter(UserIdFrom=User.objects.filter(AnonId=relationFrom.getAnonymityIdFrom())[0])
+            relationsTo = RelationTo.objects.filter(UserIdFrom=User.objects.filter(UserId=relationFrom.getUserIdFromDecrypted(recieverPrivKey))[0])
             for relationTo in relationsTo:
                 print(relationTo)
                 try:
@@ -407,12 +406,10 @@ def showAllRelationsFrom(recieverUId, recieverPrivKey):
     relationsTo = RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
     toReturn = []
     for relation in relationsTo:
-        print("inne")
         userDict = dict()
         userDict['FirstName'] = relation.getUserIdFrom().getFirstName(relation.getFromPrivDecrypted(recieverPrivKey).decode("utf-8"))
         userDict['LastName'] = relation.getUserIdFrom().getLastName(relation.getFromPrivDecrypted(recieverPrivKey).decode("utf-8"))
         userDict['UserId'] = relation.getUserIdFrom().getUid()
-        print (userDict['FirstName'])
         permissions = dict()
         permissions['Profile'] = int(relation.getPermission()[0])
         permissions['SaveMePlan'] = int(relation.getPermission()[1])
@@ -437,11 +434,12 @@ def removeRelation(uId, privKey, recieverEmail):
 def modifyRelation(uId, privKey, recieverEmail, permission):
     user = User.objects.filter(UserId=uId)[0]
     reciever = User.objects.filter(Email=recieverEmail.lower())[0]
+    print(reciever)
     with transaction.atomic():
         RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privKey), UserIdTo=reciever.getUid())[0].setPermission(permission)
         relationsTo = RelationTo.objects.filter(UserIdFrom=user)
-        print(reciever.getUid())
-        relationTo = relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), str(reciever.getUid()).encode("utf-8")))[0].setPermission(permission)
+        print(relationsTo)
+        relationTo = relationsTo.filter(UserIdToEncrypted=rsa_encrypt(reciever.getPubkey(), str(reciever.getUid()).encode("utf-8")))[0]
         relationTo.setPermission(permission)
         relationTo.save()
         return 0
