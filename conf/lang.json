@@ -227,7 +227,9 @@
               "no_title":"You need to enter a title for a memory!",
               "title_to_long":"A title can be maximum 64 characters!",
               "no_type":"You need set a type for you memory!",
-              "memory_added":"Your memory was added!"
+              "memory_added":"Your memory was added!",
+              "file_to_big":"This file is too big!",
+              "file_error":"Something with ths file upload went wrong."
             }
         }
     },

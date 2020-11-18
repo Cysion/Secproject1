@@ -32,6 +32,11 @@
     <label for="file">{{ lang.upload }} {{ max_file_size }}MB</label>
     <input type="file" class="form-control-file border" id="media" name="media">
   </div>
+  {% if alerts.file %}
+  <div class="alert alert-danger">
+    <strong>{{ error }}</strong> {{ alerts.file}}
+  </div>
+  {% endif %}
   {% elif media_type == 'url' %}
   <div class="form-group">
     <label for="link">{{ lang.link }}:</label>

@@ -48,31 +48,40 @@ def addMemoryView(request):
                 elif "media" in request.FILES.keys():  # Optional
 
                     if request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000:
-                        file = save_file(
-                            current_user.getSymKey(request.session["privKey"]),
-                            request.FILES["media"].read(),
-                            current_user.getAnonId(request.session["privKey"])
-                        )
+                        try:
+                            file = save_file(
+                                current_user.getSymKey(request.session["privKey"]),
+                                request.FILES["media"].read(),
+                                current_user.getAnonId(request.session["privKey"])
+                            )
 
-                        memory.setMediaSize(current_user.getPubkey(), request.FILES["media"].size)
-                        memory.setLink(current_user.getPubkey(), file[0])
+                            memory.setMediaSize(current_user.getPubkey(), request.FILES["media"].size)
+                            memory.setLink(current_user.getPubkey(), file[0])
+                        except RuntimeError as e:
+                            alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
+                        except Exception as e:
+                            alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_error"]
+                    else:
+                        alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
 
-                if 'media_text' in request.POST.keys():  # Optional
+                if 'media_text' in request.POST.keys() and not alerts:  # Optional
                     memory.setMediaText(current_user.getPubkey(), request.POST["media_text"])
 
-                memory.save()
-                alert = {
-                    "color": "success",  # Check https://www.w3schools.com/bootstrap4/bootstrap_alerts.asp for colors.
-                    "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
-                    "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"]
-                }
+                if not alerts:
+                    memory.save()
+                    alert = {
+                        "color": "success",
+                        "title": UNIVERSAL_LANG["universal"]["success"],
+                        "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"]
+                    }
 
-                if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                    request.session["global_alerts"] = [alert]
-                else:
-                    request.session["global_alerts"].append(alert)
+                    if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                        request.session["global_alerts"] = [alert]
+                    else:
+                        request.session["global_alerts"].append(alert)
 
                 #return HttpResponseRedirect(reverse('login:Login'))  # Should redirect to memory page
+
 
             else:  # If no type is entered
                 alerts["type"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_type"]
@@ -88,9 +97,9 @@ def addMemoryView(request):
             media_type = "file"
 
     if request.GET:
-        if request.GET["media_type"] and request.GET["media_type"] == "url":  # Displaying file input type
+        if request.GET["media_type"] and request.GET["media_type"] == "url":  # Display file input type
             media_type = "url"
-        elif request.GET["media_type"] and request.GET["media_type"] == "file":   # Displaying text input type
+        elif request.GET["media_type"] and request.GET["media_type"] == "file":   # Display text input type
             media_type = "file"
 
     global_alerts = []  # The variable which is sent to template
