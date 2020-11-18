@@ -14,6 +14,7 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 # Create your views here.
 
 def ProfileView(request):
+    testvar =0
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
