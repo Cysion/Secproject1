@@ -5,5 +5,5 @@ from . import views
 app_name = 'prepare'
 urlpatterns = [
     # ex: /polls/
-    #path('', views.IndexView.as_view(), name='index'),
+    path('memory/add/', views.addMemoryView, name='add-memory')
 ]

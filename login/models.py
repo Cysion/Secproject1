@@ -118,7 +118,7 @@ class User(models.Model):
     def setAnonId(self, privKey):
         self.AnonId=rsa_encrypt_long(self.Pubkey, gen_anon_id(self.UserId, self.getDateOfBirth(privKey)))
 
-    
+
 
 class Action(models.Model):
     """

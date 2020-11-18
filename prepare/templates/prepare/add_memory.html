@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Add a memory{% endblock %}
+
+{% block content %}
+
+<form enctype="multipart/form-data" action="/prepare/memory/add/" method="POST"> {# enctype="multipart/form-data" is needed for file uploads to work. #}
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="title">{{ lang.title }}:</label>
+    <input type="text" class="form-control" placeholder="{{ lang.placeholder }} {{ lang.title|lower }}..."
+    id="title" name="title" maxlength="64" {% if POST.title %} value="{{ POST.title }}" {% endif %}>
+  </div>
+  {% if alerts.title %}
+  <div class="alert alert-danger">
+    <strong>{{ error }}</strong> {{ alerts.title }}
+  </div>
+  {% endif %}
+  <div class="form-group">
+    <label for="media_text">{{ lang.text }}:</label>
+    <textarea class="form-control" rows="5" id="media_text" name="media_text">{% if POST.media_text %}{{ POST.media_text }}{% endif %}</textarea>
+  </div>
+  <div class="alert alert-info">
+    {{ lang.long_texts.media_info }}
+    <br>
+    {{ lang.long_texts.link_info }}
+    <br>
+    {{ lang.long_texts.file_info }}
+  </div>
+  {% if media_type == 'file' %}
+  <div class="form-group">
+    <label for="file">{{ lang.upload }} {{ max_file_size }}MB</label>
+    <input type="file" class="form-control-file border" id="media" name="media">
+  </div>
+  {% elif media_type == 'url' %}
+  <div class="form-group">
+    <label for="link">{{ lang.link }}:</label>
+    <input type="text" class="form-control" placeholder="{{ lang.placeholder }} {{ lang.link|lower }}..."
+    id="link" name="link" {% if POST.link %} value="{{ POST.link }}" {% endif %}>
+  </div>
+  {% endif %}
+  <button type="submit" class="btn btn-warning btn-lg btn-block" formaction="?media_type=url">{{ lang.link }}</button>
+  <button type="submit" class="btn btn-warning btn-lg btn-block" formaction="?media_type=file">{{ lang.file }}</button>
+  <div class="form-group">
+    <label for="type">{{ lang.long_texts.memory_type }}</label>
+    <select class="form-control" id="type" name="type">
+      <option value="mc" {% if POST.type and POST.type == "mc" %} selected{% endif %}>{{ lang.mem_cats_single.0 }}</option>
+      <option value="ge" {% if POST.type and POST.type == "ge" %} selected{% endif %}>{{ lang.mem_cats_single.1 }}</option>
+      <option value="vs" {% if POST.type and POST.type == "vs" %} selected{% endif %}>{{ lang.mem_cats_single.2 }}</option>
+      <option value="ie" {% if POST.type and POST.type == "ie" %} selected{% endif %}>{{ lang.mem_cats_single.4 }}</option>
+      <option value="pe" {% if POST.type and POST.type == "pe" %} selected{% endif %}>{{ lang.mem_cats_single.5 }}</option>
+      <option value="me" {% if POST.type and POST.type == "me" %} selected{% endif %}>{{ lang.mem_cats_single.6 }}</option>
+      <option value="sy" {% if POST.type and POST.type == "sy" %} selected{% endif %}>{{ lang.mem_cats_single.7 }}</option>
+      <option value="ad" {% if POST.type and POST.type == "ad" %} selected{% endif %}>{{ lang.mem_cats_single.8 }}</option>
+      <option value="te" {% if POST.type and POST.type == "te" %} selected{% endif %}>{{ lang.mem_cats_single.9 }}</option>
+    </select>
+  </div>
+  {% if alerts.type %}
+  <div class="alert alert-danger">
+    <strong>{{ error }}</strong> {{ alerts.type}}
+  </div>
+  {% endif %}
+  <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 15px;">{{ lang.add_memory }}</button>
+</form>
+
+{% endblock %}

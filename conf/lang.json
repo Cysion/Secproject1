@@ -211,7 +211,7 @@
         "ther_notes":"Therapy notes",
         "title":"Title",
         "text":"Text",
-        "upload":"Upload file here",
+        "upload":"Upload file: max file size is",
         "file":"File",
         "link":"Link",
         "add_memory":"Add memory",
@@ -224,7 +224,10 @@
             "file_info":"File can be photo, video or music.",
             "memory_type":"What type of memory is it?",
             "alerts":{
-
+              "no_title":"You need to enter a title for a memory!",
+              "title_to_long":"A title can be maximum 64 characters!",
+              "no_type":"You need set a type for you memory!",
+              "memory_added":"Your memory was added!"
             }
         }
     },
