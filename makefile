@@ -57,7 +57,7 @@ makemigration_all:
 	$(MAKEMIGRATION) info
 	$(MAKEMIGRATION) login
 	$(MAKEMIGRATION) practice
-#	$(MAKEMIGRATION) prepare
+	$(MAKEMIGRATION) prepare
 	$(MAKEMIGRATION) savemeplan
 	$(MAKEMIGRATION) userprofile
 

@@ -31,20 +31,3 @@ class Contacts(models.Model):
     Name = models.CharField(max_length=120)
     Phonenumber = models.CharField(max_length=20)
     Available = models.CharField(max_length=32)
-
-class Media(models.Model):
-    """
-    A users supportive memories.
-    An entry can be photo, text or video.
-    If media type is photo then MediaExternalLink is where photo is stored.
-    If media type is video then it is a youtube-url or a where video is stored.
-    Memory tells if it is a memory or not.
-    """
-
-    MediaId = models.IntegerField(primary_key=True)
-    UserId = models.ForeignKey(User, on_delete=models.CASCADE)
-    Compressed = models.BooleanField(default=False)
-    MediaType = models.CharField(max_length=4)
-    MediaTitle = models.TextField()
-    MediaExternalLink = models.URLField()
-    Memory = models.CharField(max_length=1)
