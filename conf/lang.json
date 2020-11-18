@@ -115,7 +115,8 @@
             "repassword":"Passwords are not the same!",
             "relogin":"Login credentials incorrect!",
             "wrong_pass":"Password is incorrect!",
-            "badChar":"Field contains illegal character(s)"
+            "badChar":"Field contains illegal character(s)",
+            "changed_password_success":"You changed you password!"
 
         },
         "failed_login":"Wrong email or password entered",
@@ -161,7 +162,8 @@
         "change_password_text":"If you change your password then you need to save your backup key again! When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
         "alerts": {
           "alert_changed_password":"You successfully changed your password",
-          "alert_error":"Something went wrong when trying to encrypt your data"
+          "alert_error":"Something went wrong when trying to encrypt your data",
+          "changed_info_success":"You changed your info!"
         }
       }
     },

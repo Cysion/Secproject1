@@ -130,10 +130,16 @@ def LoginView(request):
         else:
             loginFail = True
 
+    global_alerts = []  # The variable which is sent to template
+    if "global_alerts" in request.session.keys():  # Check if there is global alerts
+        global_alerts = request.session["global_alerts"]  # Retrive global alerts.
+        request.session["global_alerts"] = []  # Reset
+
     login_lang = get_lang(sections=["login"])
     args = {
         'post': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'global_alerts': global_alerts,  # Sending the alerts to template.
         'form': login_lang["login"]["form"],
         'alerts': login_lang['login']['long_texts']['alerts'],
         'wrong_login_enterd': loginFail  # A check if right login was entered
@@ -179,6 +185,18 @@ def forgotPasswordView(request):
                     request.session['privKey']=changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
                 except ValueError as keyError:
                     alerts["relogin"] = "relogin"
+
+                    alert = {
+                        "color": "success",  # Check https://www.w3schools.com/bootstrap4/bootstrap_alerts.asp for colors.
+                        "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
+                        "message": profile_lang["login"]["long_texts"]["alerts"]["changed_password_success"]
+                    }
+
+                if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                    request.session["global_alerts"] = [alert]
+                else:
+                    request.session["global_alerts"].append(alert)
+
                 return HttpResponseRedirect(reverse('userprofile:Backupkey'))
             else:
                 alerts["relogin"] = "relogin"
