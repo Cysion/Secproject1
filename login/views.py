@@ -111,8 +111,12 @@ def LoginView(request):
 
     loginFail = False
     if request.method == 'POST':
+        try:
+            user = User.objects.filter(Email=request.POST['email'].lower())[0]
+        except Exception as e:
+            user = None
+            loginFail = True
 
-        user = User.objects.filter(Email=request.POST['email'].lower())[0]
         if user:
             key = gen_rsa(secret_scrambler(request.POST["password"], user.getUid()))
             if str(key.publickey().export_key()) == str(user.getPubkey()):
@@ -165,16 +169,19 @@ def forgotPasswordView(request):
 
     if request.method == 'POST':
         if request.POST['password'] == request.POST['repassword']:
-            user = User.objects.filter(Email=request.POST['email'])[0]
+            try:
+                user = User.objects.filter(Email=request.POST['email'])[0]
+            except Exception as e:
+                user = None
             if user:
                 try:
                     request.session['UserId'] = user.getUid()
                     request.session['privKey']=changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
                 except ValueError as keyError:
-                    alerts["auth"] = "auth"
+                    alerts["relogin"] = "relogin"
                 return HttpResponseRedirect(reverse('userprofile:Backupkey'))
             else:
-                alerts["auth"] = "auth"
+                alerts["relogin"] = "relogin"
         else:
             alerts["repassword"] = "repassword"
 
@@ -191,7 +198,9 @@ def forgotPasswordView(request):
         'alert': alerts,
         'alerts': login_lang["login"]["long_texts"]["alerts"],
         'back': UNIVERSAL_LANG["universal"]["back"],
-        'POST': request.POST
+        'POST': request.POST,
+        'important': UNIVERSAL_LANG["universal"]["important"],
+        'forgot_password_info': login_lang["login"]["long_texts"]["forgot_password_info"]
     }
 
     return render(request, 'login/forgotpassword.html', args)
