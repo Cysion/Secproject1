@@ -5,7 +5,7 @@ import tools.confman as confman
 import hashlib
 from io import BytesIO, IOBase
 import gzip
-import logman
+import tools.logman as logman
 
 
 CONF = confman.get_conf()["media"]
