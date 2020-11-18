@@ -60,10 +60,8 @@ def RegisterView(request):
                     request.session['UserId'] = sessionsData[0]
                     request.session['privKey'] = sessionsData[1].decode("utf-8")
                     request.session['Role'] = sessionsData[2]
-                    if request.session['Role'] == 'User':
-                        return HttpResponseRedirect(reverse('userprofile:Backupkey'))
-                    elif request.session['Role'] == 'Professional':
-                        return HttpResponseRedirect(reverse('userprofile:Backupkey')) #Change to professional view
+
+                    return HttpResponseRedirect(reverse('userprofile:Backupkey'))
 
         args = {
             'POST': request.POST,
@@ -121,10 +119,8 @@ def LoginView(request):
                 request.session['UserId'] = user.getUid()
                 request.session['privKey'] = key.export_key().decode("utf-8")
                 request.session['Role'] = user.getRole()
-                if user.getRole() == 'User':
-                    return HttpResponseRedirect(reverse('userprofile:Profile'))
-                elif user.getRole() == 'Professional':
-                    return HttpResponseRedirect(reverse('userprofile:Profile')) #Change to professional view
+
+                return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
                 loginFail = True
         else:
