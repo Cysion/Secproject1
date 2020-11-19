@@ -30,7 +30,7 @@
   {% if media_type == 'file' %}
   <div class="form-group">
     <label for="file">{{ lang.upload }} {{ max_file_size }}MB</label>
-    <input type="file" class="form-control-file border" id="media" name="media">
+    <input type="file" class="form-control-file border" id="media" name="media" accept="audio/*,video/*,image/*">
   </div>
   {% if alerts.file %}
   <div class="alert alert-danger">

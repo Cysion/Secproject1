@@ -31,6 +31,22 @@ def addMemoryView(request):
     media_conf = get_conf(sections=["media"])["media"]
     alerts = {}
 
+    allowed_extenssions = [  # Some of the more popular allowed formats
+        #  Videos
+        ".WEBM", ".MPG", ".MP2", ".MPEG",
+        ".MPE", ".MPV", ".OGG", ".MP4", ".M4P", ".M4V", ".AVI",
+        ".WMV", ".MOV", ".QT", ".FLV", ".SWF", ".AVCHD",
+
+        # Photos
+        ".JPG", ".JPEG", ".EXIF", ".GIF", ".BMP", ".PNG",
+        ".WEBP", ".HEIF",
+
+        # Sound
+        ".AA", ".AAX", ".AIFF", ".ALAC", ".DVF", ".M4A", ".M4B",
+        ".MMF", ".MP3", ".MPC", ".OPUS", ".RF64", ".MAV", ".WMA",
+        ".WV"
+    ]
+
     media_type = ""  # Used for displaying url input or file input on page.
     if request.POST:  # Cant use method here because of two methods are used.
         if ('title' in request.POST.keys() and len(request.POST["title"]) <= 64
@@ -47,7 +63,8 @@ def addMemoryView(request):
                     memory.setMediaLink(current_user.getPubkey(), request.POST["link"])
                 elif "media" in request.FILES.keys():  # Optional
 
-                    if request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000:
+                    if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and
+                            "." + request.FILES["media"].name.split(".")[-1].upper() in allowed_extenssions):
                         try:
                             file = save_file(
                                 current_user.getSymKey(request.session["privKey"]),
@@ -115,7 +132,7 @@ def addMemoryView(request):
         'lang': prepare_lang["prepare"],
         'error': UNIVERSAL_LANG["universal"]["error"],
         'alerts': alerts,
-        'max_file_size': int(media_conf["max_size_mb"])
+        'max_file_size': int(media_conf["max_size_mb"]),
     }
 
     return render(request, 'prepare/add_memory.html', args)
