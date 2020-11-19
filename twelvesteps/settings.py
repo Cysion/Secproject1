@@ -49,7 +49,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'prepare.apps.PrepareConfig',
     'breathe.apps.BreatheConfig',
     'call.apps.CallConfig',
     'chat.apps.ChatConfig',
