@@ -198,7 +198,7 @@
         "unformat":[],
         "title":"prepare",
         "%%dev_note":"step list added in case the first, second, thirds etc paradigm is preferred to fractions. index 0 is concatenated with the following entries",
-        "steps":["step ","1/8", "2/8", "3/8", "4/8", "5/8", "6/8", "7/8", "8/8"],
+        "steps":["Step ","1/8", "2/8", "3/8", "4/8", "5/8", "6/8", "7/8", "8/8"],
         "memory":"memory",
         "memories":"memories",
         "how_to":"how to use 12 steps",

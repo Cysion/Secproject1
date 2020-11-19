@@ -10,6 +10,17 @@ from tools.mediaman import *
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
+
+def MenuView(request):
+    prepare_lang = get_lang(sections=["prepare"])
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'prepare': prepare_lang["prepare"]
+    }
+    return render(request, 'prepare/menu.html', args)
+
+
 def addMemoryView(request):
     """View for adding memories.
 
