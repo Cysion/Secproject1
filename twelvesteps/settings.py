@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'info.apps.InfoConfig',
     'login.apps.LoginConfig',
     'practice.apps.PracticeConfig',
+    'prepare.apps.PrepareConfig',
     'savemeplan.apps.SavemeplanConfig',
     'professionals.apps.ProfessionalsConfig',
     'userprofile.apps.UserprofileConfig',
@@ -178,4 +179,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static/',
 ]
 
-DEFAULT_FILE_STORAGE = "FileSystemStorage"
+#DEFAULT_FILE_STORAGE = "FileSystemStorage"
+
+MEDIA_ROOT = BASE_DIR / "media/"
+MEDIA_URL = '/media/'

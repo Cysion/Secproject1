@@ -54,7 +54,8 @@
     </nav>
     <div class="container">
       {% for alert in global_alerts %}
-      <div class="alert alert-{{ alert.color }}">
+      <div class="alert alert-{{ alert.color }} alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
         <strong>{{ alert.title }}!</strong> {{ alert.message }}
       </div>
       {% endfor %}

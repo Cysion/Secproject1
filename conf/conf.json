@@ -5,7 +5,8 @@
         "max_raw_size":2048
     },
     "media":{
-        "media_base_dir":"media"
+        "media_base_dir":"media",
+        "max_size_mb":"100"
     },
     "sessions":{
         "time_to_live":21600

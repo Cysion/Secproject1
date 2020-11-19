@@ -2,7 +2,7 @@ import logging
 import os
 import gzip
 from datetime import datetime
-from confman import get_conf
+from tools.confman import get_conf
 
 CONF = get_conf(sections=["logs"])
 

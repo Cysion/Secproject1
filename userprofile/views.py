@@ -59,7 +59,6 @@ def EditProfileView(request):
     account['lastName']=user.getLastName(request.session['privKey'])
     account['gender']=user.getGender(request.session['privKey'])
     account['email'] = user.getEmail()
-    print(account['gender'])
 
     if request.method == 'POST':
         if checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password']):
@@ -72,6 +71,17 @@ def EditProfileView(request):
             user.setLastName(request.POST['last_name'])
             user.setEmail(request.POST['email'])
             user.save()
+
+            alert = {
+                "color": "success",  # Check https://www.w3schools.com/bootstrap4/bootstrap_alerts.asp for colors.
+                "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
+                "message": profile_lang["userprofile"]["long_texts"]["alerts"]["changed_info_success"]
+            }
+
+            if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                request.session["global_alerts"] = [alert]
+            else:
+                request.session["global_alerts"].append(alert)
             return HttpResponseRedirect(reverse('userprofile:Profile'))
         else:
             wrong_pass = True
@@ -174,6 +184,7 @@ def changePassView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'alerts': login_lang['login']['long_texts']['alerts'],
         'alert': alerts,
+        'important': UNIVERSAL_LANG["universal"]["important"],
         'template': template
     }
 
@@ -233,8 +244,8 @@ def BackupKeyView(request):
 def relationsView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
-    
-    
+
+
     users = showAllRelationsTo(request.session['UserId'], request.session['privKey'])
 
     profile_lang = get_lang(sections=["userprofile"])
@@ -268,12 +279,12 @@ def addRelationsView(request):
             permissions+='1' if 'share_check' in request.POST else '0'
             permissions+='1' if 'share_prepare' in request.POST else '0'
             permissions+='1' if 'share_media' in request.POST else '0'
-            
+
             if not createRelation(user.getUid(), request.session['privKey'], recieverEmail, permissions):
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             else:
                 alerts['database'] = 'database_error'
-        
+
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -315,9 +326,9 @@ def manageRelationsView(request):
                 permission['Media'] = '1' if 'share_media' in request.POST else '0'
                 modifyRelation(request.session['UserId'], request.session['privKey'], email, permission)
                 relationData['Permission']=permission
-                
-            
-    
+
+
+
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -341,7 +352,7 @@ def createRelation(uId:int, privKey, recieverEmail:str, permissions:str):
     """
     user = User.objects.filter(UserId=uId)[0]
     reciever = User.objects.filter(Email=recieverEmail.lower())[0]
-    
+
     #try:
     with transaction.atomic():
         relationFromEntry = RelationFrom(

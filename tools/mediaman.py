@@ -1,11 +1,11 @@
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-import crypto
-import confman
+import tools.crypto as crypto
+import tools.confman as confman
 import hashlib
 from io import BytesIO, IOBase
 import gzip
-import logman
+import tools.logman as logman
 
 
 CONF = confman.get_conf()["media"]
@@ -35,7 +35,7 @@ def get_sha1(obj: IOBase) -> str:
     except AttributeError:
         hashhold.update(obj)
     return hashhold.hexdigest()
-    
+
 
 
 def save_file(key: bytes, clearfile: bytes, anonid, maxsize = None, upload_name = None, filetype_override = None, rootdir = CONF["media_base_dir"], exists_error=True, comp_level = 6, compress = True) -> tuple:
@@ -85,7 +85,7 @@ half_key_hash:{get_sha1(key[:len(key)//2])}
     #check if file already saved
     if default_storage.exists(save_path) and exists_error:
         raise FileExistsError
-    
+
     #save file
     default_storage.save(save_path, ContentFile(encfile))
     LOGGER.info(f"saved file at {save_path}")
@@ -108,7 +108,7 @@ def open_file(key:bytes, filename:str, rootdir = CONF["media_base_dir"], decompr
     infile.seek(0)
     #extract header
     opened = infile.read()
-    header, opened = header_and_file(infile, bytesio=False)    
+    header, opened = header_and_file(infile, bytesio=False)
     infile.close()
     checkfor = {
         "half_key_hash":get_sha1(key[:len(key)//2])
@@ -156,7 +156,7 @@ def header_and_file(infile:IOBase, bytesio=False, only_header=False) -> tuple:
         else:
             retfile = infile.read()
             infile.close()
-        
+
     return (header.decode("ascii"), None if only_header else retfile)
 
 
@@ -172,7 +172,7 @@ def delete_file(filename:str, rootdir = CONF["media_base_dir"], exists_error=Fal
     else:
         return
 
-    
+
 def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CONF["media_base_dir"]):
     """reencrypts all files in anonid directory with new_key. the new key is returned.
     anonid = anonid of the directory whose files are to be reencrypted
@@ -180,7 +180,7 @@ def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CON
     new_key = the key to be used for encryption (if left empty will be generated)
     rootdir = the root of all media storage sent to the default_storage class
     """
-    
+
     dirname = get_sha1(anonid)
     files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
     for file in files:
@@ -204,7 +204,7 @@ def open_all_files(key:bytes, anonid, rootdir = CONF["media_base_dir"], decompre
         fullpath = f"{dirname}/{file}"
         files_data.append(open_file(key, fullpath, rootdir=rootdir, decompress=decompress))
     return files_data
-    
+
 
 def delete_all_files(anonid, rootdir = CONF["media_base_dir"]):
     """used to IRREVERSIBLY clear all data from a user. will completely purse the directory of given anonid
@@ -240,7 +240,7 @@ if __name__ == "__main__":
         dat = inf.read()
         for i in range(9):
             save_file(key, dat, anonid, exists_error=False)
-    
+
     reencrypt_user(anonid, key, newkey)
     try:
         open_all_files(key, anonid)

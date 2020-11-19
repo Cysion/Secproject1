@@ -21,6 +21,7 @@
         "success":"Success",
         "warning":"Warning",
         "error":"Error",
+        "important":"Important",
         "titles":[
           "Info",
           "Chat",
@@ -114,10 +115,12 @@
             "repassword":"Passwords are not the same!",
             "relogin":"Login credentials incorrect!",
             "wrong_pass":"Password is incorrect!",
-            "badChar":"Field contains illegal character(s)"
+            "badChar":"Field contains illegal character(s)",
+            "changed_password_success":"You changed you password!"
 
         },
-        "failed_login":"Wrong email or password entered"
+        "failed_login":"Wrong email or password entered",
+        "forgot_password_info":"If you successfully changed password you need to save backup key again!"
       }
     },
     "userprofile":{
@@ -156,10 +159,11 @@
         "relations": "Relations",
         "logout":"Logout",
         "backupkey":"This is your backup key if you forgot your password. Please save this on a save place!. Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
-        "change_password_text":"When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
+        "change_password_text":"If you change your password then you need to save your backup key again! When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
         "alerts": {
           "alert_changed_password":"You successfully changed your password",
-          "alert_error":"Something went wrong when trying to encrypt your data"
+          "alert_error":"Something went wrong when trying to encrypt your data",
+          "changed_info_success":"You changed your info!"
         }
       }
     },
@@ -211,7 +215,7 @@
         "ther_notes":"Therapy notes",
         "title":"Title",
         "text":"Text",
-        "upload":"Upload file here",
+        "upload":"Upload file: max file size is",
         "file":"File",
         "link":"Link",
         "add_memory":"Add memory",
@@ -220,11 +224,17 @@
             "hotline_text":"see p.19 in presentation",
             "ther_notes":"see p.21 in presentation",
             "media_info":"Do you want to attach a media to your memory? Press one of the following buttons.",
-            "link_info":"Link can be a youtube link.",
+            "link_info":"Link can be a youtube or tiktok link.",
             "file_info":"File can be photo, video or music.",
             "memory_type":"What type of memory is it?",
+            "allowed_extenssions":"These extenssions are allowed",
             "alerts":{
-
+              "no_title":"You need to enter a title for a memory!",
+              "title_to_long":"A title can be maximum 64 characters!",
+              "no_type":"You need set a type for you memory!",
+              "memory_added":"Your memory was added!",
+              "file_to_big":"This file is too big or the extenssion is not allowed!",
+              "file_error":"Something with ths file upload went wrong."
             }
         }
     },

@@ -6,4 +6,3 @@ from .models import *
 
 admin.site.register(SaveMePlan)
 admin.site.register(Contacts)
-admin.site.register(Media)
