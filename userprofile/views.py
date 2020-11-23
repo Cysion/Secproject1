@@ -202,17 +202,24 @@ def changePass(uId:int, privKey, newPassword:str):
 
     key = gen_rsa(secret_scrambler(newPassword, uId))
     pubkey=key.publickey().export_key()
+    privKeyNew = key.export_key().decode("utf-8")
     with transaction.atomic():
         user.setPubKey(pubkey)
-        user.Gender=rsa_encrypt(pubkey, gender.encode("utf-8"))
-        user.FirstName=rsa_encrypt(pubkey, firstName.capitalize().encode("utf-8"))
-        user.LastName=rsa_encrypt(pubkey, lastName.capitalize().encode("utf-8"))
-        user.DateOfBirth=rsa_encrypt(pubkey, dateOfBirth.encode("utf-8"))
+        user.setGender(gender)
+        user.setFirstName(firstName.capitalize())
+        user.setLastName(lastName.capitalize())
+        user.setDateOfBirth(dateOfBirth)
+        user.setSymkey()
+        user.setAnonId(privKeyNew)
         user.save()
 
-        relationsTo = RelationTo.object.filter(UserIdFrom=user.getUid())
+        relationsTo = RelationTo.objects.filter(UserIdFrom=user.getUid())
         for relation in relationsTo:
-            relation.setFromPrivEncrypted(User.objects.filter(AnonId=relation.getAnonymityIdTo())[0].getPubkey(), key.export_key().decode("utf-8"))
+            reciever = User.objects.filter(UserId=relation.getUserIdToDecryptedFrom(privKey))[0]
+            relation.setFromPrivEncrypted(reciever.getPubkey(), key.export_key().decode("utf-8"))
+            relation.setUserIdToEncryptedFrom(pubkey, reciever.getUid())
+            relation.save()
+            
         return key.export_key()
 
     return 0
