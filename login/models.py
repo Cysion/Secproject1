@@ -127,7 +127,7 @@ class Action(models.Model):
     done.
     """
 
-    ActionId = models.IntegerField(primary_key=True)
+    ActionId = models.AutoField(primary_key=True)
     Description = models.CharField(max_length=255)
 
 class ResearchData(models.Model):
@@ -137,7 +137,8 @@ class ResearchData(models.Model):
     cannot be reversed.
     """
 
-    ResearchDataId = models.IntegerField(primary_key=True)
+    ResearchDataId = models.AutoField(primary_key=True)
     ActionId = models.ForeignKey(Action, on_delete=models.CASCADE)
-    AnonymityCode = models.CharField(max_length=64)
+    AnonId = models.BinaryField(max_length=512)
     Time = models.DateTimeField(auto_now=True)
+
