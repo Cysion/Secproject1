@@ -139,5 +139,6 @@ class ResearchData(models.Model):
 
     ResearchDataId = models.AutoField(primary_key=True)
     ActionId = models.ForeignKey(Action, on_delete=models.CASCADE)
-    AnonymityCode = models.CharField(max_length=64)
+    AnonId = models.BinaryField(max_length=512)
     Time = models.DateTimeField(auto_now=True)
+
