@@ -1,16 +1,23 @@
 {% extends template %}
-
+{% if not profView %}
 {% block title %}Edit User Profile{% endblock %}
+{% else %}
+
+{% endif %}
 
 {% block content %}
+{% if not profView %}
 <h1>Edit User Profile</h1>
-
+{% else %}
+<h1>Profile</h1>
+{% endif %}
 <form action="/userprofile/edit/" class="was-validated" method="POST">
     {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
     <div class="form-group">
       <label for="first_name">{{ form.first_name }}: </label>
       <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.first_name }}..."
-        maxlength="64" id="first_name" name="first_name" value="{{ account.firstName }}" {% if POST %} value="{{POST.first_name}}" {% endif %}{# If post already has been submitted #} required>
+        maxlength="64" id="first_name" name="first_name" value="{{ account.firstName }}" {% if POST %} value="{{POST.first_name}}" {% endif %}{# If post already has been submitted #}
+        {% if profView %}disabled{% endif %} required>
       <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
     </div>
     {% if alert.first_name %}
@@ -22,7 +29,7 @@
     <div class="form-group">
       <label for="last_name">{{ form.last_name }}: </label>
       <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.last_name }}..."
-        maxlength="64" id="last_name" name="last_name" value="{{ account.lastName }}" {% if POST %} value="{{POST.last_name}}" {% endif %} required>
+        maxlength="64" id="last_name" name="last_name" value="{{ account.lastName }}" {% if POST %} value="{{POST.last_name}}" {% endif %} {% if profView %}disabled{% endif %} required>
       <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }}</div>
     </div>
     {% if alert.last_name %}
@@ -37,24 +44,24 @@
         <input type="radio" class="form-check-input" id="gender" name="gender" value="Female"
           {% if account.gender == "Female" %} checked {% endif %}
           {% if POST and POST.gender and POST.gender == "Female" %} checked
-          {% elif not POST or not POST.gender %} checked {% endif %}>{{ form.female }} {# Django cant prioritize with () #}
+          {% elif not POST or not POST.gender %} checked {% endif %} {% if profView %}disabled{% endif %}>{{ form.female }} {# Django cant prioritize with () #}
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label">
         <input type="radio" class="form-check-input" id="gender" name="gender" value="Male"
           {% if account.gender == "Male" %} checked {% endif %}
-          {% if POST and POST.gender and POST.gender == "Male" %}checked {% endif %}>{{ form.male }}
+          {% if POST and POST.gender and POST.gender == "Male" %}checked {% endif %} {% if profView %}disabled{% endif %}>{{ form.male }}
       </label>
     </div>
     <div class="form-check">
       <label class="form-check-label">
         <input type="radio" class="form-check-input" id="gender" name="gender" value="Other"
           {% if account.gender != "Female" and account.gender != "Male" %} checked {% endif %}
-          {% if POST and POST.gender and POST.gender != "Female" and POST.gender != "Male" %} checked {% endif %}>
+          {% if POST and POST.gender and POST.gender != "Female" and POST.gender != "Male" %} checked {% endif %} {% if profView %}disabled{% endif %}>
           <input type="text" class="form-control" style="height: 30px; margin-bottom: 10px;" id="gender_other" name="gender_other"
           {% if account.gender != "Female" and account.gender != "Male" %} value="{{ account.gender }}" {% endif %}
-          {% if POST %} value="{{POST.gender}}" {% endif %} maxlength="32">
+          {% if POST %} value="{{POST.gender}}" {% endif %} maxlength="32" {% if profView %}disabled{% endif %}>
       </label>
     </div>
     {% if alert.gender or alert.gender_other %}
@@ -66,7 +73,7 @@
     <div class="form-group">
       <label for="email">{{ form.email }}: </label>
       <input type="email" class="form-control" placeholder="{{ form.placeholder }} {{ form.email }}..."
-        id="email" name="email" value="{{ account.email }}" {% if POST and not alert.email %} value="{{POST.email}}" {% endif %} required>
+        id="email" name="email" value="{{ account.email }}" {% if POST and not alert.email %} value="{{POST.email}}" {% endif %} {% if profView %}disabled{% endif %} required>
       <div class="invalid-feedback">{{ form.required }}.</div>
     </div>
 
@@ -80,20 +87,26 @@
       <strong>{{ alerts.warning }}!</strong> {{ alerts.email_already_exists }}
     </div>
     {% endif %}
+
+    {% if not profView %}
     <div class="form-group">
       <label for="password">{{ form.password }}: </label>
       <input type="password" class="form-control" placeholder="{{ form.placeholder }} {{ form.password }}..."
-      maxlength="64" id="password" name="password" required>
+      maxlength="64" id="password" name="password" {% if profView %}disabled{% endif %} required>
     </div>
+    {% endif %}
+
     {% if wrong_pass %}
     <div class="alert alert-danger">
       <strong>{{ alerts.warning }}!</strong> {{ alerts.wrong_pass }}
     </div>
     {% endif %}
 
+    {% if not profView %}
     <div class="form-group">
       <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.save }}" style="margin-top:10px;">
     </div>
+    {% endif %}
 </form>
 
 <a type="button" class="btn btn-primary btn-block" href="/userprofile/">{{ back }}</a>
