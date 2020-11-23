@@ -71,7 +71,7 @@ def addMemoryView(request):
                 memory.setMediaType(current_user.getPubkey(), request.POST["type"])
 
                 if "link" in request.POST.keys():  # Optional
-                    memory.setMediaLink(current_user.getPubkey(), request.POST["link"])
+                    memory.setLink(current_user.getPubkey(), request.POST["link"])
                 elif "media" in request.FILES.keys():  # Optional
 
                     if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and

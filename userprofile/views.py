@@ -102,7 +102,8 @@ def EditProfileView(request):
         'alerts': login_lang['login']['long_texts']['alerts'],
         "account":account,
         'wrong_pass':wrong_pass,
-        'template': template
+        'template': template,        
+        'profView': False
     }
 
     return render(request, 'userprofile/edit.html', args)
@@ -468,3 +469,13 @@ def modifyRelation(uId, privKey, recieverEmail, permission):
                 relationTo.save()
         return 0
     return 1
+
+
+def sharesDataWith(userId, recieverId, recieverPrivKey):
+    reciever = User.objects.filter(UserId=recieverId)[0]
+    relationTo = RelationTo.objects.filter(UserIdFrom=userId, AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
+    if relationTo:
+        relationTo = relationTo[0]
+        return relationTo.getFromPrivDecrypted(recieverPrivKey)
+    else:
+        return False
