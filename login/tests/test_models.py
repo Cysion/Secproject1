@@ -89,7 +89,7 @@ class TestModels(TestCase):
         self.assertEqual(self.user.getAnonId(self.priv_key), self.anon_id)
 
 
-    def test_(self):
+    def test_Action_ResearchData(self):
         """ Tests basic functionality of object Action and ResearchData """
 
         # Creating Action-object
