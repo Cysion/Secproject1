@@ -66,6 +66,8 @@ def addMemoryView(request):
             current_user = User.objects.filter(pk=request.session["UserId"])[0]
             memory = current_user.media_set.create()  # Create a Media entry with foreignkey this user.
             memory.setMediaTitle(current_user.getPubkey(), request.POST["title"])
+            memory.setMediaSize(current_user.getPubkey(), 0)
+
 
             if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
                 memory.setMediaType(current_user.getPubkey(), request.POST["type"])
@@ -76,21 +78,33 @@ def addMemoryView(request):
 
                     if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and
                             "." + request.FILES["media"].name.split(".")[-1].upper() in allowed_extenssions):
-                        try:
-                            file = save_file(
-                                current_user.getSymKey(request.session["privKey"]),
-                                request.FILES["media"].read(),
-                                current_user.getAnonId(request.session["privKey"])
-                            )
+                        medias = current_user.media_set.exclude(pk=memory.MediaId)
+                        total_space_used = 0
+                        for media in medias:
+                            total_space_used += int(media.getMediaSize(request.session["privKey"]))
 
-                            memory.setMediaSize(current_user.getPubkey(), request.FILES["media"].size)
-                            memory.setLink(current_user.getPubkey(), file[0])
-                        except RuntimeError as e:
-                            alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
-                        except Exception as e:
-                            alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_error"]
+                        if total_space_used + int(request.FILES["media"].size) <= int(media_conf["max_per_user"])*1000000:
+                            try:
+                                file = save_file(
+                                    current_user.getSymKey(request.session["privKey"]),
+                                    request.FILES["media"].read(),
+                                    current_user.getAnonId(request.session["privKey"])
+                                )
+
+                                memory.setMediaSize(current_user.getPubkey(), request.FILES["media"].size)
+                                memory.setLink(current_user.getPubkey(), file[0])
+                            except RuntimeError as e:
+                                alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
+                                memory.delete()
+                            except Exception as e:
+                                alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_error"]
+                                memory.delete()
+                        else:
+                            alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["not_enough_space"]
+                            memory.delete()
                     else:
                         alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
+                        memory.delete()
 
                 if 'media_text' in request.POST.keys() and not alerts:  # Optional
                     memory.setMediaText(current_user.getPubkey(), request.POST["media_text"])
@@ -108,16 +122,18 @@ def addMemoryView(request):
                     else:
                         request.session["global_alerts"].append(alert)
 
-                return HttpResponseRedirect(reverse('prepare:memory'))
+                        # return HttpResponseRedirect(reverse('prepare:memory'))
 
 
             else:  # If no type is entered
                 alerts["type"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_type"]
+                memory.delete()
         else:  # If Title is either empty or too long
             if len(request.POST["title"]) >= 64:
                 alerts["title"] = prepare_lang["prepare"]["long_texts"]["alerts"]["title_to_long"]
             else:
                 alerts["title"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_title"]
+            memory.delete()
 
         if "link" in request.POST.keys():  # Displaying text input type
             media_type = "url"
@@ -150,22 +166,26 @@ def addMemoryView(request):
     return render(request, 'prepare/add_memory.html', args)
 
 
-def MemoryView(request):
+def MemoryView(request, id):
 
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
     prepare_lang = get_lang(sections=["prepare"])
 
+    content = dict()
+
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
-        "add_memory": prepare_lang["prepare"]["long_texts"]["add_memory"]
+        "add_memory": prepare_lang["prepare"]["long_texts"]["add_memory"],
+        "content": content
     }
 
-    return render(request, 'prepare/memories.html', args)
+    return render(request, 'prepare/memory.html', args)

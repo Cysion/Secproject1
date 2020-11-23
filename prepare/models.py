@@ -18,11 +18,11 @@ class Media(models.Model):
     UserId = models.ForeignKey(User, on_delete=models.CASCADE)
     Compressed = models.BinaryField(max_length=1)
     MediaType = models.BinaryField(max_length=4)
-    MediaTitle = models.BinaryField(max_length=64)
+    MediaTitle = models.BinaryField(max_length=128)
     MediaText = models.BinaryField()
     MediaLink = models.BinaryField()
     Memory = models.CharField(max_length=1)
-    MediaSize = models.BinaryField(max_length=12)
+    MediaSize = models.BinaryField(max_length=32)
 
     def getCompressed(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.Compressed).decode("utf-8")
