@@ -95,7 +95,7 @@ def addMemoryView(request):
                 if 'media_text' in request.POST.keys() and not alerts:  # Optional
                     memory.setMediaText(current_user.getPubkey(), request.POST["media_text"])
 
-                if not alerts:
+                if not alerts and not request.GET:
                     memory.save()
                     alert = {
                         "color": "success",
@@ -108,7 +108,7 @@ def addMemoryView(request):
                     else:
                         request.session["global_alerts"].append(alert)
 
-                #return HttpResponseRedirect(reverse('login:Login'))  # Should redirect to memory page
+                return HttpResponseRedirect(reverse('prepare:memory'))
 
 
             else:  # If no type is entered
@@ -138,6 +138,7 @@ def addMemoryView(request):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
+        'back': UNIVERSAL_LANG["universal"]["back"],
         'media_type': media_type,
         'POST': request.POST,
         'lang': prepare_lang["prepare"],
@@ -147,3 +148,24 @@ def addMemoryView(request):
     }
 
     return render(request, 'prepare/add_memory.html', args)
+
+
+def MemoryView(request):
+
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare_lang = get_lang(sections=["prepare"])
+
+    global_alerts = []  # The variable which is sent to template
+    if "global_alerts" in request.session.keys():  # Check if there is global alerts
+        global_alerts = request.session["global_alerts"]  # Retrive global alerts.
+        request.session["global_alerts"] = []  # Reset
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
+        'global_alerts': global_alerts,  # Sending the alerts to template.
+        "add_memory": prepare_lang["prepare"]["long_texts"]["add_memory"]
+    }
+
+    return render(request, 'prepare/memories.html', args)
