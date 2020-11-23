@@ -1,9 +1,11 @@
 {% extends template %}
+{% block title %}
 {% if not profView %}
-{% block title %}Edit User Profile{% endblock %}
+Edit User Profile
 {% else %}
-
+{{ account.firstName }} {{ account.lastName }} Profile
 {% endif %}
+{% endblock %}
 
 {% block content %}
 {% if not profView %}
