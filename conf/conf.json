@@ -6,7 +6,8 @@
     },
     "media":{
         "media_base_dir":"media",
-        "max_size_mb":"100"
+        "max_size_mb":"100",
+        "max_per_user":"250"
     },
     "sessions":{
         "time_to_live":21600
