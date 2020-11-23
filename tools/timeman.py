@@ -4,17 +4,15 @@ import time
 import sys
 
 
+from django.core.management import execute_from_command_line as django_manage
+
+
 from confman import get_conf
 import logman
 
+
 CONF = get_conf()
 LOGGER = logman.get_logger("timeman")
-
-
-def purge_sessions(config):
-    ttl = config["time_to_live"]
-
-
 
 def compress_logs():
     logman.log_cleaner()
@@ -23,10 +21,12 @@ def queue_executer(args):
     parser = argparse.ArgumentParser(description="Run automated tasks for 12steps")
     parser.add_argument("-p", "--purge", help="Look through sessions and remove ones that have expired",
     metavar="")
+    parser.add_argument("-c", "--compress-logs", help="Uses gzip compression on large logfiles",
+    metavar = "")
     parser.add_argument("--test")
     args = parser.parse_args(args)
     if args.purge:
-        purge_sessions(CONF["sessions"])
+        django_manage(["manage.py","clearsessions"])
     print(args.test)
     if threading.current_thread() != threading.main_thread():
         threading.current_thread().join()
