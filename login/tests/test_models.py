@@ -8,7 +8,7 @@ from tools.crypto import gen_rsa, secret_scrambler
 class TestModels(TestCase):
 
     def setUp(self):
-        """ Initializing testing environment """
+        """ Initializing testing environment, testing User set-functions """
 
         # Initialize fields
         self.gender = u'male'
@@ -39,7 +39,7 @@ class TestModels(TestCase):
         self.user.setAnonId(self.priv_key)
         self.anon_id = self.user.getAnonId(self.priv_key)
 
-        """
+        """ Uncomment when symmetric crypt-functions has been fixed
         # 4. Generate AES key (dependent on RSA keys)
         self.user.setSymkey()
         #self.sym_key = self.user.getSymKey(self.priv_key.decode("utf-8"))
@@ -56,7 +56,7 @@ class TestModels(TestCase):
         self.assertEqual(User.objects.count(), 1)
 
     def test_User_fields_is_encrypted(self):
-        """ Tests if fields gets encrypted """
+        """ Tests if User fields gets encrypted """
 
         self.assertEqual(self.user.Email, self.email)
         self.assertEqual(self.user.Role, self.role)
@@ -70,8 +70,8 @@ class TestModels(TestCase):
         self.assertNotEqual(self.user.AnonId, self.anon_id)
 
 
-    def test_User_test_gets(self):
-        """ Tests User get-functions """
+    def test_User_field_is_decrypted(self):
+        """ Tests if User fields gets decrypted via User get-functions """
 
         # Test plain fields
         self.assertEqual(self.user.getUid(), self.user.UserId)
