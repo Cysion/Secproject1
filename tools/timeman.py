@@ -76,7 +76,6 @@ def clock(runfor, tab, sleepfor = 1, threads = 4):
 
 def devvy():
     crontab = {
-        #-1:[],
         1:"--test 1",
         5:"--test 5",
         60:"",
