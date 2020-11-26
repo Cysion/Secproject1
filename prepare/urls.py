@@ -7,8 +7,9 @@ urlpatterns = [
     # ex: /polls/
     path('contacts', views.ContactsView, name='contacts'),
     path('memory/add/', views.addMemoryView, name='add-memory'),
-    path('memory/', views.MemoryView, name='memory'),
-    path('', views.MenuView, name='Menu'),
+    path('memory/<int:id>/', views.MemoryView, name='memory'),
+    path('<int:page>/', views.MenuView, name='menu-page'),
+    path('', views.MenuView, name='menu'),
     #path('1/', views.HowToView, name='How-To'),
     #path('2/', views.PracticeBreathingView, name='Practice-Breathing'),
     #path('3/', views.SupportiveMemoriesView, name='Supportive-Memories'),
