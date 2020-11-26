@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Manage relations{% endblock %}
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "userprofile/relations.css" %}">
+<script src="{% static 'app.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<a type="button" class="btn btn-lg btn-primary btn-block" href="/userprofile/relations">{{ back }}</a>
+
+{% endblock %}

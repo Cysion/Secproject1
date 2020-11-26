@@ -7,6 +7,7 @@ from userprofile.models import RelationFrom, RelationTo
 from login.models import User
 from tools.crypto import gen_rsa, secret_scrambler
 from tools.confman import get_lang
+from tools.mediaman import reencrypt_user
 from django.db import transaction
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
 
@@ -52,6 +53,10 @@ def ProfileView(request):
 def EditProfileView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
+    
+    profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
+    
     wrong_pass = False
     account = {}
     user=User.objects.filter(UserId=request.session['UserId'])[0]
@@ -92,8 +97,6 @@ def EditProfileView(request):
     else:
         template = "base_professionals.html"
 
-    profile_lang = get_lang(sections=["userprofile"])
-    login_lang = get_lang(sections=["login"])
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
@@ -199,6 +202,7 @@ def changePass(uId:int, privKey, newPassword:str):
     gender=user.getGender(privKey)
     dateOfBirth=user.getDateOfBirth(privKey)
     symKey=user.getSymKey(privKey)
+    anonId = user.getAnonId(privKey)
 
     key = gen_rsa(secret_scrambler(newPassword, uId))
     pubkey=key.publickey().export_key()
@@ -209,7 +213,7 @@ def changePass(uId:int, privKey, newPassword:str):
         user.setFirstName(firstName.capitalize())
         user.setLastName(lastName.capitalize())
         user.setDateOfBirth(dateOfBirth)
-        user.setSymkey()
+        user.setSymkey(reencrypt_user(anonId, symKey))
         user.setAnonId(privKeyNew)
         user.save()
 
