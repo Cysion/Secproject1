@@ -2,21 +2,35 @@
 
 {% block title %}Prepare{% endblock %}
 
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "prepare/prepare.css" %}">
+{% endblock %}
+
 {% block content %}
 
-<h1>Prepare</h1>
+<nav class="second-nav nav nav-pills nav-fill align-items-center" style="border-width: 3px !important;">
+    <h1 class="nav-item m-2"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
+    <a class="nav-item nav-link btn btn-info m-2" href="#">{{ nav.library }}</a>
+    <a class="nav-item nav-link btn btn-info m-2" href="#">{{ nav.contacts }}</a>
+    <a class="nav-item nav-link btn btn-info m-2" href="#">{{ nav.notes }}</a>
+</nav>
+<h2>{{ prepare.menu }}</h2>
+<p>{{ prepare.long_texts.menu_description }}</p>
 
-
-
-<div>
-    <a type="button" class="btn btn-info" href="1/">{{ prepare.steps.0 }} {{ prepare.steps.1 }}</a>
-    <a type="button" class="btn btn-info" href="2/">{{ prepare.steps.0 }} {{ prepare.steps.2 }}</a>
-    <a type="button" class="btn btn-info" href="3/">{{ prepare.steps.0 }} {{ prepare.steps.3 }}</a>
-    <a type="button" class="btn btn-info" href="4/">{{ prepare.steps.0 }} {{ prepare.steps.4 }}</a>
-    <a type="button" class="btn btn-info" href="5/">{{ prepare.steps.0 }} {{ prepare.steps.5 }}</a>
-    <a type="button" class="btn btn-info" href="6/">{{ prepare.steps.0 }} {{ prepare.steps.6 }}</a>
-    <a type="button" class="btn btn-info" href="7/">{{ prepare.steps.0 }} {{ prepare.steps.7 }}</a>
-    <a type="button" class="btn btn-info" href="8/">{{ prepare.steps.0 }} {{ prepare.steps.8 }}</a>
-</div>
+<section style="margin:20px 0">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
+        <li class="page-item"><a class="page-link" href="1/"> {{ prepare.steps.1 }}</a></li>
+        <li class="page-item"><a class="page-link" href="2/">{{ prepare.steps.2 }}</a></li>
+        <li class="page-item"><a class="page-link" href="3/">{{ prepare.steps.3 }}</a></li>
+        <li class="page-item"><a class="page-link" href="4/">{{ prepare.steps.4 }}</a></li>
+        <li class="page-item"><a class="page-link" href="5/">{{ prepare.steps.5 }}</a></li>
+        <li class="page-item"><a class="page-link" href="6/">{{ prepare.steps.6 }}</a></li>
+        <li class="page-item"><a class="page-link" href="7/">{{ prepare.steps.7 }}</a></li>
+        <li class="page-item"><a class="page-link" href="8/">{{ prepare.steps.8 }}</a></li>
+    </ul>
+</section>
 
 {% endblock %}

@@ -16,7 +16,8 @@ def MenuView(request):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
-        'prepare': prepare_lang["prepare"]
+        'prepare': prepare_lang["prepare"],
+        'nav': prepare_lang["prepare"]["nav"]
     }
     return render(request, 'prepare/menu.html', args)
 
