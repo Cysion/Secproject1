@@ -24,6 +24,9 @@ class Media(models.Model):
     Memory = models.CharField(max_length=1)
     MediaSize = models.BinaryField(max_length=32)
 
+    def getUserId(self):
+        return self.UserId
+    
     def getCompressed(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.Compressed).decode("utf-8")
 
@@ -46,50 +49,29 @@ class Media(models.Model):
         return rsa_decrypt(privKey.encode("utf-8"), self.MediaSize).decode("utf-8")
 
     def setCompressed(self, PubKey, compressed):
-        if PubKey:
-            self.Compressed=rsa_encrypt(Pubkey, compressed.encode("utf-8)"))
-            return 0
-        else:
-            return 1
+            self.Compressed=rsa_encrypt(PubKey, compressed.encode("utf-8)"))
+
 
     def setMediaType(self, PubKey, type):
-        if PubKey:
             self.MediaType=rsa_encrypt(PubKey, type.encode("utf-8)"))
-            return 0
-        else:
-            return 1
+
 
     def setMediaTitle(self, PubKey, title):
-        if PubKey:
             self.MediaTitle=rsa_encrypt(PubKey, title.encode("utf-8)"))
-            return 0
-        else:
-            return 1
+
 
     def setMediaText(self, PubKey, text):
-        if PubKey:
             self.MediaText=rsa_encrypt(PubKey, text.encode("utf-8)"))
-            return 0
-        else:
-            return 1
+
 
     def setLink(self, PubKey, link):
-        if PubKey:
             self.MediaLink=rsa_encrypt(PubKey, link.encode("utf-8)"))
-            return 0
-        else:
-            return 1
+
 
     def setMemory(self, PubKey, memory):
-        if PubKey:
             self.Memory=rsa_encrypt(PubKey, memory.encode("utf-8)"))
-            return 0
-        else:
-            return 1
+
 
     def setMediaSize(self, PubKey, size):
-        if PubKey:
             self.MediaSize=rsa_encrypt(PubKey, str(size).encode("utf-8"))
-            return 0
-        else:
-            return 1
+
