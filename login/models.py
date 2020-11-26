@@ -105,9 +105,9 @@ class User(models.Model):
         self.Email = email
         return 0
 
-    def setSymkey(self):
+    def setSymkey(self, Symkey=rsa_encrypt(self.Pubkey, gen_aes())):
         if self.Pubkey:
-            self.Symkey=rsa_encrypt(self.Pubkey, gen_aes())
+            self.Symkey=Symkey
             return 0
         else:
             return 1

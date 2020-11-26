@@ -7,6 +7,7 @@ from login.models import User
 from prepare.models import Media
 from tools.confman import get_lang, get_conf
 from tools.mediaman import *
+from savemeplan.models import Contacts
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -189,3 +190,31 @@ def MemoryView(request, id):
     }
 
     return render(request, 'prepare/memory.html', args)
+
+
+def ContactsView(request):
+    
+    return render(request, 'prepare/contacts.html')
+
+
+
+def addContact(uId, name, phonenumber, available):
+    contact = Contacts(
+        Name = name,
+        Phonenumber = phonenumber,
+        Available = available
+    )
+    contact.save()
+
+def showContacts(uId, privKey):
+    user = User.objects.filter(UserId=uId)[0]
+    contactsToReturn = []
+    contacts = Contacts.objects.filter(UserId=user)
+    for contact in contacts:
+        contactInfo = dict({
+            'Name':contact.getName(privKey),
+            'Phonenumber':contact.getPhonenumber(privKey),
+            'Available':contact.getAvailable(privKey)
+        })
+        contactsToReturn.append(contactInfo)
+    return contactsToReturn

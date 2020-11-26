@@ -5,6 +5,7 @@ from . import views
 app_name = 'prepare'
 urlpatterns = [
     # ex: /polls/
+    path('contacts', views.ContactsView, name='contacts'),
     path('memory/add/', views.addMemoryView, name='add-memory'),
     path('memory/', views.MemoryView, name='memory'),
     path('', views.MenuView, name='Menu'),
