@@ -26,7 +26,7 @@ def MenuView(request, page=0):
     elif page == 3:
         template = 'prepare/3_supportivememories.html'
     elif page == 4:
-        template = 'prepare/4_destuctivememories.html'
+        template = 'prepare/4_destructivememories.html'
     elif page == 5:
         template = 'prepare/5_contacts.html'
     elif page == 6:
@@ -275,13 +275,13 @@ def showContacts(uId, privKey):
     return contactsToReturn
 
 def showAllmemories(uId, privKey, memType):
-    if memType == 's':
+    if memType in 'sd':
         memoryIdList=[]
         user=User.objects.filter(UserId=uId)[0]
-        memories = Media.objects.filter(UserId=user)
+        memories = Media.objects.filter(UserId=user, Memory=memType)
         for memory in memories:
-            memory
-    elif memType == 'd':
-        pass
+            memoryInfo = dict({'Title':memory.getMediaTitle(privKey),'Id':memory.getMediaId()})
+            memoryIdList.append(memoryInfo)
+        return memoryIdList
     else:
         return -1

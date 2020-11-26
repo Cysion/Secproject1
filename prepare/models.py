@@ -24,6 +24,11 @@ class Media(models.Model):
     Memory = models.CharField(max_length=1)
     MediaSize = models.BinaryField(max_length=32)
 
+
+    def getMediaId(self):
+        return self.MediaId
+
+        
     def getUserId(self):
         return self.UserId
     
