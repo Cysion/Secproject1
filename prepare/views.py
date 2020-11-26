@@ -26,7 +26,7 @@ def MenuView(request, page=0):
     elif page == 3:
         template = 'prepare/3_supportivememories.html'
     elif page == 4:
-        template = 'prepare/4_destuctivememories.html'
+        template = 'prepare/4_destructivememories.html'
     elif page == 5:
         template = 'prepare/5_contacts.html'
     elif page == 6:
