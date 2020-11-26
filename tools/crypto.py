@@ -86,7 +86,7 @@ def gen_anon_id(uid: int, birthday: str, blen=256):
     return hashlib.scrypt(birthday.encode("utf-8"),salt=uid.to_bytes(24,"little"),dklen=blen,n=2,r=4,p=1)
 
 
-def gen_aes(keysize=128) -> bytes:
+def gen_aes(keysize=256) -> bytes:
     """uses os urandom to generate a keysize-bit key (defaults to 128 bit). returns keysize bits
     binary object
     keysize = size of key to be generated, must be divisible by 8"""
