@@ -198,7 +198,7 @@
         "unformat":[],
         "title":"prepare",
         "%%dev_note":"step list added in case the first, second, thirds etc paradigm is preferred to fractions. index 0 is concatenated with the following entries",
-        "steps":["Step ","1/8", "2/8", "3/8", "4/8", "5/8", "6/8", "7/8", "8/8"],
+        "steps":["Step","1", "2", "3", "4", "5", "6", "7", "8"],
         "memory":"memory",
         "memories":"memories",
         "how_to":"how to use 12 steps",
@@ -220,7 +220,15 @@
         "link":"Link",
         "add_memory":"Add memory",
         "placeholder":"Enter a",
+        "menu":"Menu",
+        "nav":{
+            "prepare":"Prepare",
+            "library":"Library",
+            "contacts":"Contacts",
+            "notes":"Notes"
+        },
         "long_texts":{
+            "menu_description":"Click one of the areas above or select a step below",
             "hotline_text":"see p.19 in presentation",
             "ther_notes":"see p.21 in presentation",
             "media_info":"Do you want to attach a media to your memory? Press one of the following buttons.",
@@ -235,7 +243,8 @@
               "no_type":"You need set a type for you memory!",
               "memory_added":"Your memory was added!",
               "file_to_big":"This file is too big or the extenssion is not allowed!",
-              "file_error":"Something with ths file upload went wrong."
+              "file_error":"Something with ths file upload went wrong.",
+              "not_enough_space":"You dont have enough space to upload this media! You need to delete a memory with a photo, video or sound file if you wish to upload this!"
             }
         }
     },

@@ -1,14 +1,14 @@
 
 from django.test import TestCase
 
-from login.models import User
+from login.models import User, Action, ResearchData
 from tools.crypto import gen_rsa, secret_scrambler
 
 
 class TestModels(TestCase):
 
     def setUp(self):
-        """ Initializing testing environment, testing User set-functions """
+        """ Initializing testing environment, creating objects """
 
         # Initialize fields
         self.gender = u'male'
@@ -55,6 +55,7 @@ class TestModels(TestCase):
 
         self.assertEqual(User.objects.count(), 1)
 
+
     def test_User_fields_is_encrypted(self):
         """ Tests if User fields gets encrypted """
 
@@ -86,5 +87,27 @@ class TestModels(TestCase):
         self.assertEqual(self.user.getDateOfBirth(self.priv_key), self.date_of_birth)
         #self.assertEqual(self.user.getSymKey(self.priv_key), self.sym_key)
         self.assertEqual(self.user.getAnonId(self.priv_key), self.anon_id)
+
+
+    def test_Action_ResearchData(self):
+        """ Tests basic functionality of object Action and ResearchData """
+
+        # Creating Action-object
+        description = "Hello world!"
+        action = Action.objects.create(
+            Description = description
+        )
+        self.assertEqual(Action.objects.count(), 1)
+        self.assertEqual(action.Description, description)
+
+        # Creating object ResearchData
+        research_data = ResearchData.objects.create(
+            ActionId = action,
+            AnonId = self.user.getAnonId(self.priv_key),
+            Time = '2018-02-01'
+        )
+        self.assertEqual(ResearchData.objects.count(), 1)
+        self.assertEqual(research_data.ActionId, action)
+        self.assertEqual(research_data.AnonId, self.anon_id)
 
 

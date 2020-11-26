@@ -1,0 +1,13 @@
+/*stuff*/
+
+.second-nav {
+    background-color: white !important;
+    border-style: solid;
+    border-color: #42cfbc !important;
+}
+
+.second-nav h1 {
+    font-size: 1.5rem;
+    padding: 0 0 !important;
+    text-transform: uppercase !important;
+}

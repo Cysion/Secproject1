@@ -85,7 +85,10 @@ class RelationTo(models.Model):
         self.AnonymityIdTo = anonId
 
     def setFromPrivEncrypted(self, toPub, fromPriv):
-        self.rsa_encrypt(toPub, fromPriv.encode("utf-8"))
+        self.FromPrivEncrypted = rsa_encrypt_long(toPub, fromPriv.encode("utf-8"))
 
     def setPermission(self, permission):
         self.Permission = permission
+
+    def setUserIdToEncryptedFrom(self, fromPubKey, userIdTo):
+        self.UserIdToEncryptedFrom = rsa_encrypt(fromPubKey, str(userIdTo).encode("utf-8"))
