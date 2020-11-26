@@ -7,6 +7,7 @@ from userprofile.models import RelationFrom, RelationTo
 from login.models import User
 from tools.crypto import gen_rsa, secret_scrambler
 from tools.confman import get_lang
+from tools.mediaman import reencrypt_user
 from django.db import transaction
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
 
@@ -52,6 +53,10 @@ def ProfileView(request):
 def EditProfileView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
+    
+    profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
+    
     wrong_pass = False
     account = {}
     user=User.objects.filter(UserId=request.session['UserId'])[0]
@@ -92,8 +97,6 @@ def EditProfileView(request):
     else:
         template = "base_professionals.html"
 
-    profile_lang = get_lang(sections=["userprofile"])
-    login_lang = get_lang(sections=["login"])
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
@@ -102,7 +105,8 @@ def EditProfileView(request):
         'alerts': login_lang['login']['long_texts']['alerts'],
         "account":account,
         'wrong_pass':wrong_pass,
-        'template': template
+        'template': template,        
+        'profView': False
     }
 
     return render(request, 'userprofile/edit.html', args)
@@ -198,20 +202,28 @@ def changePass(uId:int, privKey, newPassword:str):
     gender=user.getGender(privKey)
     dateOfBirth=user.getDateOfBirth(privKey)
     symKey=user.getSymKey(privKey)
+    anonId = user.getAnonId(privKey)
 
     key = gen_rsa(secret_scrambler(newPassword, uId))
     pubkey=key.publickey().export_key()
+    privKeyNew = key.export_key().decode("utf-8")
     with transaction.atomic():
         user.setPubKey(pubkey)
-        user.Gender=rsa_encrypt(pubkey, gender.encode("utf-8"))
-        user.FirstName=rsa_encrypt(pubkey, firstName.capitalize().encode("utf-8"))
-        user.LastName=rsa_encrypt(pubkey, lastName.capitalize().encode("utf-8"))
-        user.DateOfBirth=rsa_encrypt(pubkey, dateOfBirth.encode("utf-8"))
+        user.setGender(gender)
+        user.setFirstName(firstName.capitalize())
+        user.setLastName(lastName.capitalize())
+        user.setDateOfBirth(dateOfBirth)
+        user.setSymkey(reencrypt_user(anonId, symKey))
+        user.setAnonId(privKeyNew)
         user.save()
 
-        relationsTo = RelationTo.object.filter(UserIdFrom=user.getUid())
+        relationsTo = RelationTo.objects.filter(UserIdFrom=user.getUid())
         for relation in relationsTo:
-            relation.setFromPrivEncrypted(User.objects.filter(AnonId=relation.getAnonymityIdTo())[0].getPubkey(), key.export_key().decode("utf-8"))
+            reciever = User.objects.filter(UserId=relation.getUserIdToDecryptedFrom(privKey))[0]
+            relation.setFromPrivEncrypted(reciever.getPubkey(), key.export_key().decode("utf-8"))
+            relation.setUserIdToEncryptedFrom(pubkey, reciever.getUid())
+            relation.save()
+            
         return key.export_key()
 
     return 0
@@ -468,3 +480,13 @@ def modifyRelation(uId, privKey, recieverEmail, permission):
                 relationTo.save()
         return 0
     return 1
+
+
+def sharesDataWith(userId, recieverId, recieverPrivKey):
+    reciever = User.objects.filter(UserId=recieverId)[0]
+    relationTo = RelationTo.objects.filter(UserIdFrom=userId, AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
+    if relationTo:
+        relationTo = relationTo[0]
+        return relationTo.getFromPrivDecrypted(recieverPrivKey)
+    else:
+        return False

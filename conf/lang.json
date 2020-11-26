@@ -236,13 +236,15 @@
             "file_info":"File can be photo, video or music.",
             "memory_type":"What type of memory is it?",
             "allowed_extenssions":"These extenssions are allowed",
+            "add_memory":"Add a new memory",
             "alerts":{
               "no_title":"You need to enter a title for a memory!",
               "title_to_long":"A title can be maximum 64 characters!",
               "no_type":"You need set a type for you memory!",
               "memory_added":"Your memory was added!",
               "file_to_big":"This file is too big or the extenssion is not allowed!",
-              "file_error":"Something with ths file upload went wrong."
+              "file_error":"Something with ths file upload went wrong.",
+              "not_enough_space":"You dont have enough space to upload this media! You need to delete a memory with a photo, video or sound file if you wish to upload this!"
             }
         }
     },

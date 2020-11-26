@@ -148,7 +148,6 @@ def header_and_file(infile:IOBase, bytesio=False, only_header=False) -> tuple:
     while addnext != b"---END HEADER---\n":
         addnext = infile.readline()
         header += addnext
-    ptr = infile.tell()
     #add the rest of the file to retfile
     if not only_header:
         if bytesio:
@@ -210,13 +209,20 @@ def delete_all_files(anonid, rootdir = CONF["media_base_dir"]):
     """used to IRREVERSIBLY clear all data from a user. will completely purse the directory of given anonid
     anonid = anonid of the directory to be purged
     rootdir = the root of all media storage sent to the default_storage class"""
-    files_data = []
     dirname = get_sha1(anonid)
     files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
     for file in files:
         fullpath = f"{dirname}/{file}"
         delete_file(fullpath)
 
+
+def request_files(key: bytes, anonid, rootdir = CONF["media_base_dir"], decompress=True) -> bytes:
+    """generator that yields file by file"""
+    dirname = get_sha1(anonid)
+    files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
+    for file in files:
+        fullpath = f"{dirname}/{file}"
+        yield open_file(key, fullpath, rootdir=rootdir, decompress=decompress)
 
 if __name__ == "__main__":
     import django.core.files.storage
