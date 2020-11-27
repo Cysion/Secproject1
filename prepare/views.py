@@ -77,8 +77,16 @@ def addMemoryView(request):
     prepare_lang = get_lang(sections=["prepare"])
     media_conf = get_conf(sections=["media"])["media"]
     alerts = {}
+    mem_type = ""
+    if "mem_type" in request.GET.keys():
+        mem_type = request.GET['mem_type']
+    elif "mem_type" in request.POST.keys():
+        mem_type = request.POST['mem_type']
+    else:
+        mem_type = "s"
 
-    memType=request.GET['mem_type']
+    if mem_type != "s" and mem_type != "d":
+        mem_type = "s"
 
     allowed_extenssions = [  # Some of the more popular allowed formats
         #  Videos
@@ -105,7 +113,7 @@ def addMemoryView(request):
             memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
             memory.setMediaTitle(user.getPubkey(), request.POST["title"])
             memory.setMediaSize(user.getPubkey(), 0)
-            memory.setMemory(user.getPubkey(), memType)
+            memory.setMemory(user.getPubkey(), mem_type)
 
 
             if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
@@ -201,7 +209,7 @@ def addMemoryView(request):
         'error': UNIVERSAL_LANG["universal"]["error"],
         'alerts': alerts,
         'max_file_size': int(media_conf["max_size_mb"]),
-        'memType': memType
+        'mem_type': mem_type
     }
 
     return render(request, 'prepare/add_memory.html', args)

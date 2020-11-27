@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form enctype="multipart/form-data" action="/prepare/memory/add/?mem_type={{memType}}" method="POST"> {# enctype="multipart/form-data" is needed for file uploads to work. #}
+<form enctype="multipart/form-data" action="/prepare/memory/add/" method="POST"> {# enctype="multipart/form-data" is needed for file uploads to work. #}
   {% csrf_token %}
   <div class="form-group">
     <label for="title">{{ lang.title }}:</label>
@@ -44,8 +44,8 @@
     id="link" name="link" {% if POST.link %} value="{{ POST.link }}" {% endif %}>
   </div>
   {% endif %}
-  <button type="submit" class="btn btn-warning btn-lg btn-block" formaction="?media_type=url&mem_type={{memType}}">{{ lang.link }}</button>
-  <button type="submit" class="btn btn-warning btn-lg btn-block" formaction="?media_type=file&mem_type={{memType}}">{{ lang.file }}</button>
+  <button type="submit" class="btn btn-warning btn-lg btn-block" formaction="?media_type=url&mem_type={{ mem_type }}">{{ lang.link }}</button>
+  <button type="submit" class="btn btn-warning btn-lg btn-block" formaction="?media_type=file&mem_type={{ mem_type }}">{{ lang.file }}</button>
   <div class="form-group">
     <label for="type">{{ lang.long_texts.memory_type }}</label>
     <select class="form-control" id="type" name="type">
@@ -65,6 +65,7 @@
     <strong>{{ error }}</strong> {{ alerts.type}}
   </div>
   {% endif %}
+  <input type="hidden" name="mem_type" value="{{ mem_type }}">
   <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 15px;" name="save" value="1">{{ lang.add_memory }}</button>
 </form>
   <a href="/prepare/memory/" class="btn btn-danger btn-block btn-lg" role="button" style="margin-top:15px;">{{ back }}</a>
