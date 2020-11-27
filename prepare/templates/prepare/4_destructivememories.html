@@ -35,4 +35,19 @@
     </ul>
 </section>
 
+
+<a type="button" class="btn btn-info btn-block" href="/prepare/memory/add/?mem_type=d">Add supportive memory</a>
+
+{% for memory in memories %}
+    <div class="relations my-1 row">
+        <div class="col-md">
+            <p><strong>{{ memory.Title }}</strong></p>
+        </div>
+        <div class="col-md">
+            <div class="my-1">
+                <a type="button" class="btn btn-info btn-block" href="/prepare/memory/{{memory.Id}}">{{ memory.Title }}</a>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 {% endblock %}

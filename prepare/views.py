@@ -10,6 +10,7 @@ from tools.mediaman import *
 import re
 import os
 import time
+from django.db import transaction
 
 from django.core.files import File
 from savemeplan.models import Contacts
@@ -36,6 +37,7 @@ def MenuView(request, page=0):
         memories = showAllmemories(request.session['UserId'], request.session['PrivKey'], 'd')
         template = 'prepare/4_destructivememories.html'
     elif page == 5:
+        showContacts(request.session['UserId'], request.session['PrivKey'])
         template = 'prepare/5_contacts.html'
     elif page == 6:
         template = 'prepare/6_wheretocall.html'
@@ -101,73 +103,74 @@ def addMemoryView(request):
         if ('title' in request.POST.keys() and len(request.POST["title"]) <= 64
                 and len(request.POST["title"]) > 0):
 
-            user = User.objects.filter(pk=request.session["UserId"])[0]
-            memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
-            memory.setMediaTitle(user.getPubkey(), request.POST["title"])
-            memory.setMediaSize(user.getPubkey(), 0)
-            memory.setMemory(user.getPubkey(), memType)
+            with transaction.atomic():
+                user = User.objects.filter(pk=request.session["UserId"])[0]
+                memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
+                memory.setMediaTitle(user.getPubkey(), request.POST["title"])
+                memory.setMediaSize(user.getPubkey(), 0)
+                memory.setMemory(user.getPubkey(), memType)
 
 
-            if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
-                memory.setMediaType(user.getPubkey(), request.POST["type"])
+                if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
+                    memory.setMediaType(user.getPubkey(), request.POST["type"])
 
-                if "link" in request.POST.keys():  # Optional
-                    memory.setLink(user.getPubkey(), request.POST["link"])
-                elif "media" in request.FILES.keys():  # Optional
+                    if "link" in request.POST.keys():  # Optional
+                        memory.setLink(user.getPubkey(), request.POST["link"])
+                    elif "media" in request.FILES.keys():  # Optional
 
-                    if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and
-                            "." + request.FILES["media"].name.split(".")[-1].upper() in allowed_extenssions):
-                        medias = user.media_set.exclude(pk=memory.MediaId)
-                        total_space_used = 0
-                        for media in medias:
-                            total_space_used += int(media.getMediaSize(request.session["privKey"]))
+                        if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and
+                                "." + request.FILES["media"].name.split(".")[-1].upper() in allowed_extenssions):
+                            medias = user.media_set.exclude(pk=memory.MediaId)
+                            total_space_used = 0
+                            for media in medias:
+                                total_space_used += int(media.getMediaSize(request.session["privKey"]))
 
-                        if total_space_used + int(request.FILES["media"].size) <= int(media_conf["max_per_user"])*1000000:
-                            try:
-                                file = save_file(
-                                    user.getSymKey(request.session["privKey"]),
-                                    request.FILES["media"].read(),
-                                    user.getAnonId(request.session["privKey"]),
-                                    upload_name=request.FILES["media"].name
-                                )
+                            if total_space_used + int(request.FILES["media"].size) <= int(media_conf["max_per_user"])*1000000:
+                                try:
+                                    file = save_file(
+                                        user.getSymKey(request.session["privKey"]),
+                                        request.FILES["media"].read(),
+                                        user.getAnonId(request.session["privKey"]),
+                                        upload_name=request.FILES["media"].name
+                                    )
 
-                                memory.setMediaSize(user.getPubkey(), request.FILES["media"].size)
-                                memory.setLink(user.getPubkey(), file[0])
-                            except RuntimeError as e:
-                                alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
-                                memory.delete()
-                            except Exception as e:
-                                alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_error"]
+                                    memory.setMediaSize(user.getPubkey(), request.FILES["media"].size)
+                                    memory.setLink(user.getPubkey(), file[0])
+                                except RuntimeError as e:
+                                    alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
+                                    memory.delete()
+                                except Exception as e:
+                                    alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_error"]
+                                    memory.delete()
+                            else:
+                                alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["not_enough_space"]
                                 memory.delete()
                         else:
-                            alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["not_enough_space"]
+                            alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
                             memory.delete()
-                    else:
-                        alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
-                        memory.delete()
 
-                if 'media_text' in request.POST.keys() and not alerts:  # Optional
-                    memory.setMediaText(user.getPubkey(), request.POST["media_text"])
+                    if 'media_text' in request.POST.keys() and not alerts:  # Optional
+                        memory.setMediaText(user.getPubkey(), request.POST["media_text"])
 
-                if not alerts and not request.GET:
-                    memory.save()
-                    alert = {
-                        "color": "success",
-                        "title": UNIVERSAL_LANG["universal"]["success"],
-                        "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"]
-                    }
+                    if not alerts and not request.GET:
+                        memory.save()
+                        alert = {
+                            "color": "success",
+                            "title": UNIVERSAL_LANG["universal"]["success"],
+                            "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"]
+                        }
 
-                    if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                        request.session["global_alerts"] = [alert]
-                    else:
-                        request.session["global_alerts"].append(alert)
+                        if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                            request.session["global_alerts"] = [alert]
+                        else:
+                            request.session["global_alerts"].append(alert)
 
-                    return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
+                        return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
 
-            else:  # If no type is entered
-                alerts["type"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_type"]
-                memory.delete()
+                else:  # If no type is entered
+                    alerts["type"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_type"]
+                    memory.delete()
         else:  # If Title is either empty or too long
             if len(request.POST["title"]) >= 64:
                 alerts["title"] = prepare_lang["prepare"]["long_texts"]["alerts"]["title_to_long"]
@@ -354,7 +357,7 @@ def showAllmemories(uId, privKey, memType):
         user=User.objects.filter(UserId=uId)[0]
         memories = Media.objects.filter(UserId=user)
         for memory in memories:
-            if memory.getMemory(privKey) == memType:
+            if 1:# memory.getMemory(privKey) == memType:
                 memoryInfo = dict({'Title':memory.getMediaTitle(privKey),'Id':memory.getMediaId(),'Size':memory.getMediaSize(privKey)})
                 memoryIdList.append(memoryInfo)
         return memoryIdList
