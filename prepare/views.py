@@ -80,7 +80,16 @@ def addMemoryView(request):
     media_conf = get_conf(sections=["media"])["media"]
     alerts = {}
 
-    memType=request.GET['mem_type']
+    mem_type = ""
+    if "mem_type" in request.GET.keys():
+        mem_type = request.GET['mem_type']
+    elif "mem_type" in request.POST.keys():
+        mem_type = request.POST['mem_type']
+    else:
+        mem_type = "s"
+
+    if mem_type != "s" and mem_type != "d":
+            mem_type = "s"
 
     allowed_extenssions = [  # Some of the more popular allowed formats
         #  Videos
@@ -108,7 +117,7 @@ def addMemoryView(request):
                 memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
                 memory.setMediaTitle(user.getPubkey(), request.POST["title"])
                 memory.setMediaSize(user.getPubkey(), 0)
-                memory.setMemory(user.getPubkey(), memType)
+                memory.setMemory(user.getPubkey(), mem_type)
 
 
                 if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
@@ -123,14 +132,14 @@ def addMemoryView(request):
                             medias = user.media_set.exclude(pk=memory.MediaId)
                             total_space_used = 0
                             for media in medias:
-                                total_space_used += int(media.getMediaSize(request.session["privKey"]))
+                                total_space_used += int(media.getMediaSize(request.session["PrivKey"]))
 
                             if total_space_used + int(request.FILES["media"].size) <= int(media_conf["max_per_user"])*1000000:
                                 try:
                                     file = save_file(
-                                        user.getSymKey(request.session["privKey"]),
+                                        user.getSymKey(request.session["PrivKey"]),
                                         request.FILES["media"].read(),
-                                        user.getAnonId(request.session["privKey"]),
+                                        user.getAnonId(request.session["PrivKey"]),
                                         upload_name=request.FILES["media"].name
                                     )
 
@@ -204,7 +213,7 @@ def addMemoryView(request):
         'error': UNIVERSAL_LANG["universal"]["error"],
         'alerts': alerts,
         'max_file_size': int(media_conf["max_size_mb"]),
-        'memType': memType
+        'memType': mem_type
     }
 
     return render(request, 'prepare/add_memory.html', args)
@@ -227,7 +236,7 @@ def MemoryView(request, id):
         # User dont belong here
         return Http404("Memory does not exist!")
 
-    content["title"] = memory.getMediaTitle(request.session["privKey"])
+    content["title"] = memory.getMediaTitle(request.session["PrivKey"])
 
     url = ""
     memtype = ""
@@ -235,9 +244,9 @@ def MemoryView(request, id):
     unidentified_url = ""
 
     if memory.MediaText:
-        content["text"] = memory.getMediaText(request.session["privKey"])
+        content["text"] = memory.getMediaText(request.session["PrivKey"])
     if memory.MediaLink:
-        unidentified_url = memory.getLink(request.session["privKey"])
+        unidentified_url = memory.getLink(request.session["PrivKey"])
 
     youtube_pattern = re.compile("^(http[s]?:\/\/)?([w]{3}.)?(youtube.com|youtu.be)\/(.*watch\?v=)?(.+)")
     local_url_pattern = re.compile("^.+\/(.+)$")  # Pattern for local files such as video, photo or sound
@@ -269,7 +278,7 @@ def MemoryView(request, id):
             ".WV"
         ]
         filetype = ""
-        file = open_file(user.getSymKey(request.session["privKey"]), url)
+        file = open_file(user.getSymKey(request.session["PrivKey"]), url)
 
         for line in file[0].split("\n"):
             splitline = line.split(":")
@@ -286,18 +295,18 @@ def MemoryView(request, id):
             memtype = "error"
 
         if memtype != "error":
-            if not os.path.exists("media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"])))):
-                os.makedirs("media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))))
+            if not os.path.exists("media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"])))):
+                os.makedirs("media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"]))))
 
             try:
                 temp_file = open(
-                        "media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype,
+                        "media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"]))) + "/" + str(int(time.time())) + "." + filetype,
                         "wb"
                     )
                 temp_file.write(file[1])
                 temp_file.close()
 
-                content[memtype] = "media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype
+                content[memtype] = "media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"]))) + "/" + str(int(time.time())) + "." + filetype
 
                 if "files_to_delete" in request.session.keys():
                     request.session["files_to_delete"].append(content[memtype])
@@ -357,7 +366,7 @@ def showAllmemories(uId, privKey, memType):
         user=User.objects.filter(UserId=uId)[0]
         memories = Media.objects.filter(UserId=user)
         for memory in memories:
-            if 1:# memory.getMemory(privKey) == memType:
+            if memory.getMemory(privKey) == memType:
                 memoryInfo = dict({'Title':memory.getMediaTitle(privKey),'Id':memory.getMediaId(),'Size':memory.getMediaSize(privKey)})
                 memoryIdList.append(memoryInfo)
         return memoryIdList
