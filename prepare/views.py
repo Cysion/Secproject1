@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 # Create your views here.
 
@@ -7,6 +7,11 @@ from login.models import User
 from prepare.models import Media
 from tools.confman import get_lang, get_conf
 from tools.mediaman import *
+import re
+import os
+import time
+
+from django.core.files import File
 from savemeplan.models import Contacts
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
@@ -73,7 +78,7 @@ def addMemoryView(request):
     media_conf = get_conf(sections=["media"])["media"]
     alerts = {}
 
-    memType=request.GET['memType']
+    #memType=request.GET['type']
 
     allowed_extenssions = [  # Some of the more popular allowed formats
         #  Videos
@@ -92,7 +97,7 @@ def addMemoryView(request):
     ]
 
     media_type = ""  # Used for displaying url input or file input on page.
-    if request.POST:  # Cant use method here because of two methods are used.
+    if request.POST and "save" in request.POST.keys():  # Cant use method here because of two methods are used.
         if ('title' in request.POST.keys() and len(request.POST["title"]) <= 64
                 and len(request.POST["title"]) > 0):
 
@@ -100,7 +105,7 @@ def addMemoryView(request):
             memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
             memory.setMediaTitle(user.getPubkey(), request.POST["title"])
             memory.setMediaSize(user.getPubkey(), 0)
-            memory.setMemory(user.getPubkey(), memType)
+            memory.setMemory(user.getPubkey(), "a")
 
 
             if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
@@ -122,7 +127,8 @@ def addMemoryView(request):
                                 file = save_file(
                                     user.getSymKey(request.session["privKey"]),
                                     request.FILES["media"].read(),
-                                    user.getAnonId(request.session["privKey"])
+                                    user.getAnonId(request.session["privKey"]),
+                                    upload_name=request.FILES["media"].name
                                 )
 
                                 memory.setMediaSize(user.getPubkey(), request.FILES["media"].size)
@@ -156,7 +162,7 @@ def addMemoryView(request):
                     else:
                         request.session["global_alerts"].append(alert)
 
-                        # return HttpResponseRedirect(reverse('prepare:memory'))
+                    return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
 
             else:  # If no type is entered
@@ -204,36 +210,99 @@ def MemoryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    media = Media.objects.filter(MediaId=id)[0]
-    user = User.object.filter(UserId=request.session['UserId'])
-    if not media.getUserId()==user:
-        return 404 #Lägg in Djangofunktion för detta
-
+    user = User.objects.filter(pk=request.session["UserId"])[0]
     prepare_lang = get_lang(sections=["prepare"])
 
-    allowed_extenssions = [  # Some of the more popular allowed formats
-    #  Videos 
-    dict({'video':[
-    ".WEBM", ".MPG", ".MP2", ".MPEG",
-    ".MPE", ".MPV", ".OGG", ".MP4", ".M4P", ".M4V", ".AVI",
-    ".WMV", ".MOV", ".QT", ".FLV", ".SWF", ".AVCHD"]}),
-
-    # Photos
-    dict({'photo':[
-    ".JPG", ".JPEG", ".EXIF", ".GIF", ".BMP", ".PNG",
-    ".WEBP", ".HEIF"]}),
-
-    # Sound
-    dict({'sound':[
-    ".AA", ".AAX", ".AIFF", ".ALAC", ".DVF", ".M4A", ".M4B",
-    ".MMF", ".MP3", ".MPC", ".OPUS", ".RF64", ".MAV", ".WMA",
-    ".WV"]})
-    ]
-
-    supported_links = ['instagram', 'youtube', 'youtu', 'tictoc']
     content = dict()
+    try:
+        memory = Media.objects.filter(pk=id)[0]
+    except Exception as e:
+        return Http404("Memory does not exist!")
 
-    link = media.getLink(request.session['PrivKey'])
+    if memory.UserId.UserId != request.session["UserId"]:
+        # User dont belong here
+        return Http404("Memory does not exist!")
+
+    content["title"] = memory.getMediaTitle(request.session["privKey"])
+
+    url = ""
+    memtype = ""
+    file = ""
+    unidentified_url = ""
+
+    if memory.MediaText:
+        content["text"] = memory.getMediaText(request.session["privKey"])
+    if memory.MediaLink:
+        unidentified_url = memory.getLink(request.session["privKey"])
+
+    youtube_pattern = re.compile("^(http[s]?:\/\/)?([w]{3}.)?(youtube.com|youtu.be)\/(.*watch\?v=)?(.+)")
+    local_url_pattern = re.compile("^.+\/(.+)$")  # Pattern for local files such as video, photo or sound
+
+    if youtube_pattern.match(unidentified_url):
+        memtype = "youtube"
+        content[memtype] = youtube_pattern.match(unidentified_url).group(5)
+    elif local_url_pattern.match(unidentified_url):
+        url = unidentified_url
+        memtype = "photo/video/sound"
+
+    if memtype == "photo/video/sound":
+        photo_extenssions = [  # Some of the more popular allowed formats
+            # Photos
+            ".JPG", ".JPEG", ".EXIF", ".GIF", ".BMP", ".PNG",
+            ".WEBP", ".HEIF",
+
+        ]
+
+        video_extenssions = [
+            ".WEBM", ".MPG", ".MP2", ".MPEG",
+            ".MPE", ".MPV", ".OGG", ".MP4", ".M4P", ".M4V", ".AVI",
+            ".WMV", ".MOV", ".QT", ".FLV", ".SWF", ".AVCHD",
+        ]
+
+        sound_extenssions = [
+            ".AA", ".AAX", ".AIFF", ".ALAC", ".DVF", ".M4A", ".M4B",
+            ".MMF", ".MP3", ".MPC", ".OPUS", ".RF64", ".MAV", ".WMA",
+            ".WV"
+        ]
+        filetype = ""
+        file = open_file(user.getSymKey(request.session["privKey"]), url)
+
+        for line in file[0].split("\n"):
+            splitline = line.split(":")
+            if splitline[0] == "filetype":
+                filetype = splitline[1]
+
+        if "." + filetype.upper() in photo_extenssions:
+            memtype = "photo"
+        elif "." + filetype.upper() in video_extenssions:
+            memtype = "video"
+        elif "." + filetype.upper() in sound_extenssions:
+            memtype = "sound"
+        else:
+            memtype = "error"
+
+        if memtype != "error":
+            if not os.path.exists("media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"])))):
+                os.makedirs("media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))))
+
+            try:
+                temp_file = open(
+                        "media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype,
+                        "wb"
+                    )
+                temp_file.write(file[1])
+                temp_file.close()
+
+                content[memtype] = "media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype
+
+                if "files_to_delete" in request.session.keys():
+                    request.session["files_to_delete"].append(content[memtype])
+                else:
+                    request.session["files_to_delete"] = [content[memtype]]
+            except Exception as e:
+                print(e)
+                pass
+
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -252,7 +321,7 @@ def MemoryView(request, id):
 
 
 def ContactsView(request):
-    
+
     return render(request, 'prepare/contacts.html')
 
 

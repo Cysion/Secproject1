@@ -65,7 +65,8 @@
     <strong>{{ error }}</strong> {{ alerts.type}}
   </div>
   {% endif %}
-  <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 15px;">{{ lang.add_memory }}</button>
+  <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 15px;" name="save" value="1">{{ lang.add_memory }}</button>
 </form>
+  <a href="/prepare/memory/" class="btn btn-danger btn-block btn-lg" role="button" style="margin-top:15px;">{{ back }}</a>
 
 {% endblock %}
