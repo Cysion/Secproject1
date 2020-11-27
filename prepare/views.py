@@ -10,6 +10,7 @@ from tools.mediaman import *
 import re
 import os
 import time
+from django.db import transaction
 
 from django.core.files import File
 from savemeplan.models import Contacts
@@ -36,6 +37,7 @@ def MenuView(request, page=0):
         memories = showAllmemories(request.session['UserId'], request.session['PrivKey'], 'd')
         template = 'prepare/4_destructivememories.html'
     elif page == 5:
+        showContacts(request.session['UserId'], request.session['PrivKey'])
         template = 'prepare/5_contacts.html'
     elif page == 6:
         template = 'prepare/6_wheretocall.html'
@@ -77,6 +79,7 @@ def addMemoryView(request):
     prepare_lang = get_lang(sections=["prepare"])
     media_conf = get_conf(sections=["media"])["media"]
     alerts = {}
+
     mem_type = ""
     if "mem_type" in request.GET.keys():
         mem_type = request.GET['mem_type']
@@ -86,7 +89,7 @@ def addMemoryView(request):
         mem_type = "s"
 
     if mem_type != "s" and mem_type != "d":
-        mem_type = "s"
+            mem_type = "s"
 
     allowed_extenssions = [  # Some of the more popular allowed formats
         #  Videos
@@ -109,73 +112,74 @@ def addMemoryView(request):
         if ('title' in request.POST.keys() and len(request.POST["title"]) <= 64
                 and len(request.POST["title"]) > 0):
 
-            user = User.objects.filter(pk=request.session["UserId"])[0]
-            memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
-            memory.setMediaTitle(user.getPubkey(), request.POST["title"])
-            memory.setMediaSize(user.getPubkey(), 0)
-            memory.setMemory(user.getPubkey(), mem_type)
+            with transaction.atomic():
+                user = User.objects.filter(pk=request.session["UserId"])[0]
+                memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
+                memory.setMediaTitle(user.getPubkey(), request.POST["title"])
+                memory.setMediaSize(user.getPubkey(), 0)
+                memory.setMemory(user.getPubkey(), mem_type)
 
 
-            if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
-                memory.setMediaType(user.getPubkey(), request.POST["type"])
+                if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
+                    memory.setMediaType(user.getPubkey(), request.POST["type"])
 
-                if "link" in request.POST.keys():  # Optional
-                    memory.setLink(user.getPubkey(), request.POST["link"])
-                elif "media" in request.FILES.keys():  # Optional
+                    if "link" in request.POST.keys():  # Optional
+                        memory.setLink(user.getPubkey(), request.POST["link"])
+                    elif "media" in request.FILES.keys():  # Optional
 
-                    if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and
-                            "." + request.FILES["media"].name.split(".")[-1].upper() in allowed_extenssions):
-                        medias = user.media_set.exclude(pk=memory.MediaId)
-                        total_space_used = 0
-                        for media in medias:
-                            total_space_used += int(media.getMediaSize(request.session["PrivKey"]))
+                        if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and
+                                "." + request.FILES["media"].name.split(".")[-1].upper() in allowed_extenssions):
+                            medias = user.media_set.exclude(pk=memory.MediaId)
+                            total_space_used = 0
+                            for media in medias:
+                                total_space_used += int(media.getMediaSize(request.session["PrivKey"]))
 
-                        if total_space_used + int(request.FILES["media"].size) <= int(media_conf["max_per_user"])*1000000:
-                            try:
-                                file = save_file(
-                                    user.getSymKey(request.session["PrivKey"]),
-                                    request.FILES["media"].read(),
-                                    user.getAnonId(request.session["PrivKey"]),
-                                    upload_name=request.FILES["media"].name
-                                )
+                            if total_space_used + int(request.FILES["media"].size) <= int(media_conf["max_per_user"])*1000000:
+                                try:
+                                    file = save_file(
+                                        user.getSymKey(request.session["PrivKey"]),
+                                        request.FILES["media"].read(),
+                                        user.getAnonId(request.session["PrivKey"]),
+                                        upload_name=request.FILES["media"].name
+                                    )
 
-                                memory.setMediaSize(user.getPubkey(), request.FILES["media"].size)
-                                memory.setLink(user.getPubkey(), file[0])
-                            except RuntimeError as e:
-                                alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
-                                memory.delete()
-                            except Exception as e:
-                                alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_error"]
+                                    memory.setMediaSize(user.getPubkey(), request.FILES["media"].size)
+                                    memory.setLink(user.getPubkey(), file[0])
+                                except RuntimeError as e:
+                                    alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
+                                    memory.delete()
+                                except Exception as e:
+                                    alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_error"]
+                                    memory.delete()
+                            else:
+                                alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["not_enough_space"]
                                 memory.delete()
                         else:
-                            alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["not_enough_space"]
+                            alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
                             memory.delete()
-                    else:
-                        alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
-                        memory.delete()
 
-                if 'media_text' in request.POST.keys() and not alerts:  # Optional
-                    memory.setMediaText(user.getPubkey(), request.POST["media_text"])
+                    if 'media_text' in request.POST.keys() and not alerts:  # Optional
+                        memory.setMediaText(user.getPubkey(), request.POST["media_text"])
 
-                if not alerts and not request.GET:
-                    memory.save()
-                    alert = {
-                        "color": "success",
-                        "title": UNIVERSAL_LANG["universal"]["success"],
-                        "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"]
-                    }
+                    if not alerts and not request.GET:
+                        memory.save()
+                        alert = {
+                            "color": "success",
+                            "title": UNIVERSAL_LANG["universal"]["success"],
+                            "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"]
+                        }
 
-                    if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                        request.session["global_alerts"] = [alert]
-                    else:
-                        request.session["global_alerts"].append(alert)
+                        if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                            request.session["global_alerts"] = [alert]
+                        else:
+                            request.session["global_alerts"].append(alert)
 
-                    return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
+                        return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
 
-            else:  # If no type is entered
-                alerts["type"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_type"]
-                memory.delete()
+                else:  # If no type is entered
+                    alerts["type"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_type"]
+                    memory.delete()
         else:  # If Title is either empty or too long
             if len(request.POST["title"]) >= 64:
                 alerts["title"] = prepare_lang["prepare"]["long_texts"]["alerts"]["title_to_long"]
@@ -209,7 +213,7 @@ def addMemoryView(request):
         'error': UNIVERSAL_LANG["universal"]["error"],
         'alerts': alerts,
         'max_file_size': int(media_conf["max_size_mb"]),
-        'mem_type': mem_type
+        'memType': mem_type
     }
 
     return render(request, 'prepare/add_memory.html', args)
@@ -254,6 +258,7 @@ def MemoryView(request, id):
         url = unidentified_url
         memtype = "photo/video/sound"
 
+    if memtype == "photo/video/sound":
         photo_extenssions = [  # Some of the more popular allowed formats
             # Photos
             ".JPG", ".JPEG", ".EXIF", ".GIF", ".BMP", ".PNG",

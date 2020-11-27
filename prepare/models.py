@@ -57,8 +57,8 @@ class Media(models.Model):
             self.Compressed=rsa_encrypt(PubKey, compressed.encode("utf-8)"))
 
 
-    def setMediaType(self, PubKey, type):
-            self.MediaType=rsa_encrypt(PubKey, type.encode("utf-8)"))
+    def setMediaType(self, PubKey, mediaType):
+            self.MediaType=rsa_encrypt(PubKey, mediaType.encode("utf-8)"))
 
 
     def setMediaTitle(self, PubKey, title):

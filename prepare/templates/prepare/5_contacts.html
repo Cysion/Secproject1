@@ -37,4 +37,22 @@
     </ul>
 </section>
 
+
+<a type="button" class="btn btn-lg btn-primary btn-block" href="/prepare/contacts">{{ Add new contact }}</a>
+
+{% for user in users %}
+<div class="relations my-1 row">
+    
+    <div class="col-md">
+        <p><strong>{{ user.Email }}</strong></p>
+    </div>
+    <div class="col-md">
+        <div class="my-1">
+            <a type="button" class="btn btn-info btn-block" href="manage/?Id={{user.RelationFrom}}">{{ relations.manage }}</a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
 {% endblock %}
