@@ -5,7 +5,7 @@
         "max_raw_size":2048
     },
     "media":{
-        "media_base_dir":"media",
+        "media_base_dir":"user",
         "max_size_mb":"100",
         "max_per_user":"250"
     },

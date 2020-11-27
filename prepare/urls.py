@@ -6,7 +6,7 @@ app_name = 'prepare'
 urlpatterns = [
     # ex: /polls/
     path('memory/add/', views.addMemoryView, name='add-memory'),
-    path('memory/', views.MemoryView, name='memory'),
+    path('memory/<int:id>/', views.MemoryView, name='memory'),
     path('', views.MenuView, name='Menu'),
     #path('1/', views.HowToView, name='How-To'),
     #path('2/', views.PracticeBreathingView, name='Practice-Breathing'),
