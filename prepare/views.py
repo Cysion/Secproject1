@@ -18,14 +18,17 @@ def MenuView(request, page=0):
 
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
+    memories = []
 
     if page == 1:
         template = 'prepare/1_howto.html'
     elif page == 2:
         template = 'prepare/2_practicebreathing.html'
     elif page == 3:
+        memories = showAllmemories(request.session['UserId'], request.session['PrivKey'], 's')
         template = 'prepare/3_supportivememories.html'
     elif page == 4:
+        memories = showAllmemories(request.session['UserId'], request.session['PrivKey'], 'd')
         template = 'prepare/4_destructivememories.html'
     elif page == 5:
         template = 'prepare/5_contacts.html'
@@ -43,7 +46,8 @@ def MenuView(request, page=0):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'prepare': prepare_lang["prepare"],
-        'nav': prepare_lang["prepare"]["nav"]
+        'nav': prepare_lang["prepare"]["nav"],
+        'memories':memories
     }
     return render(request, template, args)
 
