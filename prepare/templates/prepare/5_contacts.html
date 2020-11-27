@@ -6,6 +6,8 @@
 {% block statics %}
 {% load static %}
 <link rel="stylesheet" href="{% static "prepare/prepare.css" %}">
+<link rel="stylesheet" href="{% static "userprofile/relations.css" %}">
+<script src="{% static 'app.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -13,20 +15,22 @@
 <nav class="second-nav nav nav-pills nav-fill align-items-center" style="border-width: 3px !important;">
     <h1 class="nav-item m-2"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
     <a class="nav-item nav-link btn btn-info m-2" name="page" value="1" href="/prepare/1">{{ nav.library }}</a>
-    <a class="nav-item nav-link btn btn-info m-2" name="page" value="5" href="/prepare/5">{{ nav.contacts }}</a>
+    <a class="nav-item nav-link btn btn-info m-2" name="page" value="5" href="#">{{ nav.contacts }}</a>
     <a class="nav-item nav-link btn btn-info m-2" name="page" value="7" href="/prepare/7">{{ nav.notes }}</a>
 </nav>
-<h2>{{ prepare.menu }}</h2>
-<p>{{ prepare.long_texts.menu_description }}</p>
+
+<!--Insert page content here-->
+<p>contacts (5)</p>
+<a type="button" class="btn btn-lg btn-primary btn-block" href="/userprofile/relations">{{ back }}</a>
 
 <section style="margin:20px 0">
     <ul class="pagination justify-content-center">
         <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="1" href="/prepare/1"> {{ prepare.steps.1 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="1" href="/prepare/1">{{ prepare.steps.1 }}</a></li>
         <li class="page-item"><a class="page-link" name="page" value="2" href="/prepare/2">{{ prepare.steps.2 }}</a></li>
         <li class="page-item"><a class="page-link" name="page" value="3" href="/prepare/3">{{ prepare.steps.3 }}</a></li>
         <li class="page-item"><a class="page-link" name="page" value="4" href="/prepare/4">{{ prepare.steps.4 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="5" href="/prepare/5">{{ prepare.steps.5 }}</a></li>
+        <li class="page-item active"><a class="page-link" name="page" value="5" href="#">{{ prepare.steps.5 }}</a></li>
         <li class="page-item"><a class="page-link" name="page" value="6" href="/prepare/6">{{ prepare.steps.6 }}</a></li>
         <li class="page-item"><a class="page-link" name="page" value="7" href="/prepare/7">{{ prepare.steps.7 }}</a></li>
         <li class="page-item"><a class="page-link" name="page" value="8" href="/prepare/8">{{ prepare.steps.8 }}</a></li>

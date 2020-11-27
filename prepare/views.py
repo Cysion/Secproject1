@@ -12,18 +12,45 @@ import os
 import time
 
 from django.core.files import File
+from savemeplan.models import Contacts
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 
-def MenuView(request):
+def MenuView(request, page=0):
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
+
     prepare_lang = get_lang(sections=["prepare"])
+    template = 'prepare/menu.html'
+
+    if page == 1:
+        template = 'prepare/1_howto.html'
+    elif page == 2:
+        template = 'prepare/2_practicebreathing.html'
+    elif page == 3:
+        template = 'prepare/3_supportivememories.html'
+    elif page == 4:
+        template = 'prepare/4_destructivememories.html'
+    elif page == 5:
+        template = 'prepare/5_contacts.html'
+    elif page == 6:
+        template = 'prepare/6_wheretocall.html'
+    elif page == 7:
+        template = 'prepare/7_diary.html'
+    elif page == 8:
+        template = 'prepare/8_therapynotes.html'
+    else:
+        template = 'prepare/menu.html'
+
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
-        'prepare': prepare_lang["prepare"]
+        'prepare': prepare_lang["prepare"],
+        'nav': prepare_lang["prepare"]["nav"]
     }
-    return render(request, 'prepare/menu.html', args)
+    return render(request, template, args)
 
 
 def addMemoryView(request):
@@ -47,6 +74,8 @@ def addMemoryView(request):
     media_conf = get_conf(sections=["media"])["media"]
     alerts = {}
 
+    #memType=request.GET['type']
+
     allowed_extenssions = [  # Some of the more popular allowed formats
         #  Videos
         ".WEBM", ".MPG", ".MP2", ".MPEG",
@@ -68,22 +97,23 @@ def addMemoryView(request):
         if ('title' in request.POST.keys() and len(request.POST["title"]) <= 64
                 and len(request.POST["title"]) > 0):
 
-            current_user = User.objects.filter(pk=request.session["UserId"])[0]
-            memory = current_user.media_set.create()  # Create a Media entry with foreignkey this user.
-            memory.setMediaTitle(current_user.getPubkey(), request.POST["title"])
-            memory.setMediaSize(current_user.getPubkey(), 0)
+            user = User.objects.filter(pk=request.session["UserId"])[0]
+            memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
+            memory.setMediaTitle(user.getPubkey(), request.POST["title"])
+            memory.setMediaSize(user.getPubkey(), 0)
+            memory.setMemory(user.getPubkey(), "a")
 
 
             if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
-                memory.setMediaType(current_user.getPubkey(), request.POST["type"])
+                memory.setMediaType(user.getPubkey(), request.POST["type"])
 
                 if "link" in request.POST.keys():  # Optional
-                    memory.setLink(current_user.getPubkey(), request.POST["link"])
+                    memory.setLink(user.getPubkey(), request.POST["link"])
                 elif "media" in request.FILES.keys():  # Optional
 
                     if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and
                             "." + request.FILES["media"].name.split(".")[-1].upper() in allowed_extenssions):
-                        medias = current_user.media_set.exclude(pk=memory.MediaId)
+                        medias = user.media_set.exclude(pk=memory.MediaId)
                         total_space_used = 0
                         for media in medias:
                             total_space_used += int(media.getMediaSize(request.session["privKey"]))
@@ -91,14 +121,14 @@ def addMemoryView(request):
                         if total_space_used + int(request.FILES["media"].size) <= int(media_conf["max_per_user"])*1000000:
                             try:
                                 file = save_file(
-                                    current_user.getSymKey(request.session["privKey"]),
+                                    user.getSymKey(request.session["privKey"]),
                                     request.FILES["media"].read(),
-                                    current_user.getAnonId(request.session["privKey"]),
+                                    user.getAnonId(request.session["privKey"]),
                                     upload_name=request.FILES["media"].name
                                 )
 
-                                memory.setMediaSize(current_user.getPubkey(), request.FILES["media"].size)
-                                memory.setLink(current_user.getPubkey(), file[0])
+                                memory.setMediaSize(user.getPubkey(), request.FILES["media"].size)
+                                memory.setLink(user.getPubkey(), file[0])
                             except RuntimeError as e:
                                 alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
                                 memory.delete()
@@ -113,7 +143,7 @@ def addMemoryView(request):
                         memory.delete()
 
                 if 'media_text' in request.POST.keys() and not alerts:  # Optional
-                    memory.setMediaText(current_user.getPubkey(), request.POST["media_text"])
+                    memory.setMediaText(user.getPubkey(), request.POST["media_text"])
 
                 if not alerts and not request.GET:
                     memory.save()
@@ -171,13 +201,12 @@ def addMemoryView(request):
 
     return render(request, 'prepare/add_memory.html', args)
 
-
 def MemoryView(request, id):
 
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    current_user = User.objects.filter(pk=request.session["UserId"])[0]
+    user = User.objects.filter(pk=request.session["UserId"])[0]
     prepare_lang = get_lang(sections=["prepare"])
 
     content = dict()
@@ -232,7 +261,7 @@ def MemoryView(request, id):
             ".WV"
         ]
         filetype = ""
-        file = open_file(current_user.getSymKey(request.session["privKey"]), url)
+        file = open_file(user.getSymKey(request.session["privKey"]), url)
 
         for line in file[0].split("\n"):
             splitline = line.split(":")
@@ -249,18 +278,18 @@ def MemoryView(request, id):
             memtype = "error"
 
         if memtype != "error":
-            if not os.path.exists("media/temp/" + str(get_sha1(current_user.getAnonId(request.session["privKey"])))):
-                os.makedirs("media/temp/" + str(get_sha1(current_user.getAnonId(request.session["privKey"]))))
+            if not os.path.exists("media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"])))):
+                os.makedirs("media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))))
 
             try:
                 temp_file = open(
-                        "media/temp/" + str(get_sha1(current_user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype,
+                        "media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype,
                         "wb"
                     )
                 temp_file.write(file[1])
                 temp_file.close()
 
-                content[memtype] = "media/temp/" + str(get_sha1(current_user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype
+                content[memtype] = "media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype
 
                 if "files_to_delete" in request.session.keys():
                     request.session["files_to_delete"].append(content[memtype])
@@ -269,6 +298,7 @@ def MemoryView(request, id):
             except Exception as e:
                 print(e)
                 pass
+
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -284,3 +314,43 @@ def MemoryView(request, id):
     }
 
     return render(request, 'prepare/memory.html', args)
+
+
+def ContactsView(request):
+
+    return render(request, 'prepare/contacts.html')
+
+
+
+def addContact(uId, name, phonenumber, available):
+    contact = Contacts(
+        Name = name,
+        Phonenumber = phonenumber,
+        Available = available
+    )
+    contact.save()
+
+def showContacts(uId, privKey):
+    user = User.objects.filter(UserId=uId)[0]
+    contactsToReturn = []
+    contacts = Contacts.objects.filter(UserId=user)
+    for contact in contacts:
+        contactInfo = dict({
+            'Name':contact.getName(privKey),
+            'Phonenumber':contact.getPhonenumber(privKey),
+            'Available':contact.getAvailable(privKey)
+        })
+        contactsToReturn.append(contactInfo)
+    return contactsToReturn
+
+def showAllmemories(uId, privKey, memType):
+    if memType in 'sd':
+        memoryIdList=[]
+        user=User.objects.filter(UserId=uId)[0]
+        memories = Media.objects.filter(UserId=user, Memory=memType)
+        for memory in memories:
+            memoryInfo = dict({'Title':memory.getMediaTitle(privKey),'Id':memory.getMediaId()})
+            memoryIdList.append(memoryInfo)
+        return memoryIdList
+    else:
+        return -1
