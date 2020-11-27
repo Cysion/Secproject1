@@ -58,7 +58,7 @@ def RegisterView(request):
                     alerts['database'] = 'Database error'
                 else:
                     request.session['UserId'] = sessionsData[0]
-                    request.session['privKey'] = sessionsData[1].decode("utf-8")
+                    request.session['PrivKey'] = sessionsData[1].decode("utf-8")
                     request.session['Role'] = sessionsData[2]
 
                     return HttpResponseRedirect(reverse('userprofile:Backupkey'))
@@ -121,7 +121,7 @@ def LoginView(request):
             key = gen_rsa(secret_scrambler(request.POST["password"], user.getUid()))
             if str(key.publickey().export_key()) == str(user.getPubkey()):
                 request.session['UserId'] = user.getUid()
-                request.session['privKey'] = key.export_key().decode("utf-8")
+                request.session['PrivKey'] = key.export_key().decode("utf-8")
                 request.session['Role'] = user.getRole()
 
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
@@ -182,7 +182,7 @@ def forgotPasswordView(request):
             if user:
                 try:
                     request.session['UserId'] = user.getUid()
-                    request.session['privKey']=changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
+                    request.session['PrivKey']=changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
                 except ValueError as keyError:
                     alerts["relogin"] = "relogin"
 

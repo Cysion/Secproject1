@@ -25,8 +25,8 @@ def ProfileView(request):
 
     login_lang = get_lang(sections=["userprofile"])
     user1 = User.objects.filter(UserId=request.session['UserId'])[0]
-    first_name = user1.getFirstName(request.session['privKey'])
-    last_name = user1.getLastName(request.session['privKey'])
+    first_name = user1.getFirstName(request.session['PrivKey'])
+    last_name = user1.getLastName(request.session['PrivKey'])
 
     global_alerts = []  # The variable which is sent to template
 
@@ -60,13 +60,13 @@ def EditProfileView(request):
     wrong_pass = False
     account = {}
     user=User.objects.filter(UserId=request.session['UserId'])[0]
-    account['firstName']=user.getFirstName(request.session['privKey'])
-    account['lastName']=user.getLastName(request.session['privKey'])
-    account['gender']=user.getGender(request.session['privKey'])
+    account['firstName']=user.getFirstName(request.session['PrivKey'])
+    account['lastName']=user.getLastName(request.session['PrivKey'])
+    account['gender']=user.getGender(request.session['PrivKey'])
     account['email'] = user.getEmail()
 
     if request.method == 'POST':
-        if checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password']):
+        if checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
             user = User.objects.filter(UserId=request.session['UserId'])[0]
             if request.POST['gender'] == 'Other':
                 user.setGender(request.POST['gender_other'])
@@ -130,12 +130,12 @@ def changePassView(request):
 
     if request.method == "POST":
 
-        if checkPassword(request.session['UserId'], request.session['privKey'], request.POST["current_password"]):
+        if checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST["current_password"]):
             if request.POST['new_password'] == request.POST['new_repassword']:
-                privkey = changePass(request.session['UserId'], request.session['privKey'], request.POST["new_password"]).decode('utf-8')
+                privkey = changePass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"]).decode('utf-8')
 
                 if privkey:  # Check if changing password succeded
-                    request.session['privKey'] = privkey
+                    request.session['PrivKey'] = privkey
                     alert = {
                         "color": "success",
                         "title": UNIVERSAL_LANG["universal"]["success"],
@@ -247,7 +247,7 @@ def BackupKeyView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
-        'privkey': request.session['privKey'],
+        'privkey': request.session['PrivKey'],
         'template': template
     }
 
@@ -258,7 +258,7 @@ def relationsView(request):
         return HttpResponseRedirect(reverse('login:Login'))
 
 
-    users = showAllRelationsTo(request.session['UserId'], request.session['privKey'])
+    users = showAllRelationsTo(request.session['UserId'], request.session['PrivKey'])
 
     profile_lang = get_lang(sections=["userprofile"])
 
@@ -292,7 +292,7 @@ def addRelationsView(request):
             permissions+='1' if 'share_prepare' in request.POST else '0'
             permissions+='1' if 'share_media' in request.POST else '0'
 
-            if not createRelation(user.getUid(), request.session['privKey'], recieverEmail, permissions):
+            if not createRelation(user.getUid(), request.session['PrivKey'], recieverEmail, permissions):
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             else:
                 alerts['database'] = 'database_error'
@@ -326,7 +326,7 @@ def manageRelationsView(request):
         if request.method == 'POST':
             if 'delete' in request.POST:
                 print("delete")
-                removeRelation(request.session['UserId'], request.session['privKey'], email)
+                removeRelation(request.session['UserId'], request.session['PrivKey'], email)
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             elif 'save' in request.POST:
                 print("modify")
@@ -336,7 +336,7 @@ def manageRelationsView(request):
                 permission['Check'] = '1' if 'share_check' in request.POST else '0'
                 permission['Prepare'] = '1' if 'share_prepare' in request.POST else '0'
                 permission['Media'] = '1' if 'share_media' in request.POST else '0'
-                modifyRelation(request.session['UserId'], request.session['privKey'], email, permission)
+                modifyRelation(request.session['UserId'], request.session['PrivKey'], email, permission)
                 relationData['Permission']=permission
 
 

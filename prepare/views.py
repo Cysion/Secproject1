@@ -23,14 +23,17 @@ def MenuView(request, page=0):
 
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
+    memories = []
 
     if page == 1:
         template = 'prepare/1_howto.html'
     elif page == 2:
         template = 'prepare/2_practicebreathing.html'
     elif page == 3:
+        memories = showAllmemories(request.session['UserId'], request.session['PrivKey'], 's')
         template = 'prepare/3_supportivememories.html'
     elif page == 4:
+        memories = showAllmemories(request.session['UserId'], request.session['PrivKey'], 'd')
         template = 'prepare/4_destructivememories.html'
     elif page == 5:
         template = 'prepare/5_contacts.html'
@@ -48,7 +51,8 @@ def MenuView(request, page=0):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'prepare': prepare_lang["prepare"],
-        'nav': prepare_lang["prepare"]["nav"]
+        'nav': prepare_lang["prepare"]["nav"],
+        'memories':memories
     }
     return render(request, template, args)
 
@@ -74,7 +78,7 @@ def addMemoryView(request):
     media_conf = get_conf(sections=["media"])["media"]
     alerts = {}
 
-    #memType=request.GET['type']
+    memType=request.GET['mem_type']
 
     allowed_extenssions = [  # Some of the more popular allowed formats
         #  Videos
@@ -101,7 +105,7 @@ def addMemoryView(request):
             memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
             memory.setMediaTitle(user.getPubkey(), request.POST["title"])
             memory.setMediaSize(user.getPubkey(), 0)
-            memory.setMemory(user.getPubkey(), "a")
+            memory.setMemory(user.getPubkey(), memType)
 
 
             if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
@@ -177,9 +181,9 @@ def addMemoryView(request):
             media_type = "file"
 
     if request.GET:
-        if request.GET["media_type"] and request.GET["media_type"] == "url":  # Display file input type
+        if "media_type" in request.GET.keys() and request.GET["media_type"] == "url":  # Display file input type
             media_type = "url"
-        elif request.GET["media_type"] and request.GET["media_type"] == "file":   # Display text input type
+        elif "media_type" in request.GET.keys() and request.GET["media_type"] == "file":   # Display text input type
             media_type = "file"
 
     global_alerts = []  # The variable which is sent to template
@@ -197,6 +201,7 @@ def addMemoryView(request):
         'error': UNIVERSAL_LANG["universal"]["error"],
         'alerts': alerts,
         'max_file_size': int(media_conf["max_size_mb"]),
+        'memType': memType
     }
 
     return render(request, 'prepare/add_memory.html', args)
@@ -359,10 +364,11 @@ def showAllmemories(uId, privKey, memType):
     if memType in 'sd':
         memoryIdList=[]
         user=User.objects.filter(UserId=uId)[0]
-        memories = Media.objects.filter(UserId=user, Memory=memType)
+        memories = Media.objects.filter(UserId=user)
         for memory in memories:
-            memoryInfo = dict({'Title':memory.getMediaTitle(privKey),'Id':memory.getMediaId()})
-            memoryIdList.append(memoryInfo)
+            if memory.getMemory(privKey) == memType:
+                memoryInfo = dict({'Title':memory.getMediaTitle(privKey),'Id':memory.getMediaId(),'Size':memory.getMediaSize(privKey)})
+                memoryIdList.append(memoryInfo)
         return memoryIdList
     else:
         return -1
