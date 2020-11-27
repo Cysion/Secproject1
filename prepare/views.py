@@ -73,7 +73,7 @@ def addMemoryView(request):
     media_conf = get_conf(sections=["media"])["media"]
     alerts = {}
 
-    memType=request.GET['type']
+    memType=request.GET['memType']
 
     allowed_extenssions = [  # Some of the more popular allowed formats
         #  Videos
