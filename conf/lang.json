@@ -244,7 +244,8 @@
               "memory_added":"Your memory was added!",
               "file_to_big":"This file is too big or the extenssion is not allowed!",
               "file_error":"Something with ths file upload went wrong.",
-              "not_enough_space":"You dont have enough space to upload this media! You need to delete a memory with a photo, video or sound file if you wish to upload this!"
+              "not_enough_space":"You dont have enough space to upload this media! You need to delete a memory with a photo, video or sound file if you wish to upload this!",
+              "checksum_error":"This file has been modified! You can test delete this memory and reupload this memory."
             }
         }
     },

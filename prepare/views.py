@@ -241,7 +241,6 @@ def MemoryView(request, id):
         url = unidentified_url
         memtype = "photo/video/sound"
 
-    if memtype == "photo/video/sound":
         photo_extenssions = [  # Some of the more popular allowed formats
             # Photos
             ".JPG", ".JPEG", ".EXIF", ".GIF", ".BMP", ".PNG",
@@ -261,7 +260,20 @@ def MemoryView(request, id):
             ".WV"
         ]
         filetype = ""
-        file = open_file(user.getSymKey(request.session["privKey"]), url)
+        try:
+            file = open_file(user.getSymKey(request.session["privKey"]), url)
+        except RuntimeError as e:
+            alert = {
+                "color": "error",
+                "title": UNIVERSAL_LANG["universal"]["error"],
+                "message": prepare_lang["prepare"]["long_texts"]["alerts"]["checksum_error"]
+            }
+
+            if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                request.session["global_alerts"] = [alert]
+            else:
+                request.session["global_alerts"].append(alert)
+            return HttpResponseRedirect(reverse('prepare:menu'))
 
         for line in file[0].split("\n"):
             splitline = line.split(":")
