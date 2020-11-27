@@ -128,14 +128,14 @@ def addMemoryView(request):
                         medias = user.media_set.exclude(pk=memory.MediaId)
                         total_space_used = 0
                         for media in medias:
-                            total_space_used += int(media.getMediaSize(request.session["privKey"]))
+                            total_space_used += int(media.getMediaSize(request.session["PrivKey"]))
 
                         if total_space_used + int(request.FILES["media"].size) <= int(media_conf["max_per_user"])*1000000:
                             try:
                                 file = save_file(
-                                    user.getSymKey(request.session["privKey"]),
+                                    user.getSymKey(request.session["PrivKey"]),
                                     request.FILES["media"].read(),
-                                    user.getAnonId(request.session["privKey"]),
+                                    user.getAnonId(request.session["PrivKey"]),
                                     upload_name=request.FILES["media"].name
                                 )
 
@@ -232,7 +232,7 @@ def MemoryView(request, id):
         # User dont belong here
         return Http404("Memory does not exist!")
 
-    content["title"] = memory.getMediaTitle(request.session["privKey"])
+    content["title"] = memory.getMediaTitle(request.session["PrivKey"])
 
     url = ""
     memtype = ""
@@ -240,9 +240,9 @@ def MemoryView(request, id):
     unidentified_url = ""
 
     if memory.MediaText:
-        content["text"] = memory.getMediaText(request.session["privKey"])
+        content["text"] = memory.getMediaText(request.session["PrivKey"])
     if memory.MediaLink:
-        unidentified_url = memory.getLink(request.session["privKey"])
+        unidentified_url = memory.getLink(request.session["PrivKey"])
 
     youtube_pattern = re.compile("^(http[s]?:\/\/)?([w]{3}.)?(youtube.com|youtu.be)\/(.*watch\?v=)?(.+)")
     local_url_pattern = re.compile("^.+\/(.+)$")  # Pattern for local files such as video, photo or sound
@@ -274,7 +274,7 @@ def MemoryView(request, id):
         ]
         filetype = ""
         try:
-            file = open_file(user.getSymKey(request.session["privKey"]), url)
+            file = open_file(user.getSymKey(request.session["PrivKey"]), url)
         except RuntimeError as e:
             alert = {
                 "color": "error",
@@ -303,18 +303,18 @@ def MemoryView(request, id):
             memtype = "error"
 
         if memtype != "error":
-            if not os.path.exists("media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"])))):
-                os.makedirs("media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))))
+            if not os.path.exists("media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"])))):
+                os.makedirs("media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"]))))
 
             try:
                 temp_file = open(
-                        "media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype,
+                        "media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"]))) + "/" + str(int(time.time())) + "." + filetype,
                         "wb"
                     )
                 temp_file.write(file[1])
                 temp_file.close()
 
-                content[memtype] = "media/temp/" + str(get_sha1(user.getAnonId(request.session["privKey"]))) + "/" + str(int(time.time())) + "." + filetype
+                content[memtype] = "media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"]))) + "/" + str(int(time.time())) + "." + filetype
 
                 if "files_to_delete" in request.session.keys():
                     request.session["files_to_delete"].append(content[memtype])
@@ -355,27 +355,27 @@ def addContact(uId, name, phonenumber, available):
     )
     contact.save()
 
-def showContacts(uId, privKey):
+def showContacts(uId, PrivKey):
     user = User.objects.filter(UserId=uId)[0]
     contactsToReturn = []
     contacts = Contacts.objects.filter(UserId=user)
     for contact in contacts:
         contactInfo = dict({
-            'Name':contact.getName(privKey),
-            'Phonenumber':contact.getPhonenumber(privKey),
-            'Available':contact.getAvailable(privKey)
+            'Name':contact.getName(PrivKey),
+            'Phonenumber':contact.getPhonenumber(PrivKey),
+            'Available':contact.getAvailable(PrivKey)
         })
         contactsToReturn.append(contactInfo)
     return contactsToReturn
 
-def showAllmemories(uId, privKey, memType):
+def showAllmemories(uId, PrivKey, memType):
     if memType in 'sd':
         memoryIdList=[]
         user=User.objects.filter(UserId=uId)[0]
         memories = Media.objects.filter(UserId=user)
         for memory in memories:
-            if memory.getMemory(privKey) == memType:
-                memoryInfo = dict({'Title':memory.getMediaTitle(privKey),'Id':memory.getMediaId(),'Size':memory.getMediaSize(privKey)})
+            if memory.getMemory(PrivKey) == memType:
+                memoryInfo = dict({'Title':memory.getMediaTitle(PrivKey),'Id':memory.getMediaId(),'Size':memory.getMediaSize(PrivKey)})
                 memoryIdList.append(memoryInfo)
         return memoryIdList
     else:
