@@ -37,7 +37,7 @@
 
 
 
-<a type="button" class="btn btn-info btn-block" href="prepare/memory/add/">Add supportive memory</a>
+<a type="button" class="btn btn-info btn-block" href="/prepare/memory/add/?mem_type=s">Add supportive memory</a>
 
 {% for memory in memories %}
     <div class="relations my-1 row">
@@ -46,7 +46,7 @@
         </div>
         <div class="col-md">
             <div class="my-1">
-                <a type="button" class="btn btn-info btn-block" href="prepare/memory/{{memory.Id}}">{{ memory.Title }}</a>
+                <a type="button" class="btn btn-info btn-block" href="/prepare/memory/{{memory.Id}}">{{ memory.Title }}</a>
             </div>
         </div>
     </div>
