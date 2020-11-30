@@ -213,7 +213,8 @@
             "in":"Breathe IN and count",
             "hold":"Hold your breath and count",
             "out":"Breathe OUT and count",
-            "count":"one, two, three, four"
+            "count":"one, two, three, four",
+            "audio_instructions":"Audio instructions"
         },
         "prac_breath":"practice breathing",
         "good_mem":"my library for supportive memories",
