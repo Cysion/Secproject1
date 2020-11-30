@@ -2,17 +2,24 @@ import json
 import os
 import argparse
 
-def from_json(tree="lang", jsonfp="conf/lang.json"):
+def from_json(tree="lang", jsonfp="conf/lang.json") -> None:
+    """converts a file to a csv tree from a json file
+    tree = location of the tree
+    jsonfp = location of the json file"""
     if not tree or not jsonfp:
         tree, jsonfp="lang","conf/lang.json"
     lang_dict = {}
     with open(jsonfp) as inf:
         lang_dict = json.load(inf)
     to_tree(lang_dict, tree)
+    return
 
 
 
-def to_tree(jasoon, cwd):
+def to_tree(jasoon: dict, cwd: str) -> None:
+    """recursively crawls json file and unpacks it to a csv tree
+    jasoon = dict to unpack OR synthpop band from malmö featuring lead singer tinbuktu
+    cwd = root dir to unpack to"""
     csvify = lambda key, stuff: ",".join([f'"{i}"' for i in tuple([key] + [stuff] if type(stuff) == str else [key] + stuff)])
     with open(os.path.join(cwd, os.path.join(os.path.split(cwd)[-1] + ".csv")), "w") as outf:
         for key in jasoon:
@@ -25,17 +32,24 @@ def to_tree(jasoon, cwd):
             else:
                 csvified = csvify(key, jasoon[key])
                 outf.write(csvified + "\n")
+    return
 
 
-def from_tree(tree="lang", jsonfp="conf/lang.out.json"):
+def from_tree(tree="lang", jsonfp="conf/lang.out.json") -> None:
+    """converts a file to a csv tree from a json file
+    tree = location of the tree
+    jsonfp = location of the json file"""
     if not tree or not jsonfp:
         tree, jsonfp="lang","conf/lang.out.json"
     dicc = to_json(tree)
     with open(jsonfp, "w") as outf:
         json.dump(dicc, outf, indent=4)
+    return
     
     
-def to_json(cwd):
+def to_json(cwd: str) -> dict:
+    """recursively crawls a csv tree and packs it into a pythonic dictionary.
+    cwd = root to csv dir to pack"""
     dicc = {}
     for thing in os.listdir(cwd):
         if os.path.isdir(os.path.join(cwd, thing)):
@@ -54,6 +68,7 @@ def to_json(cwd):
 
 
 def test_sim(dict1, dict2, revved=0):
+    """tests if dict1 and dict2 are identical"""
     assert type(dict1) == dict
     assert type(dict2) == dict
     for key in dict1:
