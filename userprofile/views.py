@@ -9,6 +9,7 @@ from tools.crypto import gen_rsa, secret_scrambler
 from tools.confman import get_lang
 from tools.mediaman import reencrypt_user
 from django.db import transaction
+from prepare.views import reencryptMedia
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
@@ -216,6 +217,8 @@ def changePass(uId:int, PrivKey, newPassword:str):
         user.setSymkey(reencrypt_user(anonId, symKey))
         user.setAnonId(PrivKeyNew)
         user.save()
+
+        reencryptMedia(user.getUid(), PrivKey, pubkey)
 
         relationsTo = RelationTo.objects.filter(UserIdFrom=user.getUid())
         for relation in relationsTo:

@@ -196,17 +196,25 @@
     },
     "prepare":{
         "unformat":[],
-        "title":"prepare",
+        "title":"Prepare",
         "%%dev_note":"step list added in case the first, second, thirds etc paradigm is preferred to fractions. index 0 is concatenated with the following entries",
         "steps":["Step","1", "2", "3", "4", "5", "6", "7", "8"],
         "memory":"memory",
         "memories":"memories",
         "how_to":{
-            "use_12_steps":"How to use 12 steps",
+            "title":"How to use 12 steps",
             "young":"YOUNG",
             "middle_aged":"MIDDLE AGED",
             "senior":"SENIOR",
             "me":"ME"
+        },
+        "practice_breathing":{
+            "title":"Practice Breathing",
+            "in":"Breathe IN and count",
+            "hold":"Hold your breath and count",
+            "out":"Breathe OUT and count",
+            "count":"one, two, three, four",
+            "audio_instructions":"Audio instructions"
         },
         "prac_breath":"practice breathing",
         "good_mem":"my library for supportive memories",
@@ -219,7 +227,7 @@
         "call_cisis":"where do i call in a crisis",
         "diary":"diary",
         "ther_notes":"Therapy notes",
-        "title":"Title",
+        "title2":"Title",
         "text":"Text",
         "upload":"Upload file: max file size is",
         "file":"File",

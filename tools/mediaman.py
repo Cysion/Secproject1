@@ -181,13 +181,17 @@ def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CON
     """
 
     dirname = get_sha1(anonid)
-    files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
-    for file in files:
-        fullpath = f"{dirname}/{file}"
-        filedata = open_file(old_key, fullpath, decompress=False, header_check=False)[1]
-        delete_file(fullpath, exists_error=True)
-        save_file(new_key, filedata, anonid, compress=False)
+    try:
+        files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
+        for file in files:
+            fullpath = f"{dirname}/{file}"
+            filedata = open_file(old_key, fullpath, decompress=False, header_check=False)[1]
+            delete_file(fullpath, exists_error=True)
+            save_file(new_key, filedata, anonid, compress=False)
+    except FileNotFoundError:
+        pass
     return new_key
+        
 
 
 def open_all_files(key:bytes, anonid, rootdir = CONF["media_base_dir"], decompress=True):

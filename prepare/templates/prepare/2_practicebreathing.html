@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Prepare{% endblock %}
+{% block title %}{{ prepare.practice_breathing.title }} - {{ prepare.title }}{% endblock %}
 
 
 {% block statics %}
@@ -12,13 +12,74 @@
 
 <nav class="second-nav nav nav-pills nav-fill align-items-center">
     <h1 class="nav-item m-2"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
-    <a class="nav-item nav-link btn btn-info m-2" name="page" value="1" href="/prepare/1">{{ nav.library }}</a>
+    <a class="nav-item nav-link btn btn-info m-2 active" name="page" value="1" href="/prepare/1">{{ nav.library }}</a>
     <a class="nav-item nav-link btn btn-info m-2" name="page" value="5" href="/prepare/5">{{ nav.contacts }}</a>
     <a class="nav-item nav-link btn btn-info m-2" name="page" value="7" href="/prepare/7">{{ nav.notes }}</a>
 </nav>
 
-<!--Insert page content here-->
-<p>practicebreathing (2)</p>
+<section>
+    <div class="m-2 p-2 rounded " style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+        <h2>{{ prepare.steps.0 }} {{ prepare.steps.2 }}/{{ prepare.steps.8 }}: {{ prepare.practice_breathing.title }}</h2>
+    </div>
+    <div class="row m-2 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+        <div class="col p-0">
+            <p class="m-1 h5 text-center">{{ prepare.practice_breathing.in }}:<br>{{ prepare.practice_breathing.count }}</p>
+        </div>
+        <div class="col-3 p-0 text-center">
+            <i class="fas fa-lungs" style="font-size: 2.5rem;"></i>
+        </div>
+    </div>
+
+    <div class="row m-2 align-items-center justify-content-between">
+        <div class="col-5 text-center">
+            <i class="fas fa-arrow-up" style="font-size: 3rem;"></i>
+        </div>
+        <div class="col-5 text-center">
+            <i class="fas fa-arrow-down" style="font-size: 3rem;"></i>
+        </div>
+    </div>
+
+    <div class="row m-2 align-items-center justify-content-between">
+        <div class="col-5 p-0 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+            <p class="m-1 h6 text-center">{{ prepare.practice_breathing.hold }}:<br>{{ prepare.practice_breathing.count }}</p>
+        </div>
+        <div class="col-5 p-0 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+            <p class="m-1 h6 text-center">{{ prepare.practice_breathing.hold }}:<br>{{ prepare.practice_breathing.count }}</p>
+        </div>
+    </div>
+
+    <div class="row m-2 align-items-center justify-content-between">
+        <div class="col-5 text-center">
+            <i class="fas fa-arrow-up" style="font-size: 3rem;"></i>
+        </div>
+        <div class="col-5 text-center">
+            <i class="fas fa-arrow-down" style="font-size: 3rem;"></i>
+        </div>
+    </div>
+
+    <div class="row m-2 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+        <div class="col p-0">
+            <p class="m-1 h5 text-center">{{ prepare.practice_breathing.out }}:<br>{{ prepare.practice_breathing.count }}</p>
+        </div>
+        <div class="col-3 p-0 text-center">
+            <i class="fas fa-lungs" style="font-size: 2.5rem;"></i>
+        </div>
+    </div>
+
+    <div class="row m-2 align-items-center justify-content-between">
+        <div class="col-sm-5 m-2 embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" allowfullscreen></iframe> <!--REPLACE-->
+        </div>
+        <div class="col-sm-5 m-2">
+            <figure>
+                <figcaption>{{ prepare.practice_breathing.audio_instructions }}:</figcaption>
+                <audio controls class="w-100" src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3"> <!--REPLACE-->
+                </audio>
+            </figure>
+        </div>
+        
+    </div>
+</section>
 
 <section style="margin:20px 0">
     <ul class="pagination justify-content-center">

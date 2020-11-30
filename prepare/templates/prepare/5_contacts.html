@@ -12,16 +12,37 @@
 
 {% block content %}
 
-<nav class="second-nav nav nav-pills nav-fill align-items-center>
+<nav class="second-nav nav nav-pills nav-fill align-items-center">
     <h1 class="nav-item m-2"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
     <a class="nav-item nav-link btn btn-info m-2" name="page" value="1" href="/prepare/1">{{ nav.library }}</a>
-    <a class="nav-item nav-link btn btn-info m-2" name="page" value="5" href="#">{{ nav.contacts }}</a>
+    <a class="nav-item nav-link btn btn-info m-2 active" name="page" value="5" href="#">{{ nav.contacts }}</a>
     <a class="nav-item nav-link btn btn-info m-2" name="page" value="7" href="/prepare/7">{{ nav.notes }}</a>
 </nav>
 
 <!--Insert page content here-->
 <p>contacts (5)</p>
-<a type="button" class="btn btn-lg btn-primary btn-block" href="/userprofile/relations">{{ back }}</a>
+
+
+
+<a type="button" class="btn btn-lg btn-primary btn-block" href="/prepare/contacts">Add new contact</a>
+
+{% for contact in contacts %}
+<div class="relations my-1 row">
+    
+    <div class="col-md">
+        <p><strong>{{ contact.Name}}</strong></p>
+        <p><strong>{{ contact.Phonenumber}}</strong></p>
+        <p><strong>{{ contact.Available}}</strong></p>
+    </div>
+    <div class="col-md">
+        <div class="my-1">
+            <a type="button" class="btn btn-info btn-block" href="manage/?Id={{user.RelationFrom}}">Edit</a>
+            Call?
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 
 <section style="margin:20px 0">
     <ul class="pagination justify-content-center">
@@ -36,23 +57,5 @@
         <li class="page-item"><a class="page-link" name="page" value="8" href="/prepare/8">{{ prepare.steps.8 }}</a></li>
     </ul>
 </section>
-
-
-<a type="button" class="btn btn-lg btn-primary btn-block" href="/prepare/contacts">{{ Add new contact }}</a>
-
-{% for user in users %}
-<div class="relations my-1 row">
-    
-    <div class="col-md">
-        <p><strong>{{ user.Email }}</strong></p>
-    </div>
-    <div class="col-md">
-        <div class="my-1">
-            <a type="button" class="btn btn-info btn-block" href="manage/?Id={{user.RelationFrom}}">{{ relations.manage }}</a>
-        </div>
-    </div>
-</div>
-{% endfor %}
-
 
 {% endblock %}

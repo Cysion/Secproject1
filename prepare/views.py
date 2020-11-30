@@ -11,6 +11,7 @@ import re
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import time
+import login.views
 from django.db import transaction
 
 from django.core.files import File
@@ -26,6 +27,7 @@ def MenuView(request, page=0):
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
     memories = []
+    contacts = []
 
     if page == 1:
         template = 'prepare/1_howto.html'
@@ -38,7 +40,7 @@ def MenuView(request, page=0):
         memories = showAllmemories(request.session['UserId'], request.session['PrivKey'], 'd')
         template = 'prepare/4_destructivememories.html'
     elif page == 5:
-        showContacts(request.session['UserId'], request.session['PrivKey'])
+        contacts=showContacts(request.session['UserId'], request.session['PrivKey'])
         template = 'prepare/5_contacts.html'
     elif page == 6:
         template = 'prepare/6_wheretocall.html'
@@ -55,7 +57,8 @@ def MenuView(request, page=0):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
-        'memories':memories
+        'memories':memories,
+        'contacts':contacts
     }
     return render(request, template, args)
 
@@ -391,17 +394,42 @@ def MemoryView(request, id):
 
 
 def ContactsView(request):
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
+    alerts = {}
+    if request.method == 'POST':
+        exceptions = ''
+        user = User.objects.filter(UserId=request.session["UserId"])[0]
+        prepare_lang = get_lang(sections=["prepare"])
+        for index in ['name', 'phonenumber', 'available']:
+            if index == 'phonenumber':
+                exceptions = '+0123456789'
+            if index == 'available':
+                exceptions = '0123456789+-/'
+            if login.views.containsBadChar(request.POST[index], exceptions):
+                alerts[index] = "badChar"
+        if not alerts:
+            addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
+            return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
+    args = {
+        'POST': request.POST,
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG['universal']['back'],
+        'alert': alerts
+    }
+    return render(request, 'prepare/addcontact.html')
 
-    return render(request, 'prepare/contacts.html')
 
 
-
-def addContact(uId, name, phonenumber, available):
-    contact = Contacts(
-        Name = name,
-        Phonenumber = phonenumber,
-        Available = available
-    )
+def addContact(uId, name, phonenumber, available, privKey):
+    user = User.objects.filter(UserId = uId)[0]
+    contact = Contacts(UserId = user)
+    contact.setName(name)
+    contact.setPhonenumber(phonenumber)
+    contact.setAvailable(available)
+    print(contact.getName(privKey))
+    print(contact.getPhonenumber(privKey))
+    print(contact.getAvailable(privKey))
     contact.save()
 
 def showContacts(uId, PrivKey):
@@ -429,3 +457,25 @@ def showAllmemories(uId, PrivKey, memType):
         return memoryIdList
     else:
         return -1
+
+def reencryptMedia(uId, oldPrivKey, newPubKey):
+    user=User.objects.filter(UserId=uId)[0]
+    media = Media.objects.filter(UserId=user)
+    for mediaObject in media:
+        compressed = mediaObject.getCompressed(oldPrivKey)
+        mediaType = mediaObject.getMediaType(oldPrivKey)
+        mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
+        mediaText = mediaObject.getMediaText(oldPrivKey)
+        mediaLink = mediaObject.getMediaLink(oldPrivKey)
+        memory = mediaObject.getMemory(oldPrivKey)
+        mediaSize = mediaObject.getMediaSize(oldPrivKey)
+
+        mediaObject.setCompressed(newPubKey, compressed)
+        mediaObject.setMediaType(newPubKey, mediaType)
+        mediaObject.setMediaTitle(newPubKey, mediaTitle)
+        mediaObject.setMediaText(newPubKey, mediaText)
+        mediaObject.setMediaLink(newPubKey, mediaLink)
+        mediaObject.setMemory(newPubKey, memory)
+        mediaObject.setMediaSize(newPubKey, mediaSize)
+
+        mediaObject.save()
