@@ -129,6 +129,7 @@ def addMemoryView(request):
 
                         if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and
                                 "." + request.FILES["media"].name.split(".")[-1].upper() in allowed_extenssions):
+
                             medias = user.media_set.exclude(pk=memory.MediaId)
                             total_space_used = 0
                             for media in medias:
@@ -180,6 +181,7 @@ def addMemoryView(request):
                 else:  # If no type is entered
                     alerts["type"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_type"]
                     memory.delete()
+
         else:  # If Title is either empty or too long
             if len(request.POST["title"]) >= 64:
                 alerts["title"] = prepare_lang["prepare"]["long_texts"]["alerts"]["title_to_long"]
@@ -199,6 +201,7 @@ def addMemoryView(request):
             media_type = "file"
 
     global_alerts = []  # The variable which is sent to template
+
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
@@ -248,7 +251,9 @@ def MemoryView(request, id):
     if memory.MediaLink:
         unidentified_url = memory.getLink(request.session["PrivKey"])
 
-    youtube_pattern = re.compile("^(http[s]?:\/\/)?([w]{3}.)?(youtube.com|youtu.be)\/(.*watch\?v=)?(.+)")
+    print(unidentified_url)
+
+    youtube_pattern = re.compile("^(http[s]?:\/\/)?([w]{3}.)?(youtube.com|youtu.be)\/(.*watch\?v=)?(.+)(&.*)")
     local_url_pattern = re.compile("^.+\/(.+)$")  # Pattern for local files such as video, photo or sound
 
     if youtube_pattern.match(unidentified_url):
@@ -257,6 +262,9 @@ def MemoryView(request, id):
     elif local_url_pattern.match(unidentified_url):
         url = unidentified_url
         memtype = "photo/video/sound"
+    else:
+        memtype = "url_other"
+        content[memtype] = unidentified_url
 
     if memtype == "photo/video/sound":
         photo_extenssions = [  # Some of the more popular allowed formats
@@ -334,7 +342,6 @@ def MemoryView(request, id):
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
-
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
