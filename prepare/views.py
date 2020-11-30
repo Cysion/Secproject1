@@ -8,7 +8,8 @@ from prepare.models import Media
 from tools.confman import get_lang, get_conf
 from tools.mediaman import *
 import re
-import os
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 import time
 from django.db import transaction
 
@@ -89,7 +90,7 @@ def addMemoryView(request):
         mem_type = "s"
 
     if mem_type != "s" and mem_type != "d":
-            mem_type = "s"
+        mem_type = "s"
 
     allowed_extenssions = [  # Some of the more popular allowed formats
         #  Videos
@@ -130,7 +131,7 @@ def addMemoryView(request):
                         if (request.FILES["media"].size < int(media_conf["max_size_mb"])*1000000 and
                                 "." + request.FILES["media"].name.split(".")[-1].upper() in allowed_extenssions):
 
-                            medias = user.media_set.exclude(pk=memory.MediaId)
+                            medias = user.media_set.exclude(pk=memory.MediaId)  # Get all memories exept current one.
                             total_space_used = 0
                             for media in medias:
                                 total_space_used += int(media.getMediaSize(request.session["PrivKey"]))
@@ -146,15 +147,19 @@ def addMemoryView(request):
 
                                     memory.setMediaSize(user.getPubkey(), request.FILES["media"].size)
                                     memory.setLink(user.getPubkey(), file[0])
+
                                 except RuntimeError as e:
                                     alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
                                     memory.delete()
+
                                 except Exception as e:
                                     alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_error"]
                                     memory.delete()
+
                             else:
                                 alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["not_enough_space"]
                                 memory.delete()
+
                         else:
                             alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
                             memory.delete()
@@ -216,7 +221,7 @@ def addMemoryView(request):
         'error': UNIVERSAL_LANG["universal"]["error"],
         'alerts': alerts,
         'max_file_size': int(media_conf["max_size_mb"]),
-        'memType': mem_type
+        'mem_type': mem_type
     }
 
     return render(request, 'prepare/add_memory.html', args)
@@ -239,7 +244,15 @@ def MemoryView(request, id):
         # User dont belong here
         return Http404("Memory does not exist!")
 
+    if "files_to_delete" in request.session.keys():
+        for file in request.session["files_to_delete"]:
+            splitted_path = file.split("/")
+            delete_file("".join(splitted_path[2:]), splitted_path[1])
+
+    content["id"] = id
     content["title"] = memory.getMediaTitle(request.session["PrivKey"])
+    content["type"] = memory.getMemory(request.session["PrivKey"])
+    content["size"] = int(memory.getMediaSize(request.session["PrivKey"]))/1000000
 
     url = ""
     memtype = ""
@@ -251,20 +264,30 @@ def MemoryView(request, id):
     if memory.MediaLink:
         unidentified_url = memory.getLink(request.session["PrivKey"])
 
-    print(unidentified_url)
-
     youtube_pattern = re.compile("^(http[s]?:\/\/)?([w]{3}.)?(youtube.com|youtu.be)\/(.*watch\?v=)?(.+)(&.*)")
-    local_url_pattern = re.compile("^.+\/(.+)$")  # Pattern for local files such as video, photo or sound
+    local_url_pattern = re.compile("^[a-zA-Z0-9]{40}\/([a-zA-Z0-9]{40})$")  # Pattern for local files such as video, photo or sound
 
     if youtube_pattern.match(unidentified_url):
         memtype = "youtube"
         content[memtype] = youtube_pattern.match(unidentified_url).group(5)
+
     elif local_url_pattern.match(unidentified_url):
         url = unidentified_url
         memtype = "photo/video/sound"
+
     else:
         memtype = "url_other"
         content[memtype] = unidentified_url
+
+    if request.GET and "delete" in request.GET.keys():
+        if memtype == "photo/video/sound":
+            delete_file(url)
+        redirect_path = memory.getMemory(request.session["PrivKey"])
+        memory.delete()
+        if redirect_path == "s":
+            return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
+        else:
+            return HttpResponseRedirect(reverse('prepare:menu-page', args=(4,)))
 
     if memtype == "photo/video/sound":
         photo_extenssions = [  # Some of the more popular allowed formats
@@ -285,9 +308,11 @@ def MemoryView(request, id):
             ".MMF", ".MP3", ".MPC", ".OPUS", ".RF64", ".MAV", ".WMA",
             ".WV"
         ]
-        filetype = ""
+        file_type = ""
+
         try:
             file = open_file(user.getSymKey(request.session["PrivKey"]), url)
+
         except RuntimeError as e:
             alert = {
                 "color": "error",
@@ -304,39 +329,47 @@ def MemoryView(request, id):
         for line in file[0].split("\n"):
             splitline = line.split(":")
             if splitline[0] == "filetype":
-                filetype = splitline[1]
+                file_type = splitline[1]
 
-        if "." + filetype.upper() in photo_extenssions:
+        if "." + file_type.upper() in photo_extenssions:
             memtype = "photo"
-        elif "." + filetype.upper() in video_extenssions:
+        elif "." + file_type.upper() in video_extenssions:
             memtype = "video"
-        elif "." + filetype.upper() in sound_extenssions:
+        elif "." + file_type.upper() in sound_extenssions:
             memtype = "sound"
         else:
             memtype = "error"
 
         if memtype != "error":
-            if not os.path.exists("media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"])))):
-                os.makedirs("media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"]))))
+
+            file_path = "temp/"
+            file_name = str(time.time())
+            file_name = "".join(file_name.split("."))
 
             try:
-                temp_file = open(
-                        "media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"]))) + "/" + str(int(time.time())) + "." + filetype,
-                        "wb"
-                    )
-                temp_file.write(file[1])
-                temp_file.close()
+                default_storage.save(file_path + file_name + "." + file_type, ContentFile(file[1]))
 
-                content[memtype] = "media/temp/" + str(get_sha1(user.getAnonId(request.session["PrivKey"]))) + "/" + str(int(time.time())) + "." + filetype
+                content[memtype] = "media/" + file_path + file_name + "." + file_type
 
                 if "files_to_delete" in request.session.keys():
                     request.session["files_to_delete"].append(content[memtype])
                 else:
                     request.session["files_to_delete"] = [content[memtype]]
             except Exception as e:
-                print(e)
-                pass
 
+                alert = {
+                    "color": "error",
+                    "title": UNIVERSAL_LANG["universal"]["error"],
+                    "message": prepare_lang["prepare"]["long_texts"]["alerts"]["could_not_open_file"]
+                }
+
+                if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                    request.session["global_alerts"] = [alert]
+                else:
+                    request.session["global_alerts"].append(alert)
+                return HttpResponseRedirect(reverse('prepare:menu'))
+
+    using_space = prepare_lang["prepare"]["long_texts"]["memory_size"].replace("%mb%", str(int(content["size"])))
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -347,7 +380,11 @@ def MemoryView(request, id):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
         "add_memory": prepare_lang["prepare"]["long_texts"]["add_memory"],
-        "content": content
+        "using_space": using_space,
+        "content": content,
+        "back": UNIVERSAL_LANG["universal"]["back"],
+        "delete": prepare_lang["prepare"]["delete"],
+        "delete_confirm": prepare_lang["prepare"]["delete_confirm"]
     }
 
     return render(request, 'prepare/memory.html', args)
