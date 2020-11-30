@@ -196,12 +196,26 @@
     },
     "prepare":{
         "unformat":[],
-        "title":"prepare",
+        "title":"Prepare",
         "%%dev_note":"step list added in case the first, second, thirds etc paradigm is preferred to fractions. index 0 is concatenated with the following entries",
         "steps":["Step","1", "2", "3", "4", "5", "6", "7", "8"],
         "memory":"memory",
         "memories":"memories",
-        "how_to":"how to use 12 steps",
+        "how_to":{
+            "title":"How to use 12 steps",
+            "young":"YOUNG",
+            "middle_aged":"MIDDLE AGED",
+            "senior":"SENIOR",
+            "me":"ME"
+        },
+        "practice_breathing":{
+            "title":"Practice Breathing",
+            "in":"Breathe IN and count",
+            "hold":"Hold your breath and count",
+            "out":"Breathe OUT and count",
+            "count":"one, two, three, four",
+            "audio_instructions":"Audio instructions"
+        },
         "prac_breath":"practice breathing",
         "good_mem":"my library for supportive memories",
         "mem_cats":["Music", "Games", "Videos", "Chat", "Images", "Phrases", "Memes", "Stories", "Awards", "Themes"],
@@ -213,7 +227,7 @@
         "call_cisis":"where do i call in a crisis",
         "diary":"diary",
         "ther_notes":"Therapy notes",
-        "title":"Title",
+        "title2":"Title",
         "text":"Text",
         "upload":"Upload file: max file size is",
         "file":"File",
@@ -231,8 +245,8 @@
             "menu_description":"Click one of the areas above or select a step below",
             "hotline_text":"see p.19 in presentation",
             "ther_notes":"see p.21 in presentation",
-            "media_info":"Do you want to attach a media to your memory? Press one of the following buttons.",
-            "link_info":"Link can be a youtube or tiktok link.",
+            "media_info":"Do you want to attach a file or url to your memory? Press one of the following buttons.",
+            "link_info":"Link can be anything. A youtube link will show the video when viewing the memory.",
             "file_info":"File can be photo, video or music.",
             "memory_type":"What type of memory is it?",
             "allowed_extenssions":"These extenssions are allowed",
@@ -244,7 +258,8 @@
               "memory_added":"Your memory was added!",
               "file_to_big":"This file is too big or the extenssion is not allowed!",
               "file_error":"Something with ths file upload went wrong.",
-              "not_enough_space":"You dont have enough space to upload this media! You need to delete a memory with a photo, video or sound file if you wish to upload this!"
+              "not_enough_space":"You dont have enough space to upload this media! You need to delete a memory with a photo, video or sound file if you wish to upload this!",
+              "checksum_error":"This file has been modified! You can test delete this memory and reupload this memory."
             }
         }
     },

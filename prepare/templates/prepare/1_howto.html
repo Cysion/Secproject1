@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Prepare{% endblock %}
+{% block title %}{{ prepare.how_to.title }} - {{ prepare.title }}{% endblock %}
 
 
 {% block statics %}
@@ -10,27 +10,66 @@
 
 {% block content %}
 
-<nav class="second-nav nav nav-pills nav-fill align-items-center" style="border-width: 3px !important;">
+<nav class="second-nav nav nav-pills nav-fill align-items-center">
     <h1 class="nav-item m-2"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
-    <a class="nav-item nav-link btn btn-info m-2" href="#">{{ nav.library }}</a>
-    <a class="nav-item nav-link btn btn-info m-2" href="#">{{ nav.contacts }}</a>
-    <a class="nav-item nav-link btn btn-info m-2" href="#">{{ nav.notes }}</a>
+    <a class="nav-item nav-link btn btn-info m-2 active" name="page" value="1" href="#">{{ nav.library }}</a>
+    <a class="nav-item nav-link btn btn-info m-2" name="page" value="5" href="/prepare/5">{{ nav.contacts }}</a>
+    <a class="nav-item nav-link btn btn-info m-2" name="page" value="7" href="/prepare/7">{{ nav.notes }}</a>
 </nav>
 
-<!--Insert page content here-->
-<p>howto (1)</p>
+<section>
+    <div class="m-2 p-2 rounded " style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+        <h2>{{ prepare.steps.0 }} {{ prepare.steps.1 }}/{{ prepare.steps.8 }}: {{ prepare.how_to.title }}</h2>
+    </div>
+
+    <div class="row m-2 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+        <div class="col-md">
+            <h3>{{ prepare.how_to.young }}</h3>
+        </div>
+        <div class="m-2 col-md-4 embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" allowfullscreen></iframe> <!--REPLACE-->
+        </div>
+    </div>
+
+    <div class="row m-2 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+        <div class="col-md">
+            <h3>{{ prepare.how_to.middle_aged }}</h3>
+        </div>
+        <div class="m-2 col-md-4 embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" allowfullscreen></iframe> <!--REPLACE-->
+        </div>
+    </div>
+
+    <div class="row m-2 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+        <div class="col-md">
+            <h3>{{ prepare.how_to.senior }}</h3>
+        </div>
+        <div class="m-2 col-md-4 embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" allowfullscreen></iframe> <!--REPLACE-->
+        </div>
+    </div>
+    
+    <div class="row m-2 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+        <div class="col-md">
+            <h3>{{ prepare.how_to.me }}({{ prepare.how_to.use_12_steps }}?)</h3>
+        </div>
+        <div class="m-2 col-md-4 embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" allowfullscreen></iframe> <!--REPLACE-->
+        </div>
+    </div>
+</section>
 
 <section style="margin:20px 0">
     <ul class="pagination justify-content-center">
         <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
         <li class="page-item active"><a class="page-link" name="page" value="1" href="#">{{ prepare.steps.1 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="2" href="?page=2">{{ prepare.steps.2 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="3" href="?page=3">{{ prepare.steps.3 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="4" href="?page=4">{{ prepare.steps.4 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="5" href="?page=5">{{ prepare.steps.5 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="6" href="?page=6">{{ prepare.steps.6 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="7" href="?page=7">{{ prepare.steps.7 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="8" href="?page=8">{{ prepare.steps.8 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="2" href="/prepare/2">{{ prepare.steps.2 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="3" href="/prepare/3">{{ prepare.steps.3 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="4" href="/prepare/4">{{ prepare.steps.4 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="5" href="/prepare/5">{{ prepare.steps.5 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="6" href="/prepare/6">{{ prepare.steps.6 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="7" href="/prepare/7">{{ prepare.steps.7 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="8" href="/prepare/8">{{ prepare.steps.8 }}</a></li>
     </ul>
 </section>
 

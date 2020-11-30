@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Memory{% endblock %}
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "prepare/memory.css" %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="title">
+  <i>{{ content.title }}</i>
+</div>
+
+{% if content.photo %}
+<div class="media">
+  <a href="/{{ content.photo }}" target="_blank"><img src="/{{ content.photo }}" class="mx-auto d-block img-fluid rounded"/></a>
+</div>
+
+{% elif content.video %}
+<div class="media">
+  <video src="/{{ content.video }}" class="mx-auto d-block" controls>
+    Your browser does not support the video.
+  </video>
+</div>
+
+{% elif content.youtube %}
+<div class="media">
+  <iframe src="https://www.youtube.com/embed/{{ content.youtube }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" class="mx-auto d-block" allowfullscreen></iframe>
+</div>
+
+{% elif content.url_other %}
+
+<a href="{{ content.url_other }}">Link</a>
+
+{% endif %}
+
+<div class="description">
+  {{ content.text }}
+</div>
+
+{% endblock %}

@@ -22,8 +22,8 @@ def ClientsView(request):
     Permissions (dict) with key as Profile, SaveMePlan, Check, Prepare or Media
     Values as 1 or 0 where 1 is got access and 0 denied access."""
 
-    updateRelationTo(request.session['UserId'], request.session['privKey'])
-    clients = showAllRelationsFrom(request.session['UserId'], request.session['privKey'])
+    updateRelationTo(request.session['UserId'], request.session['PrivKey'])
+    clients = showAllRelationsFrom(request.session['UserId'], request.session['PrivKey'])
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -46,12 +46,12 @@ def ClientsView(request):
 def profileView(request, UserId):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
-    
-    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['privKey']).decode("utf-8")
+
+    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
     user=User.objects.filter(UserId=UserId)[0]
-    
+
     account = {}
     account['firstName']=user.getFirstName(userPrivKey)
     account['lastName']=user.getLastName(userPrivKey)
@@ -79,7 +79,7 @@ def saveMePlanView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['privKey']).decode("utf-8")
+    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
     user=User.objects.filter(UserId=UserId)[0]
 
     global_alerts = []  # The variable which is sent to template
@@ -98,7 +98,7 @@ def CheckView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['privKey']).decode("utf-8")
+    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
     user=User.objects.filter(UserId=UserId)[0]
 
     global_alerts = []  # The variable which is sent to template
