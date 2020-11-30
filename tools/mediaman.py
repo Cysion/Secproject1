@@ -119,6 +119,7 @@ def open_file(key:bytes, filename:str, rootdir = CONF["media_base_dir"], decompr
             if splitline[0] in checkfor:
                 if splitline[1] != checkfor[splitline[0]]:
                     LOGGER.warning(f"failed to retrive file at {filename} - failed to check out {splitline[0]}")
+                    print(get_sha1(key[:len(key)//2]))
                     raise RuntimeError(f"{splitline[0]} failed to check out for file: {filename}")
     outfile = crypto.aes_decrypt(key, opened)
     if decompress:
@@ -172,25 +173,26 @@ def delete_file(filename:str, rootdir = CONF["media_base_dir"], exists_error=Fal
         return
 
 
-def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CONF["media_base_dir"]):
+def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CONF["media_base_dir"]) -> tuple:
     """reencrypts all files in anonid directory with new_key. the new key is returned.
     anonid = anonid of the directory whose files are to be reencrypted
     old_key = key currently used to encrypt files
     new_key = the key to be used for encryption (if left empty will be generated)
     rootdir = the root of all media storage sent to the default_storage class
     """
-
+    filenames = {}
     dirname = get_sha1(anonid)
     try:
         files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
         for file in files:
             fullpath = f"{dirname}/{file}"
-            filedata = open_file(old_key, fullpath, decompress=False, header_check=False)[1]
+            filedata = open_file(old_key, fullpath, decompress=False, header_check=True)[1]
             delete_file(fullpath, exists_error=True)
-            save_file(new_key, filedata, anonid, compress=False)
+            newname = save_file(new_key, filedata, anonid, compress=False)[0]
+            filenames[fullpath] = newname
     except FileNotFoundError:
         pass
-    return new_key
+    return new_key, filenames
         
 
 
