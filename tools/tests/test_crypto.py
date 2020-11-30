@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-import crypto
+from tools import crypto
 
 
 class TestCrypto(TestCase):
@@ -93,11 +93,5 @@ class TestCrypto(TestCase):
 
         self.assertEqual(get_anon_id(uid_first, birthday_first, blen_first), result_first)
         self.assertEqual(get_anon_id(uid_second, birthday_second, blen_second), result_second)
-
-
-    def test_sym_key_keygen(self):
-        
-
-    def test_aes_encrypt(self):
 
 
