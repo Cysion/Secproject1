@@ -18,8 +18,13 @@
   {% endif %}
   <div class="form-group">
     <label for="media_text">{{ lang.text }}:</label>
-    <textarea class="form-control" rows="5" id="media_text" name="media_text">{% if POST.media_text %}{{ POST.media_text }}{% endif %}</textarea>
+    <textarea class="form-control" rows="5" id="media_text" name="media_text" maxlength="500">{% if POST.media_text %}{{ POST.media_text }}{% endif %}</textarea>
   </div>
+  {% if alerts.text %}
+  <div class="alert alert-danger">
+    <strong>{{ error }}</strong> {{ alerts.text }}
+  </div>
+  {% endif %}
   <div class="alert alert-info">
     {{ lang.long_texts.media_info }}
     <br>

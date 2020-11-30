@@ -168,8 +168,10 @@ def addMemoryView(request):
                             alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
                             memory.delete()
 
-                    if 'media_text' in request.POST.keys() and not alerts:  # Optional
+                    if 'media_text' in request.POST.keys() and len(request.POST["media_text"]) <= 500 and not alerts:  # Optional
                         memory.setMediaText(user.getPubkey(), request.POST["media_text"])
+                    else:
+                        alerts["text"] = prepare_lang["prepare"]["long_texts"]["alerts"]["text_to_long"]
 
                     if not alerts and not request.GET:
                         memory.save()
