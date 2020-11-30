@@ -462,7 +462,6 @@ def reencryptMedia(uId, oldPrivKey, newPubKey):
     user=User.objects.filter(UserId=uId)[0]
     media = Media.objects.filter(UserId=user)
     for mediaObject in media:
-        compressed = mediaObject.getCompressed(oldPrivKey)
         mediaType = mediaObject.getMediaType(oldPrivKey)
         mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
         mediaText = mediaObject.getMediaText(oldPrivKey)
@@ -470,7 +469,6 @@ def reencryptMedia(uId, oldPrivKey, newPubKey):
         memory = mediaObject.getMemory(oldPrivKey)
         mediaSize = mediaObject.getMediaSize(oldPrivKey)
 
-        mediaObject.setCompressed(newPubKey, compressed)
         mediaObject.setMediaType(newPubKey, mediaType)
         mediaObject.setMediaTitle(newPubKey, mediaTitle)
         mediaObject.setMediaText(newPubKey, mediaText)

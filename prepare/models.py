@@ -16,7 +16,6 @@ class Media(models.Model):
 
     MediaId = models.AutoField(primary_key=True)
     UserId = models.ForeignKey(User, on_delete=models.CASCADE)
-    Compressed = models.BinaryField(max_length=512)
     MediaType = models.BinaryField(max_length=512)
     MediaTitle = models.BinaryField(max_length=512)
     MediaText = models.BinaryField(max_length=512)
@@ -31,9 +30,6 @@ class Media(models.Model):
 
     def getUserId(self):
         return self.UserId
-
-    def getCompressed(self, privKey):
-        return rsa_decrypt(privKey.encode("utf-8"), self.Compressed).decode("utf-8")
 
     def getMediaType(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.MediaType).decode("utf-8")
@@ -52,9 +48,6 @@ class Media(models.Model):
 
     def getMediaSize(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.MediaSize).decode("utf-8")
-
-    def setCompressed(self, PubKey, compressed):
-            self.Compressed=rsa_encrypt(PubKey, compressed.encode("utf-8)"))
 
 
     def setMediaType(self, PubKey, mediaType):
