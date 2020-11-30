@@ -10,8 +10,8 @@ from tools.mediaman import *
 import re
 import os
 import time
+import login.views
 from django.db import transaction
-from login.views import containsBadChar
 
 from django.core.files import File
 from savemeplan.models import Contacts
@@ -369,7 +369,7 @@ def ContactsView(request):
                 exceptions = '+0123456789'
             if index == 'available':
                 exceptions = '0123456789+-/'
-            if containsBadChar(request.POST[index], exceptions):
+            if login.views.containsBadChar(request.POST[index], exceptions):
                 alerts[index] = "badChar"
         if not alerts:
             addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
@@ -420,3 +420,25 @@ def showAllmemories(uId, PrivKey, memType):
         return memoryIdList
     else:
         return -1
+
+def reencryptMedia(uId, oldPrivKey, newPubKey):
+    user=User.objects.filter(UserId=uId)[0]
+    media = Media.objects.filter(UserId=user)
+    for mediaObject in media:
+        compressed = mediaObject.getCompressed(oldPrivKey)
+        mediaType = mediaObject.getMediaType(oldPrivKey)
+        mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
+        mediaText = mediaObject.getMediaText(oldPrivKey)
+        mediaLink = mediaObject.getMediaLink(oldPrivKey)
+        memory = mediaObject.getMemory(oldPrivKey)
+        mediaSize = mediaObject.getMediaSize(oldPrivKey)
+
+        mediaObject.setCompressed(newPubKey, compressed)
+        mediaObject.setMediaType(newPubKey, mediaType)
+        mediaObject.setMediaTitle(newPubKey, mediaTitle)
+        mediaObject.setMediaText(newPubKey, mediaText)
+        mediaObject.setMediaLink(newPubKey, mediaLink)
+        mediaObject.setMemory(newPubKey, memory)
+        mediaObject.setMediaSize(newPubKey, mediaSize)
+
+        mediaObject.save()
