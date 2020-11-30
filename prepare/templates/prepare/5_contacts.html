@@ -21,7 +21,6 @@
 
 <!--Insert page content here-->
 <p>contacts (5)</p>
-<a type="button" class="btn btn-lg btn-primary btn-block" href="/userprofile/relations">{{ back }}</a>
 
 <section style="margin:20px 0">
     <ul class="pagination justify-content-center">
@@ -38,17 +37,20 @@
 </section>
 
 
-<a type="button" class="btn btn-lg btn-primary btn-block" href="/prepare/contacts">{{ Add new contact }}</a>
+<a type="button" class="btn btn-lg btn-primary btn-block" href="/prepare/contacts">Add new contact</a>
 
-{% for user in users %}
+{% for contact in contacts %}
 <div class="relations my-1 row">
     
     <div class="col-md">
-        <p><strong>{{ user.Email }}</strong></p>
+        <p><strong>{{ contact.Name}}</strong></p>
+        <p><strong>{{ contact.Phonenumber}}</strong></p>
+        <p><strong>{{ contact.Available}}</strong></p>
     </div>
     <div class="col-md">
         <div class="my-1">
-            <a type="button" class="btn btn-info btn-block" href="manage/?Id={{user.RelationFrom}}">{{ relations.manage }}</a>
+            <a type="button" class="btn btn-info btn-block" href="manage/?Id={{user.RelationFrom}}">Edit</a>
+            Call?
         </div>
     </div>
 </div>
