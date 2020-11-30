@@ -201,7 +201,13 @@
         "steps":["Step","1", "2", "3", "4", "5", "6", "7", "8"],
         "memory":"memory",
         "memories":"memories",
-        "how_to":"how to use 12 steps",
+        "how_to":{
+            "use_12_steps":"How to use 12 steps",
+            "young":"YOUNG",
+            "middle_aged":"MIDDLE AGED",
+            "senior":"SENIOR",
+            "me":"ME"
+        },
         "prac_breath":"practice breathing",
         "good_mem":"my library for supportive memories",
         "mem_cats":["Music", "Games", "Videos", "Chat", "Images", "Phrases", "Memes", "Stories", "Awards", "Themes"],
