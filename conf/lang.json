@@ -263,7 +263,8 @@
               "file_error":"Something with ths file upload went wrong.",
               "not_enough_space":"You dont have enough space to upload this media! You need to delete a memory with a photo, video or sound file if you wish to upload this!",
               "checksum_error":"This file has been modified! You can test delete this memory and reupload this memory.",
-              "could_not_open_file":"Something went wrong when trying to open your file."
+              "could_not_open_file":"Something went wrong when trying to open your file.",
+              "memory_deleted":"Memory was removed!"
             }
         }
     },

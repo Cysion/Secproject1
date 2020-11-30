@@ -68,6 +68,10 @@
   <input type="hidden" name="mem_type" value="{{ mem_type }}">
   <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 15px;" name="save" value="1">{{ lang.add_memory }}</button>
 </form>
-  <a href="/prepare/memory/" class="btn btn-danger btn-block btn-lg" role="button" style="margin-top:15px;">{{ back }}</a>
 
+{% if mem_type == "s" %}
+  <a href="/prepare/3/" class="btn btn-danger btn-block btn-lg" role="button" style="margin-top:15px;">{{ back }}</a>
+{% else %}
+<a href="/prepare/4/" class="btn btn-danger btn-block btn-lg" role="button" style="margin-top:15px;">{{ back }}</a>
+{% endif %}
 {% endblock %}
