@@ -30,6 +30,10 @@
   <iframe src="https://www.youtube.com/embed/{{ content.youtube }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" class="mx-auto d-block" allowfullscreen></iframe>
 </div>
 
+{% elif content.url_other %}
+
+<a href="{{ content.url_other }}">Link</a>
+
 {% endif %}
 
 <div class="description">
