@@ -209,7 +209,6 @@
         "link":"Link",
         "add_memory":"Add memory",
         "add_a_memory":"Add a memory",
-        "add_supportive_memory":"Add supportive memory",
         "placeholder":"Enter a",
         "menu":"Menu",
         "nav":{
@@ -235,9 +234,10 @@
         },
         "supportive_memories":{
             "title":"My library for supportive memories",
+            "add_memory":"Add supportive memory",
             "list_memories":"List of supportive memories",
             "view_memory":"View this memory",
-            "modal": {
+            "modal":{
                 "confirm_action":"Confirm your action",
                 "confirm_remove_memory":"Are you sure that you want to remove this memory?",
                 "close":"Close",
@@ -248,7 +248,15 @@
             "title":"My rubbish bin for destructive memories",
             "title_part1":"My",
             "title_part2":"for destructive memories",
-            "place_in_trash":"What would you like to place in the garbage bag?"
+            "add_memory":"What would you like to place in the garbage bag?",
+            "list_memories":"List of destructive memories",
+            "view_memory":"View this memory",
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_memory":"Are you sure that you want to remove this memory?",
+                "close":"Close",
+                "remove_memory":"Remove this memory"
+            }
         },
         "contacts":{
             "title":"Contacts",
