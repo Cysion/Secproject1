@@ -223,7 +223,7 @@ def addMemoryView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'media_type': media_type,
         'POST': request.POST,
-        'lang': prepare_lang["prepare"],
+        'prepare': prepare_lang["prepare"],
         'error': UNIVERSAL_LANG["universal"]["error"],
         'alerts': alerts,
         'max_file_size': int(media_conf["max_size_mb"]),
@@ -408,12 +408,11 @@ def MemoryView(request, id):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
-        "add_memory": prepare_lang["prepare"]["long_texts"]["add_memory"],
         "using_space": using_space,
         "content": content,
         "back": UNIVERSAL_LANG["universal"]["back"],
-        "delete": prepare_lang["prepare"]["delete"],
-        "delete_confirm": prepare_lang["prepare"]["delete_confirm"]
+        'prepare': prepare_lang["prepare"],
+        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"]
     }
 
     return render(request, 'prepare/memory.html', args)

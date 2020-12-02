@@ -199,8 +199,25 @@
         "title":"Prepare",
         "%%dev_note":"step list added in case the first, second, thirds etc paradigm is preferred to fractions. index 0 is concatenated with the following entries",
         "steps":["Step","1", "2", "3", "4", "5", "6", "7", "8"],
-        "memory":"memory",
-        "memories":"memories",
+        "memory":"Memory",
+        "mem_cats":["Music", "Games", "Videos", "Chat", "Images", "Phrases", "Memes", "Stories", "Awards", "Themes"],
+        "mem_cats_single":["Music", "Game", "Video", "Chat", "Image", "Phrase", "Meme", "Story", "Award", "Theme"],
+        "bad_mem_cats":["Hurful words","Bad habit","Negative thoughts","Negative experience","Misstakes","Difficult feelings"],
+        "text":"Text",
+        "upload":"Upload file: max file size is",
+        "file":"File",
+        "link":"Link",
+        "add_memory":"Add memory",
+        "add_a_memory":"Add a memory",
+        "add_supportive_memory":"Add supportive memory",
+        "placeholder":"Enter a",
+        "menu":"Menu",
+        "nav":{
+            "prepare":"Prepare",
+            "library":"Library",
+            "contacts":"Contacts",
+            "notes":"Notes"
+        },
         "how_to":{
             "title":"How to use 12 steps",
             "young":"Young",
@@ -227,32 +244,27 @@
                 "remove_memory":"Remove this memory"
             }
         },
-        "prac_breath":"practice breathing",
-        "good_mem":"my library for supportive memories",
-        "mem_cats":["Music", "Games", "Videos", "Chat", "Images", "Phrases", "Memes", "Stories", "Awards", "Themes"],
-        "mem_cats_single":["Music", "Game", "Video", "Chat", "Image", "Phrase", "Meme", "Story", "Award", "Theme"],
-        "bad_mem":"my rubbish bin for destructive memories",
-        "sup_con":"add support contacts",
-        "acc":"accessible at time",
-        "pref_con":"preferred means of contact",
-        "call_cisis":"where do i call in a crisis",
-        "diary":"diary",
-        "ther_notes":"Therapy notes",
-        "title2":"Title",
-        "text":"Text",
-        "upload":"Upload file: max file size is",
-        "file":"File",
-        "link":"Link",
-        "add_memory":"Add memory",
-        "placeholder":"Enter a",
-        "menu":"Menu",
-        "delete":"Delete",
-        "delete_confirm":"Are you sure?",
-        "nav":{
-            "prepare":"Prepare",
-            "library":"Library",
-            "contacts":"Contacts",
-            "notes":"Notes"
+        "destructive_memories":{
+            "title":"My rubbish bin for destructive memories",
+            "title_part1":"My",
+            "title_part2":"for destructive memories",
+            "place_in_trash":"What would you like to place in the garbage bag?"
+        },
+        "contacts":{
+            "title":"Contacts",
+            "sup_con":"add support contacts",
+            "acc":"accessible at time",
+            "pref_con":"preferred means of contact"
+        },
+        "where_to_call":{
+            "title":"Where do i call in a crisis?"
+        },
+        "diary":{
+            "title":"Diary"
+
+        },
+        "therapy_notes":{
+            "title":"Therapy notes"
         },
         "long_texts":{
             "menu_description":"Click one of the areas above or select a step below",
@@ -263,7 +275,6 @@
             "file_info":"File can be photo, video or music.",
             "memory_type":"What type of memory is it?",
             "allowed_extenssions":"These extenssions are allowed",
-            "add_memory":"Add a new memory",
             "memory_size":"This memory takes %mb% MB in space.",
             "alerts":{
               "no_title":"You need to enter a title for a memory!",
