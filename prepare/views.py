@@ -6,16 +6,17 @@ from django.urls import reverse
 from login.models import User
 from prepare.models import Media
 from tools.confman import get_lang, get_conf
-from tools.mediaman import *
-import re
+from tools.mediaman import get_sha1, save_file, open_file, delete_file
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-import time
 import login.views
 from django.db import transaction
 
 from django.core.files import File
 from savemeplan.models import Contacts
+
+import time
+import re
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -168,8 +169,10 @@ def addMemoryView(request):
                             alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
                             memory.delete()
 
-                    if 'media_text' in request.POST.keys() and not alerts:  # Optional
+                    if 'media_text' in request.POST.keys() and len(request.POST["media_text"]) <= 500 and not alerts:  # Optional
                         memory.setMediaText(user.getPubkey(), request.POST["media_text"])
+                    else:
+                        alerts["text"] = prepare_lang["prepare"]["long_texts"]["alerts"]["text_to_long"]
 
                     if not alerts and not request.GET:
                         memory.save()
@@ -210,7 +213,6 @@ def addMemoryView(request):
             media_type = "file"
 
     global_alerts = []  # The variable which is sent to template
-
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
@@ -248,7 +250,7 @@ def MemoryView(request, id):
         # User dont belong here
         return Http404("Memory does not exist!")
 
-    if "files_to_delete" in request.session.keys():
+    if "files_to_delete" in request.session.keys():  # If there is any temporary files not used anymore, delete them
         for file in request.session["files_to_delete"]:
             splitted_path = file.split("/")
             delete_file("".join(splitted_path[2:]), splitted_path[1])
@@ -263,17 +265,28 @@ def MemoryView(request, id):
     file = ""
     unidentified_url = ""
 
+    local_url_pattern = re.compile("^[a-zA-Z0-9]{40}\/([a-zA-Z0-9]{40})$")  # Pattern for local files such as video, photo or sound
+
     if memory.MediaText:
         content["text"] = memory.getMediaText(request.session["PrivKey"])
     if memory.MediaLink:
         unidentified_url = memory.getLink(request.session["PrivKey"])
 
-    youtube_pattern = re.compile("^(http[s]?:\/\/)?([w]{3}.)?(youtube.com|youtu.be)\/(.*watch\?v=)?(.+)(&.*)")
-    local_url_pattern = re.compile("^[a-zA-Z0-9]{40}\/([a-zA-Z0-9]{40})$")  # Pattern for local files such as video, photo or sound
-
-    if youtube_pattern.match(unidentified_url):
+    if "youtube.com" in unidentified_url:
         memtype = "youtube"
-        content[memtype] = youtube_pattern.match(unidentified_url).group(5)
+        index = unidentified_url.find("?v=")
+        done = False
+        content[memtype] = ""
+
+        for i in range(index+3, len(unidentified_url)):  # get video id of youtube video
+            if unidentified_url[i] == "&":
+                done = True
+            if not done:
+                content[memtype] += unidentified_url[i]
+
+    elif "youtu.be" in unidentified_url:
+        memtype = "youtube"
+        content[memtype] = unidentified_url.split("/")[-1]  # get video id of youtube video
 
     elif local_url_pattern.match(unidentified_url):
         url = unidentified_url
@@ -284,10 +297,23 @@ def MemoryView(request, id):
         content[memtype] = unidentified_url
 
     if request.GET and "delete" in request.GET.keys():
+
         if memtype == "photo/video/sound":
             delete_file(url)
-        redirect_path = memory.getMemory(request.session["PrivKey"])
+        redirect_path = memory.getMemory(request.session["PrivKey"])  # To know which step to redirect to.
         memory.delete()
+
+        alert = {
+            "color": "success",
+            "title": UNIVERSAL_LANG["universal"]["warning"],
+            "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_deleted"]
+        }
+
+        if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+            request.session["global_alerts"] = [alert]
+        else:
+            request.session["global_alerts"].append(alert)
+
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
         else:
@@ -353,7 +379,7 @@ def MemoryView(request, id):
             try:
                 default_storage.save(file_path + file_name + "." + file_type, ContentFile(file[1]))
 
-                content[memtype] = "media/" + file_path + file_name + "." + file_type
+                content[memtype] = "media/" + file_path + file_name + "." + file_type  # Full path to media
 
                 if "files_to_delete" in request.session.keys():
                     request.session["files_to_delete"].append(content[memtype])
@@ -374,7 +400,6 @@ def MemoryView(request, id):
                 return HttpResponseRedirect(reverse('prepare:menu'))
 
     using_space = prepare_lang["prepare"]["long_texts"]["memory_size"].replace("%mb%", str(int(content["size"])))
-
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.

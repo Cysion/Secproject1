@@ -1,4 +1,5 @@
 
+from django.db import IntegrityError
 from django.test import TestCase
 
 from login.models import User, Action, ResearchData
@@ -21,7 +22,7 @@ class TestModels(TestCase):
 
         self.priv_key = ''
         self.pub_key = ''
-        #self.sym_key = ''
+        self.sym_key = ''
         self.anon_id = ''
 
         # 1. Create user with Id
@@ -87,6 +88,17 @@ class TestModels(TestCase):
         self.assertEqual(self.user.getDateOfBirth(self.priv_key), self.date_of_birth)
         #self.assertEqual(self.user.getSymKey(self.priv_key), self.sym_key)
         self.assertEqual(self.user.getAnonId(self.priv_key), self.anon_id)
+
+
+    def test_User_allowing_duplicates(self):
+        """ Tests if duplicate users can be added """
+
+        try:
+            dupelicate_user = User.objects.create(Email = self.email)
+        except IntegrityError:
+            pass
+        else:
+            raise IntegrityError("Database allows creation of users with duplicate email")
 
 
     def test_Action_ResearchData(self):

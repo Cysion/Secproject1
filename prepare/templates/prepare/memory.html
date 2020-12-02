@@ -31,17 +31,50 @@
 <div class="media">
   <iframe src="https://www.youtube.com/embed/{{ content.youtube }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" class="mx-auto d-block" allowfullscreen></iframe>
 </div>
-
-{% elif content.url_other %}
-
-<a href="{{ content.url_other }}">Link</a>
-
 {% endif %}
 
-<div class="description">
+<div class="media description">
   {{ content.text }}
 </div>
 
+{% if content.url_other %}
+<div class="link">
+  <a href="{{ content.url_other }}" class="btn btn-block btn-lg btn-info">Link</a>
+</div>
 
+{% endif %}
 
+<p>{{ using_space }}</p>
+
+{% if content.type == "s" %}
+  <a href="/prepare/3/" class="btn btn-block btn-lg btn-danger">{{ back }}</a>
+{% else %}
+  <a href="/prepare/4/" class="btn btn-block btn-lg btn-danger">{{ back }}</a>
+{% endif %}
+
+<!-- Button to Open the Modal -->
+<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-block btn-lg btn-warning">
+  {{ delete }}
+</button>
+
+<!-- The Modal -->
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">{{ delete_confirm }}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <a href="/prepare/memory/{{ content.id }}/?delete=true" class="btn btn-warning">{{ delete }}</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
 {% endblock %}
