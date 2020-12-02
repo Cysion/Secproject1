@@ -203,18 +203,29 @@
         "memories":"memories",
         "how_to":{
             "title":"How to use 12 steps",
-            "young":"YOUNG",
-            "middle_aged":"MIDDLE AGED",
-            "senior":"SENIOR",
+            "young":"Young",
+            "middle_aged":"Middle aged",
+            "senior":"Senior",
             "me":"ME"
         },
         "practice_breathing":{
-            "title":"Practice Breathing",
+            "title":"Practice breathing",
             "in":"Breathe IN and count",
             "hold":"Hold your breath and count",
             "out":"Breathe OUT and count",
             "count":"one, two, three, four",
             "audio_instructions":"Audio instructions"
+        },
+        "supportive_memories":{
+            "title":"My library for supportive memories",
+            "list_memories":"List of supportive memories",
+            "view_memory":"View this memory",
+            "modal": {
+                "confirm_action":"Confirm your action",
+                "confirm_remove_memory":"Are you sure that you want to remove this memory?",
+                "close":"Close",
+                "remove_memory":"Remove this memory"
+            }
         },
         "prac_breath":"practice breathing",
         "good_mem":"my library for supportive memories",

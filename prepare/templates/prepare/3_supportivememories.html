@@ -1,25 +1,82 @@
 {% extends "base.html" %}
 
-{% block title %}Prepare{% endblock %}
+{% block title %}{{ prepare.supportive_memories.title }} - {{ prepare.title }}{% endblock %}
 
-
-{% block statics %}
-{% load static %}
-<link rel="stylesheet" href="{% static "prepare/prepare.css" %}">
-{% endblock %}
 
 {% block content %}
 
-<nav class="second-nav nav nav-pills nav-fill align-items-center">
-    <h1 class="nav-item m-2"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
-    <a class="nav-item nav-link btn btn-info m-2 active" name="page" value="1" href="/prepare/1">{{ nav.library }}</a>
-    <a class="nav-item nav-link btn btn-info m-2" name="page" value="5" href="/prepare/5">{{ nav.contacts }}</a>
-    <a class="nav-item nav-link btn btn-info m-2" name="page" value="7" href="/prepare/7">{{ nav.notes }}</a>
-</nav>
+<section class="row p-2 align-items-center justify-content-between" style="background-color: white; border-style: solid; border-color: #42cfbc;">
+    <div class="col-md-4 col ">
+        <h1 class="m-2 p-0 h4 text-uppercase text-center"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-4 px-1">
+                <a class="btn btn-info btn-block active" name="page" value="1" href="/prepare/1">{{ nav.library }}</a>
+            </div>
+            <div class="col-4 px-1">
+                <a class="btn btn-info btn-block" name="page" value="5" href="/prepare/5">{{ nav.contacts }}</a>            
+            </div>
+            <div class="col-4 px-1">
+                <a class="btn btn-info btn-block" name="page" value="7" href="/prepare/7">{{ nav.notes }}</a>            
+            </div>
+        </div>
+    </div>
+</section>
 
-<!--Insert page content here-->
-<!--/prepare/memory/add/?memtype=s-->
-<p>supportivememories (3)</p>
+<section class="m-2 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <h2 class="h4 text-uppercase">{{ prepare.steps.0 }} {{ prepare.steps.3 }}/{{ prepare.steps.8 }}: {{ prepare.supportive_memories.title }}</h2>
+</section>
+
+<section class="m-2 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <h3 class="h5">{{ prepare.supportive_memories.list_memories }}</h3>
+    {% for memory in memories %}
+        
+        <hr class="m-0" style="border-style: solid; border-color: #109075;">
+        <div class="relations my-1 row align-items-center justify-content-between">
+            <div class="col-sm-auto">
+                <p class="m-0"><strong>{{ memory.Title }}</strong></p>
+            </div>
+            <div class="col-sm-auto my-1 mx-0 row justify-content-between">
+                <div class="col-8 col-sm-auto p-1">
+                    <a type="button" class="btn btn-info btn-block" href="/prepare/memory/{{ memory.Id }}">{{ prepare.supportive_memories.view_memory }}</a>
+                </div>
+                <div class="col-4 col-sm-auto p-1">
+                    <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveMemory{{ memory.Id }}"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="confirmRemoveMemory{{ memory.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="modalCenterLongTitle">{{ modal.confirm_action }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{ modal.confirm_remove_memory }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ modal.close }}</button>
+                        <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/memory/{{ memory.Id }}/?delete=true">{{ modal.remove_memory }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+    <hr class="mt-0 mb-2" style="border-style: solid; border-color: #109075;">
+    <a type="button" class="btn btn-info btn-block" href="/prepare/memory/add/?mem_type=s">Add supportive memory</a>
+    
+</section>
+
+
+
+
 
 <section style="margin:20px 0">
     <ul class="pagination justify-content-center">
@@ -34,22 +91,5 @@
         <li class="page-item"><a class="page-link" name="page" value="8" href="/prepare/8">{{ prepare.steps.8 }}</a></li>
     </ul>
 </section>
-
-
-
-<a type="button" class="btn btn-info btn-block" href="/prepare/memory/add/?mem_type=s">Add supportive memory</a>
-
-{% for memory in memories %}
-    <div class="relations my-1 row">
-        <div class="col-md">
-            <p><strong>{{ memory.Title }}</strong></p>
-        </div>
-        <div class="col-md">
-            <div class="my-1">
-                <a type="button" class="btn btn-info btn-block" href="/prepare/memory/{{memory.Id}}">{{ memory.Title }}</a>
-            </div>
-        </div>
-    </div>
-{% endfor %}
 
 {% endblock %}
