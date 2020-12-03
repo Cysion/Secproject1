@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Add Relations{% endblock %}
+{% block title %}Prepare{% endblock %}
 
 {% block content %}
 
@@ -45,10 +45,34 @@
 
 
         <div class="form-group">
-            <input type="submit" class="btn btn-lg btn-success btn-block" value="Add contact" style="margin-top:10px;">
+            <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ prepare.save }}">
         </div>
-        <a type="button" class="btn btn-lg btn-primary btn-block" href="/prepare/5">Back</a>
+        <a href="/prepare/5/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+      
+        <button type="button" data-toggle="modal" data-target="#confirmRemoveContact{{ contact.Id }}" class="btn btn-block btn-lg btn-danger"><i class="fas fa-trash-alt"></i></button>
+
     </div>
 </form>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmRemoveContact{{ contact.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true"> <!--BEHÖVER FIXAS-->
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h5 class="modal-title" id="modalCenterLongTitle">{{ prepare.contacts.modal.confirm_action }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <div class="modal-body">
+              <p>{{ prepare.contacts.modal.confirm_remove_contact }}</p><!--"prepare.contacts.modal.confirm_remove_contact" funkar ej?-->
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.contacts.modal.close }}</button>
+              <a name="delete" type="button" class="btn btn-danger" value="1" href="#">{{ prepare.contacts.modal.remove_contact }}</a> <!--BEHÖVER FIXAS--> <!--"prepare.contacts.modal.remove_contact" funkar ej?-->
+          </div>
+      </div>
+  </div>
+</div>
 
 {% endblock %}
