@@ -74,6 +74,14 @@ def profileView(request, UserId):
     return render(request, 'userprofile/edit.html', args)
 
 
+def prepareView(request, UserId):
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
+    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
+    if not userPrivKey:
+        return HttpResponseRedirect(reverse('professionals:clients'))
+    user=User.objects.filter(UserId=UserId)[0]
+
 
 def saveMePlanView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.

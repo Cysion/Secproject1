@@ -186,21 +186,23 @@ def forgotPasswordView(request):
                 try:
                     request.session['UserId'] = user.getUid()
                     request.session['PrivKey']=changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
+                    request.session["Role"] = user.getRole()
+                    #print(request.session["Role"])
                 except ValueError as keyError:
                     alerts["relogin"] = "relogin"
 
                     alert = {
                         "color": "success",  # Check https://www.w3schools.com/bootstrap4/bootstrap_alerts.asp for colors.
                         "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
-                        "message": profile_lang["login"]["long_texts"]["alerts"]["changed_password_success"]
+                        "message": login_lang["login"]["long_texts"]["alerts"]["changed_password_success"]
                     }
+                    if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                        request.session["global_alerts"] = [alert]
+                    else:
+                        request.session["global_alerts"].append(alert)
 
-                if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                    request.session["global_alerts"] = [alert]
-                else:
-                    request.session["global_alerts"].append(alert)
-
-                return HttpResponseRedirect(reverse('userprofile:Backupkey'))
+                if 'relogin' not in alerts:
+                    return HttpResponseRedirect(reverse('userprofile:Backupkey'))
             else:
                 alerts["relogin"] = "relogin"
         else:

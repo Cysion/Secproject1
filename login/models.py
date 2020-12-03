@@ -108,8 +108,8 @@ class User(models.Model):
     def setSymkey(self, Symkey=None):
         if self.Pubkey:
             if not Symkey:
-                Symkey=rsa_encrypt(self.Pubkey, gen_aes())
-            self.Symkey=Symkey
+                Symkey=gen_aes()
+            self.Symkey=rsa_encrypt(self.Pubkey,Symkey)
             return 0
         else:
             return 1
