@@ -293,16 +293,30 @@
             "profession_support_work_related":"Same profession support - for work-related problems.",
             "teenager":"Teenager",
             "senior":"Senior",
+            "church":"Church",
             "parent":"Parent",
             "caregiver":"Caregiver",
-            "church":"Church",
             "police":"Police",
             "description1":"Depression? Anxiety? Self-harm? ADHD? Autism? Psychosis? Eating disorders? Sexual problems? Sleep problems? Suicidal thoughts? Crisis after suicide attempt or suicide? Other health problems with mental health issues?",
             "description2":"Problem in communication in relation? Divorce? Financial issues? Legal issues? Alcohol? Drugs? Crime? Bullying? Other problems with mental health issues? Suicidal thoughts? Crisis after suicide attempt or suicide?",
             "description3":"Students, teachers, doctors, emergency workers, police officers, soldiers, fireman, farmers, priests",
             "in_crisis_part1":"IN CRISIS AND DO NOT KNOW WHERE TO CALL?",
             "in_crisis_part2":"CALL",
-            "in_crisis_part3":"WE WILL GUIDE YOU!"
+            "in_crisis_part3":"WE WILL GUIDE YOU!",
+            "phone_numbers":{
+                "peer_support":"0708123456",
+                "specialist_consultation":"0708123456",
+                "hospital":"0708123456",
+                "crisis_center":"0708123456",
+                "profession_support_work_related":"0708123456",
+                "in_crisis":"0708123456",
+                "teenager":"0708123456",
+                "senior":"0708123456",
+                "church":"0708123456",
+                "parent":"0708123456",
+                "caregiver":"0708123456",
+                "police":"0708123456"
+            }
         },
         "diary":{
             "title":"Diary"
