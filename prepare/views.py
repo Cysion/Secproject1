@@ -59,7 +59,6 @@ def MenuView(request, page=0):
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
         'memories':memories,
-        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"],
         'contacts':contacts
     }
     return render(request, template, args)
@@ -411,8 +410,7 @@ def MemoryView(request, id):
         "using_space": using_space,
         "content": content,
         "back": UNIVERSAL_LANG["universal"]["back"],
-        'prepare': prepare_lang["prepare"],
-        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"]
+        'prepare': prepare_lang["prepare"]
     }
 
     return render(request, 'prepare/memory.html', args)
