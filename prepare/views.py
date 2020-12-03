@@ -385,9 +385,7 @@ def MemoryView(request, id):
                     request.session["files_to_delete"].append(content[memtype])
                 else:
                     request.session["files_to_delete"] = [content[memtype]]
-                print("hej")
             except Exception as e:
-                print(f"e: {e}")
                 alert = {
                     "color": "error",
                     "title": UNIVERSAL_LANG["universal"]["error"],
