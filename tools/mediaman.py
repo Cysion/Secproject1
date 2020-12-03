@@ -186,9 +186,9 @@ def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CON
         files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
         for file in files:
             fullpath = f"{dirname}/{file}"
-            filedata = open_file(old_key, fullpath, decompress=False, header_check=True)[1]
+            header, filedata = open_file(old_key, fullpath, decompress=False, header_check=True)
             delete_file(fullpath, exists_error=True)
-            newname = save_file(new_key, filedata, anonid, compress=False)[0]
+            newname = save_file(new_key, filedata, anonid, compress=False, filetype_override=val_from_header(header, "filetype"))[0]
             filenames[fullpath] = newname
     except FileNotFoundError:
         pass
@@ -222,6 +222,13 @@ def delete_all_files(anonid, rootdir = CONF["media_base_dir"]):
         delete_file(fullpath)
 
 
+def val_from_header(header, val):
+    for line in header.split("\n"):
+        splitline = line.split(":")
+        if splitline[0] == val:
+            return splitline[1]
+
+
 def request_files(key: bytes, anonid, rootdir = CONF["media_base_dir"], decompress=True) -> bytes:
     """generator that yields file by file"""
     dirname = get_sha1(anonid)
@@ -229,6 +236,7 @@ def request_files(key: bytes, anonid, rootdir = CONF["media_base_dir"], decompre
     for file in files:
         fullpath = f"{dirname}/{file}"
         yield open_file(key, fullpath, rootdir=rootdir, decompress=decompress)
+
 
 if __name__ == "__main__":
     import django.core.files.storage
