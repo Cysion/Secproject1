@@ -1,5 +1,5 @@
 from django.db import models
-from tools.crypto import rsa_encrypt, rsa_decrypt
+from tools.crypto import rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
 
 # Create your models here.
 
@@ -18,7 +18,7 @@ class Media(models.Model):
     UserId = models.ForeignKey(User, on_delete=models.CASCADE)
     MediaType = models.BinaryField(max_length=512)
     MediaTitle = models.BinaryField(max_length=512)
-    MediaText = models.BinaryField(max_length=512)
+    MediaText = models.BinaryField(max_length=768)
     MediaLink = models.BinaryField(max_length=512)
     Memory = models.BinaryField(max_length=512)
     MediaSize = models.BinaryField(max_length=512)
@@ -38,7 +38,7 @@ class Media(models.Model):
         return rsa_decrypt(privKey.encode("utf-8"), self.MediaTitle).decode("utf-8")
 
     def getMediaText(self, privKey):
-        return rsa_decrypt(privKey.encode("utf-8"), self.MediaText).decode("utf-8")
+        return rsa_decrypt_long(privKey.encode("utf-8"), self.MediaText).decode("utf-8")
 
     def getLink(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.MediaLink).decode("utf-8")
@@ -59,7 +59,7 @@ class Media(models.Model):
 
 
     def setMediaText(self, PubKey, text):
-            self.MediaText=rsa_encrypt(PubKey, text.encode("utf-8)"))
+            self.MediaText=rsa_encrypt_long(PubKey, text.encode("utf-8)"))
 
 
     def setLink(self, PubKey, link):

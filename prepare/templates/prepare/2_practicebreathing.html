@@ -3,25 +3,33 @@
 {% block title %}{{ prepare.practice_breathing.title }} - {{ prepare.title }}{% endblock %}
 
 
-{% block statics %}
-{% load static %}
-<link rel="stylesheet" href="{% static "prepare/prepare.css" %}">
-{% endblock %}
-
 {% block content %}
 
-<nav class="second-nav nav nav-pills nav-fill align-items-center">
-    <h1 class="nav-item m-2"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
-    <a class="nav-item nav-link btn btn-info m-2 active" name="page" value="1" href="/prepare/1">{{ nav.library }}</a>
-    <a class="nav-item nav-link btn btn-info m-2" name="page" value="5" href="/prepare/5">{{ nav.contacts }}</a>
-    <a class="nav-item nav-link btn btn-info m-2" name="page" value="7" href="/prepare/7">{{ nav.notes }}</a>
-</nav>
+<section class="row p-2 align-items-center justify-content-between" style="background-color: white; border-style: solid; border-color: #42cfbc;">
+    <div class="col-md-4 col ">
+        <h1 class="m-2 p-0 h4 text-uppercase text-center"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-4 px-1">
+                <a class="btn btn-info btn-block active" name="page" value="1" href="/prepare/1">{{ nav.library }}</a>
+            </div>
+            <div class="col-4 px-1">
+                <a class="btn btn-info btn-block" name="page" value="5" href="/prepare/5">{{ nav.contacts }}</a>            
+            </div>
+            <div class="col-4 px-1">
+                <a class="btn btn-info btn-block" name="page" value="7" href="/prepare/7">{{ nav.notes }}</a>            
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <h2 class="text-uppercase">{{ prepare.steps.0 }} {{ prepare.steps.2 }}/{{ prepare.steps.8 }}: {{ prepare.practice_breathing.title }}</h2>
+</section>
 
 <section>
-    <div class="m-2 p-2 rounded " style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
-        <h2>{{ prepare.steps.0 }} {{ prepare.steps.2 }}/{{ prepare.steps.8 }}: {{ prepare.practice_breathing.title }}</h2>
-    </div>
-    <div class="row m-2 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <div class="row my-2 mx-1 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
         <div class="col p-0">
             <p class="m-1 h5 text-center">{{ prepare.practice_breathing.in }}:<br>{{ prepare.practice_breathing.count }}</p>
         </div>
@@ -30,7 +38,7 @@
         </div>
     </div>
 
-    <div class="row m-2 align-items-center justify-content-between">
+    <div class="row my-2 mx-1 align-items-center justify-content-between">
         <div class="col-5 text-center">
             <i class="fas fa-arrow-up" style="font-size: 3rem;"></i>
         </div>
@@ -39,7 +47,7 @@
         </div>
     </div>
 
-    <div class="row m-2 align-items-center justify-content-between">
+    <div class="row my-2 mx-1 align-items-center justify-content-between">
         <div class="col-5 p-0 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
             <p class="m-1 h6 text-center">{{ prepare.practice_breathing.hold }}:<br>{{ prepare.practice_breathing.count }}</p>
         </div>
@@ -48,7 +56,7 @@
         </div>
     </div>
 
-    <div class="row m-2 align-items-center justify-content-between">
+    <div class="row my-2 mx-1 align-items-center justify-content-between">
         <div class="col-5 text-center">
             <i class="fas fa-arrow-up" style="font-size: 3rem;"></i>
         </div>
@@ -57,7 +65,7 @@
         </div>
     </div>
 
-    <div class="row m-2 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <div class="row my-2 mx-1 rounded align-items-center" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
         <div class="col p-0">
             <p class="m-1 h5 text-center">{{ prepare.practice_breathing.out }}:<br>{{ prepare.practice_breathing.count }}</p>
         </div>
@@ -66,14 +74,15 @@
         </div>
     </div>
 
-    <div class="row m-2 align-items-center justify-content-between">
+    <div class="row my-2 mx-1 align-items-center justify-content-between">
         <div class="col-sm-5 m-2 embed-responsive embed-responsive-16by9">
-            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" allowfullscreen></iframe> <!--REPLACE-->
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> <!--REPLACE-->
         </div>
         <div class="col-sm-5 m-2">
             <figure>
                 <figcaption>{{ prepare.practice_breathing.audio_instructions }}:</figcaption>
                 <audio controls class="w-100" src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3"> <!--REPLACE-->
+                    Your browser does not support the <code>audio</code> element.
                 </audio>
             </figure>
         </div>
@@ -81,7 +90,7 @@
     </div>
 </section>
 
-<section style="margin:20px 0">
+<section class="my-3 mx-0">
     <ul class="pagination justify-content-center">
         <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
         <li class="page-item"><a class="page-link" name="page" value="1" href="/prepare/1">{{ prepare.steps.1 }}</a></li>
