@@ -60,7 +60,7 @@ class TestViews(TestCase):
         self.assertTemplateUsed(response, 'login/forgotpassword.html')
 
 
-    def test_accepts_valid_login(self):
+    def test_Login_accepts_valid_user(self):
         """ Verifies user cannot be registered twice """
 
         response = self.client.post(self.url_Login, {
@@ -72,7 +72,7 @@ class TestViews(TestCase):
         self.assertEquals(response.url, '/userprofile/')
 
 
-    def test_denies_invalid_login(self):
+    def test_Login_denies_invalid_user(self):
         """ Verifies view 'Login' rejects invalid logins """
 
         response = self.client.post(self.url_Login, {
@@ -82,5 +82,23 @@ class TestViews(TestCase):
 
         self.assertEquals(response.status_code, 200)
 
+
+    def test_Register_valid_user(self):
+        """ Verifies view 'Register' registers valid users """
+
+        response = self.client.post(self.url_Register, {
+            'first_name': 'Göran',
+            'last_name': 'Västervik',
+            'date_of_birth': '2020-03-28',
+            'gender': 'male',
+            'gender_other': '',
+            'email': 'valid_mail@hotmail.com',
+            'password': 'god',
+            'repassword': 'god',
+            'agree_terms': 'accept'
+        })
+        
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/userprofile/backupkey/')
 
 
