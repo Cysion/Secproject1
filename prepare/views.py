@@ -446,6 +446,29 @@ def ContactsView(request):
     }
     return render(request, 'prepare/addcontact.html')
 
+def editContactView(request, id):
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
+    prepare_lang = get_lang(sections=["prepare"])
+    alerts=dict()
+    
+    user = User.objects.filter(UserId=request.session["UserId"])[0]
+
+    if request.method=='POST':
+        pass
+
+    contact = dict({
+        
+    })
+    args = {
+        'POST': request.POST,
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG['universal']['back'],
+        'alert': alerts,
+        'prepare': prepare_lang["prepare"],
+        'modal': prepare_lang["prepare"]["contacts"]["modal"]
+    return render(request, 'prepare/editcontact.html')
+
 
 
 def addContact(uId, name, phonenumber, available, privKey):
@@ -465,6 +488,7 @@ def showContacts(uId, PrivKey):
     contacts = Contacts.objects.filter(UserId=user)
     for contact in contacts:
         contactInfo = dict({
+            'Id':contact.ContactsId,
             'Name':contact.getName(PrivKey),
             'Phonenumber':contact.getPhonenumber(PrivKey),
             'Available':contact.getAvailable(PrivKey)
