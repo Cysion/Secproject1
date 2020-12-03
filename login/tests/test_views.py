@@ -3,6 +3,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 from login.views import RegisterView, LoginView, forgotPasswordView, registerUser
+from login.models import User
 from tools.crypto import gen_rsa, secret_scrambler
 
 
@@ -86,13 +87,15 @@ class TestViews(TestCase):
     def test_Register_valid_user(self):
         """ Verifies view 'Register' registers valid users """
 
+        n_users = User.objects.count()
+
         response = self.client.post(self.url_Register, {
             'first_name': 'Göran',
             'last_name': 'Västervik',
             'date_of_birth': '2020-03-28',
             'gender': 'male',
             'gender_other': '',
-            'email': 'valid_mail@hotmail.com',
+            'email': 'valid_mail.99@hotmail.com',
             'password': 'god',
             'repassword': 'god',
             'agree_terms': 'accept'
@@ -100,5 +103,82 @@ class TestViews(TestCase):
         
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, '/userprofile/backupkey/')
+        self.assertEqual(User.objects.count(), n_users + 1)
+
+
+    def test_Register_duplicate_email(self):
+        """ Verifies view 'Register' denies registration of user with existant email """
+
+        n_users = User.objects.count()
+
+        response = self.client.post(self.url_Register, {
+            'first_name': 'Karin',
+            'last_name': 'Larsson',
+            'date_of_birth': '2020-03-28',
+            'gender': 'male',
+            'gender_other': '',
+            'email': self.email,
+            'password': 'god',
+            'repassword': 'god',
+            'agree_terms': 'accept'
+        })
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.count(), n_users)
+
+
+    def test_Register_denies_email_with_unicode(self):
+        """ Verifies view 'Register' denies registration with email including unicode characters """
+
+        n_users = User.objects.count()
+
+        response = self.client.post(self.url_Register, {
+            'first_name': 'Karin',
+            'last_name': 'Larsson',
+            'date_of_birth': '2020-03-28',
+            'gender': 'male',
+            'gender_other': '',
+            'email': 'karin_lärson@gmail.com',
+            'password': 'god',
+            'repassword': 'god',
+            'agree_terms': 'accept'
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.count(), n_users)
+
+
+    def test_Register_denies_invalid_characters(self):
+        """ Verifies view 'Register' denies registration with email including invalid characters """
+
+        n_users = User.objects.count()
+
+        response = self.client.post(self.url_Register, {
+            'first_name': 'Karin',
+            'last_name': 'Larsson',
+            'date_of_birth': '2020-03-28',
+            'gender': 'male',
+            'gender_other': '',
+            'email': 'karin,larsson@gmail.com',
+            'password': 'god',
+            'repassword': 'god',
+            'agree_terms': 'accept'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.count(), n_users)
+
+        response = self.client.post(self.url_Register, {
+            'first_name': 'Karin',
+            'last_name': 'Larsson',
+            'date_of_birth': '2020-03-28',
+            'gender': 'male',
+            'gender_other': '',
+            'email': 'karin;larsson@gmail.com',
+            'password': 'god',
+            'repassword': 'god',
+            'agree_terms': 'accept'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.count(), n_users)
 
 
