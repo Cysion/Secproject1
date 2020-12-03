@@ -33,7 +33,7 @@
     {% for memory in memories %}
         
         <hr class="m-0" style="border-style: solid; border-color: #109075;">
-        <div class="relations my-1 row align-items-center justify-content-between">
+        <div class="my-1 row align-items-center justify-content-between">
             <div class="col-sm-7">
                 <p class="m-0"><strong>{{ memory.Title }}</strong></p>
             </div>
@@ -52,17 +52,17 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="modalCenterLongTitle">{{ modal.confirm_action }}</h5>
+                    <h5 class="modal-title" id="modalCenterLongTitle">{{ prepare.supportive_memories.modal.confirm_action }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     </div>
                     <div class="modal-body">
-                        <p>{{ modal.confirm_remove_memory }}</p>
+                        <p>{{ prepare.supportive_memories.modal.confirm_remove_memory }}</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ modal.close }}</button>
-                        <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/memory/{{ memory.Id }}/?delete=true">{{ modal.remove_memory }}</a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.supportive_memories.modal.close }}</button>
+                        <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/memory/{{ memory.Id }}/?delete=true">{{ prepare.supportive_memories.modal.remove_memory }}</a>
                     </div>
                 </div>
             </div>

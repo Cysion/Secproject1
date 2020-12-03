@@ -59,7 +59,6 @@ def MenuView(request, page=0):
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
         'memories':memories,
-        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"],
         'contacts':contacts
     }
     return render(request, template, args)
@@ -410,8 +409,7 @@ def MemoryView(request, id):
         "using_space": using_space,
         "content": content,
         "back": UNIVERSAL_LANG["universal"]["back"],
-        'prepare': prepare_lang["prepare"],
-        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"]
+        'prepare': prepare_lang["prepare"]
     }
 
     return render(request, 'prepare/memory.html', args)
@@ -435,11 +433,16 @@ def ContactsView(request):
         if not alerts:
             addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
+    
+    prepare_lang = get_lang(sections=["prepare"])
+
     args = {
         'POST': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG['universal']['back'],
-        'alert': alerts
+        'alert': alerts,
+        'prepare': prepare_lang["prepare"],
+        'modal': prepare_lang["prepare"]["contacts"]["modal"]
     }
     return render(request, 'prepare/addcontact.html')
 
