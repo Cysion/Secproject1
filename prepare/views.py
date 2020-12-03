@@ -59,6 +59,7 @@ def MenuView(request, page=0):
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
         'memories':memories,
+        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"],
         'contacts':contacts
     }
     return render(request, template, args)
@@ -168,8 +169,10 @@ def addMemoryView(request):
                             alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
                             memory.delete()
 
-                    if 'media_text' in request.POST.keys() and not alerts:  # Optional
+                    if 'media_text' in request.POST.keys() and len(request.POST["media_text"]) <= 500 and not alerts:  # Optional
                         memory.setMediaText(user.getPubkey(), request.POST["media_text"])
+                    else:
+                        alerts["text"] = prepare_lang["prepare"]["long_texts"]["alerts"]["text_to_long"]
 
                     if not alerts and not request.GET:
                         memory.save()
@@ -220,7 +223,7 @@ def addMemoryView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'media_type': media_type,
         'POST': request.POST,
-        'lang': prepare_lang["prepare"],
+        'prepare': prepare_lang["prepare"],
         'error': UNIVERSAL_LANG["universal"]["error"],
         'alerts': alerts,
         'max_file_size': int(media_conf["max_size_mb"]),
@@ -405,12 +408,11 @@ def MemoryView(request, id):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
-        "add_memory": prepare_lang["prepare"]["long_texts"]["add_memory"],
         "using_space": using_space,
         "content": content,
         "back": UNIVERSAL_LANG["universal"]["back"],
-        "delete": prepare_lang["prepare"]["delete"],
-        "delete_confirm": prepare_lang["prepare"]["delete_confirm"]
+        'prepare': prepare_lang["prepare"],
+        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"]
     }
 
     return render(request, 'prepare/memory.html', args)
