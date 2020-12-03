@@ -14,7 +14,7 @@ from django.db import transaction
 
 from django.core.files import File
 from savemeplan.models import Contacts
-
+from tools.scienceman import new_entry
 import time
 import re
 
@@ -29,6 +29,7 @@ def MenuView(request, page=0):
     template = 'prepare/menu.html'
     memories = []
     contacts = []
+    user = User.objects.filter(pk=request.session["UserId"])[0]
 
     if page == 1:
         template = 'prepare/1_howto.html'
@@ -50,6 +51,9 @@ def MenuView(request, page=0):
     elif page == 8:
         template = 'prepare/8_therapynotes.html'
     else:
+        #Science segment
+        new_entry("g1", user.getAnonId(request.session['PrivKey']), "prep")
+
         template = 'prepare/menu.html'
 
 
@@ -61,6 +65,9 @@ def MenuView(request, page=0):
         'memories':memories,
         'contacts':contacts
     }
+
+    if 0 < page < 9:
+        new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
     return render(request, template, args)
 
 
@@ -228,7 +235,7 @@ def addMemoryView(request):
         'max_file_size': int(media_conf["max_size_mb"]),
         'mem_type': mem_type
     }
-
+    new_entry("m1", user.getAnonId(request.session["PrivKey"]), "na")
     return render(request, 'prepare/add_memory.html', args)
 
 def MemoryView(request, id):
@@ -312,7 +319,8 @@ def MemoryView(request, id):
             request.session["global_alerts"] = [alert]
         else:
             request.session["global_alerts"].append(alert)
-
+        
+        new_entry("m2", user.getAnonId(request.session["PrivKey"]), "na")
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
         else:
@@ -412,6 +420,7 @@ def MemoryView(request, id):
         'prepare': prepare_lang["prepare"]
     }
 
+    new_entry("m3", user.getAnonId(request.session["PrivKey"]), "na")
     return render(request, 'prepare/memory.html', args)
 
 
