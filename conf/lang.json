@@ -260,9 +260,18 @@
         },
         "contacts":{
             "title":"Contacts",
+            "contact_name":"Contact name",
+            "phone_number":"Phone number",
+            "available":"Available",
             "sup_con":"add support contacts",
-            "acc":"accessible at time",
-            "pref_con":"preferred means of contact"
+            "pref_con":"preferred means of contact",
+            "edit":"Edit",
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_contact":"Are you sure that you want to remove this contact?",
+                "close":"Close",
+                "remove_contact":"Remove this contact"
+            }
         },
         "where_to_call":{
             "title":"Where do i call in a crisis?"

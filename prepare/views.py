@@ -59,7 +59,6 @@ def MenuView(request, page=0):
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
         'memories':memories,
-        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"],
         'contacts':contacts
     }
     return render(request, template, args)
@@ -288,7 +287,7 @@ def MemoryView(request, id):
         memtype = "youtube"
         content[memtype] = unidentified_url.split("/")[-1]  # get video id of youtube video
 
-    elif local_url_pattern.match(unidentified_url):
+    elif local_url_pattern.match(unidentified_url): 
         url = unidentified_url
         memtype = "photo/video/sound"
 
@@ -342,7 +341,7 @@ def MemoryView(request, id):
 
         try:
             file = open_file(user.getSymKey(request.session["PrivKey"]), url)
-
+            
         except RuntimeError as e:
             alert = {
                 "color": "error",
@@ -369,7 +368,7 @@ def MemoryView(request, id):
             memtype = "sound"
         else:
             memtype = "error"
-
+        
         if memtype != "error":
 
             file_path = "temp/"
@@ -386,7 +385,6 @@ def MemoryView(request, id):
                 else:
                     request.session["files_to_delete"] = [content[memtype]]
             except Exception as e:
-
                 alert = {
                     "color": "error",
                     "title": UNIVERSAL_LANG["universal"]["error"],
@@ -411,8 +409,7 @@ def MemoryView(request, id):
         "using_space": using_space,
         "content": content,
         "back": UNIVERSAL_LANG["universal"]["back"],
-        'prepare': prepare_lang["prepare"],
-        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"]
+        'prepare': prepare_lang["prepare"]
     }
 
     return render(request, 'prepare/memory.html', args)
@@ -436,11 +433,16 @@ def ContactsView(request):
         if not alerts:
             addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
+    
+    prepare_lang = get_lang(sections=["prepare"])
+
     args = {
         'POST': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG['universal']['back'],
-        'alert': alerts
+        'alert': alerts,
+        'prepare': prepare_lang["prepare"],
+        'modal': prepare_lang["prepare"]["contacts"]["modal"]
     }
     return render(request, 'prepare/addcontact.html')
 
@@ -483,22 +485,55 @@ def showAllmemories(uId, PrivKey, memType):
     else:
         return -1
 
-def reencryptMedia(uId, oldPrivKey, newPubKey):
+def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
     user=User.objects.filter(UserId=uId)[0]
     media = Media.objects.filter(UserId=user)
     for mediaObject in media:
-        mediaType = mediaObject.getMediaType(oldPrivKey)
-        mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
-        mediaText = mediaObject.getMediaText(oldPrivKey)
-        mediaLink = mediaObject.getMediaLink(oldPrivKey)
-        memory = mediaObject.getMemory(oldPrivKey)
-        mediaSize = mediaObject.getMediaSize(oldPrivKey)
+        try:
+            mediaType = mediaObject.getMediaType(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMediaType(newPubKey, mediaType)
 
-        mediaObject.setMediaType(newPubKey, mediaType)
-        mediaObject.setMediaTitle(newPubKey, mediaTitle)
-        mediaObject.setMediaText(newPubKey, mediaText)
-        mediaObject.setMediaLink(newPubKey, mediaLink)
-        mediaObject.setMemory(newPubKey, memory)
-        mediaObject.setMediaSize(newPubKey, mediaSize)
+        try:
+            mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMediaTitle(newPubKey, mediaTitle)
+
+        try:
+            mediaText = mediaObject.getMediaText(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMediaText(newPubKey, mediaText)
+
+        try:
+            mediaLink = mediaObject.getLink(oldPrivKey)
+        except ValueError:
+            pass    
+        else:
+            if mediaLink in newFileNames:
+                print(f"Medialink old: {mediaLink}")
+                
+                mediaLink = newFileNames[mediaLink]
+                print(f"MediaLink new: {mediaLink}")
+            mediaObject.setLink(newPubKey, mediaLink)
+        
+        try:
+            memory = mediaObject.getMemory(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMemory(newPubKey, memory)
+
+        try:
+            mediaSize = mediaObject.getMediaSize(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMediaSize(newPubKey, mediaSize)
 
         mediaObject.save()
