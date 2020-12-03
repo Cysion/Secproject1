@@ -185,7 +185,7 @@ def reencrypt_user(anonid, old_key, new_key = crypto.gen_aes(256), rootdir = CON
         files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
         for file in files:
             fullpath = f"{dirname}/{file}"
-            filedata = open_file(old_key, fullpath, decompress=False, header_check=False)[1]
+            filedata = open_file(old_key, fullpath, decompress=False, header_check=True)[1]
             delete_file(fullpath, exists_error=True)
             save_file(new_key, filedata, anonid, compress=False)
     except FileNotFoundError:

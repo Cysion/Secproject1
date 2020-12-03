@@ -465,14 +465,14 @@ def reencryptMedia(uId, oldPrivKey, newPubKey):
         mediaType = mediaObject.getMediaType(oldPrivKey)
         mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
         mediaText = mediaObject.getMediaText(oldPrivKey)
-        mediaLink = mediaObject.getMediaLink(oldPrivKey)
+        mediaLink = mediaObject.getLink(oldPrivKey)
         memory = mediaObject.getMemory(oldPrivKey)
         mediaSize = mediaObject.getMediaSize(oldPrivKey)
 
         mediaObject.setMediaType(newPubKey, mediaType)
         mediaObject.setMediaTitle(newPubKey, mediaTitle)
         mediaObject.setMediaText(newPubKey, mediaText)
-        mediaObject.setMediaLink(newPubKey, mediaLink)
+        mediaObject.setLink(newPubKey, mediaLink)
         mediaObject.setMemory(newPubKey, memory)
         mediaObject.setMediaSize(newPubKey, mediaSize)
 

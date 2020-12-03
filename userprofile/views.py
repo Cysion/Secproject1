@@ -214,6 +214,8 @@ def changePass(uId:int, PrivKey, newPassword:str):
         user.setFirstName(firstName.capitalize())
         user.setLastName(lastName.capitalize())
         user.setDateOfBirth(dateOfBirth)
+        print(f"Symkey: {user.Symkey}")
+        
         user.setSymkey(reencrypt_user(anonId, symKey))
         user.setAnonId(PrivKeyNew)
         user.save()
