@@ -215,12 +215,12 @@ def changePass(uId:int, PrivKey, newPassword:str):
         user.setLastName(lastName.capitalize())
         user.setDateOfBirth(dateOfBirth)
         print(f"Symkey: {user.Symkey}")
-        
-        user.setSymkey(reencrypt_user(anonId, symKey))
+        retVal = reencrypt_user(anonId, symKey)
+        user.setSymkey(retVal[0])
         user.setAnonId(PrivKeyNew)
         user.save()
 
-        reencryptMedia(user.getUid(), PrivKey, pubkey)
+        reencryptMedia(user.getUid(), PrivKey, pubkey, retVal[1])
 
         relationsTo = RelationTo.objects.filter(UserIdFrom=user.getUid())
         for relation in relationsTo:
