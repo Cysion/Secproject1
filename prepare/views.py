@@ -465,21 +465,33 @@ def editContactView(request, id):
     alerts=dict()
     
     user = User.objects.filter(UserId=request.session["UserId"])[0]
-
+    contact = Contacts.objects.filter(ContactsId=id)[0]
+    
     if request.method=='POST':
-        pass
+        contact.setName(request.POST['Name'])
+        contact.setPhonenumber(request.POST['Phonenumber'])
+        contact.setAvailable(request.POST['Available'])
+        contact.save()
 
-    contact = dict({
-        
+    contactData = dict({
+        'Name': contact.getName(request.session['PrivKey']),
+        'Phonenumber':contact.getPhonenumber(request.session['PrivKey']),
+        'Available':contact.getAvailable(request.session['PrivKey'])
     })
+
+
     args = {
         'POST': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG['universal']['back'],
         'alert': alerts,
         'prepare': prepare_lang["prepare"],
-        'modal': prepare_lang["prepare"]["contacts"]["modal"]
-    return render(request, 'prepare/edit_contact.html')
+        'modal': prepare_lang["prepare"]["contacts"]["modal"],
+        'contact':contactData
+
+    }
+    print(args['contact'])
+    return render(request, 'prepare/edit_contact.html', args)
 
 
 
