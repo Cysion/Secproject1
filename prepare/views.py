@@ -441,7 +441,19 @@ def ContactsView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG['universal']['back'],
         'alert': alerts,
+        "back": UNIVERSAL_LANG["universal"]["back"],
+        'prepare': prepare_lang["prepare"]
+    }
+    return render(request, 'prepare/add_contact.html', args)
+
+def editContactsView(request):
+    prepare_lang = get_lang(sections=["prepare"])
+    args = {
+        'POST': request.POST,
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG['universal']['back'],
         'prepare': prepare_lang["prepare"],
+        "back": UNIVERSAL_LANG["universal"]["back"],
         'modal': prepare_lang["prepare"]["contacts"]["modal"]
     }
     return render(request, 'prepare/addcontact.html')
@@ -467,7 +479,7 @@ def editContactView(request, id):
         'alert': alerts,
         'prepare': prepare_lang["prepare"],
         'modal': prepare_lang["prepare"]["contacts"]["modal"]
-    return render(request, 'prepare/editcontact.html')
+    return render(request, 'prepare/edit_contact.html')
 
 
 
