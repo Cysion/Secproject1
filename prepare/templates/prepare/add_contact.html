@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Prepare{% endblock %}
+
+{% block content %}
+
+<h1> {{ relations.add_new }} </h1>
+<form action="/prepare/contacts/" class="was-validated" method="POST">
+    {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
+    <div class="form-group">
+      <label for="name">Name: </label>
+      <input type="text" class="form-control" placeholder="{{ form.placeholder }} Name..."
+        maxlength="64" id="name" name="name" {% if POST %} value="{{POST.name}}" {% endif %}{# If post already has been submitted #} required>
+      <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
+    </div>
+    {% if alert.name %}
+    <div class="alert alert-danger">
+      <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+    </div>
+    {% endif %}
+
+    <div class="form-group">
+        <label for="name">Phonenumber: </label>
+        <input type="text" class="form-control" placeholder="{{ form.placeholder }} Phonenumber..."
+          maxlength="64" id="phonenumber" name="phonenumber" {% if POST %} value="{{POST.phonenumber}}" {% endif %}{# If post already has been submitted #} required>
+        <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
+      </div>
+      {% if alert.phonenumber %}
+      <div class="alert alert-danger">
+        <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+      </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="name">Available: </label>
+        <input type="text" class="form-control" placeholder="{{ form.placeholder }} Available..."
+          maxlength="64" id="available" name="available" {% if POST %} value="{{POST.available}}" {% endif %}{# If post already has been submitted #} required>
+        <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
+      </div>
+      {% if alert.available %}
+      <div class="alert alert-danger">
+        <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+      </div>
+      {% endif %}
+
+
+        <div class="form-group">
+            <input type="submit" class="btn btn-lg btn-success btn-block mt-2" value="Add contact">
+        </div>
+        <a type="button" class="btn btn-lg btn-primary btn-block" href="/prepare/5">{{ back }}</a>
+    </div>
+</form>
+
+{% endblock %}
