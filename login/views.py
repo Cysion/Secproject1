@@ -10,6 +10,7 @@ from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
 from userprofile.views import checkPassword, changePass
 
 from tools.confman import get_lang
+from tools.scienceman import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -54,6 +55,7 @@ def RegisterView(request):
                 try:
                     with transaction.atomic():
                         sessionsData = registerUser(request.POST)
+
                 except AttributeError:
                     alerts['database'] = 'Database error'
                 else:
@@ -102,6 +104,7 @@ def registerUser(postData): # Place function somewere else.
     user.setAnonId(key.export_key().decode("utf-8"))
     user.setSymkey()
     user.save()
+    new_entry("PROFILE", user.getAnonId(key.export_key()), f"{postData['date_of_birth']}|{postData['gender'] if postData['gender'] != 'Other' else postData['gender_other']}")
     return user.getUid(), key.export_key(), user.getRole()
 
 
@@ -123,7 +126,7 @@ def LoginView(request):
                 request.session['UserId'] = user.getUid()
                 request.session['PrivKey'] = key.export_key().decode("utf-8")
                 request.session['Role'] = user.getRole()
-
+                new_entry("u1", user.getAnonId(request.session['PrivKey']), "na")
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
                 loginFail = True

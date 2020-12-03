@@ -3,13 +3,12 @@
 {% block title %}Prepare{% endblock %}
 
 {% block content %}
-
 <h1> {{ relations.add_new }} </h1>
 <form action="/prepare/contacts/" class="was-validated" method="POST">
     {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
     <div class="form-group">
       <label for="name">Name: </label>
-      <input type="text" class="form-control" placeholder="{{ form.placeholder }} Name..."
+      <input type="text" class="form-control" value="{{contact.Name}}"
         maxlength="64" id="name" name="name" {% if POST %} value="{{POST.name}}" {% endif %}{# If post already has been submitted #} required>
       <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
     </div>
@@ -21,7 +20,7 @@
 
     <div class="form-group">
         <label for="name">Phonenumber: </label>
-        <input type="text" class="form-control" placeholder="{{ form.placeholder }} Phonenumber..."
+        <input type="text" class="form-control" value="{{ contact.Phonenumber }}"
           maxlength="64" id="phonenumber" name="phonenumber" {% if POST %} value="{{POST.phonenumber}}" {% endif %}{# If post already has been submitted #} required>
         <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
       </div>
@@ -33,7 +32,7 @@
 
       <div class="form-group">
         <label for="name">Available: </label>
-        <input type="text" class="form-control" placeholder="{{ form.placeholder }} Available..."
+        <input type="text" class="form-control" value="{{contact.Available}}"
           maxlength="64" id="available" name="available" {% if POST %} value="{{POST.available}}" {% endif %}{# If post already has been submitted #} required>
         <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
       </div>
