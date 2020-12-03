@@ -436,11 +436,16 @@ def ContactsView(request):
         if not alerts:
             addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
+    
+    prepare_lang = get_lang(sections=["prepare"])
+
     args = {
         'POST': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG['universal']['back'],
-        'alert': alerts
+        'alert': alerts,
+        'prepare': prepare_lang["prepare"],
+        'modal': prepare_lang["prepare"]["contacts"]["modal"]
     }
     return render(request, 'prepare/addcontact.html')
 
