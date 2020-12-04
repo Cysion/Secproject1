@@ -67,7 +67,11 @@ def MenuView(request, page=0):
     }
 
     #if 0 < page < 9:
+<<<<<<< HEAD
     #    new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+=======
+        #new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+>>>>>>> 98410930a0ad465fc18ee7790453806684dd1c0a
     return render(request, template, args)
 
 
@@ -455,17 +459,6 @@ def ContactsView(request):
     }
     return render(request, 'prepare/add_contact.html', args)
 
-def editContactsView(request):
-    prepare_lang = get_lang(sections=["prepare"])
-    args = {
-        'POST': request.POST,
-        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-        'back': UNIVERSAL_LANG['universal']['back'],
-        'prepare': prepare_lang["prepare"],
-        "back": UNIVERSAL_LANG["universal"]["back"],
-        'modal': prepare_lang["prepare"]["contacts"]["modal"]
-    }
-    return render(request, 'prepare/addcontact.html')
 
 def editContactView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
@@ -477,12 +470,15 @@ def editContactView(request, id):
     contact = Contacts.objects.filter(ContactsId=id)[0]
     
     if request.method=='POST':
-        contact.setName(request.POST['Name'])
-        contact.setPhonenumber(request.POST['Phonenumber'])
-        contact.setAvailable(request.POST['Available'])
+        contact = Contacts.objects.filter(ContactsId=id)[0]
+        contact.setName(request.POST['name'])
+        contact.setPhonenumber(request.POST['phonenumber'])
+        contact.setAvailable(request.POST['available'])
         contact.save()
+        return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
 
     contactData = dict({
+        'Id': contact.ContactsId,
         'Name': contact.getName(request.session['PrivKey']),
         'Phonenumber':contact.getPhonenumber(request.session['PrivKey']),
         'Available':contact.getAvailable(request.session['PrivKey'])
@@ -499,7 +495,6 @@ def editContactView(request, id):
         'contact':contactData
 
     }
-    print(args['contact'])
     return render(request, 'prepare/edit_contact.html', args)
 
 

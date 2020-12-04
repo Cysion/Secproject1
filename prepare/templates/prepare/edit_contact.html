@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1> {{ relations.add_new }} </h1>
-<form action="/prepare/contacts/" class="was-validated" method="POST">
+<form action="/prepare/contacts/edit/{{contact.Id}}" class="was-validated" method="POST">
   {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
   <div class="form-group">
     <label for="name">Name: </label>
