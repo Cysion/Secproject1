@@ -14,7 +14,7 @@ from django.db import transaction
 
 from django.core.files import File
 from savemeplan.models import Contacts
-
+from tools.scienceman import new_entry
 import time
 import re
 
@@ -29,6 +29,7 @@ def MenuView(request, page=0):
     template = 'prepare/menu.html'
     memories = []
     contacts = []
+    user = User.objects.filter(pk=request.session["UserId"])[0]
 
     if page == 1:
         template = 'prepare/1_howto.html'
@@ -50,6 +51,9 @@ def MenuView(request, page=0):
     elif page == 8:
         template = 'prepare/8_therapynotes.html'
     else:
+        #Science segment
+        new_entry("g1", user.getAnonId(request.session['PrivKey']), "prep")
+
         template = 'prepare/menu.html'
 
     print(prepare_lang["prepare"]["contacts"]["modal"])
@@ -61,9 +65,11 @@ def MenuView(request, page=0):
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
         'memories':memories,
-        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"],
         'contacts':contacts
     }
+
+    #if 0 < page < 9:
+    #    new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
     return render(request, template, args)
 
 
@@ -231,7 +237,7 @@ def addMemoryView(request):
         'max_file_size': int(media_conf["max_size_mb"]),
         'mem_type': mem_type
     }
-
+    #new_entry("m1", user.getAnonId(request.session["PrivKey"]), "na")
     return render(request, 'prepare/add_memory.html', args)
 
 def MemoryView(request, id):
@@ -290,7 +296,7 @@ def MemoryView(request, id):
         memtype = "youtube"
         content[memtype] = unidentified_url.split("/")[-1]  # get video id of youtube video
 
-    elif local_url_pattern.match(unidentified_url):
+    elif local_url_pattern.match(unidentified_url): 
         url = unidentified_url
         memtype = "photo/video/sound"
 
@@ -315,7 +321,8 @@ def MemoryView(request, id):
             request.session["global_alerts"] = [alert]
         else:
             request.session["global_alerts"].append(alert)
-
+        
+        new_entry("m2", user.getAnonId(request.session["PrivKey"]), "na")
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
         else:
@@ -344,7 +351,7 @@ def MemoryView(request, id):
 
         try:
             file = open_file(user.getSymKey(request.session["PrivKey"]), url)
-
+            
         except RuntimeError as e:
             alert = {
                 "color": "error",
@@ -371,7 +378,7 @@ def MemoryView(request, id):
             memtype = "sound"
         else:
             memtype = "error"
-
+        
         if memtype != "error":
 
             file_path = "temp/"
@@ -388,7 +395,6 @@ def MemoryView(request, id):
                 else:
                     request.session["files_to_delete"] = [content[memtype]]
             except Exception as e:
-
                 alert = {
                     "color": "error",
                     "title": UNIVERSAL_LANG["universal"]["error"],
@@ -413,10 +419,10 @@ def MemoryView(request, id):
         "using_space": using_space,
         "content": content,
         "back": UNIVERSAL_LANG["universal"]["back"],
-        'prepare': prepare_lang["prepare"],
-        'modal': prepare_lang["prepare"]["supportive_memories"]["modal"]
+        'prepare': prepare_lang["prepare"]
     }
 
+    new_entry("m3", user.getAnonId(request.session["PrivKey"]), "na")
     return render(request, 'prepare/memory.html', args)
 
 
@@ -446,10 +452,53 @@ def ContactsView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG['universal']['back'],
         'alert': alerts,
-        'prepare': prepare_lang["prepare"],
-        'modal': prepare_lang["prepare"]["contacts"]["modal"]
+        "back": UNIVERSAL_LANG["universal"]["back"],
+        'prepare': prepare_lang["prepare"]
     }
-    return render(request, 'prepare/addcontact.html')
+    return render(request, 'prepare/add_contact.html', args)
+
+
+def editContactView(request, id):
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
+    prepare_lang = get_lang(sections=["prepare"])
+    alerts=dict()
+    
+    user = User.objects.filter(UserId=request.session["UserId"])[0]
+    contact = Contacts.objects.filter(ContactsId=id)[0]
+    
+    if request.GET and "delete" in request.GET.keys():
+        if request.GET['delete']:
+            removeContact(request.session["UserId"], id)
+            return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
+
+    if request.method=='POST':
+        contact = Contacts.objects.filter(ContactsId=id)[0]
+        contact.setName(request.POST['name'])
+        contact.setPhonenumber(request.POST['phonenumber'])
+        contact.setAvailable(request.POST['available'])
+        contact.save()
+        return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
+
+    contactData = dict({
+        'Id': contact.ContactsId,
+        'Name': contact.getName(request.session['PrivKey']),
+        'Phonenumber':contact.getPhonenumber(request.session['PrivKey']),
+        'Available':contact.getAvailable(request.session['PrivKey'])
+    })
+
+
+    args = {
+        'POST': request.POST,
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG['universal']['back'],
+        'alert': alerts,
+        'prepare': prepare_lang["prepare"],
+        'modal': prepare_lang["prepare"]["contacts"]["modal"],
+        'contact':contactData
+
+    }
+    return render(request, 'prepare/edit_contact.html', args)
 
 
 
@@ -470,12 +519,18 @@ def showContacts(uId, PrivKey):
     contacts = Contacts.objects.filter(UserId=user)
     for contact in contacts:
         contactInfo = dict({
+            'Id':contact.ContactsId,
             'Name':contact.getName(PrivKey),
             'Phonenumber':contact.getPhonenumber(PrivKey),
             'Available':contact.getAvailable(PrivKey)
         })
         contactsToReturn.append(contactInfo)
     return contactsToReturn
+
+def removeContact(uId, contactId):
+    user = User.objects.filter(UserId=uId)[0]
+    Contacts.objects.filter(ContactsId=contactId, UserId=user).delete()
+
 
 def showAllmemories(uId, PrivKey, memType):
     if memType in 'sd':
@@ -490,22 +545,55 @@ def showAllmemories(uId, PrivKey, memType):
     else:
         return -1
 
-def reencryptMedia(uId, oldPrivKey, newPubKey):
+def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
     user=User.objects.filter(UserId=uId)[0]
     media = Media.objects.filter(UserId=user)
     for mediaObject in media:
-        mediaType = mediaObject.getMediaType(oldPrivKey)
-        mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
-        mediaText = mediaObject.getMediaText(oldPrivKey)
-        mediaLink = mediaObject.getMediaLink(oldPrivKey)
-        memory = mediaObject.getMemory(oldPrivKey)
-        mediaSize = mediaObject.getMediaSize(oldPrivKey)
+        try:
+            mediaType = mediaObject.getMediaType(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMediaType(newPubKey, mediaType)
 
-        mediaObject.setMediaType(newPubKey, mediaType)
-        mediaObject.setMediaTitle(newPubKey, mediaTitle)
-        mediaObject.setMediaText(newPubKey, mediaText)
-        mediaObject.setMediaLink(newPubKey, mediaLink)
-        mediaObject.setMemory(newPubKey, memory)
-        mediaObject.setMediaSize(newPubKey, mediaSize)
+        try:
+            mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMediaTitle(newPubKey, mediaTitle)
+
+        try:
+            mediaText = mediaObject.getMediaText(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMediaText(newPubKey, mediaText)
+
+        try:
+            mediaLink = mediaObject.getLink(oldPrivKey)
+        except ValueError:
+            pass    
+        else:
+            if mediaLink in newFileNames:
+                print(f"Medialink old: {mediaLink}")
+                
+                mediaLink = newFileNames[mediaLink]
+                print(f"MediaLink new: {mediaLink}")
+            mediaObject.setLink(newPubKey, mediaLink)
+        
+        try:
+            memory = mediaObject.getMemory(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMemory(newPubKey, memory)
+
+        try:
+            mediaSize = mediaObject.getMediaSize(oldPrivKey)
+        except ValueError:
+            pass
+        else:
+            mediaObject.setMediaSize(newPubKey, mediaSize)
 
         mediaObject.save()

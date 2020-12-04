@@ -1,30 +1,56 @@
 from datetime import datetime
 import time
-from confman import get_conf
 import os
+import hashlib
+
+try:
+    from confman import get_conf
+    from logman import get_logger
+except ModuleNotFoundError:
+    from tools.confman import get_conf
+    from tools.logman import get_logger
 ID_DESC={
-    "g1":"page click",
-    "g2":"page enter",
+    "PROFILE":"Anonymous user profile",
+    "g2":"page click",
+    "g1":"page enter",
     "g3":"page leave",
-    "m1":"into watch",
-    "m2":"prep guide",
-    "r1":"share with"
+    "u1":"user logon",
+    "u2":"user logoff",
+    "u3":"prof change",
+    "h1":"intro watch",
+    "h2":"prep guide",
+    "r1":"share with",
+    "p1":"contact add",
+    "p2":"contact use",
+    "s1":"print click",
+    "s2":"send click",
+    "m1":"add memory",
+    "m2":"del memory",
+    "m3":"view memory",
+    "c1":"wellness ind"
 }
 
-IMPLIES={
-    "g1":["g2","g3"]
-}
 
 CONF = get_conf()
 
 
-def new_entry(action_id: list, anonid, value, imply=True):
-    actiontime = str(int(time.time())) if CONF["research"]["timestandard"] == "unix" else int(datetime.now().strftime(CONF["research"]["strftime"]))
+LOGGER = get_logger("scienceman")
+
+def get_sha(obj) -> str:
+    obj = str(obj)
+    obj += "a" * (1024-len(obj)) if len(obj) < 1024 else obj
+    hashhold = hashlib.sha256()
+    hashhold.update(obj.encode("utf-8"))
+    return hashhold.hexdigest()
+
+
+def new_entry(action_id:str, anonid: bytes, value:str, mangle=False):
+    actiontime = str(int(time.time())) if CONF["research"]["timestandard"] == "unix" else str(datetime.now().strftime(CONF["research"]["strftime"]))
     value = ",".join(value) if type(value) == list else value
+    anonid = get_sha(anonid)
+    value = get_sha(value) if mangle else value
     send_package(action_id, anonid, value, actiontime)
-    if imply and (action_id in IMPLIES):
-        for implied in IMPLIES[action_id]:
-            new_entry(implied, anonid, value, imply=False)
+    LOGGER.info(f"SciPak {anonid[0:len(anonid)//4]} '{ID_DESC[action_id]}' and value '{value}' at time {actiontime}")
 
 
 def retrieve_packages():
@@ -35,6 +61,7 @@ def retrieve_packages():
     
 
 def export_data(dir, maxlines=1000, rootdir=CONF["research"]["exportdir"], timefrom=0, timeto=float("inf")):
+    topline = "action, value, datetime, anonid\n"
     i = 0
     foldername = datetime.now().strftime(CONF["research"]["strftime"])
     try:
@@ -42,18 +69,15 @@ def export_data(dir, maxlines=1000, rootdir=CONF["research"]["exportdir"], timef
     except FileExistsError:
         pass
     file = open(os.path.join(rootdir, f"entries0-{maxlines}.csv"), "w")
+    file.write(topline)
     for package in retrieve_packages():
         if i%maxlines == 0:
             file.close()
             file = open(os.path.join(rootdir,foldername,f"entries{i}-{i+maxlines}.csv"))
-            if timefrom < int(package[3]) < timeto: 
-                
-                i+=1
-
-
-
-
-
+            file.write(topline)
+        if timefrom < int(package[3]) < timeto: 
+            file.write(",".join(package) + "\n")
+            i+=1
 
 
 

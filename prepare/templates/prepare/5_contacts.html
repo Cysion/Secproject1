@@ -3,12 +3,6 @@
 {% block title %}Prepare{% endblock %}
 
 
-{% block statics %}
-{% load static %}
-<link rel="stylesheet" href="{% static "userprofile/relations.css" %}">
-<script src="{% static 'app.js' %}"></script>
-{% endblock %}
-
 {% block content %}
 
 <section class="row p-2 align-items-center justify-content-between" style="background-color: white; border-style: solid; border-color: #42cfbc;">
@@ -30,7 +24,11 @@
     </div>
 </section>
 
-<section class="rounded p-2" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+<section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <h2 class="h4 text-uppercase">{{ prepare.steps.0 }} {{ prepare.steps.5 }}/{{ prepare.steps.8 }}: {{ prepare.contacts.title }}</h2>
+</section>
+
+<section class="my-2 mx-1 rounded p-2" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
     <div class="row">
         <div class="col col-md-3">
             <p class="m-0">{{ prepare.contacts.contact_name }}</p>
@@ -58,31 +56,31 @@
         </div>
         <div class="col-12 col-md my-1 mx-0 row justify-content-end">
             <div class="col-8 col-md-auto p-1">
-                <a class="btn btn-info btn-block" href="manage/?Id={{user.RelationFrom}}">{{ prepare.contacts.edit }}</a> <!--BEHÖVER FIXAS-->
+                <a class="btn btn-info btn-block" href="/prepare/contacts/edit/{{contact.Id}}">{{ prepare.contacts.edit }}</a> <!--BEHÖVER FIXAS-->
             </div>
             <div class="col-4 col-md-auto p-1">
-                <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveContact{{ memory.Id }}"><i class="fas fa-trash-alt"></i></button> <!--BEHÖVER FIXAS-->
+                <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveContact{{ contact.Id }}"><i class="fas fa-trash-alt"></i></button> <!--BEHÖVER FIXAS-->
             </div>
         </div>
     </div>
     <hr class="mt-0 mb-2" style="border-style: solid; border-color: #109075;">
 
     <!-- Modal -->
-    <div class="modal fade" id="confirmRemoveContact{{ memory.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true"> <!--BEHÖVER FIXAS-->
+    <div class="modal fade" id="confirmRemoveContact{{ contact.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true"> <!--BEHÖVER FIXAS-->
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="modalCenterLongTitle">{{ modal.confirm_action }}</h5>
+                <h5 class="modal-title" id="modalCenterLongTitle">{{ prepare.contacts.modal.confirm_action }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
                 <div class="modal-body">
-                    <p>{{ modal.confirm_remove_contact }}</p><!--"modal.confirm_remove_contact" funkar ej?-->
+                    <p>{{ prepare.contacts.modal.confirm_remove_contact }}</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ modal.close }}</button>
-                    <a name="delete" type="button" class="btn btn-danger" value="1" href="#">{{ modal.remove_contact }}</a> <!--BEHÖVER FIXAS--> <!--"modal.remove_contact" funkar ej?-->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.contacts.modal.close }}</button>
+                    <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/contacts/edit/{{ contact.Id }}?delete=true">{{ prepare.contacts.modal.remove_contact }}</a><!--"prepare.contacts.modal.remove_contact" funkar ej?-->
                 </div>
             </div>
         </div>

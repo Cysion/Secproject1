@@ -10,6 +10,7 @@ from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
 from userprofile.views import checkPassword, changePass
 
 from tools.confman import get_lang
+from tools.scienceman import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -54,6 +55,7 @@ def RegisterView(request):
                 try:
                     with transaction.atomic():
                         sessionsData = registerUser(request.POST)
+
                 except AttributeError:
                     alerts['database'] = 'Database error'
                 else:
@@ -102,6 +104,7 @@ def registerUser(postData): # Place function somewere else.
     user.setAnonId(key.export_key().decode("utf-8"))
     user.setSymkey()
     user.save()
+    new_entry("PROFILE", user.getAnonId(key.export_key()), f"{postData['date_of_birth']}|{postData['gender'] if postData['gender'] != 'Other' else postData['gender_other']}")
     return user.getUid(), key.export_key(), user.getRole()
 
 
@@ -123,7 +126,7 @@ def LoginView(request):
                 request.session['UserId'] = user.getUid()
                 request.session['PrivKey'] = key.export_key().decode("utf-8")
                 request.session['Role'] = user.getRole()
-
+                new_entry("u1", user.getAnonId(request.session['PrivKey']), "na")
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
                 loginFail = True
@@ -183,21 +186,23 @@ def forgotPasswordView(request):
                 try:
                     request.session['UserId'] = user.getUid()
                     request.session['PrivKey']=changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
+                    request.session["Role"] = user.getRole()
+                    #print(request.session["Role"])
                 except ValueError as keyError:
                     alerts["relogin"] = "relogin"
 
                     alert = {
                         "color": "success",  # Check https://www.w3schools.com/bootstrap4/bootstrap_alerts.asp for colors.
                         "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
-                        "message": profile_lang["login"]["long_texts"]["alerts"]["changed_password_success"]
+                        "message": login_lang["login"]["long_texts"]["alerts"]["changed_password_success"]
                     }
+                    if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                        request.session["global_alerts"] = [alert]
+                    else:
+                        request.session["global_alerts"].append(alert)
 
-                if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                    request.session["global_alerts"] = [alert]
-                else:
-                    request.session["global_alerts"].append(alert)
-
-                return HttpResponseRedirect(reverse('userprofile:Backupkey'))
+                if 'relogin' not in alerts:
+                    return HttpResponseRedirect(reverse('userprofile:Backupkey'))
             else:
                 alerts["relogin"] = "relogin"
         else:

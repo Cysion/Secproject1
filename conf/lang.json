@@ -212,6 +212,15 @@
         "add_a_memory":"Add a memory",
         "placeholder":"Enter a",
         "menu":"Menu",
+        "save":"Save changes",
+        "memories":{
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_memory":"Are you sure that you want to remove this memory?",
+                "close":"Close",
+                "remove_memory":"Remove this memory"
+            }
+        },
         "nav":{
             "prepare":"Prepare",
             "library":"Library",
@@ -261,6 +270,8 @@
         },
         "contacts":{
             "title":"Contacts",
+            "add_contacts":"Add contacts",
+            "edit_contacts":"Edit contacts",
             "contact_name":"Contact name",
             "phone_number":"Phone number",
             "available":"Available",
@@ -275,7 +286,38 @@
             }
         },
         "where_to_call":{
-            "title":"Where do i call in a crisis?"
+            "title":"Where do i call in a crisis?",
+            "peer_support":"PEER support",
+            "specialist_consultation":"SPECIALIST consultation",
+            "hospital":"Hostpital",
+            "crisis_center":"Crisis Center",
+            "profession_support_work_related":"Same profession support - for work-related problems.",
+            "teenager":"Teenager",
+            "senior":"Senior",
+            "church":"Church",
+            "parent":"Parent",
+            "caregiver":"Caregiver",
+            "police":"Police",
+            "description1":"Depression? Anxiety? Self-harm? ADHD? Autism? Psychosis? Eating disorders? Sexual problems? Sleep problems? Suicidal thoughts? Crisis after suicide attempt or suicide? Other health problems with mental health issues?",
+            "description2":"Problem in communication in relation? Divorce? Financial issues? Legal issues? Alcohol? Drugs? Crime? Bullying? Other problems with mental health issues? Suicidal thoughts? Crisis after suicide attempt or suicide?",
+            "description3":"Students, teachers, doctors, emergency workers, police officers, soldiers, fireman, farmers, priests",
+            "in_crisis_part1":"IN CRISIS AND DO NOT KNOW WHERE TO CALL?",
+            "in_crisis_part2":"CALL",
+            "in_crisis_part3":"WE WILL GUIDE YOU!",
+            "phone_numbers":{
+                "peer_support":"0708123456",
+                "specialist_consultation":"0708123456",
+                "hospital":"0708123456",
+                "crisis_center":"0708123456",
+                "profession_support_work_related":"0708123456",
+                "in_crisis":"0708123456",
+                "teenager":"0708123456",
+                "senior":"0708123456",
+                "church":"0708123456",
+                "parent":"0708123456",
+                "caregiver":"0708123456",
+                "police":"0708123456"
+            }
         },
         "diary":{
             "title":"Diary"

@@ -12,6 +12,8 @@ from django.db import transaction
 from prepare.views import reencryptMedia
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
 
+from tools.scienceman import new_entry
+
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 # Create your views here.
 
@@ -19,13 +21,14 @@ def ProfileView(request):
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
+    user1 = User.objects.filter(UserId=request.session['UserId'])[0]
     if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
         if 'logout' in request.GET.keys():
+            new_entry("u2", user1.getAnonId(request.session['PrivKey']), "na")
             request.session.flush()
             return HttpResponseRedirect(reverse('login:Login'))
-
     login_lang = get_lang(sections=["userprofile"])
-    user1 = User.objects.filter(UserId=request.session['UserId'])[0]
+    new_entry("g1", user1.getAnonId(request.session['PrivKey']), "prof")
     first_name = user1.getFirstName(request.session['PrivKey'])
     last_name = user1.getLastName(request.session['PrivKey'])
 
@@ -77,6 +80,20 @@ def EditProfileView(request):
             user.setLastName(request.POST['last_name'])
             user.setEmail(request.POST['email'])
             user.save()
+
+
+            #data collection
+            for_science = {
+                "firstname":(account['firstName'] ,user.getFirstName(request.session['PrivKey'])),
+                "lastname":(account['lastName'], user.getLastNate(request.session['PrivKey'])),
+                "gender":(account['gender'], user.getGender(request.session['PrivKey'])),
+                "email":(account['email'], user.getEmail(request.session['PrivKey']))
+            }
+            for science in for_science:
+                if for_science[science][0] != for_science[science][0]:
+                    new_entry("u3", user.getAnonId(request.session['PrivKey']), science)
+            del for_science, science
+
 
             alert = {
                 "color": "success",  # Check https://www.w3schools.com/bootstrap4/bootstrap_alerts.asp for colors.
@@ -214,11 +231,13 @@ def changePass(uId:int, PrivKey, newPassword:str):
         user.setFirstName(firstName.capitalize())
         user.setLastName(lastName.capitalize())
         user.setDateOfBirth(dateOfBirth)
-        user.setSymkey(reencrypt_user(anonId, symKey))
+        print(f"Symkey: {user.Symkey}")
+        retVal = reencrypt_user(anonId, symKey)
+        user.setSymkey(retVal[0])
         user.setAnonId(PrivKeyNew)
         user.save()
 
-        reencryptMedia(user.getUid(), PrivKey, pubkey)
+        reencryptMedia(user.getUid(), PrivKey, pubkey, retVal[1])
 
         relationsTo = RelationTo.objects.filter(UserIdFrom=user.getUid())
         for relation in relationsTo:
@@ -294,6 +313,7 @@ def addRelationsView(request):
             permissions+='1' if 'share_check' in request.POST else '0'
             permissions+='1' if 'share_prepare' in request.POST else '0'
             permissions+='1' if 'share_media' in request.POST else '0'
+            new_entry("r1", user.getAnonId(request.session['PrivKey']), "professional: " + permissions)
 
             if not createRelation(user.getUid(), request.session['PrivKey'], recieverEmail, permissions):
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
@@ -308,7 +328,6 @@ def addRelationsView(request):
         'form': profile_lang["userprofile"]["relations"]["form"],
         'alerts': alerts
     }
-
     return render(request, 'userprofile/addrelations.html', args)
 
 def manageRelationsView(request):
@@ -328,11 +347,9 @@ def manageRelationsView(request):
 
         if request.method == 'POST':
             if 'delete' in request.POST:
-                print("delete")
                 removeRelation(request.session['UserId'], request.session['PrivKey'], email)
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             elif 'save' in request.POST:
-                print("modify")
                 relationFrom = RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
                 permission['Profile'] = '1'
                 permission['SaveMePlan'] ='1' if 'share_savemeplan' in request.POST else '0'
