@@ -66,8 +66,8 @@ def MenuView(request, page=0):
         'contacts':contacts
     }
 
-    if 0 < page < 9:
-        new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+    #if 0 < page < 9:
+    #    new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
     return render(request, template, args)
 
 
@@ -235,7 +235,7 @@ def addMemoryView(request):
         'max_file_size': int(media_conf["max_size_mb"]),
         'mem_type': mem_type
     }
-    new_entry("m1", user.getAnonId(request.session["PrivKey"]), "na")
+    #new_entry("m1", user.getAnonId(request.session["PrivKey"]), "na")
     return render(request, 'prepare/add_memory.html', args)
 
 def MemoryView(request, id):
