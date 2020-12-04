@@ -52,6 +52,8 @@ def MenuView(request, page=0):
     else:
         template = 'prepare/menu.html'
 
+    print(prepare_lang["prepare"]["contacts"]["modal"])
+
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -436,7 +438,7 @@ def ContactsView(request):
         if not alerts:
             addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
-    
+
     prepare_lang = get_lang(sections=["prepare"])
 
     args = {
