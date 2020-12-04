@@ -67,7 +67,11 @@ def MenuView(request, page=0):
     }
 
     #if 0 < page < 9:
+<<<<<<< HEAD
+    #    new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+=======
         #new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+>>>>>>> 98410930a0ad465fc18ee7790453806684dd1c0a
     return render(request, template, args)
 
 
