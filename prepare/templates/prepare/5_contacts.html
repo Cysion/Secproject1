@@ -59,14 +59,14 @@
                 <a class="btn btn-info btn-block" href="/prepare/contacts/edit/{{contact.Id}}">{{ prepare.contacts.edit }}</a> <!--BEHÖVER FIXAS-->
             </div>
             <div class="col-4 col-md-auto p-1">
-                <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveContact{{ memory.Id }}"><i class="fas fa-trash-alt"></i></button> <!--BEHÖVER FIXAS-->
+                <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveContact{{ contact.Id }}"><i class="fas fa-trash-alt"></i></button> <!--BEHÖVER FIXAS-->
             </div>
         </div>
     </div>
     <hr class="mt-0 mb-2" style="border-style: solid; border-color: #109075;">
 
     <!-- Modal -->
-    <div class="modal fade" id="confirmRemoveContact{{ memory.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true"> <!--BEHÖVER FIXAS-->
+    <div class="modal fade" id="confirmRemoveContact{{ contact.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true"> <!--BEHÖVER FIXAS-->
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -80,7 +80,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.contacts.modal.close }}</button>
-                    <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/contacts/edit/{{contact.Id}}/?delete=true">{{ prepare.contacts.modal.remove_contact }}</a><!--"prepare.contacts.modal.remove_contact" funkar ej?-->
+                    <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/contacts/edit/{{ contact.Id }}/?delete=true">{{ prepare.contacts.modal.remove_contact }}</a><!--"prepare.contacts.modal.remove_contact" funkar ej?-->
                 </div>
             </div>
         </div>
