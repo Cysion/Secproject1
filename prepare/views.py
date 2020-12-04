@@ -465,6 +465,11 @@ def editContactView(request, id):
     user = User.objects.filter(UserId=request.session["UserId"])[0]
     contact = Contacts.objects.filter(ContactsId=id)[0]
     
+    if request.GET and "delete" in request.GET.keys():
+        if request.GET['delete']:
+            removeContact(request.session["UserId"], id)
+            return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
+
     if request.method=='POST':
         contact = Contacts.objects.filter(ContactsId=id)[0]
         contact.setName(request.POST['name'])
@@ -519,6 +524,11 @@ def showContacts(uId, PrivKey):
         })
         contactsToReturn.append(contactInfo)
     return contactsToReturn
+
+def removeContact(uId, contactId):
+    user = User.objects.filter(UserId=uId)[0]
+    Contacts.objects.filter(ContactsId=contactId, UserId=user).delete()
+
 
 def showAllmemories(uId, PrivKey, memType):
     if memType in 'sd':
