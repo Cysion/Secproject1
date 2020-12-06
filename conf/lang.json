@@ -288,7 +288,7 @@
             "title":"Where do i call in a crisis?",
             "peer_support":"PEER support",
             "specialist_consultation":"SPECIALIST consultation",
-            "hospital":"Hostpital",
+            "hospital":"Hospital",
             "crisis_center":"Crisis Center",
             "profession_support_work_related":"Same profession support - for work-related problems.",
             "teenager":"Teenager",
@@ -319,11 +319,35 @@
             }
         },
         "diary":{
-            "title":"Diary"
+            "title":"Diary",
+            "date":"Date",
+            "text":"Text",
+            "stored_entries":"Stored entries",
+            "create_entry":"Create a new entry",
+            "add":"Add",
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_entry":"Are you sure that you want to remove this entry in your diary?",
+                "close":"Close",
+                "remove_entry":"Remove this entry"
+            }
 
         },
         "therapy_notes":{
-            "title":"Therapy notes"
+            "title":"Therapy notes",
+            "important_facts":"Note important facts in your CV.",
+            "what_helps":"What helps you feel better?",
+            "date":"Date",
+            "text":"Text",
+            "stored_entries":"Stored entries",
+            "create_entry":"Create a new entry",
+            "add":"Add",
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_entry":"Are you sure that you want to remove this entry in your diary?",
+                "close":"Close",
+                "remove_entry":"Remove this entry"
+            }
         },
         "long_texts":{
             "menu_description":"Click one of the areas above or select a step below",
