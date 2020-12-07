@@ -1,14 +1,15 @@
+from django.shortcuts import render
+
+# Create your views here.
 from datetime import datetime
 import time
 import os
 import hashlib
+from tools.confman import get_conf
+from tools.logman import get_logger
 
-try:
-    from confman import get_conf
-    from logman import get_logger
-except ModuleNotFoundError:
-    from tools.confman import get_conf
-    from tools.logman import get_logger
+from science.models import ResearchData
+
 ID_DESC={
     "PROFILE":"Anonymous user profile",
     "g2":"page click",
@@ -33,8 +34,7 @@ ID_DESC={
 
 CONF = get_conf()
 
-
-LOGGER = get_logger("scienceman")
+LOGGER = get_logger("scienceview")
 
 def get_sha(obj) -> str:
     obj = str(obj)
@@ -45,6 +45,8 @@ def get_sha(obj) -> str:
 
 
 def new_entry(action_id:str, anonid: bytes, value:str, mangle=False):
+    if not CONF["enable_collection"] == "True":
+        return
     actiontime = str(int(time.time())) if CONF["research"]["timestandard"] == "unix" else str(datetime.now().strftime(CONF["research"]["strftime"]))
     value = ",".join(value) if type(value) == list else value
     anonid = get_sha(anonid)
@@ -80,9 +82,12 @@ def export_data(dir, maxlines=1000, rootdir=CONF["research"]["exportdir"], timef
             i+=1
 
 
-
-
-#rle territory
+def forget_me(anonid):
+    #select all in table with anonid and burn it
+    pass
+def find_me(anonid):
+    #select all in table with anonid and return
+    pass
 def get_all_ids() -> list:
     #return all primary keys in the table so all actions can be fetched
     return list()

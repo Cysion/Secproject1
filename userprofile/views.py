@@ -12,7 +12,7 @@ from django.db import transaction
 from prepare.views import reencryptMedia
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
 
-from tools.scienceman import new_entry
+from science.views import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 # Create your views here.

@@ -10,7 +10,7 @@ from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
 from userprofile.views import checkPassword, changePass
 
 from tools.confman import get_lang
-from tools.scienceman import new_entry
+from science.views import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 

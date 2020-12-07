@@ -14,7 +14,7 @@ from django.db import transaction
 
 from django.core.files import File
 from savemeplan.models import Contacts
-from tools.scienceman import new_entry
+from science.views import new_entry
 import time
 import re
 

@@ -9,5 +9,4 @@ logs/*.gz
 .vscode
 testdata/*.blob
 media/*
-test*
 lang*
