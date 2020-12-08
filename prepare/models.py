@@ -72,3 +72,46 @@ class Media(models.Model):
 
     def setMediaSize(self, PubKey, size):
             self.MediaSize=rsa_encrypt(PubKey, str(size).encode("utf-8"))
+
+
+class Diary(models.Model):
+    DiaryId = models.AutoField(primary_key=True)
+    UserId = models.ForeignKey(User, on_delete=models.CASCADE)
+    Date = models.BinaryField(max_length=512)
+    Text = models.BinaryField(max_length=768)
+    Timestamp = models.BinaryField(max_length=512)
+
+    def getDiaryId(self):
+        return self.DiaryId
+    
+    def getUserId(self):
+        return self.UserId
+
+    def getDate(self, privKey):
+        return rsa_decrypt(privKey.encode('utf-8'), self.Date).decode("utf-8")
+
+    def getText(self, privKey):
+        return rsa_decrypt_long(privKey.encode('utf-8'), self.Text).decode("utf-8")
+
+    def getTimestamp(self, privKey):
+        return rsa_decrypt(privKey.encode('utf-8'), self.Timestamp).decode("utf-8")
+
+    def setUserId(self, user):
+        self.UserId = user
+
+    def setDate(self, pubKey, date):
+        self.Date = rsa_encrypt(pubKey, date.encode("utf-8"))
+
+    def setText(self, pubKey, text):
+        self.Text = rsa_encrypt_long(pubKey, text.encode("utf-8"))
+
+    def setTimestamp(self, pubKey, timestamp):
+        self.Timestamp = rsa_encrypt(pubKey, timestamp.encode("utf-8"))
+
+    def lessThan(self, other, privKey):
+        selfDate = self.getDate(privKey)
+        otherDate = other.getDate(privKey)
+        if selfDate != otherDate:
+            return selfDate < otherDate
+        return self.getTimestamp(privKey) < other.getTimestamp(privKey)
+    
