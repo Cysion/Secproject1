@@ -24,8 +24,92 @@
     </div>
 </section>
 
-<!--Insert page content here-->
-<p>therapynotes (8)</p>
+<section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <h2 class="h4 text-uppercase">{{ prepare.steps.0 }} {{ prepare.steps.8 }}/{{ prepare.steps.8 }}: {{ prepare.therapy_notes.title }}</h2>
+    <p>{{ prepare.therapy_notes.important_facts }}<br>
+    {{ prepare.therapy_notes.what_helps }}</p>
+</section>
+
+<section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <h3>{{ prepare.diary.stored_entries }}</h3>
+    <hr class="mx-0 my-1" style="border-style: solid; border-color: #109075;">
+    
+<!--
+    Kommentar för implementation:
+    Varje dict 'entry' i listan 'entries' sparas med följande variabler:
+    - EntryDate (datum som användare fyller i)
+    - Text (text som användare fyller i)
+    - TimestampCreated (autogenererad, anger exakt när entry skapades)
+    - Id (id för entry)
+
+    Sortering skall ske innan output, enligt följande ordning:
+    1. EntryDate
+    2. TimestampCreated
+-->
+
+{% for entry in entries %}
+    <div class="row my-2">
+        <div class="col-12 col-md-auto">
+            <p>{{ entry.EntryDate }}</p>
+        </div>
+        <div class="col-12 col-md">
+            <p class="p-1 m-0" style="background-color: white; border-style: solid; border-color: lightgray">{{ entry.Text }}</p>
+        </div>
+        <div class="col-12 col-md-auto m-1">
+            <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveEntry{{ entry.Id }}"><i class="fas fa-trash-alt"></i></button>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="confirmRemoveEntry{{ entry.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterLongTitle">{{ prepare.therapy_notes.modal.confirm_action }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ prepare.therapy_notesy.modal.confirm_remove_contact }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.therapy_notes.modal.close }}</button>
+                    <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/8/{{ entry.Id }}?delete=true">{{ prepare.therapy_notes.modal.remove_contact }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="mx-0 my-1" style="border-style: solid; border-color: #109075;">
+    {% endfor %}
+
+    
+    
+    <h3>{{ prepare.diary.create_entry }}</h3>
+
+    <form action="/prepare/7/" class="was-validated" method="POST">
+        <div class="row">
+            <div class="form-group col-12 col-md-auto">
+                <label for="date_of_birth">{{ prepare.therapy_notes.date }}: </label>
+                <input type="date" class="form-control" id="date" name="date"
+                  min="1850-01-01" max="{% now "Y-m-d" %}" required>
+            </div>
+            <div class="form-group col-12 col-md">
+                <label for="media_text">{{ prepare.therapy_notes.text }}:</label>
+                <textarea class="form-control" rows="2" id="text" name="text" maxlength="500" required></textarea>
+              </div>
+              {% if alerts.text %}
+              <div class="alert alert-danger">
+                <strong>{{ error }}</strong> {{ alerts.text }}
+              </div>
+              {% endif %}
+            </div>
+            <div class="form-group col-12 m-0 p-0">
+                <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ prepare.therapy_notes.add }}">
+            </div>
+        </div>
+    </form>
+</section>
 
 <section class="my-3 mx-0">
     <ul class="pagination justify-content-center">
