@@ -3,55 +3,75 @@
 {% block title %}Prepare{% endblock %}
 
 {% block content %}
-
 <h1> {{ relations.add_new }} </h1>
-<form action="/prepare/contacts/" class="was-validated" method="POST">
-    {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
-    <div class="form-group">
-      <label for="name">Name: </label>
-      <input type="text" class="form-control" placeholder="{{ form.placeholder }} Name..."
-        maxlength="64" id="name" name="name" {% if POST %} value="{{POST.name}}" {% endif %}{# If post already has been submitted #} required>
+<form action="/prepare/contacts/edit/{{contact.Id}}" class="was-validated" method="POST">
+  {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
+  <div class="form-group">
+    <label for="name">Name: </label>
+    <input type="text" class="form-control" value="{{contact.Name}}"
+    maxlength="64" id="name" name="name" {% if POST %} value="{{POST.name}}" {% endif %}{# If post already has been submitted #} required>
+    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
+  </div>
+  {% if alert.name %}
+  <div class="alert alert-danger">
+    <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+  </div>
+  {% endif %}
+  <div class="form-group">
+      <label for="name">Phonenumber: </label>
+      <input type="text" class="form-control" value="{{ contact.Phonenumber }}"
+        maxlength="64" id="phonenumber" name="phonenumber" {% if POST %} value="{{POST.phonenumber}}" {% endif %}{# If post already has been submitted #} required>
       <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
     </div>
-    {% if alert.name %}
+    {% if alert.phonenumber %}
     <div class="alert alert-danger">
       <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
     </div>
     {% endif %}
 
     <div class="form-group">
-        <label for="name">Phonenumber: </label>
-        <input type="text" class="form-control" placeholder="{{ form.placeholder }} Phonenumber..."
-          maxlength="64" id="phonenumber" name="phonenumber" {% if POST %} value="{{POST.phonenumber}}" {% endif %}{# If post already has been submitted #} required>
-        <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
-      </div>
-      {% if alert.phonenumber %}
-      <div class="alert alert-danger">
-        <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
-      </div>
-      {% endif %}
+      <label for="name">Available: </label>
+      <input type="text" class="form-control" value="{{contact.Available}}"
+        maxlength="64" id="available" name="available" {% if POST %} value="{{POST.available}}" {% endif %}{# If post already has been submitted #} required>
+      <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
+    </div>
+    {% if alert.available %}
+    <div class="alert alert-danger">
+      <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+    </div>
+    {% endif %}
+
 
       <div class="form-group">
-        <label for="name">Available: </label>
-        <input type="text" class="form-control" placeholder="{{ form.placeholder }} Available..."
-          maxlength="64" id="available" name="available" {% if POST %} value="{{POST.available}}" {% endif %}{# If post already has been submitted #} required>
-        <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
+          <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ prepare.save }}">
       </div>
-      {% if alert.available %}
-      <div class="alert alert-danger">
-        <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
-      </div>
-      {% endif %}
-
-
-        <div class="form-group">
-            <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ prepare.save }}">
-        </div>
-        <a href="/prepare/5/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+      <a href="/prepare/5/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
       
-        <button type="button" data-toggle="modal" data-target="#confirmRemoveContact{{ contact.Id }}" class="btn btn-block btn-lg btn-danger"><i class="fas fa-trash-alt"></i></button>
+      <button type="button" data-toggle="modal" data-target="#confirmRemoveContact{{ contact.Id }}" class="btn btn-block btn-lg btn-danger"><i class="fas fa-trash-alt"></i></button>
 
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="confirmRemoveContact{{ contact.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true"> <!--BEHÖVER FIXAS-->
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="modalCenterLongTitle">{{ prepare.contacts.modal.confirm_action }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <p>{{ prepare.contacts.modal.confirm_remove_contact }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.contacts.modal.close }}</button>
+                <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/contacts/edit/{{ contact.Id }}?delete=true">{{ prepare.contacts.modal.remove_contact }}</a> <!--BEHÖVER FIXAS-->
+            </div>
+        </div>
     </div>
+  </div>
+
 </form>
 
 <!-- Modal -->
@@ -69,7 +89,7 @@
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.contacts.modal.close }}</button>
-              <a name="delete" type="button" class="btn btn-danger" value="1" href="#">{{ prepare.contacts.modal.remove_contact }}</a> <!--BEHÖVER FIXAS--> <!--"prepare.contacts.modal.remove_contact" funkar ej?-->
+              <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/contacts/edit/{{contact.Id}}?delete=true">{{ prepare.contacts.modal.remove_contact }}</a> <!--BEHÖVER FIXAS--> <!--"prepare.contacts.modal.remove_contact" funkar ej?-->
           </div>
       </div>
   </div>

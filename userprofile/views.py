@@ -347,11 +347,9 @@ def manageRelationsView(request):
 
         if request.method == 'POST':
             if 'delete' in request.POST:
-                print("delete")
                 removeRelation(request.session['UserId'], request.session['PrivKey'], email)
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             elif 'save' in request.POST:
-                print("modify")
                 relationFrom = RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
                 permission['Profile'] = '1'
                 permission['SaveMePlan'] ='1' if 'share_savemeplan' in request.POST else '0'

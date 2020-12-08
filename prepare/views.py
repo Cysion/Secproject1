@@ -66,8 +66,8 @@ def MenuView(request, page=0):
         'contacts':contacts
     }
 
-    if 0 < page < 9:
-        new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+    #if 0 < page < 9:
+    #    new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
     return render(request, template, args)
 
 
@@ -235,7 +235,7 @@ def addMemoryView(request):
         'max_file_size': int(media_conf["max_size_mb"]),
         'mem_type': mem_type
     }
-    new_entry("m1", user.getAnonId(request.session["PrivKey"]), "na")
+    #new_entry("m1", user.getAnonId(request.session["PrivKey"]), "na")
     return render(request, 'prepare/add_memory.html', args)
 
 def MemoryView(request, id):
@@ -455,17 +455,50 @@ def ContactsView(request):
     }
     return render(request, 'prepare/add_contact.html', args)
 
-def editContactsView(request):
+
+def editContactView(request, id):
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
     prepare_lang = get_lang(sections=["prepare"])
+    alerts=dict()
+    
+    user = User.objects.filter(UserId=request.session["UserId"])[0]
+    contact = Contacts.objects.filter(ContactsId=id)[0]
+    
+    if request.GET and "delete" in request.GET.keys():
+        if request.GET['delete']:
+            removeContact(request.session["UserId"], id)
+            return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
+
+    if request.method=='POST':
+        contact = Contacts.objects.filter(ContactsId=id)[0]
+        contact.setName(request.POST['name'])
+        contact.setPhonenumber(request.POST['phonenumber'])
+        contact.setAvailable(request.POST['available'])
+        contact.save()
+        return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
+
+    contactData = dict({
+        'Id': contact.ContactsId,
+        'Name': contact.getName(request.session['PrivKey']),
+        'Phonenumber':contact.getPhonenumber(request.session['PrivKey']),
+        'Available':contact.getAvailable(request.session['PrivKey'])
+    })
+
+
     args = {
         'POST': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG['universal']['back'],
+        'alert': alerts,
         'prepare': prepare_lang["prepare"],
-        "back": UNIVERSAL_LANG["universal"]["back"],
-        'modal': prepare_lang["prepare"]["contacts"]["modal"]
+        'modal': prepare_lang["prepare"]["contacts"]["modal"],
+        'contact':contactData
+
     }
     return render(request, 'prepare/edit_contact.html', args)
+
+
 
 def addContact(uId, name, phonenumber, available, privKey):
     user = User.objects.filter(UserId = uId)[0]
@@ -484,12 +517,18 @@ def showContacts(uId, PrivKey):
     contacts = Contacts.objects.filter(UserId=user)
     for contact in contacts:
         contactInfo = dict({
+            'Id':contact.ContactsId,
             'Name':contact.getName(PrivKey),
             'Phonenumber':contact.getPhonenumber(PrivKey),
             'Available':contact.getAvailable(PrivKey)
         })
         contactsToReturn.append(contactInfo)
     return contactsToReturn
+
+def removeContact(uId, contactId):
+    user = User.objects.filter(UserId=uId)[0]
+    Contacts.objects.filter(ContactsId=contactId, UserId=user).delete()
+
 
 def showAllmemories(uId, PrivKey, memType):
     if memType in 'sd':
