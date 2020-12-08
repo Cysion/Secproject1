@@ -50,15 +50,17 @@ def MenuView(request, page=0):
     elif page == 6:
         template = 'prepare/6_wheretocall.html'
     elif page == 7:
+        symKey = user.getSymKey(request.session['PrivKey'])
         if request.method == 'POST':
             if 'date' in request.POST.keys() and 'text' in request.POST.keys():
                 now = str(datetime.now())
                 diaryEntry = Diary(UserId = user)
-                diaryEntry.setDate(user.getPubkey(), request.POST['date'])
-                diaryEntry.setText(user.getPubkey(), request.POST['text'])
-                diaryEntry.setTimestamp(user.getPubkey(), now)
+                diaryEntry.setDate(symKey, request.POST['date'])
+                text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
+                diaryEntry.setText(symKey, text)
+                diaryEntry.setTimestamp(symKey, now)
                 diaryEntry.save()
-        diary = showDiary(user.getUid(), request.session['PrivKey'])
+        diary = showDiary(user.getUid(), symKey)
         template = 'prepare/7_diary.html'
     elif page == 8:
         template = 'prepare/8_therapynotes.html'
@@ -618,28 +620,28 @@ def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
         mediaObject.save()
 
 
-def showDiary(uId, privKey):
+def showDiary(uId, symKey):
     user=User.objects.filter(UserId=uId)[0]
     diary = []
     entries = Diary.objects.filter(UserId=user)
-    entries = sortDiary(entries, privKey)
+    entries = sortDiary(entries, symKey)
     for entry in entries:
         entry = {
-            'EntryDate' : entry.getDate(privKey),
-            'Text' : entry.getText(privKey),
-            'TimestampCreated' : entry.getTimestamp(privKey),
+            'EntryDate' : entry.getDate(symKey),
+            'Text' : entry.getText(symKey),
+            'TimestampCreated' : entry.getTimestamp(symKey),
             'Id' : entry.getDiaryId()
         }
         diary.append(entry)
     return diary
 
-def sortDiary(diary, privKey):
+def sortDiary(diary, symKey):
     if len(diary) > 1:
-        low = sortDiary(diary[0:len(diary)//2], privKey)
-        high = sortDiary(diary[(len(diary)//2):len(diary)], privKey)
+        low = sortDiary(diary[0:len(diary)//2], symKey)
+        high = sortDiary(diary[(len(diary)//2):len(diary)], symKey)
         diary = []
         for value in low:
-            while high and high[0].lessThan(value, privKey):
+            while high and high[0].lessThan(value, symKey):
                 diary.append(high.pop(0))
             diary.append(value)
         if high:

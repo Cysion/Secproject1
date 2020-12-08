@@ -1,5 +1,5 @@
 from django.db import models
-from tools.crypto import rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
+from tools.crypto import rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long, aes_encrypt, aes_decrypt
 
 # Create your models here.
 
@@ -87,31 +87,31 @@ class Diary(models.Model):
     def getUserId(self):
         return self.UserId
 
-    def getDate(self, privKey):
-        return rsa_decrypt(privKey.encode('utf-8'), self.Date).decode("utf-8")
+    def getDate(self, symKey):
+        return aes_decrypt(symKey, self.Date).decode("utf-8")
 
-    def getText(self, privKey):
-        return rsa_decrypt_long(privKey.encode('utf-8'), self.Text).decode("utf-8")
+    def getText(self, symKey):
+        return aes_decrypt(symKey, self.Text).decode("utf-8")
 
-    def getTimestamp(self, privKey):
-        return rsa_decrypt(privKey.encode('utf-8'), self.Timestamp).decode("utf-8")
+    def getTimestamp(self, symKey):
+        return aes_decrypt(symKey, self.Timestamp).decode("utf-8")
 
     def setUserId(self, user):
         self.UserId = user
 
-    def setDate(self, pubKey, date):
-        self.Date = rsa_encrypt(pubKey, date.encode("utf-8"))
+    def setDate(self, symKey, date):
+        self.Date = aes_encrypt(symKey, date.encode("utf-8"))
 
-    def setText(self, pubKey, text):
-        self.Text = rsa_encrypt_long(pubKey, text.encode("utf-8"))
+    def setText(self, symKey, text):
+        self.Text = aes_encrypt(symKey, text.encode("utf-8"))
 
-    def setTimestamp(self, pubKey, timestamp):
-        self.Timestamp = rsa_encrypt(pubKey, timestamp.encode("utf-8"))
+    def setTimestamp(self, symKey, timestamp):
+        self.Timestamp = aes_encrypt(symKey, timestamp.encode("utf-8"))
 
-    def lessThan(self, other, privKey):
-        selfDate = self.getDate(privKey)
-        otherDate = other.getDate(privKey)
+    def lessThan(self, other, symKey):
+        selfDate = self.getDate(symKey)
+        otherDate = other.getDate(symKey)
         if selfDate != otherDate:
             return selfDate < otherDate
-        return self.getTimestamp(privKey) < other.getTimestamp(privKey)
+        return self.getTimestamp(symKey) < other.getTimestamp(symKey)
     
