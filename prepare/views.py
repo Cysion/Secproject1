@@ -647,3 +647,12 @@ def sortDiary(diary, symKey):
         if high:
             diary += high
     return diary
+
+
+def reencryptDiary(user, oldSymKey, newSymkey):
+    entries = Diary.objects.filter(UserId=user)
+    for entry in entries:
+            entry.setDate(newSymkey, entry.getDate(oldSymKey))
+            entry.setText(newSymkey, entry.getText(oldSymKey))
+            entry.setTimestamp(newSymkey, entry.getTimestamp(oldSymKey))
+            entry.save()
