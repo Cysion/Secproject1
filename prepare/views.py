@@ -74,6 +74,8 @@ def MenuView(request, page=0):
 
         template = 'prepare/menu.html'
 
+    print(prepare_lang["prepare"]["contacts"]["modal"])
+
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -197,7 +199,7 @@ def addMemoryView(request):
 
                     if 'media_text' in request.POST.keys() and len(request.POST["media_text"]) <= 500 and not alerts:  # Optional
                         memory.setMediaText(user.getPubkey(), request.POST["media_text"])
-                    else:
+                    elif len(request.POST["media_text"]) > 500:
                         alerts["text"] = prepare_lang["prepare"]["long_texts"]["alerts"]["text_to_long"]
 
                     if not alerts and not request.GET:
@@ -260,6 +262,7 @@ def addMemoryView(request):
 
 def MemoryView(request, id):
 
+
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -321,7 +324,7 @@ def MemoryView(request, id):
         memtype = "youtube"
         content[memtype] = unidentified_url.split("/")[-1]  # get video id of youtube video
 
-    elif local_url_pattern.match(unidentified_url): 
+    elif local_url_pattern.match(unidentified_url):
         url = unidentified_url
         memtype = "photo/video/sound"
 
@@ -403,7 +406,7 @@ def MemoryView(request, id):
             memtype = "sound"
         else:
             memtype = "error"
-        
+
         if memtype != "error":
 
             file_path = "temp/"
@@ -471,7 +474,7 @@ def ContactsView(request):
         if not alerts:
             prepare.tools.addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
-    
+
     prepare_lang = get_lang(sections=["prepare"])
 
     args = {
