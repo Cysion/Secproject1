@@ -60,10 +60,40 @@
     "check":{
         "unformat":[],
         "title":"check",
-        "long_texts":{
-        }
-
-    },
+        "pages":["MY GREEN CASE INDEX","MY WELL-FEELING INDEX","SAVE.ME PLAN","MY PRACTICE SELF-CARE"],
+        "good_job":"Good Job!",
+        "progress_overview":"Progress overview",
+        "green_case":{
+            "subtitle":"MY GREEN CASE INDEX PROGRESS OVERVIEW",
+            "select_month":"Select month and year",
+            "go":"Go",
+            "red_day":"Red day - day with an unhealthy activity",
+            "orange_day":"Orange day - day with no health+/- activities",
+            "green_day":"Green day - day with health+ activities",
+            "green_case_index":"GREEN CASE INDEX",
+            "red_days":"Red days/days",
+            "orange_days":"orange days/days",
+            "green_days":"Green days/days"
+        },
+        "well_feeling":{
+            "subtitle":"MY WELL-FEELING INDEX PROGRESS OVERVIEW",
+            "statistics":["IDENTITY","VALUE","ACCESS","CONTROLL"]
+        },
+        "save_me_plan":{
+            "subtitle":"SAVE.ME PLAN PROGRESS OVERVIEW",
+            "statistics":{
+                "steps":["STEP","A1","A2","A3","A4","B1","B2","B3","B4","C1","C2","C3","C4"],
+                "a":["SITUATION","FEELINGS","THOUGHTS","BEHAVIORS"],
+                "b":["CALM & DISTRACT","WALK","REPLACE","PROTECT"],
+                "c":["SMS & CHAT","CALL","GO SAFE","112"]
+            }
+        },
+        "practice_self_care":{
+            "subtitle":"MY PRACTICE SELF-CARE PROGRESS OVERVIEW",
+            "steps":["STEP","1","2","3","4","5","6","7","8","9","10","11","12"],
+            "statistics":["MAGICIAN","FEELER","THINKER","COOLER","TALKER","WALKER","ECO","SMARTER","DISCOVER","SAFER","HELPER","EXPERT"]
+            }
+        },
     "danger":{
         "unformat":[],
         "title":"danger",
