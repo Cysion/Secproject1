@@ -1,6 +1,7 @@
-body{
+body {
   padding-top: 100px; /*Padding is needed so nothing comes under navbar*/
   padding-bottom: 100px;
+  background-color: #e6fff4 !important;
 }
 
 .navbar {

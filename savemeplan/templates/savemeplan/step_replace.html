@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% load static %}
+{% block statics %}
+<link rel="stylesheet" href="{% static "savemeplan/savemeplan.css" %}">
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+textarea:focus {
+  background-color: {{ content.step_bg }};
+}
+</style>
+<section class="row p-2 align-items-center justify-content-between" style="background-color: white; border-style: solid; border-color: #ff66f0;">
+    <div class="col-md-4 col page-title">
+        <h4 class="m-2 p-0 text-center"><i class="fas fa-umbrella"></i>Save.Me Plan!</h4>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-3 px-1">
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'A' %} active {% endif %}" name="page" href="/savemeplan/0/">A</a>
+            </div>
+            <div class="col-3 px-1">
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'B' %} active {% endif %}" name="page" href="/savemeplan/5/">B</a>
+            </div>
+            <div class="col-3 px-1">
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'C' %} active {% endif %}" name="page" href="/savemeplan/10/">C</a>
+            </div>
+            <div class="col-3 px-1">
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'D' %} active {% endif %}" name="page" href="/savemeplan/15/">D</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="part-description" style="background-color: {{ content.step_bg }};">
+  <h4>{{ content.step_title }}:</h4>
+</div>
+<div class="row">
+  <div class="col-1"></div>
+  <div class="col-5 replace_bad text-center">
+    <p>{{ content.dangerous }}</p>
+  </div>
+  <div class="col-5 replace_good text-center">
+    {{ content.good }}
+  </div>
+  <div class="col-1"></div>
+</div>
+<form action="/savemeplan/{{ content.current_step }}/" method="POST">
+  {% csrf_token %}
+  <div class="form-check">
+    {% for option in content.options %}
+    <div class="row">
+      <div class="col-6">
+        <label class="form-check-label replace_bad_item text-center">
+        <input type="radio" ckass="form-check-input" name="bad" value="{{ option.0 }}">  {{ option.0 }}</label>
+      </div>
+      <div class="col-6">
+        <label class="form-check-label replace_good_item text-center">
+        <input type="radio" ckass="form-check-input" name="good" value="{{ option.1 }}">  {{ option.1 }}</label>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="row">
+      <div class="col-6">
+        <label class="form-check-label replace_bad_item text-center">
+          <input type="radio" class="form-check-input" id="bad" name="bad" value="other">  Other
+        </label>
+      </div>
+      <div class="col-6">
+        <label class="form-check-label replace_good_item text-center">
+          <input type="radio" class="form-check-input" id="good" name="good" value="other"> Other
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6">
+      <div class="form-group replace_bad_item_text">
+        <label for="bad_other">{{ content.other }}:</label>
+        <input type="text" class="form-control" placeholder="{{ content.other_placeholder }}..." id="bad_other" name="bad_other">
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="form-group replace_good_item_text">
+        <label for="good_other">{{ content.other }}:</label>
+        <input type="text" class="form-control" placeholder="{{ content.other_placeholder }}..." id="good_other" name="good_other">
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:20px;">{{ next_step }}</button>
+</form>
+
+
+{% endblock %}
