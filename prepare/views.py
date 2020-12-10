@@ -194,7 +194,7 @@ def addMemoryView(request):
 
                     if 'media_text' in request.POST.keys() and len(request.POST["media_text"]) <= 500 and not alerts:  # Optional
                         memory.setMediaText(user.getPubkey(), request.POST["media_text"])
-                    else:
+                    elif len(request.POST["media_text"]) > 500:
                         alerts["text"] = prepare_lang["prepare"]["long_texts"]["alerts"]["text_to_long"]
 
                     if not alerts and not request.GET:
@@ -257,6 +257,7 @@ def addMemoryView(request):
 
 def MemoryView(request, id):
 
+
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -311,7 +312,7 @@ def MemoryView(request, id):
         memtype = "youtube"
         content[memtype] = unidentified_url.split("/")[-1]  # get video id of youtube video
 
-    elif local_url_pattern.match(unidentified_url): 
+    elif local_url_pattern.match(unidentified_url):
         url = unidentified_url
         memtype = "photo/video/sound"
 
@@ -336,7 +337,7 @@ def MemoryView(request, id):
             request.session["global_alerts"] = [alert]
         else:
             request.session["global_alerts"].append(alert)
-        
+
         new_entry("m2", user.getAnonId(request.session["PrivKey"]), "na")
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
@@ -366,7 +367,7 @@ def MemoryView(request, id):
 
         try:
             file = open_file(user.getSymKey(request.session["PrivKey"]), url)
-            
+
         except RuntimeError as e:
             alert = {
                 "color": "error",
@@ -393,7 +394,7 @@ def MemoryView(request, id):
             memtype = "sound"
         else:
             memtype = "error"
-        
+
         if memtype != "error":
 
             file_path = "temp/"
@@ -478,10 +479,10 @@ def editContactView(request, id):
         return HttpResponseRedirect(reverse('login:Login'))
     prepare_lang = get_lang(sections=["prepare"])
     alerts=dict()
-    
+
     user = User.objects.filter(UserId=request.session["UserId"])[0]
     contact = Contacts.objects.filter(ContactsId=id)[0]
-    
+
     if request.GET and "delete" in request.GET.keys():
         if request.GET['delete']:
             removeContact(request.session["UserId"], id)
@@ -519,7 +520,7 @@ def editContactView(request, id):
 def removeDiaryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    
+
     user = User.objects.filter(UserId=request.session["UserId"])[0]
 
     Diary.objects.filter(UserId=user, DiaryId=id).delete()
@@ -596,15 +597,15 @@ def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
         try:
             mediaLink = mediaObject.getLink(oldPrivKey)
         except ValueError:
-            pass    
+            pass
         else:
             if mediaLink in newFileNames:
                 print(f"Medialink old: {mediaLink}")
-                
+
                 mediaLink = newFileNames[mediaLink]
                 print(f"MediaLink new: {mediaLink}")
             mediaObject.setLink(newPubKey, mediaLink)
-        
+
         try:
             memory = mediaObject.getMemory(oldPrivKey)
         except ValueError:
