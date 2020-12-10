@@ -4,6 +4,10 @@ from django.urls import reverse
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
+from savemeplan.models import SaveMePlan
+from login.models import User
+
+import time
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
 
@@ -30,6 +34,12 @@ def StartView(request):
     return HttpResponseRedirect(reverse('savemeplan:Step', args=(0,)))  # Redirect user to savemeplan part A
 
 def StepView(request, step):
+    """
+    Main Save.me Plan view. Handles all interfaces and saving to database for each step.
+
+    step=Current step, is between 0-15. 0, 5, 10, 15 is Part A, B, C, D
+    And those between is the actual steps for Save.me Plan ex 1=A1, 7=B2...
+    """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -48,8 +58,117 @@ def StepView(request, step):
     if request.POST:
         if 'choosen_item' in request.POST.keys():
             content["textarea_text"] = request.POST['choosen_item']
-        else:
-            # Check for stuff and add to db...
+        else:  # User is going to next step.
+            steps = {
+                1: 'A1',
+                2: 'A2',
+                3: 'A3',
+                4: 'A4',
+                6: 'B1',
+                7: 'B2',
+                8: 'B3',
+                9: 'B4',
+                11: 'C1',
+                12: 'C2',
+                13: 'C3',
+                14: 'C4',
+            }
+
+            if step in [1, 2, 3, 4, 6, 7, 9]:  # Is using step_default.html template
+
+                user = User.objects.filter(pk=request.session['UserId'])[0]
+                savemeplan_step = SaveMePlan(UserId=user)
+                savemeplan_step.setStep(steps[step])  # Save step as a user reads it
+                privKey = request.session['PrivKey']
+
+                if 'describe' in request.POST.keys():
+                    if len(request.POST['describe']) != 0:
+                        savemeplan_step.setText(request.POST['describe'])
+                    else:
+                        savemeplan_step.setText('EMPTY')
+                else:
+                    savemeplan_step.setText('EMPTY')
+
+                if 'rating' in request.POST.keys():
+                    if len(request.POST['rating']) != 0:
+                        savemeplan_step.setValue(request.POST['rating'])
+                    else:
+                        savemeplan_step.setValue('-1')
+                else:
+                    savemeplan_step.setValue('-1')
+
+                savemeplan_step.setTime(str(int(time.time())))
+
+                savemeplan_step.save()
+
+            elif step == 8:  # Replace a bad thing with a good thing step.
+
+                user = User.objects.filter(pk=request.session['UserId'])[0]
+                savemeplan_step = SaveMePlan(UserId=user)
+                savemeplan_step.setStep(steps[step])
+                privKey = request.session['PrivKey']
+
+                replace = ''  # Will have format <bad>;<good> IF one of them is empty they will be replaced by EMPTY
+
+                if 'bad' in request.POST.keys():
+                    if request.POST['bad'] != 'other':
+                        replace = f"{request.POST['bad']};"
+
+                    else:
+                        if len(request.POST['bad_other']) != 0:
+                            replace = f"{request.POST['bad_other']};"
+
+                        else:
+                            replace = 'EMPTY;'
+                else:
+                    replace = 'EMPTY;'
+
+                if 'good' in request.POST.keys():
+                    if request.POST['good'] != 'other':
+                        replace = f"{replace}{request.POST['good']}"
+
+                    else:
+                        if len(request.POST['good_other']) != 0:
+                            replace = f"{replace}{request.POST['good_other']}"
+                        else:
+                            replace = f"{replace}EMPTY"
+
+                else:
+                    replace = f"{replace}EMPTY"
+
+                savemeplan_step.setText(replace)
+                savemeplan_step.setValue('-1')
+                savemeplan_step.setTime(str(int(time.time())))
+                savemeplan_step.save()
+
+            elif step == 13:  # Go to a safe place step
+
+                user = User.objects.filter(pk=request.session['UserId'])[0]
+                savemeplan_step = SaveMePlan(UserId=user)
+                savemeplan_step.setStep(steps[step])
+                privKey = request.session['PrivKey']
+
+                goto = ''
+
+                if 'place' in request.POST.keys():
+                    if request.POST['place'] != 'other':
+                        goto = request.POST['place']
+
+                    else:
+                        if len(request.POST['place_other']) != 0:
+                            goto = request.POST['place_other']
+                        else:
+                            goto = 'EMPTY'
+
+                else:
+                    goto = 'EMPTY'
+
+                savemeplan_step.setText(goto)
+
+                savemeplan_step.setValue('-1')
+                savemeplan_step.setTime(str(int(time.time())))
+
+                savemeplan_step.save()
 
             return HttpResponseRedirect(reverse('savemeplan:Step', args=(step+1,)))
 

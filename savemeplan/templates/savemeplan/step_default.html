@@ -50,14 +50,14 @@ textarea:focus {
   {% csrf_token %}
   <ul class="list-group item-list">
       {% for item in content.options %}
-        <button type="submit" class="list-group-item list-item" s style="background-color: {{ content.step_bg }};" name="choosen_item" value="{{ item }}">{{ item }}</button>
+        <button type="submit" class="list-group-item list-item" style="background-color: {{ content.step_bg }};" name="choosen_item" value="{{ item }}">{{ item }}</button>
       {% endfor %}
   </ul>
 </form>
 <form action="/savemeplan/{{ content.current_step }}/" method="POST">
   {% csrf_token %}
   <div class="form-group">
-    <textarea class="form-control" rows="5" id="comment"  style="background-color: {{ content.step_bg }};" placeholder="{{ content.describe_placeholder }}..." maxlength="64">{{ content.textarea_text }}</textarea>
+    <textarea class="form-control" rows="5" id="describe" name="describe" style="background-color: {{ content.step_bg }};" placeholder="{{ content.describe_placeholder }}..." maxlength="64">{{ content.textarea_text }}</textarea>
   </div>
   <div class="form-group rating">
     <label for="rating">{{ content.rate }}<br>1 - {{ content.1 }}<br>{% if content.4 %}4 - {{ content.4 }}{% else %} 9 - {{ content.9 }}{% endif %}</label>
