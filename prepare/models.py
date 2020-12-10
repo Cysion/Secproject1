@@ -1,5 +1,5 @@
 from django.db import models
-from tools.crypto import rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
+from tools.crypto import rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long, aes_encrypt, aes_decrypt
 
 # Create your models here.
 
@@ -72,3 +72,46 @@ class Media(models.Model):
 
     def setMediaSize(self, PubKey, size):
             self.MediaSize=rsa_encrypt(PubKey, str(size).encode("utf-8"))
+
+
+class Diary(models.Model):
+    DiaryId = models.AutoField(primary_key=True)
+    UserId = models.ForeignKey(User, on_delete=models.CASCADE)
+    Date = models.BinaryField(max_length=512)
+    Text = models.BinaryField(max_length=768)
+    Timestamp = models.BinaryField(max_length=512)
+
+    def getDiaryId(self):
+        return self.DiaryId
+    
+    def getUserId(self):
+        return self.UserId
+
+    def getDate(self, symKey):
+        return aes_decrypt(symKey, self.Date).decode("utf-8")
+
+    def getText(self, symKey):
+        return aes_decrypt(symKey, self.Text).decode("utf-8")
+
+    def getTimestamp(self, symKey):
+        return aes_decrypt(symKey, self.Timestamp).decode("utf-8")
+
+    def setUserId(self, user):
+        self.UserId = user
+
+    def setDate(self, symKey, date):
+        self.Date = aes_encrypt(symKey, date.encode("utf-8"))
+
+    def setText(self, symKey, text):
+        self.Text = aes_encrypt(symKey, text.encode("utf-8"))
+
+    def setTimestamp(self, symKey, timestamp):
+        self.Timestamp = aes_encrypt(symKey, timestamp.encode("utf-8"))
+
+    def lessThan(self, other, symKey):
+        selfDate = self.getDate(symKey)
+        otherDate = other.getDate(symKey)
+        if selfDate != otherDate:
+            return selfDate < otherDate
+        return self.getTimestamp(symKey) < other.getTimestamp(symKey)
+    
