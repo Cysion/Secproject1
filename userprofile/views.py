@@ -9,7 +9,7 @@ from tools.crypto import gen_rsa, secret_scrambler
 from tools.confman import get_lang
 from tools.mediaman import reencrypt_user
 from django.db import transaction
-from prepare.views import reencryptMedia
+from prepare.views import reencryptMedia, reencryptDiary
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
 
 from science.views import new_entry
@@ -219,7 +219,7 @@ def changePass(uId:int, PrivKey, newPassword:str):
     lastName=user.getLastName(PrivKey)
     gender=user.getGender(PrivKey)
     dateOfBirth=user.getDateOfBirth(PrivKey)
-    symKey=user.getSymKey(PrivKey)
+    oldSymKey=user.getSymKey(PrivKey)
     anonId = user.getAnonId(PrivKey)
 
     key = gen_rsa(secret_scrambler(newPassword, uId))
@@ -231,12 +231,13 @@ def changePass(uId:int, PrivKey, newPassword:str):
         user.setFirstName(firstName.capitalize())
         user.setLastName(lastName.capitalize())
         user.setDateOfBirth(dateOfBirth)
-        print(f"Symkey: {user.Symkey}")
-        retVal = reencrypt_user(anonId, symKey)
-        user.setSymkey(retVal[0])
+        retVal = reencrypt_user(anonId, oldSymKey)
+        newSymkey = retVal[0]
+        user.setSymkey(newSymkey)
         user.setAnonId(PrivKeyNew)
         user.save()
 
+        reencryptDiary(user, oldSymKey, newSymkey)
         reencryptMedia(user.getUid(), PrivKey, pubkey, retVal[1])
 
         relationsTo = RelationTo.objects.filter(UserIdFrom=user.getUid())
