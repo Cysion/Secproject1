@@ -2,9 +2,11 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from userprofile.views import showAllRelationsFrom, updateRelationTo, sharesDataWith
-from userprofile.models import RelationFrom, RelationTo
-from login.models import User
+import userprofile.tools
+import login.models
+import prepare.tools
+import prepare.models
+import datetime
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
@@ -22,8 +24,8 @@ def ClientsView(request):
     Permissions (dict) with key as Profile, SaveMePlan, Check, Prepare or Media
     Values as 1 or 0 where 1 is got access and 0 denied access."""
 
-    updateRelationTo(request.session['UserId'], request.session['PrivKey'])
-    clients = showAllRelationsFrom(request.session['UserId'], request.session['PrivKey'])
+    userprofile.tools.updateRelationTo(request.session['UserId'], request.session['PrivKey'])
+    clients = userprofile.tools.showAllRelationsFrom(request.session['UserId'], request.session['PrivKey'])
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -47,10 +49,10 @@ def profileView(request, UserId):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
-    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
+    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
-    user=User.objects.filter(UserId=UserId)[0]
+    user=login.models.User.objects.filter(UserId=UserId)[0]
 
     account = {}
     account['firstName']=user.getFirstName(userPrivKey)
@@ -74,21 +76,70 @@ def profileView(request, UserId):
     return render(request, 'userprofile/edit.html', args)
 
 
-def prepareView(request, UserId):
+def prepareView(request, UserId, page):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
+    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
-    user=User.objects.filter(UserId=UserId)[0]
+    user=login.models.User.objects.filter(UserId=UserId)[0]
+
+    prepare_lang = get_lang(sections=["prepare"])
+    template = 'prepare/menu.html'
+    memories = []
+    contacts = []
+    diary= []
+    
+    print("profprepare")
+    if page == 1:
+        template = 'prepare/1_howto.html'
+    elif page == 2:
+        template = 'prepare/2_practicebreathing.html'
+    elif page == 3:
+        memories = prepare.tools.showAllmemories(user.getUid(), userPrivKey, 's')
+        template = 'prepare/3_supportivememories.html'
+    elif page == 4:
+        memories = prepare.tools.showAllmemories(user.getUid(), userPrivKey, 'd')
+        template = 'prepare/4_destructivememories.html'
+    elif page == 5:
+        contacts=prepare.tools.showContacts(user.getUid(), userPrivKey)
+        template = 'prepare/5_contacts.html'
+    elif page == 6:
+        template = 'prepare/6_wheretocall.html'
+    elif page == 7:
+        symKey = user.getSymKey(userPrivKey)
+        diary = prepare.tools.showDiary(user.getUid(), symKey)
+        template = 'prepare/7_diary.html'
+    elif page == 8:
+        template = 'prepare/8_therapynotes.html'
+    else:
+        template = 'prepare/menu.html'
+
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'prepare': prepare_lang["prepare"],
+        'nav': prepare_lang["prepare"]["nav"],
+        'template': "base_professionals.html",
+        'memories':memories,
+        'contacts':contacts,
+        'entries':diary,
+        'profView':True,
+        'UserId':UserId
+    }
+
+    #if 0 < page < 9:
+    #    new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+    return render(request, template, args)
 
 
 def saveMePlanView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
-    user=User.objects.filter(UserId=UserId)[0]
+    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
+    user=login.models.User.objects.filter(UserId=UserId)[0]
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -106,8 +157,8 @@ def CheckView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    userPrivKey = sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
-    user=User.objects.filter(UserId=UserId)[0]
+    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
+    user=login.models.User.objects.filter(UserId=UserId)[0]
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts

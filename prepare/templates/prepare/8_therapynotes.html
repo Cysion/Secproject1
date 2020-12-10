@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends template %}
 
 {% block title %}Prepare{% endblock %}
 
@@ -88,6 +88,7 @@
     <h3>{{ prepare.diary.create_entry }}</h3>
 
     <form action="/prepare/7/" class="was-validated" method="POST">
+    {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
         <div class="row">
             <div class="form-group col-12 col-md-auto">
                 <label for="date_of_birth">{{ prepare.therapy_notes.date }}: </label>
@@ -113,6 +114,7 @@
 
 <section class="my-3 mx-0">
     <ul class="pagination justify-content-center">
+        {% if not profView %}
         <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
         <li class="page-item"><a class="page-link" name="page" value="1" href="/prepare/1">{{ prepare.steps.1 }}</a></li>
         <li class="page-item"><a class="page-link" name="page" value="2" href="/prepare/2">{{ prepare.steps.2 }}</a></li>
@@ -122,6 +124,19 @@
         <li class="page-item"><a class="page-link" name="page" value="6" href="/prepare/6">{{ prepare.steps.6 }}</a></li>
         <li class="page-item"><a class="page-link" name="page" value="7" href="/prepare/7">{{ prepare.steps.7 }}</a></li>
         <li class="page-item active"><a class="page-link" name="page" value="8" href="#">{{ prepare.steps.8 }}</a></li>
+        {% endif %}
+
+        {% if profView %}
+        <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="1" href="/professionals/{{UserId}}/prepare/1/"> {{ prepare.steps.1 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="2" href="/professionals/{{UserId}}/prepare/2/">{{ prepare.steps.2 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="3" href="/professionals/{{UserId}}/prepare/3/">{{ prepare.steps.3 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="4" href="/professionals/{{UserId}}/prepare/4/">{{ prepare.steps.4 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="5" href="/professionals/{{UserId}}/prepare/5/">{{ prepare.steps.5 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="6" href="/professionals/{{UserId}}/prepare/6/">{{ prepare.steps.6 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="7" href="/professionals/{{UserId}}/prepare/7/">{{ prepare.steps.7 }}</a></li>
+        <li class="page-item active"><a class="page-link" name="page" value="8" href="#">{{ prepare.steps.8 }}</a></li>
+        {% endif %}
     </ul>
 </section>
 

@@ -3,22 +3,24 @@ from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 # Create your views here.
 
-from login.models import User
-from prepare.models import Media, Diary
+import login.models
+import userprofile.tools
+import prepare.models
 from tools.confman import get_lang, get_conf
 from tools.mediaman import get_sha1, save_file, open_file, delete_file
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import login.views
 from django.db import transaction
-from datetime import datetime
+import datetime
 
 from django.core.files import File
-from savemeplan.models import Contacts
+import savemeplan.models
 from tools.scienceman import new_entry
 import time
 import re
 import random
+import prepare.tools
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -32,20 +34,22 @@ def MenuView(request, page=0):
     memories = []
     contacts = []
     diary= []
-    user = User.objects.filter(pk=request.session["UserId"])[0]
+    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
 
     if page == 1:
         template = 'prepare/1_howto.html'
     elif page == 2:
         template = 'prepare/2_practicebreathing.html'
     elif page == 3:
-        memories = showAllmemories(request.session['UserId'], request.session['PrivKey'], 's')
+        memories = prepare.tools.showAllmemories(request.session['UserId'], request.session['PrivKey'], 's')
         template = 'prepare/3_supportivememories.html'
     elif page == 4:
-        memories = showAllmemories(request.session['UserId'], request.session['PrivKey'], 'd')
+        memories = prepare.tools.showAllmemories(request.session['UserId'], request.session['PrivKey'], 'd')
         template = 'prepare/4_destructivememories.html'
     elif page == 5:
-        contacts=showContacts(request.session['UserId'], request.session['PrivKey'])
+        contacts=prepare.tools.showContacts(request.session['UserId'], request.session['PrivKey'])
         template = 'prepare/5_contacts.html'
     elif page == 6:
         template = 'prepare/6_wheretocall.html'
@@ -53,14 +57,14 @@ def MenuView(request, page=0):
         symKey = user.getSymKey(request.session['PrivKey'])
         if request.method == 'POST':
             if 'date' in request.POST.keys() and 'text' in request.POST.keys():
-                now = str(datetime.now())
-                diaryEntry = Diary(UserId = user)
+                now = str(datetime.datetime.now())
+                diaryEntry = prepare.models.Diary(UserId = user)
                 diaryEntry.setDate(symKey, request.POST['date'])
                 text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
                 diaryEntry.setText(symKey, text)
                 diaryEntry.setTimestamp(symKey, now)
                 diaryEntry.save()
-        diary = showDiary(user.getUid(), symKey)
+        diary = prepare.tools.showDiary(user.getUid(), symKey)
         template = 'prepare/7_diary.html'
     elif page == 8:
         template = 'prepare/8_therapynotes.html'
@@ -78,7 +82,8 @@ def MenuView(request, page=0):
         'nav': prepare_lang["prepare"]["nav"],
         'memories':memories,
         'contacts':contacts,
-        'entries':diary
+        'entries':diary,
+        'template': template
     }
 
     #if 0 < page < 9:
@@ -140,7 +145,7 @@ def addMemoryView(request):
                 and len(request.POST["title"]) > 0):
 
             with transaction.atomic():
-                user = User.objects.filter(pk=request.session["UserId"])[0]
+                user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
                 memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
                 memory.setMediaTitle(user.getPubkey(), request.POST["title"])
                 memory.setMediaSize(user.getPubkey(), 0)
@@ -258,18 +263,25 @@ def MemoryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    user = User.objects.filter(pk=request.session["UserId"])[0]
+    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    userPrivkey = request.session["PrivKey"]
     prepare_lang = get_lang(sections=["prepare"])
-
+    profView = False
     content = dict()
     try:
-        memory = Media.objects.filter(pk=id)[0]
+        memory = prepare.models.Media.objects.filter(pk=id)[0]
     except Exception as e:
         return Http404("Memory does not exist!")
 
     if memory.UserId.UserId != request.session["UserId"]:
-        # User dont belong here
-        return Http404("Memory does not exist!")
+        # User doesn't belong here
+        mediaOwnerId=memory.getUserId().getUid()
+        userPrivkey = userprofile.tools.sharesDataWith(mediaOwnerId, request.session["UserId"], userPrivkey).decode("utf-8")
+        if userPrivkey:
+            user = mediaOwnerId=memory.getUserId()
+            profView = True
+        else:
+            return Http404("Memory does not exist!")
 
     if "files_to_delete" in request.session.keys():  # If there is any temporary files not used anymore, delete them
         for file in request.session["files_to_delete"]:
@@ -277,9 +289,9 @@ def MemoryView(request, id):
             delete_file("".join(splitted_path[2:]), splitted_path[1])
 
     content["id"] = id
-    content["title"] = memory.getMediaTitle(request.session["PrivKey"])
-    content["type"] = memory.getMemory(request.session["PrivKey"])
-    content["size"] = int(memory.getMediaSize(request.session["PrivKey"]))/1000000
+    content["title"] = memory.getMediaTitle(userPrivkey)
+    content["type"] = memory.getMemory(userPrivkey)
+    content["size"] = int(memory.getMediaSize(userPrivkey))/1000000
 
     url = ""
     memtype = ""
@@ -289,9 +301,9 @@ def MemoryView(request, id):
     local_url_pattern = re.compile("^[a-zA-Z0-9]{40}\/([a-zA-Z0-9]{40})$")  # Pattern for local files such as video, photo or sound
 
     if memory.MediaText:
-        content["text"] = memory.getMediaText(request.session["PrivKey"])
+        content["text"] = memory.getMediaText(userPrivkey)
     if memory.MediaLink:
-        unidentified_url = memory.getLink(request.session["PrivKey"])
+        unidentified_url = memory.getLink(userPrivkey)
 
     if "youtube.com" in unidentified_url:
         memtype = "youtube"
@@ -321,7 +333,7 @@ def MemoryView(request, id):
 
         if memtype == "photo/video/sound":
             delete_file(url)
-        redirect_path = memory.getMemory(request.session["PrivKey"])  # To know which step to redirect to.
+        redirect_path = memory.getMemory(userPrivkey)  # To know which step to redirect to.
         memory.delete()
 
         alert = {
@@ -335,7 +347,7 @@ def MemoryView(request, id):
         else:
             request.session["global_alerts"].append(alert)
         
-        new_entry("m2", user.getAnonId(request.session["PrivKey"]), "na")
+        new_entry("m2", user.getAnonId(userPrivkey), "na")
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
         else:
@@ -363,7 +375,7 @@ def MemoryView(request, id):
         file_type = ""
 
         try:
-            file = open_file(user.getSymKey(request.session["PrivKey"]), url)
+            file = open_file(user.getSymKey(userPrivkey), url)
             
         except RuntimeError as e:
             alert = {
@@ -432,10 +444,12 @@ def MemoryView(request, id):
         "using_space": using_space,
         "content": content,
         "back": UNIVERSAL_LANG["universal"]["back"],
-        'prepare': prepare_lang["prepare"]
+        'prepare': prepare_lang["prepare"],
+        'profView':profView,
+        'UserId': user.getUid()
     }
 
-    new_entry("m3", user.getAnonId(request.session["PrivKey"]), "na")
+    new_entry("m3", user.getAnonId(userPrivkey), "na")
     return render(request, 'prepare/memory.html', args)
 
 
@@ -445,7 +459,7 @@ def ContactsView(request):
     alerts = {}
     if request.method == 'POST':
         exceptions = ''
-        user = User.objects.filter(UserId=request.session["UserId"])[0]
+        user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
         prepare_lang = get_lang(sections=["prepare"])
         for index in ['name', 'phonenumber', 'available']:
             if index == 'phonenumber':
@@ -455,7 +469,7 @@ def ContactsView(request):
             if login.views.containsBadChar(request.POST[index], exceptions):
                 alerts[index] = "badChar"
         if not alerts:
-            addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
+            prepare.tools.addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
     
     prepare_lang = get_lang(sections=["prepare"])
@@ -477,16 +491,16 @@ def editContactView(request, id):
     prepare_lang = get_lang(sections=["prepare"])
     alerts=dict()
     
-    user = User.objects.filter(UserId=request.session["UserId"])[0]
-    contact = Contacts.objects.filter(ContactsId=id)[0]
+    user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
+    contact = savemeplan.models.Contacts.objects.filter(ContactsId=id)[0]
     
     if request.GET and "delete" in request.GET.keys():
         if request.GET['delete']:
-            removeContact(request.session["UserId"], id)
+            prepare.tools.removeContact(request.session["UserId"], id)
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
 
     if request.method=='POST':
-        contact = Contacts.objects.filter(ContactsId=id)[0]
+        contact = savemeplan.models.Contacts.objects.filter(ContactsId=id)[0]
         contact.setName(request.POST['name'])
         contact.setPhonenumber(request.POST['phonenumber'])
         contact.setAvailable(request.POST['available'])
@@ -518,141 +532,7 @@ def removeDiaryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
     
-    user = User.objects.filter(UserId=request.session["UserId"])[0]
+    user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
 
-    Diary.objects.filter(UserId=user, DiaryId=id).delete()
+    prepare.models.Diary.objects.filter(UserId=user, DiaryId=id).delete()
     return HttpResponseRedirect(reverse('prepare:menu-page', args=(7,)))
-
-def addContact(uId, name, phonenumber, available, privKey):
-    user = User.objects.filter(UserId = uId)[0]
-    contact = Contacts(UserId = user)
-    contact.setName(name)
-    contact.setPhonenumber(phonenumber)
-    contact.setAvailable(available)
-    print(contact.getName(privKey))
-    print(contact.getPhonenumber(privKey))
-    print(contact.getAvailable(privKey))
-    contact.save()
-
-def showContacts(uId, PrivKey):
-    user = User.objects.filter(UserId=uId)[0]
-    contactsToReturn = []
-    contacts = Contacts.objects.filter(UserId=user)
-    for contact in contacts:
-        contactInfo = dict({
-            'Id':contact.ContactsId,
-            'Name':contact.getName(PrivKey),
-            'Phonenumber':contact.getPhonenumber(PrivKey),
-            'Available':contact.getAvailable(PrivKey)
-        })
-        contactsToReturn.append(contactInfo)
-    return contactsToReturn
-
-def removeContact(uId, contactId):
-    user = User.objects.filter(UserId=uId)[0]
-    Contacts.objects.filter(ContactsId=contactId, UserId=user).delete()
-
-
-def showAllmemories(uId, PrivKey, memType):
-    if memType in 'sd':
-        memoryIdList=[]
-        user=User.objects.filter(UserId=uId)[0]
-        memories = Media.objects.filter(UserId=user)
-        for memory in memories:
-            if memory.getMemory(PrivKey) == memType:
-                memoryInfo = dict({'Title':memory.getMediaTitle(PrivKey),'Id':memory.getMediaId(),'Size':memory.getMediaSize(PrivKey)})
-                memoryIdList.append(memoryInfo)
-        return memoryIdList
-    else:
-        return -1
-
-def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
-    user=User.objects.filter(UserId=uId)[0]
-    media = Media.objects.filter(UserId=user)
-    for mediaObject in media:
-        try:
-            mediaType = mediaObject.getMediaType(oldPrivKey)
-        except ValueError:
-            pass
-        else:
-            mediaObject.setMediaType(newPubKey, mediaType)
-
-        try:
-            mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
-        except ValueError:
-            pass
-        else:
-            mediaObject.setMediaTitle(newPubKey, mediaTitle)
-
-        try:
-            mediaText = mediaObject.getMediaText(oldPrivKey)
-        except ValueError:
-            pass
-        else:
-            mediaObject.setMediaText(newPubKey, mediaText)
-
-        try:
-            mediaLink = mediaObject.getLink(oldPrivKey)
-        except ValueError:
-            pass    
-        else:
-            if mediaLink in newFileNames:
-                print(f"Medialink old: {mediaLink}")
-                
-                mediaLink = newFileNames[mediaLink]
-                print(f"MediaLink new: {mediaLink}")
-            mediaObject.setLink(newPubKey, mediaLink)
-        
-        try:
-            memory = mediaObject.getMemory(oldPrivKey)
-        except ValueError:
-            pass
-        else:
-            mediaObject.setMemory(newPubKey, memory)
-
-        try:
-            mediaSize = mediaObject.getMediaSize(oldPrivKey)
-        except ValueError:
-            pass
-        else:
-            mediaObject.setMediaSize(newPubKey, mediaSize)
-
-        mediaObject.save()
-
-
-def showDiary(uId, symKey):
-    user=User.objects.filter(UserId=uId)[0]
-    diary = []
-    entries = Diary.objects.filter(UserId=user)
-    entries = sortDiary(entries, symKey)
-    for entry in entries:
-        entry = {
-            'EntryDate' : entry.getDate(symKey),
-            'Text' : entry.getText(symKey),
-            'TimestampCreated' : entry.getTimestamp(symKey),
-            'Id' : entry.getDiaryId()
-        }
-        diary.append(entry)
-    return diary
-
-def sortDiary(diary, symKey):
-    if len(diary) > 1:
-        low = sortDiary(diary[0:len(diary)//2], symKey)
-        high = sortDiary(diary[(len(diary)//2):len(diary)], symKey)
-        diary = []
-        for value in low:
-            while high and high[0].lessThan(value, symKey):
-                diary.append(high.pop(0))
-            diary.append(value)
-        if high:
-            diary += high
-    return diary
-
-
-def reencryptDiary(user, oldSymKey, newSymkey):
-    entries = Diary.objects.filter(UserId=user)
-    for entry in entries:
-            entry.setDate(newSymkey, entry.getDate(oldSymKey))
-            entry.setText(newSymkey, entry.getText(oldSymKey))
-            entry.setTimestamp(newSymkey, entry.getTimestamp(oldSymKey))
-            entry.save()
