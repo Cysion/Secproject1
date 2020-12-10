@@ -10,6 +10,7 @@ from tools.logman import get_logger
 
 from science.models import ResearchData
 
+
 ID_DESC={
     "PROFILE":"Anonymous user profile",
     "g2":"page click",
@@ -31,7 +32,6 @@ ID_DESC={
     "c1":"wellness ind"
 }
 
-
 CONF = get_conf()
 
 LOGGER = get_logger("scienceview")
@@ -49,53 +49,42 @@ def new_entry(action_id:str, anonid: bytes, value:str, mangle=False):
         return
     actiontime = str(int(time.time())) if CONF["research"]["timestandard"] == "unix" else str(datetime.now().strftime(CONF["research"]["strftime"]))
     value = ",".join(value) if type(value) == list else value
-    anonid = get_sha(anonid)
     value = get_sha(value) if mangle else value
-    send_package(action_id, anonid, value, actiontime)
+    package = ResearchData(ActionId=action_id, AnonId=anonid, Value=value, Time=datetime)
+    package.save()
     LOGGER.info(f"SciPak {anonid[0:len(anonid)//4]} '{ID_DESC[action_id]}' and value '{value}' at time {actiontime}")
 
 
-def retrieve_packages():
-    pack_ids = get_all_ids()
-    for pack_id in pack_ids:
-        yield retrieve_package(pack_id)
-    return
-    
-
 def export_data(dir, maxlines=1000, rootdir=CONF["research"]["exportdir"], timefrom=0, timeto=float("inf")):
-    topline = "action, value, datetime, anonid\n"
     i = 0
     foldername = datetime.now().strftime(CONF["research"]["strftime"])
     try:
         os.mkdir(foldername)
     except FileExistsError:
         pass
-    file = open(os.path.join(rootdir, f"entries0-{maxlines}.csv"), "w")
-    file.write(topline)
-    for package in retrieve_packages():
+    for package in get_all_data():
         if i%maxlines == 0:
-            file.close()
-            file = open(os.path.join(rootdir,foldername,f"entries{i}-{i+maxlines}.csv"))
-            file.write(topline)
+            try:
+                file.close()
+            except NameError:
+                pass
+            file = open(os.path.join(rootdir,foldername,f"entries{i}-{i+maxlines}.csv"), "a")
         if timefrom < int(package[3]) < timeto: 
-            file.write(",".join(package) + "\n")
-            i+=1
+            file.write(",".join(package))
+        i+=1
 
 
 def forget_me(anonid):
     #select all in table with anonid and burn it
-    pass
+    ResearchData.objects.filter(AnonId=anonid).delete()
+    return
+
+
 def find_me(anonid):
     #select all in table with anonid and return
-    pass
-def get_all_ids() -> list:
-    #return all primary keys in the table so all actions can be fetched
-    return list()
+    return ResearchData.objects.filter(AnonId=anonid)
 
-def retrieve_package(datapoint_id) -> tuple:
-    #return tuple of (action_id, value, time, anonid) from primary key datapoint_id
-    return tuple()
 
-def send_package(action_id, anonid, value, datetime) -> None:
-    #add entry in database
-    pass
+def get_all_data() -> tuple:
+    for data in ResearchData.objects.iterator():
+        yield (data.ActionId, data.AnonId, data.Value, data.Time)
