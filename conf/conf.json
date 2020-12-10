@@ -18,6 +18,8 @@
         "timestandard":"unix",
         "timestrf":"%Y%m%d%H%M%S",
         "exportdir":"research",
-        "enable_collection":"True"
+        "enable_collection":"True",
+        "output_to_console":"True",
+        "key_lifetime":600
     }
 }

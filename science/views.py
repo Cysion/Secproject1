@@ -45,17 +45,19 @@ def get_sha(obj) -> str:
 
 
 def new_entry(action_id:str, anonid: bytes, value:str, mangle=False):
-    if not CONF["enable_collection"] == "True":
+    if not CONF["research"]["enable_collection"] == "True":
         return
     actiontime = str(int(time.time())) if CONF["research"]["timestandard"] == "unix" else str(datetime.now().strftime(CONF["research"]["strftime"]))
     value = ",".join(value) if type(value) == list else value
     value = get_sha(value) if mangle else value
     package = ResearchData(ActionId=action_id, AnonId=anonid, Value=value, Time=datetime)
     package.save()
-    LOGGER.info(f"SciPak {anonid[0:len(anonid)//4]} '{ID_DESC[action_id]}' and value '{value}' at time {actiontime}")
+    if CONF["research"]["output_to_console"] == "True":
+        LOGGER.info(f"SciPak {anonid[0:5]} '{ID_DESC[action_id]}' and value '{value}' at time {actiontime}")
 
 
-def export_data(dir, maxlines=1000, rootdir=CONF["research"]["exportdir"], timefrom=0, timeto=float("inf")):
+def export_data(maxlines=1000, rootdir=CONF["research"]["exportdir"], timefrom=0, timeto=float("inf")):
+    LOGGER.info("Data export initialized")
     i = 0
     foldername = datetime.now().strftime(CONF["research"]["strftime"])
     try:
@@ -88,3 +90,39 @@ def find_me(anonid):
 def get_all_data() -> tuple:
     for data in ResearchData.objects.iterator():
         yield (data.ActionId, data.AnonId, data.Value, data.Time)
+
+
+def gen_otp(minsize=1024) -> str:
+    timestr = "time:" + str(int(time.time()))
+    longstr = "key:"
+    try:
+        with open("export-key.txt", "r") as inf:
+            lines = inf.readlines()
+            oldtime = int(lines[0].split(":")[1])
+            if time.time() - oldtime < CONF["research"]["key_lifetime"]:
+                return lines[1]
+    except FileNotFoundError:
+        pass
+    while len(longstr) < minsize:
+        longstr += get_sha(os.urandom(256))
+    with open("export-key.txt", "w") as outf:
+        outf.write(timestr + "\n" + longstr)
+        LOGGER.info(f"New export key generated at time {timestr}")
+    return longstr
+
+
+def export_view(request):
+    one_time_pass = gen_otp().split(":")[1]
+    if request.method == 'POST':
+        if request.POST["export_key"] == one_time_pass:
+            export_data()
+        else:
+            LOGGER.warning("Wrong export key used!")
+    args = {
+        'POST': request.POST,
+        'form': {
+            "export_key":"Enter one time key",
+        }
+    }
+    return render(request, 'science/export.html', args)
+

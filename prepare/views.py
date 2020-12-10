@@ -81,8 +81,8 @@ def MenuView(request, page=0):
         'entries':diary
     }
 
-    #if 0 < page < 9:
-    #    new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+    if 0 < page < 9:
+        new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
     return render(request, template, args)
 
 
@@ -533,6 +533,7 @@ def addContact(uId, name, phonenumber, available, privKey):
     print(contact.getPhonenumber(privKey))
     print(contact.getAvailable(privKey))
     contact.save()
+    new_entry("p1", user.AnonId(privKey), contact.getName(privKey), mangle=True)
 
 def showContacts(uId, PrivKey):
     user = User.objects.filter(UserId=uId)[0]
@@ -565,6 +566,7 @@ def showAllmemories(uId, PrivKey, memType):
         return memoryIdList
     else:
         return -1
+
 
 def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
     user=User.objects.filter(UserId=uId)[0]
