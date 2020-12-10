@@ -4,19 +4,21 @@ from django.urls import reverse
 # Create your views here.
 
 from login.models import User
-from prepare.models import Media
+from prepare.models import Media, Diary
 from tools.confman import get_lang, get_conf
 from tools.mediaman import get_sha1, save_file, open_file, delete_file
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import login.views
 from django.db import transaction
+from datetime import datetime
 
 from django.core.files import File
 from savemeplan.models import Contacts
 from tools.scienceman import new_entry
 import time
 import re
+import random
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -29,6 +31,7 @@ def MenuView(request, page=0):
     template = 'prepare/menu.html'
     memories = []
     contacts = []
+    diary= []
     user = User.objects.filter(pk=request.session["UserId"])[0]
 
     if page == 1:
@@ -47,6 +50,17 @@ def MenuView(request, page=0):
     elif page == 6:
         template = 'prepare/6_wheretocall.html'
     elif page == 7:
+        symKey = user.getSymKey(request.session['PrivKey'])
+        if request.method == 'POST':
+            if 'date' in request.POST.keys() and 'text' in request.POST.keys():
+                now = str(datetime.now())
+                diaryEntry = Diary(UserId = user)
+                diaryEntry.setDate(symKey, request.POST['date'])
+                text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
+                diaryEntry.setText(symKey, text)
+                diaryEntry.setTimestamp(symKey, now)
+                diaryEntry.save()
+        diary = showDiary(user.getUid(), symKey)
         template = 'prepare/7_diary.html'
     elif page == 8:
         template = 'prepare/8_therapynotes.html'
@@ -63,7 +77,8 @@ def MenuView(request, page=0):
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
         'memories':memories,
-        'contacts':contacts
+        'contacts':contacts,
+        'entries':diary
     }
 
     #if 0 < page < 9:
@@ -499,6 +514,14 @@ def editContactView(request, id):
     return render(request, 'prepare/edit_contact.html', args)
 
 
+def removeDiaryView(request, id):
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
+    
+    user = User.objects.filter(UserId=request.session["UserId"])[0]
+
+    Diary.objects.filter(UserId=user, DiaryId=id).delete()
+    return HttpResponseRedirect(reverse('prepare:menu-page', args=(7,)))
 
 def addContact(uId, name, phonenumber, available, privKey):
     user = User.objects.filter(UserId = uId)[0]
@@ -595,3 +618,41 @@ def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
             mediaObject.setMediaSize(newPubKey, mediaSize)
 
         mediaObject.save()
+
+
+def showDiary(uId, symKey):
+    user=User.objects.filter(UserId=uId)[0]
+    diary = []
+    entries = Diary.objects.filter(UserId=user)
+    entries = sortDiary(entries, symKey)
+    for entry in entries:
+        entry = {
+            'EntryDate' : entry.getDate(symKey),
+            'Text' : entry.getText(symKey),
+            'TimestampCreated' : entry.getTimestamp(symKey),
+            'Id' : entry.getDiaryId()
+        }
+        diary.append(entry)
+    return diary
+
+def sortDiary(diary, symKey):
+    if len(diary) > 1:
+        low = sortDiary(diary[0:len(diary)//2], symKey)
+        high = sortDiary(diary[(len(diary)//2):len(diary)], symKey)
+        diary = []
+        for value in low:
+            while high and high[0].lessThan(value, symKey):
+                diary.append(high.pop(0))
+            diary.append(value)
+        if high:
+            diary += high
+    return diary
+
+
+def reencryptDiary(user, oldSymKey, newSymkey):
+    entries = Diary.objects.filter(UserId=user)
+    for entry in entries:
+            entry.setDate(newSymkey, entry.getDate(oldSymKey))
+            entry.setText(newSymkey, entry.getText(oldSymKey))
+            entry.setTimestamp(newSymkey, entry.getTimestamp(oldSymKey))
+            entry.save()
