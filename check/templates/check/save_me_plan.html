@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Check{% endblock %}
+
+
+{% block content %}
+
+<section class="row p-2 justify-content-between" style="background-color: white; border-style: solid; border-color: #42cfbc;">
+    <div class="col p-0">
+        <h2 class="h2 m-2 p-0 h1 text-uppercase text-left"><i class="fas fa-envelope"></i></h2>
+    </div>
+    <div class="col-auto p-0">
+        <h1 class="h2 m-2 p-0 text-uppercase text-right"><i class="fas fa-star"></i> {{ check.title }}</h1>
+    </div>
+</section>
+
+<section class="my-2 mx-1 p-2 rounded justify-content-between" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <div class="p-0">
+        <h2 class="h4"><i class="fas fa-suitcase"></i> {{ check.save_me_plan.subtitle }}</h2>
+    </div>
+</section>
+
+<section class="my-2 mx-1 p-1 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <div class="col-md-12">
+        <h3 class="text-uppercase text-center h5">{{ check.progress_overview }}</h3>
+        <div class="row align-items-center">
+            <div class="col-12 col-md-6 px-1 my-1">
+                <a class="btn btn-info btn-block" href="/check/1/">{{ check.pages.0 }}</a>
+            </div>
+            <div class="col-12 col-md-6 px-1 my-1">
+                <a class="btn btn-info btn-block" href="/check/2/">{{ check.pages.1 }}</a>            
+            </div>
+            <div class="col-12 col-md-6 px-1 my-1">
+                <a class="btn btn-info btn-block active" href="#">{{ check.pages.2 }}</a>            
+            </div>
+            <div class="col-12 col-md-6 px-1 my-1">
+                <a class="btn btn-info btn-block" href="/check/4/">{{ check.pages.3 }}</a>            
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr>
+
+<section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #dd552a;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.1 }}: {{ check.save_me_plan.statistics.a.0 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #d5296b;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.2 }}: {{ check.save_me_plan.statistics.a.1 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #713b95;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.3 }}: {{ check.save_me_plan.statistics.a.2 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #dd8f39;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.4 }}: {{ check.save_me_plan.statistics.a.3 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+
+    
+    <hr>
+
+
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #984807;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.5 }}: {{ check.save_me_plan.statistics.b.0 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #106f13;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.6 }}: {{ check.save_me_plan.statistics.b.1 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #59a6ff;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.7 }}: {{ check.save_me_plan.statistics.b.2 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #12b9a6;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.8 }}: {{ check.save_me_plan.statistics.b.3 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+
+
+    <hr>
+
+
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #4ead2b;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.9 }}: {{ check.save_me_plan.statistics.c.0 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #0082cc;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.10 }}: {{ check.save_me_plan.statistics.c.1 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #59a6ff;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.11 }}: {{ check.save_me_plan.statistics.c.2 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+            <p class="text-center h3 text-white w-100" style="background-color: #ff0a0c;">{{ check.save_me_plan.statistics.steps.0 }} {{ check.save_me_plan.statistics.steps.12 }}: {{ check.save_me_plan.statistics.c.3 }}</p>
+        </div>
+        <div class="col-md-auto">
+            <img class="mx-auto d-block img-fluid rounded" src="/static/img/trend-graph-icon-trendy-isolated-260nw-1358202131.jpg"> <!-- TEMP IMAGE-->
+        </div>
+    </div>
+</section>
+
+<div class="row mx-0 p-1">
+    <p class="col-auto h5" style="background-color: rgb(255, 242, 204); width: auto;">{{ check.good_job }} <i class="fas fa-smile"></i></p>
+</div>
+
+
+{% endblock %}
