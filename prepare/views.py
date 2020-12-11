@@ -36,7 +36,7 @@ def MenuView(request, page=0):
     diary= []
     user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    baseTemplate = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
 
     if page == 1:
         template = 'prepare/1_howto.html'
@@ -85,7 +85,7 @@ def MenuView(request, page=0):
         'memories':memories,
         'contacts':contacts,
         'entries':diary,
-        'template': template
+        'template': baseTemplate
     }
 
     #if 0 < page < 9:
