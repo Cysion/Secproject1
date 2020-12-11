@@ -160,10 +160,10 @@ def removeRelation(uId, PrivKey, recieverEmail):
 
 def modifyRelation(uId, PrivKey, recieverEmail, permission):
     permissionString = '1'
-    permissionString += permission['SaveMePlan']
-    permissionString += permission['Check']
-    permissionString += permission['Prepare']
-    permissionString += permission['Media']
+    permissionString += str(permission['SaveMePlan'])
+    permissionString += str(permission['Check'])
+    permissionString += str(permission['Prepare'])
+    permissionString += str(permission['Media'])
 
     user = login.models.User.objects.filter(UserId=uId)[0]
     reciever = login.models.User.objects.filter(Email=recieverEmail.lower())[0]
