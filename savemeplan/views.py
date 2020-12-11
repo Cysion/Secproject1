@@ -6,6 +6,7 @@ from django.urls import reverse
 from tools.confman import get_lang  # Needed for retrieving text from language file
 from savemeplan.models import SaveMePlan
 from login.models import User
+from savemeplan.tools import top5_options, top_5_bad_good, extend_top5
 
 import time
 
@@ -43,6 +44,8 @@ def StepView(request, step):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
+    user = User.objects.filter(pk=request.session['UserId'])[0]
+
     savemeplan_lang = get_lang(sections=['savemeplan'])
     template = ''  # Diffrent step sets diffrent template
     content = {  # Main variable for each step content
@@ -76,7 +79,6 @@ def StepView(request, step):
 
             if step in [1, 2, 3, 4, 6, 7, 9]:  # Is using step_default.html template
 
-                user = User.objects.filter(pk=request.session['UserId'])[0]
                 savemeplan_step = SaveMePlan(UserId=user)
                 savemeplan_step.setStep(steps[step])  # Save step as a user reads it
                 privKey = request.session['PrivKey']
@@ -192,8 +194,12 @@ def StepView(request, step):
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][1]} - {savemeplan_lang['savemeplan']['long_texts']['steps'][0]}"
         content['step'] =  savemeplan_lang['savemeplan']['mysit']
-        default_options = savemeplan_lang['savemeplan']['long_texts']['sitrate']  #
-        content['options'] = default_options
+
+        default_options = savemeplan_lang['savemeplan']['long_texts']['sitrate']
+        top_5 = top5_options(user, 'A1', request.session['PrivKey'])  # Get most used options
+        if len(top_5) < 5:
+            top_5 = extend_top5(top_5, default_options)
+        content['options'] = top_5
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['sittext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_sit']  # Rating text
@@ -210,8 +216,12 @@ def StepView(request, step):
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][2]} - {savemeplan_lang['savemeplan']['long_texts']['steps'][0]}"
         content['step'] =  savemeplan_lang['savemeplan']['myemo']
+
         default_options = savemeplan_lang['savemeplan']['long_texts']['emorate']
-        content['options'] = default_options
+        top_5 = top5_options(user, 'A2', request.session['PrivKey'])  # Get most used options
+        if len(top_5) < 5:
+            top_5 = extend_top5(top_5, default_options)
+        content['options'] = top_5
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['emotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_emo']  # Rating text
@@ -229,8 +239,12 @@ def StepView(request, step):
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][3]} - {savemeplan_lang['savemeplan']['long_texts']['steps'][0]}"
         content['step'] =  savemeplan_lang['savemeplan']['mytho']
+
         default_options = savemeplan_lang['savemeplan']['long_texts']['thorate']
-        content['options'] = default_options
+        top_5 = top5_options(user, 'A3', request.session['PrivKey'])  # Get most used options
+        if len(top_5) < 5:
+            top_5 = extend_top5(top_5, default_options)
+        content['options'] = top_5
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['thotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_tho']
@@ -246,8 +260,12 @@ def StepView(request, step):
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][4]} - {savemeplan_lang['savemeplan']['long_texts']['steps'][0]}"
         content['step'] =  savemeplan_lang['savemeplan']['mybeh']
+
         default_options = savemeplan_lang['savemeplan']['long_texts']['emorate']
-        content['options'] = default_options
+        top_5 = top5_options(user, 'A4', request.session['PrivKey'])  # Get most used options
+        if len(top_5) < 5:
+            top_5 = extend_top5(top_5, default_options)
+        content['options'] = top_5
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['emotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_beh']
@@ -278,8 +296,12 @@ def StepView(request, step):
         default_options = savemeplan_lang['savemeplan']['long_texts']['calrate']
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][5]} - {savemeplan_lang['savemeplan']['calmtitle'].upper()}"
         content['step'] =  savemeplan_lang['savemeplan']['calm_step']
+
         default_options = savemeplan_lang['savemeplan']['long_texts']['calrate']
-        content['options'] = default_options
+        top_5 = top5_options(user, 'B1', request.session['PrivKey'])  # Get most used options
+        if len(top_5) < 5:
+            top_5 = extend_top5(top_5, default_options)
+        content['options'] = top_5
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['calmtext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_calm']
@@ -295,8 +317,10 @@ def StepView(request, step):
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][6]} - {savemeplan_lang['savemeplan']['routtitle'].upper()}"
         content['step'] =  savemeplan_lang['savemeplan']['my_route']
-        default_options = savemeplan_lang['savemeplan']['long_texts']['rourate']
-        content['options'] = default_options
+        top_5 = top5_options(user, 'B2', request.session['PrivKey'])  # Get most used options
+        if len(top_5) < 5:
+            top_5 = extend_top5(top_5, default_options)
+        content['options'] = top_5
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['routtext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_rout']
@@ -316,14 +340,17 @@ def StepView(request, step):
 
         default_bad =  savemeplan_lang['savemeplan']['long_texts']['repbad']
         default_good = savemeplan_lang['savemeplan']['long_texts']['repgood']
+        top_5 = top_5_bad_good(user, request.session['PrivKey'])
         content['options'] = list()
 
-        if len(default_bad) <= len(default_good):  # Add good and bad in examples in raplace
-            for i in range(len(default_bad)):
-                content['options'].append((default_bad[i], default_good[i]))
-        else:
-            for i in range(len(default_good)):
-                content['options'].append((default_bad[i], default_good[i]))
+        if len(top_5[0]) < 5:
+            top_5[0] = extend_top5(top_5[0], default_bad)
+
+        if len(top_5[1]) < 5:
+            top_5[1] = extend_top5(top_5[1], default_good)
+
+        for i in range(len(top_5[0])):
+            content['options'].append((top_5[0][i], top_5[1][i]))
 
         content['dangerous'] = savemeplan_lang['savemeplan']['put_away']
         content['good'] = savemeplan_lang['savemeplan']['find_safe']
@@ -340,8 +367,12 @@ def StepView(request, step):
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][4]} - {savemeplan_lang['savemeplan']['prot_title']}"
         content['step'] =  savemeplan_lang['savemeplan']['my_values']
+
         default_options = savemeplan_lang['savemeplan']['long_texts']['protect']
-        content['options'] = default_options
+        top_5 = top5_options(user, 'B4', request.session['PrivKey'])  # Get most used options
+        if len(top_5) < 5:
+            top_5 = extend_top5(top_5, default_options)
+        content['options'] = top_5
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['name_values']
         content['rate'] = savemeplan_lang['savemeplan']['rate_values']
@@ -419,8 +450,12 @@ def StepView(request, step):
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][11]} - {savemeplan_lang['savemeplan']['safe']}"
         content['step'] =  savemeplan_lang['savemeplan']['go_to_safe']
+
         default_options = savemeplan_lang['savemeplan']['long_texts']['safe']
-        content['options'] = default_options
+        top_5 = top5_options(user, 'C3', request.session['PrivKey'])  # Get most used options
+        if len(top_5) < 5:
+            top_5 = extend_top5(top_5, default_options)
+        content['options'] = top_5
 
         content['other_placeholder'] = savemeplan_lang['savemeplan']['add_safe']
         content['other'] = savemeplan_lang['savemeplan']['other']
