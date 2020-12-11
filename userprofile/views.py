@@ -298,17 +298,17 @@ def manageRelationsView(request):
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             elif 'save' in request.POST:
                 relationFrom = userprofile.models.RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
-                permission['Profile'] = '1'
-                permission['SaveMePlan'] ='1' if 'share_savemeplan' in request.POST else '0'
-                permission['Check'] = '1' if 'share_check' in request.POST else '0'
-                permission['Prepare'] = '1' if 'share_prepare' in request.POST else '0'
-                permission['Media'] = '1' if 'share_media' in request.POST else '0'
+                permission['Profile'] = 1
+                permission['SaveMePlan'] = 1 if 'share_savemeplan' in request.POST else 0
+                permission['Check'] = 1 if 'share_check' in request.POST else 0
+                permission['Prepare'] = 1 if 'share_prepare' in request.POST else 0
+                permission['Media'] = 1 if 'share_media' in request.POST else 0
                 userprofile.tools.modifyRelation(request.session['UserId'], request.session['PrivKey'], email, permission)
                 relationData['Permission']=permission
 
 
 
-
+    print(relationData['Permission'])
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],

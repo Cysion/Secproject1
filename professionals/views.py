@@ -49,7 +49,10 @@ def profileView(request, UserId):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
-    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
+    try:
+        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
+    except AttributeError:
+        return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
     user=login.models.User.objects.filter(UserId=UserId)[0]
@@ -79,42 +82,60 @@ def profileView(request, UserId):
 def prepareView(request, UserId, page):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
-    if not userPrivKey:
-        return HttpResponseRedirect(reverse('professionals:clients'))
-    user=login.models.User.objects.filter(UserId=UserId)[0]
+    
+    prep = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'prepare')
+    media = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'media')
 
+    if not prep and not media:
+        return HttpResponseRedirect(reverse('professionals:clients'))
+
+    user=login.models.User.objects.filter(UserId=UserId)[0]
+    permissions = userprofile.tools.getPermissions(UserId, request.session['UserId'], request.session['PrivKey'])
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
     memories = []
     contacts = []
     diary= []
-    
-    print("profprepare")
-    if page == 1:
-        template = 'prepare/1_howto.html'
-    elif page == 2:
-        template = 'prepare/2_practicebreathing.html'
-    elif page == 3:
-        memories = prepare.tools.showAllmemories(user.getUid(), userPrivKey, 's')
-        template = 'prepare/3_supportivememories.html'
-    elif page == 4:
-        memories = prepare.tools.showAllmemories(user.getUid(), userPrivKey, 'd')
-        template = 'prepare/4_destructivememories.html'
-    elif page == 5:
-        contacts=prepare.tools.showContacts(user.getUid(), userPrivKey)
-        template = 'prepare/5_contacts.html'
-    elif page == 6:
-        template = 'prepare/6_wheretocall.html'
-    elif page == 7:
-        symKey = user.getSymKey(userPrivKey)
-        diary = prepare.tools.showDiary(user.getUid(), symKey)
-        template = 'prepare/7_diary.html'
-    elif page == 8:
-        template = 'prepare/8_therapynotes.html'
-    else:
-        template = 'prepare/menu.html'
 
+    if prep:
+        userPrivKey = prep.decode("utf-8") 
+        
+        if page == 1:
+            template = 'prepare/1_howto.html'
+        elif page == 2:
+            template = 'prepare/2_practicebreathing.html'
+        elif page == 5:
+            contacts=prepare.tools.showContacts(user.getUid(), userPrivKey)
+            template = 'prepare/5_contacts.html'
+        elif page == 6:
+            template = 'prepare/6_wheretocall.html'
+        elif page == 7:
+            symKey = user.getSymKey(userPrivKey)
+            diary = prepare.tools.showDiary(user.getUid(), symKey)
+            template = 'prepare/7_diary.html'
+        elif page == 8:
+            template = 'prepare/8_therapynotes.html'
+        elif page == 3 or page == 4:
+            pass
+        else:
+            return HttpResponseRedirect(reverse('professionals:clients'))
+        prep = True
+    
+    if media:
+        userPrivKey = media.decode("utf-8")
+
+        if page == 3:
+            memories = prepare.tools.showAllmemories(user.getUid(), userPrivKey, 's')
+            template = 'prepare/3_supportivememories.html'
+        elif page == 4:
+            memories = prepare.tools.showAllmemories(user.getUid(), userPrivKey, 'd')
+            template = 'prepare/4_destructivememories.html'
+        elif page == 1 or page == 2 or page == 5 or page == 6 or page == 7 or page == 8:
+            pass
+        else:
+            return HttpResponseRedirect(reverse('professionals:clients'))
+        media = True
+    
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -126,7 +147,9 @@ def prepareView(request, UserId, page):
         'contacts':contacts,
         'entries':diary,
         'profView':True,
-        'UserId':UserId
+        'UserId':UserId,
+        'prep':prep,
+        'media':media
     }
 
     #if 0 < page < 9:
@@ -138,7 +161,12 @@ def saveMePlanView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
+    try:
+        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
+    except AttributeError:
+        return HttpResponseRedirect(reverse('professionals:clients'))
+    if not userPrivKey:
+        return HttpResponseRedirect(reverse('professionals:clients'))
     user=login.models.User.objects.filter(UserId=UserId)[0]
 
     global_alerts = []  # The variable which is sent to template
@@ -157,7 +185,12 @@ def CheckView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
+    try:
+        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
+    except AttributeError:
+        return HttpResponseRedirect(reverse('professionals:clients'))
+    if not userPrivKey:
+        return HttpResponseRedirect(reverse('professionals:clients'))
     user=login.models.User.objects.filter(UserId=UserId)[0]
 
     global_alerts = []  # The variable which is sent to template

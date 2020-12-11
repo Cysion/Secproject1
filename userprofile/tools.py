@@ -160,10 +160,10 @@ def removeRelation(uId, PrivKey, recieverEmail):
 
 def modifyRelation(uId, PrivKey, recieverEmail, permission):
     permissionString = '1'
-    permissionString += permission['SaveMePlan']
-    permissionString += permission['Check']
-    permissionString += permission['Prepare']
-    permissionString += permission['Media']
+    permissionString += str(permission['SaveMePlan'])
+    permissionString += str(permission['Check'])
+    permissionString += str(permission['Prepare'])
+    permissionString += str(permission['Media'])
 
     user = login.models.User.objects.filter(UserId=uId)[0]
     reciever = login.models.User.objects.filter(Email=recieverEmail.lower())[0]
@@ -180,11 +180,47 @@ def modifyRelation(uId, PrivKey, recieverEmail, permission):
     return 1
 
 
-def sharesDataWith(userId, recieverId, recieverPrivKey):
+def getPermissions(userId, recieverId, recieverPrivKey):
     reciever = login.models.User.objects.filter(UserId=recieverId)[0]
     relationTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=userId, AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
     if relationTo:
         relationTo = relationTo[0]
-        return relationTo.getFromPrivDecrypted(recieverPrivKey)
+        return relationTo.getPermission()
+    else:
+        return '00000'
+
+def sharesDataWith(userId, recieverId, recieverPrivKey, data):
+    reciever = login.models.User.objects.filter(UserId=recieverId)[0]
+    relationTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=userId, AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
+    if relationTo:
+        relationTo = relationTo[0]
+        permission = relationTo.getPermission()
+        if data == 'profile':
+            if permission[0] == '1':
+                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+            else:
+                return False
+        elif data == 'saveMePlan':
+            if permission[1] == '1':
+                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+            else:
+                return False
+        elif data == 'check':
+            if permission[2] == '1':
+                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+            else:
+                return False
+        elif data == 'prepare':
+            if permission[3] == '1':
+                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+            else:
+                return False
+        elif data == 'media':
+            if permission[4] == '1':
+                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+            else:
+                return False
+        else:
+            return False
     else:
         return False
