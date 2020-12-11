@@ -7,8 +7,14 @@
   color: #ff66f0 !important;
 }
 
-.part-button:active {
+.part-button:hover {
+  color: black !important;
+  background-color: #ff66f0 !important;
+}
 
+.part-button:active {
+  color: black !important;
+  background-color: #ff66f0 !important;
 }
 
 .step {
@@ -43,6 +49,7 @@
   background-color: #ff66f0 !important;
   color: black !important;
 }
+
 .part-description h4{
   margin-top: 10px;
 }
