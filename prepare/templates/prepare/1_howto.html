@@ -11,15 +11,40 @@
     </div>
     <div class="col-md-8">
         <div class="row">
-            <div class="col-4 px-1">
-                <a class="btn btn-info btn-block active" name="page" value="1" href="#">{{ nav.library }}</a>
-            </div>
-            <div class="col-4 px-1">
-                <a class="btn btn-info btn-block" name="page" value="5" href="/prepare/5">{{ nav.contacts }}</a>            
-            </div>
-            <div class="col-4 px-1">
-                <a class="btn btn-info btn-block" name="page" value="7" href="/prepare/7">{{ nav.notes }}</a>            
-            </div>
+            {% if not profView %}
+                <div class="col-4 px-1">
+                    <a class="btn btn-info btn-block" name="page" value="1" href="/prepare/1/">{{ nav.library }}</a>
+                </div>
+                <div class="col-4 px-1">
+                    <a class="btn btn-info btn-block" name="page" value="5" href="/prepare/5/">{{ nav.contacts }}</a>            
+                </div>
+                <div class="col-4 px-1">
+                    <a class="btn btn-info btn-block" name="page" value="7" href="/prepare/7/">{{ nav.notes }}</a>            
+                </div>
+            {% else %}
+                <div class="col-4 px-1">
+                    {% if media %}
+                        <a class="btn btn-info btn-block" name="page" value="3" href="/professionals/{{UserId}}/prepare/3/">{{ nav.library }}</a>
+                    {% else %}
+                        <a class="btn btn-info btn-block" name="page" value="3">{{ nav.library }}</a>
+                    {% endif %}
+                </div>
+                
+                <div class="col-4 px-1">
+                    {% if prep %}
+                        <a class="btn btn-info btn-block" name="page" value="5" href="/professionals/{{UserId}}/prepare/5/">{{ nav.contacts }}</a>
+                    {% else %}
+                        <a class="btn btn-info btn-block" name="page" value="5">{{ nav.contacts }}</a>
+                    {% endif %}      
+                </div>
+                <div class="col-4 px-1">
+                    {% if prep %}
+                        <a class="btn btn-info btn-block" name="page" value="7" href="/professionals/{{UserId}}/prepare/7/">{{ nav.notes }}</a> 
+                    {% else %}
+                        <a class="btn btn-info btn-block" name="page" value="7">{{ nav.notes }}</a>
+                    {% endif %}          
+                </div>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -81,15 +106,34 @@
         {% endif %}
 
         {% if profView %}
-        <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
-        <li class="page-item active"><a class="page-link" name="page" value="1" href="#">{{ prepare.steps.1 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="2" href="/professionals/{{UserId}}/prepare/2/">{{ prepare.steps.2 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="3" href="/professionals/{{UserId}}/prepare/3/">{{ prepare.steps.3 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="4" href="/professionals/{{UserId}}/prepare/4/">{{ prepare.steps.4 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="5" href="/professionals/{{UserId}}/prepare/5/">{{ prepare.steps.5 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="6" href="/professionals/{{UserId}}/prepare/6/">{{ prepare.steps.6 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="7" href="/professionals/{{UserId}}/prepare/7/">{{ prepare.steps.7 }}</a></li>
-        <li class="page-item"><a class="page-link" name="page" value="8" href="/professionals/{{UserId}}/prepare/8/">{{ prepare.steps.8 }}</a></li>
+            <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
+            {% if prep %}
+                <li class="page-item active"><a class="page-link" name="page" value="1" href="#">{{ prepare.steps.1 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="2" href="/professionals/{{UserId}}/prepare/2/">{{ prepare.steps.2 }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" name="page" value="1"> {{ prepare.steps.1 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="2">{{ prepare.steps.2 }}</a></li>
+            {% endif %}
+
+            {% if media %}
+                <li class="page-item"><a class="page-link" name="page" value="3" href="/professionals/{{UserId}}/prepare/3/">{{ prepare.steps.3 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="4" href="/professionals/{{UserId}}/prepare/4/">{{ prepare.steps.4 }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" name="page" value="3">{{ prepare.steps.3 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="4">{{ prepare.steps.4 }}</a></li>
+            {% endif %}
+
+            {% if prep %}
+                <li class="page-item"><a class="page-link" name="page" value="5" href="/professionals/{{UserId}}/prepare/5/">{{ prepare.steps.5 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="6" href="/professionals/{{UserId}}/prepare/6/">{{ prepare.steps.6 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="7" href="/professionals/{{UserId}}/prepare/7/">{{ prepare.steps.7 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="8" href="/professionals/{{UserId}}/prepare/8/">{{ prepare.steps.8 }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" name="page" value="5">{{ prepare.steps.5 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="6">{{ prepare.steps.6 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="7">{{ prepare.steps.7 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="8">{{ prepare.steps.8 }}</a></li>
+            {% endif %}
         {% endif %}
     </ul>
 </section>

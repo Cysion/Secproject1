@@ -28,6 +28,8 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 def MenuView(request, page=0):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    if request.session['Role'] == 'professional':
+        return HttpResponseRedirect(reverse('professionals:clients'))
 
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
@@ -274,17 +276,30 @@ def MemoryView(request, id):
     try:
         memory = prepare.models.Media.objects.filter(pk=id)[0]
     except Exception as e:
-        return Http404("Memory does not exist!")
+        if request.session['Role'] == 'User':
+            return HttpResponseRedirect(reverse('prepare:menu'))#Http404("Memory does not exist!")
+        else:
+            return HttpResponseRedirect(reverse('professionals:clients'))
 
     if memory.UserId.UserId != request.session["UserId"]:
         # User doesn't belong here
         mediaOwnerId=memory.getUserId().getUid()
-        userPrivkey = userprofile.tools.sharesDataWith(mediaOwnerId, request.session["UserId"], userPrivkey).decode("utf-8")
-        if userPrivkey:
-            user = mediaOwnerId=memory.getUserId()
-            profView = True
+        try:
+            userPrivkey = userprofile.tools.sharesDataWith(mediaOwnerId, request.session["UserId"], userPrivkey, 'media').decode("utf-8")
+        except AttributeError:
+            if request.session['Role'] == 'User':
+                return HttpResponseRedirect(reverse('prepare:menu'))#Http404("Memory does not exist!")
+            else:
+                return HttpResponseRedirect(reverse('professionals:clients'))
         else:
-            return Http404("Memory does not exist!")
+            if userPrivkey:
+                user = mediaOwnerId=memory.getUserId()
+                profView = True
+            else:
+                if request.session['Role'] == 'User':
+                    return HttpResponseRedirect(reverse('prepare:menu'))#Http404("Memory does not exist!")
+                else:
+                    return HttpResponseRedirect(reverse('professionals:clients'))
 
     if "files_to_delete" in request.session.keys():  # If there is any temporary files not used anymore, delete them
         for file in request.session["files_to_delete"]:
