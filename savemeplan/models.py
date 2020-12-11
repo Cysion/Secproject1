@@ -13,12 +13,36 @@ class SaveMePlan(models.Model):
     Time: Used be researcher
     """
 
-    SaveMePlanId = models.IntegerField(primary_key=True)
+    SaveMePlanId = models.AutoField(primary_key=True)
     UserId = models.ForeignKey(User, on_delete=models.CASCADE)
-    Step = models.CharField(max_length=2, blank=False)
-    Text = models.CharField(max_length=120)
-    Value = models.IntegerField(blank=False)
-    Time = models.DateTimeField(auto_now=True)
+    Step = models.BinaryField(max_length=512)
+    Text = models.BinaryField(max_length=512)
+    Value = models.BinaryField(max_length=512)
+    Time = models.BinaryField(max_length=512)
+
+    def setStep(self, step):
+        self.Step = rsa_encrypt(self.UserId.getPubkey(), step.encode("utf-8"))
+
+    def setText(self, text):
+        self.Text = rsa_encrypt(self.UserId.getPubkey(), text.encode("utf-8"))
+
+    def setValue(self, value):
+        self.Value = rsa_encrypt(self.UserId.getPubkey(), value.encode("utf-8"))
+
+    def setTime(self, time):
+        self.Time = rsa_encrypt(self.UserId.getPubkey(), time.encode("utf-8"))
+
+    def getStep(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.Step).decode("utf8")
+
+    def getText(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.Text).decode("utf8")
+
+    def getValue(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.Value).decode("utf8")
+
+    def getTime(self, privKey):
+        return rsa_decrypt(privKey.encode("utf-8"), self.Time).decode("utf8")
 
 class Contacts(models.Model):
     """
@@ -35,7 +59,7 @@ class Contacts(models.Model):
 
     def setName(self, name):
         self.Name = rsa_encrypt(self.UserId.getPubkey(), name.encode("utf-8"))
-    
+
     def setPhonenumber(self, phoneNumber):
         self.Phonenumber = rsa_encrypt(self.UserId.getPubkey(), phoneNumber.encode("utf-8"))
 
@@ -50,5 +74,3 @@ class Contacts(models.Model):
 
     def getAvailable(self,privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.Available).decode("utf8")
-
-    

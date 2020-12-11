@@ -1,0 +1,286 @@
+.page-title h4{
+  color: #ff66f0;
+}
+
+.part-button {
+  border: 1px solid #ff66f0 !important;
+  color: #ff66f0 !important;
+}
+
+.part-button:hover {
+  color: black !important;
+  background-color: #ff66f0 !important;
+}
+
+.part-button:active {
+  color: black !important;
+  background-color: #ff66f0 !important;
+}
+
+.step {
+  text-align: center;
+  color: black;
+  width: 100%;
+  min-height: 50px;
+  max-height: 100px;
+  margin-top: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 3px;
+}
+
+.step h5 {
+  margin-top: 10px;
+}
+
+.list-group-item-action {
+  color: black !important;
+}
+
+.part-description {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 5px;
+  min-height: 50px;
+  max-height: 100px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.active {
+  background-color: #ff66f0 !important;
+  color: black !important;
+}
+
+.part-description h4{
+  margin-top: 10px;
+}
+
+.item-list {
+  margin-top: 20px;
+  margin-bottom: 20px !important;
+}
+
+.list-item button{
+  text-overflow: clip !important;
+}
+
+.replace_bad {
+  height: 100px;
+  margin-top: 20px;
+  border: 1px solid red;
+  border-radius: 3px;
+  background-color: #f5c6cb;
+  font-size: 16px;
+}
+
+.replace_good {
+  height: 100px;
+  margin-top: 20px;
+  border: 1px solid green;
+  border-radius: 3px;
+  background-color: #c3e6cb;
+  font-size: 18px;
+}
+
+.replace_bad_item {
+  min-height: 50px;
+  max-height: 100px;
+  margin-top: 20px;
+  border: 1px solid red;
+  border-radius: 3px;
+  background-color: #f5c6cb;
+  width:100%;
+  font-size: 20px;
+}
+
+.replace_bad_item input {
+  margin-top: 15px;
+}
+
+.replace_good_item {
+  min-height: 50px;
+  max-height: 100px;
+  width:100%;
+  margin-top: 20px;
+  margin-left: -15px !important;
+  border: 1px solid green;
+  border-radius: 3px;
+  background-color: #c3e6cb;
+  font-size: 20px;
+}
+
+.replace_good_item input {
+  margin-top: 15px;
+}
+
+.replace_bad_item_text {
+  height: 50px;
+  margin-top: 20px;
+  width:100%;
+  font-size: 20px;
+}
+
+.replace_bad_item_text input {
+  background-color: #f5c6cb;
+}
+
+.replace_bad_item_text input:focus {
+  background-color: #f5c6cb;
+}
+
+.replace_good_item_text {
+  height: 50px;
+  width:100%;
+  margin-top: 20px;
+  margin-left: -15px !important;
+  font-size: 20px;
+}
+
+.replace_good_item_text input {
+  background-color: #c3e6cb;
+}
+
+.replace_good_item_text input:focus {
+  background-color: #c3e6cb;
+}
+
+.code {
+  min-height: 120px;
+  min-width: 300px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  text-align: center;
+  background-color: white;
+}
+
+.code_red{
+  border-color: red;
+}
+
+.code_red h4{
+  background-color: #f5c6cb;
+}
+
+.code_orange {
+  border-color: orange;
+}
+
+.code_orange h4{
+  background-color: #f7c174;
+}
+
+.code_yellow {
+  border-color: yellow;
+}
+
+.code_yellow h4{
+  background-color: #ffeeba;
+}
+
+.code_blue{
+  border-color: blue;
+}
+
+.code_blue h4{
+  background-color: #bee5eb;
+}
+
+.code_green {
+  border-color: green;
+}
+
+.code_green h4{
+  background-color: #c3e6cb;
+}
+
+.card{
+  text-align: center !important;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.safe_place {
+  min-height: 50px;
+  max-height: 100px;
+  width:100%;
+  margin-top: 20px;
+  margin-left: -15px !important;
+  border: 1px solid green;
+  border-radius: 3px;
+  background-color: #c3e6cb;
+  font-size: 20px;
+  text-overflow: clip;
+}
+
+.safe_place_text{
+  margin-top: 20px;
+}
+
+.safe_place_text input {
+  background-color: #c3e6cb;
+}
+
+.safe_place_text input:focus {
+  background-color: #c3e6cb;
+}
+
+.sos_boxes {
+  width: 100%;
+  min-height: 40px;
+  max-height: 80px;
+  font-size: 20px;
+  background-color: #c3e6cb;
+  border: 1px solid green;
+  border-radius:5px;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.sos_boxes p {
+  margin-top: 3px;
+}
+
+.btn-group-lg {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.btn-group-lg{
+  width: 100%;
+}
+
+.part-description_summary {
+  border: 2px solid #ff66f0;;
+  border-radius: 5px;
+  min-height: 50px;
+  max-height: 100px;
+  text-align: center;
+  margin-top: 20px;
+  color: #ff66f0;
+}
+
+.part-description_summary h4 {
+  margin-top: 10px;
+}
+
+.summary_item {
+  min-height: 50px;
+  text-align: center;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.summary_item input {
+  margin-top: 5px;
+  border-color: black;
+}
+
+.summary_step {
+  margin-top: 12px;
+}

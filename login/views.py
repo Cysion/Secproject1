@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.db import transaction
 # Create your views here.
 
 
-from login.models import User
-from django.db import transaction
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
-from userprofile.views import checkPassword, changePass
+import login.models
+import login.tools
+import userprofile.tools
 
 from tools.confman import get_lang
 from science.views import new_entry
@@ -44,17 +44,17 @@ def RegisterView(request):
                 exceptions = ''
                 if index == 'email':
                     exceptions = '1234567890@!#$%&*+-/=?^_`{|}~.'
-                if containsBadChar(request.POST[index], exceptions):
+                if login.tools.containsBadChar(request.POST[index], exceptions):
                     alerts[index] = "badChar"
 
             if request.POST["password"] != request.POST["repassword"]:
                 alerts['repassword'] = "repassword"
-            if getUidFromEmail(request.POST["email"]):
+            if login.tools.getUidFromEmail(request.POST["email"]):
                 alerts['email'] = 'email_already_exists'
             if not alerts:
                 try:
                     with transaction.atomic():
-                        sessionsData = registerUser(request.POST)
+                        sessionsData = login.tools.registerUser(request.POST)
 
                 except AttributeError:
                     alerts['database'] = 'Database error'
@@ -76,38 +76,6 @@ def RegisterView(request):
         return render(request, 'login/register.html', args)
     return HttpResponseRedirect(reverse('userprofile:Profile'))
 
-def containsBadChar(stringToCheck:str, exceptions:str = ''):
-    badChar = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3").difference(set(exceptions))
-    return True if set(stringToCheck).intersection(badChar) else False
-
-
-def getUidFromEmail(newMail):
-    user = User.objects.filter(Email=newMail).values('UserId')
-    if user:
-        return user[0]["UserId"]
-    return False
-
-def registerUser(postData): # Place function somewere else.
-    user = User(Email=postData["email"].lower())
-    user.save()
-    key = gen_rsa(secret_scrambler(postData["password"], user.UserId))
-
-    user.setPubKey(key.publickey().export_key())
-    if postData['gender'] == 'Other':
-        user.setGender(postData['gender_other'])
-    else:
-        user.setGender(postData['gender'])
-    user.setFirstName(postData['first_name'])
-    user.setLastName(postData['last_name'])
-    user.setDateOfBirth(postData['date_of_birth'])
-    user.setRole('professional') if 'professional' in postData else user.setRole('User')
-    user.setAnonId(key.export_key().decode("utf-8"))
-    user.setSymkey()
-    user.save()
-    new_entry("PROFILE", user.getAnonId(key.export_key()), f"{postData['date_of_birth']}|{postData['gender'] if postData['gender'] != 'Other' else postData['gender_other']}")
-    return user.getUid(), key.export_key(), user.getRole()
-
-
 def LoginView(request):
     if 'UserId' in request.session:
         return HttpResponseRedirect(reverse('userprofile:Profile'))
@@ -115,13 +83,13 @@ def LoginView(request):
     loginFail = False
     if request.method == 'POST':
         try:
-            user = User.objects.filter(Email=request.POST['email'].lower())[0]
+            user = login.models.User.objects.filter(Email=request.POST['email'].lower())[0]
         except Exception as e:
             user = None
             loginFail = True
 
         if user:
-            key = gen_rsa(secret_scrambler(request.POST["password"], user.getUid()))
+            key = login.models.gen_rsa(login.models.secret_scrambler(request.POST["password"], user.getUid()))
             if str(key.publickey().export_key()) == str(user.getPubkey()):
                 request.session['UserId'] = user.getUid()
                 request.session['PrivKey'] = key.export_key().decode("utf-8")
@@ -179,13 +147,13 @@ def forgotPasswordView(request):
     if request.method == 'POST':
         if request.POST['password'] == request.POST['repassword']:
             try:
-                user = User.objects.filter(Email=request.POST['email'])[0]
+                user = login.models.User.objects.filter(Email=request.POST['email'])[0]
             except Exception as e:
                 user = None
             if user:
                 try:
                     request.session['UserId'] = user.getUid()
-                    request.session['PrivKey']=changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
+                    request.session['PrivKey']=userprofile.tools.changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
                     request.session["Role"] = user.getRole()
                     #print(request.session["Role"])
                 except ValueError as keyError:

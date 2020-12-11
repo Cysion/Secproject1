@@ -48,11 +48,21 @@
 
 <p>{{ using_space }}</p>
 
-{% if content.type == "s" %}
-  <a href="/prepare/3/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
-{% else %}
-  <a href="/prepare/4/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+{% if profView %}
+  {% if content.type == "s" %}
+  <a href="/professionals/{{UserId}}/prepare/3/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+  {% else %}
+  <a href="/professionals/{{UserId}}/prepare/4/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+  {% endif %}
+
 {% endif %}
+
+{% if not profView %}
+  {% if content.type == "s" %}
+    <a href="/prepare/3/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+  {% else %}
+    <a href="/prepare/4/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+  {% endif %}
 
 <button type="button" data-toggle="modal" data-target="#confirmRemoveMemory" class="btn btn-block btn-lg btn-danger"><i class="fas fa-trash-alt"></i></button>
 
@@ -77,4 +87,5 @@
       </div>
   </div>
 </div>
+{% endif %}
 {% endblock %}
