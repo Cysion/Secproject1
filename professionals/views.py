@@ -49,7 +49,7 @@ def profileView(request, UserId):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
-    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey']).decode("utf-8")
+    userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
     user=login.models.User.objects.filter(UserId=UserId)[0]
