@@ -76,17 +76,14 @@ def MenuView(request, page=0):
 
         template = 'prepare/menu.html'
 
-    print(prepare_lang["prepare"]["contacts"]["modal"])
-
-
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
-        'memories':memories,
-        'contacts':contacts,
-        'entries':diary,
+        'memories': memories,
+        'contacts': contacts,
+        'entries': diary,
         'template': baseTemplate
     }
 
@@ -364,7 +361,7 @@ def MemoryView(request, id):
             request.session["global_alerts"] = [alert]
         else:
             request.session["global_alerts"].append(alert)
-        
+
         new_entry("m2", user.getAnonId(userPrivkey), "na")
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
@@ -394,7 +391,7 @@ def MemoryView(request, id):
 
         try:
             file = open_file(user.getSymKey(userPrivkey), url)
-            
+
         except RuntimeError as e:
             alert = {
                 "color": "error",
@@ -508,10 +505,10 @@ def editContactView(request, id):
         return HttpResponseRedirect(reverse('login:Login'))
     prepare_lang = get_lang(sections=["prepare"])
     alerts=dict()
-    
+
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
     contact = savemeplan.models.Contacts.objects.filter(ContactsId=id)[0]
-    
+
     if request.GET and "delete" in request.GET.keys():
         if request.GET['delete']:
             prepare.tools.removeContact(request.session["UserId"], id)
@@ -549,7 +546,7 @@ def editContactView(request, id):
 def removeDiaryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    
+
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
 
     prepare.models.Diary.objects.filter(UserId=user, DiaryId=id).delete()
