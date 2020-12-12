@@ -44,6 +44,7 @@ textarea:focus {
   <div class="card-body">
     <h4 class="card-title">{{ person.name }}</h4>
     <a href="tel:{{ person.number }}" class="card-link">{{ person.number }}</a>
+    <p>{{ content.available }}: {{ person.available }}</p>
   </div>
 </div>
 {% endfor %}

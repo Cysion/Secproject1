@@ -4,7 +4,7 @@ from django.urls import reverse
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
-from savemeplan.models import SaveMePlan
+from savemeplan.models import SaveMePlan, Contacts
 from login.models import User
 from savemeplan.tools import top5_options, top_5_bad_good, extend_top5
 
@@ -401,14 +401,24 @@ def StepView(request, step):
         content['part'] = 'C'
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][9]} - {savemeplan_lang['savemeplan']['sms_chat']}"
-        contacts = [{
-            'name': 'Kevin Engström',
-            'number': '0701234567'
-        }, {
-            'name': 'Robin Källström',
-            'number': '0701234567'
-        }]
-        content['contacts_list'] = contacts
+
+        all_contacts_enc = user.contacts_set.all()
+        all_contacts_dec = []
+
+        for contact in all_contacts_enc:
+            name = contact.getName(request.session['PrivKey'])
+            nr = contact.getPhonenumber(request.session['PrivKey'])
+            available = contact.getAvailable(request.session['PrivKey'])
+            all_contacts_dec.append(
+                {
+                    'name': name,
+                    'number': nr,
+                    'available': available
+                }
+            )
+
+
+        content['contacts_list'] = all_contacts_dec
 
         content['code_red'] = savemeplan_lang['savemeplan']['codered'].upper()
         content['code_orange'] = savemeplan_lang['savemeplan']['codeor'].upper()
@@ -420,6 +430,7 @@ def StepView(request, step):
         content['message'] = savemeplan_lang['savemeplan']['long_texts']['messages']  # Code texts
         content['chat'] = savemeplan_lang['savemeplan']['long_texts']['chat']  # word chat
         content['chat_website'] = savemeplan_lang['savemeplan']['chat_site']
+        content['available'] = savemeplan_lang['savemeplan']['available']
 
         # Colors on part title and descibe parts.
         content['step_bg'] = STEP_COLORS['C1']
@@ -431,14 +442,24 @@ def StepView(request, step):
         content['part'] = 'C'
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][2]} - {savemeplan_lang['savemeplan']['callhelper']}"
-        contacts = [{
-            'name': 'Kevin Engström',
-            'number': '0701234567'
-        }, {
-            'name': 'Robin Källström',
-            'number': '0701234567'
-        }]
-        content['contacts_list'] = contacts
+
+        all_contacts_enc = user.contacts_set.all()
+        all_contacts_dec = []
+
+        for contact in all_contacts_enc:
+            name = contact.getName(request.session['PrivKey'])
+            nr = contact.getPhonenumber(request.session['PrivKey'])
+            available = contact.getAvailable(request.session['PrivKey'])
+            all_contacts_dec.append(
+                {
+                    'name': name,
+                    'number': nr,
+                    'available': available
+                }
+            )
+
+        content['contacts_list'] = all_contacts_dec
+        content['available'] = savemeplan_lang['savemeplan']['available']   
 
         content['step_bg'] = STEP_COLORS['C2']
 

@@ -488,6 +488,7 @@
         "no":"no",
         "nomild":"No/mild",
         "next_step":"Next step",
+        "available":"Available",
 
         "long_texts":{
             "chat":"You can press this button to start chatting or copy the phonenumber from the contacts bellow",
