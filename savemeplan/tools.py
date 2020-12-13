@@ -1,6 +1,10 @@
 from savemeplan.models import SaveMePlan
 from login.models import User
 
+from tools.confman import get_lang
+
+import datetime
+
 
 def top5_options(user, step, PrivKey):
     """
@@ -125,3 +129,50 @@ def extend_top5(top5, default):
                     top5.append(option)
                     top_5_len += 1
     return top5
+
+def decrypt_steps(steps, PrivKey):
+    """Decrypts all steps in 'steps'.
+    Returns a list with elements as tuples. First element in tuple is id
+    and second is decrypted step.
+
+    steps = list with SaveMePlan objects.
+    PrivKey = Users privatekey/decryptionkey
+    """
+    dec_steps = []
+
+    for step in steps:
+        temp = (step.id, step.getStep(PrivKey))
+        dec_steps.append(temp)
+
+    return dec_steps
+
+def get_savemeplan_items(user, PrivKey, id=-1):
+    """Get all items from savemeplan. Returns a list with step data. Step data
+    is a list with values in index order (0) Step, (1) Text and (2) Rating.
+
+    id = the Save.me Plan id. If none sent get from the latest item from user.
+    """
+    savemeplan_data = []
+    if id == -1:
+        try:
+            id = user.savemeplan_set.order_by('SaveMePlanId').reverse()[0].SaveMePlanId
+        except IndexError as e:  # Never done Save Me Plan.
+            id = -1
+
+    if id != -1:
+        steps = user.savemeplan_set.filter(SaveMePlanId=id)
+
+        for step in steps:
+            smp_step = step.getStep(PrivKey)
+            smp_text = step.getText(PrivKey)
+
+            if smp_step == 'B3':  # Step B3 will have on the format <bad thing>;<good thing>
+                smp_lang = get_lang(sections=['savemeplan'])
+                smp_text = f"{smp_lang['savemeplan']['replace']} {smp_text}"
+                smp_text = smp_text.replace(';', f" {smp_lang['savemeplan']['with']} ")
+
+            savemeplan_data.append([smp_step, smp_text])
+
+        savemeplan_data.sort(key=lambda x: x[0])  # Sort by step.
+
+    return savemeplan_data

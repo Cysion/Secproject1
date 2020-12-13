@@ -13,7 +13,7 @@ class SaveMePlan(models.Model):
     Time: Used be researcher
     """
 
-    SaveMePlanId = models.AutoField(primary_key=True)
+    SaveMePlanId = models.IntegerField()
     UserId = models.ForeignKey(User, on_delete=models.CASCADE)
     Step = models.BinaryField(max_length=512)
     Text = models.BinaryField(max_length=512)

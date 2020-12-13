@@ -6,7 +6,7 @@ from django.urls import reverse
 from tools.confman import get_lang  # Needed for retrieving text from language file
 from savemeplan.models import SaveMePlan, Contacts
 from login.models import User
-from savemeplan.tools import top5_options, top_5_bad_good, extend_top5
+from savemeplan.tools import top5_options, top_5_bad_good, extend_top5, decrypt_steps, get_savemeplan_items
 
 import time
 
@@ -76,27 +76,46 @@ def StepView(request, step):
                 13: 'C3',
                 14: 'C4',
             }
+            if 'SaveMePlanId' not in request.session.keys():
+
+                last_savemeplan = user.savemeplan_set.order_by('SaveMePlanId').reverse()
+                if len(last_savemeplan) != 0:
+                    request.session['SaveMePlanId'] = last_savemeplan[0].SaveMePlanId+1  # Increase SaveMePlanId with one.
+                else:
+                    request.session['SaveMePlanId'] = 0
+
+            current_smp_session = user.savemeplan_set.filter(SaveMePlanId=request.session['SaveMePlanId'])
+            done_steps = decrypt_steps(current_smp_session, request.session['PrivKey'])
+
+            foundId = -1
+            for item in done_steps:
+                if item[1] == steps[step]:
+                    foundId = item[0]
+
+            if foundId == -1:
+                savemeplan_step = SaveMePlan(SaveMePlanId=request.session['SaveMePlanId'], UserId=user)
+            else:  # User is changing on a previously saved step
+                savemeplan_step = SaveMePlan.objects.filter(pk=foundId)[0]
 
             if step in [1, 2, 3, 4, 6, 7, 9]:  # Is using step_default.html template
 
-                savemeplan_step = SaveMePlan(UserId=user)
-                savemeplan_step.setStep(steps[step])  # Save step as a user reads it
-                privKey = request.session['PrivKey']
+                if foundId == -1:
+                    savemeplan_step.setStep(steps[step])  # Save step as a user reads it
 
                 if 'describe' in request.POST.keys():
                     if len(request.POST['describe']) != 0:
                         savemeplan_step.setText(request.POST['describe'])
-                    else:
+                    elif foundId == -1:
                         savemeplan_step.setText('EMPTY')
-                else:
+                elif foundId == -1:
                     savemeplan_step.setText('EMPTY')
 
                 if 'rating' in request.POST.keys():
                     if len(request.POST['rating']) != 0:
                         savemeplan_step.setValue(request.POST['rating'])
-                    else:
+                    elif foundId == -1:
                         savemeplan_step.setValue('-1')
-                else:
+                elif foundId == -1:
                     savemeplan_step.setValue('-1')
 
                 savemeplan_step.setTime(str(int(time.time())))
@@ -105,10 +124,8 @@ def StepView(request, step):
 
             elif step == 8:  # Replace a bad thing with a good thing step.
 
-                user = User.objects.filter(pk=request.session['UserId'])[0]
-                savemeplan_step = SaveMePlan(UserId=user)
-                savemeplan_step.setStep(steps[step])
-                privKey = request.session['PrivKey']
+                if foundId == -1:
+                    savemeplan_step.setStep(steps[step])  # Save step as a user reads it
 
                 replace = ''  # Will have format <bad>;<good> IF one of them is empty they will be replaced by EMPTY
 
@@ -138,17 +155,17 @@ def StepView(request, step):
                 else:
                     replace = f"{replace}EMPTY"
 
-                savemeplan_step.setText(replace)
+                if replace != 'EMPTY;EMPTY':
+                    savemeplan_step.setText(replace)
+
                 savemeplan_step.setValue('-1')
                 savemeplan_step.setTime(str(int(time.time())))
                 savemeplan_step.save()
 
             elif step == 13:  # Go to a safe place step
 
-                user = User.objects.filter(pk=request.session['UserId'])[0]
-                savemeplan_step = SaveMePlan(UserId=user)
-                savemeplan_step.setStep(steps[step])
-                privKey = request.session['PrivKey']
+                if foundId == -1:
+                    savemeplan_step.setStep(steps[step])  # Save step as a user reads it
 
                 goto = ''
 
@@ -165,7 +182,8 @@ def StepView(request, step):
                 else:
                     goto = 'EMPTY'
 
-                savemeplan_step.setText(goto)
+                if foundId == -1:
+                    savemeplan_step.setText(goto)
 
                 savemeplan_step.setValue('-1')
                 savemeplan_step.setTime(str(int(time.time())))
@@ -316,7 +334,9 @@ def StepView(request, step):
         content['part'] = 'B'
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][6]} - {savemeplan_lang['savemeplan']['routtitle'].upper()}"
-        content['step'] =  savemeplan_lang['savemeplan']['my_route']
+        content['step'] = savemeplan_lang['savemeplan']['my_route']
+
+        default_options = savemeplan_lang['savemeplan']['long_texts']['rourate']
         top_5 = top5_options(user, 'B2', request.session['PrivKey'])  # Get most used options
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
@@ -459,7 +479,7 @@ def StepView(request, step):
             )
 
         content['contacts_list'] = all_contacts_dec
-        content['available'] = savemeplan_lang['savemeplan']['available']   
+        content['available'] = savemeplan_lang['savemeplan']['available']
 
         content['step_bg'] = STEP_COLORS['C2']
 
@@ -505,14 +525,21 @@ def StepView(request, step):
         content['step_bg'] = STEP_COLORS['C4']
 
     elif step == 15:  # Summary
-
         template = 'savemeplan/step_summary.html'
         title = f"{title} - {savemeplan_lang['savemeplan']['part'].upper()} {savemeplan_lang['savemeplan']['parts'][3]}"
         content['part'] = 'D'
 
         content['step_title'] = savemeplan_lang['savemeplan']['summary']
 
-        content['colors'] = STEP_COLORS
+        if 'SaveMePlanId' in request.session.keys():
+            content['steps'] = get_savemeplan_items(user, request.session['PrivKey'], request.session['SaveMePlanId'])
+            del request.session['SaveMePlanId']  # User is now done with this session.
+        else:
+            content['old'] = savemeplan_lang['savemeplan']['long_texts']['old_session']
+            content['steps'] = get_savemeplan_items(user, request.session['PrivKey'])
+
+        for smp_step in content['steps']:
+            smp_step.append(STEP_COLORS[smp_step[0]])
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.,
