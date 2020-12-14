@@ -7,6 +7,7 @@ from tools.confman import get_lang  # Needed for retrieving text from language f
 from savemeplan.models import SaveMePlan, Contacts
 from login.models import User
 from savemeplan.tools import top5_options, top_5_bad_good, extend_top5, decrypt_steps, get_savemeplan_items
+from prepare.tools import delete_temp_files
 
 import time
 
@@ -43,6 +44,8 @@ def StepView(request, step):
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     user = User.objects.filter(pk=request.session['UserId'])[0]
 

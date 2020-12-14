@@ -31,6 +31,8 @@ def MenuView(request, page=0):
     if request.session['Role'] == 'professional':
         return HttpResponseRedirect(reverse('professionals:clients'))
 
+    prepare.tools.delete_temp_files(request.session)
+
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
     memories = []
@@ -108,6 +110,8 @@ def addMemoryView(request):
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
 
     prepare_lang = get_lang(sections=["prepare"])
     media_conf = get_conf(sections=["media"])["media"]
@@ -298,10 +302,7 @@ def MemoryView(request, id):
                 else:
                     return HttpResponseRedirect(reverse('professionals:clients'))
 
-    if "files_to_delete" in request.session.keys():  # If there is any temporary files not used anymore, delete them
-        for file in request.session["files_to_delete"]:
-            splitted_path = file.split("/")
-            delete_file("".join(splitted_path[2:]), splitted_path[1])
+    prepare.tools.delete_temp_files(request.session)
 
     content["id"] = id
     content["title"] = memory.getMediaTitle(userPrivkey)
@@ -471,6 +472,9 @@ def MemoryView(request, id):
 def ContactsView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
+
     alerts = {}
     if request.method == 'POST':
         exceptions = ''
@@ -503,6 +507,9 @@ def ContactsView(request):
 def editContactView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
+
     prepare_lang = get_lang(sections=["prepare"])
     alerts=dict()
 
@@ -546,6 +553,8 @@ def editContactView(request, id):
 def removeDiaryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
 
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
 
