@@ -1,6 +1,5 @@
 env/*
-db.cnf*
-twelvesteps/settings.py
+db.cnf
 */__pycache__/*
 abs_path.cnf
 */migrations/*
@@ -11,3 +10,4 @@ testdata/*.blob
 media/*
 test*
 lang*
+export-key.txt

@@ -15,7 +15,7 @@ MANAGE = $(EXECUTE) manage.py
 MAKEMIGRATION = $(MANAGE) makemigrations
 
 
-all: upgrade env deps dev makemigration_all migrate
+all: upgrade env deps makemigration_all migrate
 
 env:
 	@echo  --- generating virtual environment ---
@@ -58,11 +58,22 @@ makemigration_all:
 	$(MAKEMIGRATION) login
 	$(MAKEMIGRATION) practice
 	$(MAKEMIGRATION) prepare
+	$(MAKEMIGRATION) science
 	$(MAKEMIGRATION) savemeplan
 	$(MAKEMIGRATION) userprofile
 
+make_pkg: full_clean
+	git checkout production
+	git pull
+	tar -zcvf 12stepsapp-production-branch.tar.gz *
+
+full_clean: clean
+	$(RMRF) env
+	$(RMRF) lang
+	$(RMRF) conf/lang.out.json
+
+
 clean:
 	@echo  --- cleaning up ---
-	#$(RMRF) env
 	$(RMRF) */migrations
 	$(RMRF) */__pycache__
