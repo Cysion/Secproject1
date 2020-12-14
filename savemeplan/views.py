@@ -8,6 +8,7 @@ from savemeplan.models import SaveMePlan, Contacts
 from login.models import User
 from savemeplan.tools import top5_options, top_5_bad_good, extend_top5, decrypt_steps, get_savemeplan_items
 from prepare.tools import delete_temp_files
+from tools.global_alerts import add_alert
 
 import time
 
@@ -107,7 +108,11 @@ def StepView(request, step):
 
                 if 'describe' in request.POST.keys():
                     if len(request.POST['describe']) != 0:
-                        savemeplan_step.setText(request.POST['describe'])
+                        if len(request.POST['describe']) <= 64:
+                            savemeplan_step.setText(request.POST['describe'])
+                        else:
+                            savemeplan_step.setText(request.POST['describe'][:64])
+                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
                     elif foundId == -1:
                         savemeplan_step.setText('EMPTY')
                 elif foundId == -1:
@@ -134,11 +139,19 @@ def StepView(request, step):
 
                 if 'bad' in request.POST.keys():
                     if request.POST['bad'] != 'other':
-                        replace = f"{request.POST['bad']};"
+                        if len(request.POST['bad']) <= 64:
+                            replace = f"{request.POST['bad']};"
+                        else:
+                            replace = f"{request.POST['bad'][:64]};"
+                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
                     else:
                         if len(request.POST['bad_other']) != 0:
-                            replace = f"{request.POST['bad_other']};"
+                            if len(request.POST['bad_other']) <= 64:
+                                replace = f"{request.POST['bad_other']};"
+                            else:
+                                replace = f"{request.POST['bad_other'][:64]};"
+                                add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
                         else:
                             replace = 'EMPTY;'
@@ -147,11 +160,19 @@ def StepView(request, step):
 
                 if 'good' in request.POST.keys():
                     if request.POST['good'] != 'other':
-                        replace = f"{replace}{request.POST['good']}"
+                        if len(request.POST['good']) <= 64:
+                            replace = f"{replace}{request.POST['good']}"
+                        else:
+                            replace = f"{request.POST['good'][:64]};"
+                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
                     else:
                         if len(request.POST['good_other']) != 0:
-                            replace = f"{replace}{request.POST['good_other']}"
+                            if len(request.POST['good_other']) <= 64:
+                                replace = f"{replace}{request.POST['good_other']}"
+                            else:
+                                replace = f"{request.POST['good_other'][:64]};"
+                                add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
                         else:
                             replace = f"{replace}EMPTY"
 
@@ -186,7 +207,11 @@ def StepView(request, step):
                     goto = 'EMPTY'
 
                 if foundId == -1:
-                    savemeplan_step.setText(goto)
+                    if len(goto) <= 64:
+                        savemeplan_step.setText(goto)
+                    else:
+                        savemeplan_step.setText(goto[:64])
+                        add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
                 savemeplan_step.setValue('-1')
                 savemeplan_step.setTime(str(int(time.time())))
@@ -544,8 +569,14 @@ def StepView(request, step):
         for smp_step in content['steps']:
             smp_step.append(STEP_COLORS[smp_step[0]])
 
+    global_alerts = []  # The variable which is sent to template
+    if "global_alerts" in request.session.keys():  # Check if there is global alerts
+        global_alerts = request.session["global_alerts"]  # Retrive global alerts.
+        request.session["global_alerts"] = []  # Reset
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.,
+        'global_alerts': global_alerts,  # Sending the alerts to template.
         'title': title,
         'content': content,
         'next_step': next_step,
