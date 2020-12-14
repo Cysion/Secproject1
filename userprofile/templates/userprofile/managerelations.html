@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Manage relations{% endblock %}
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "userprofile/relations.css" %}">
+{% endblock %}
+
+{% block content %}
+<h1>{{ relations.manage_relation }}</h1>
+
+<form action="/userprofile/relations/manage/?Id={{user.RelationFrom}}" class="was-validated" method="POST">
+    {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
+    <div>
+        <p><strong>{{ form.email }}:</strong><br>
+            {{ user.Email }}</p>
+
+        <div class="form-group" name="share_data">
+            <label for="share_data"><strong>{{ form.share_data }}:</strong></label>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" id="share_profile" name="share_profile" value="1" checked disabled> {{ form.profile }}
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" id="share_savemeplan" name="share_savemeplan" value="1" {% if user.Permission.SaveMePlan == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.savemeplan }}
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" id="share_check" name="share_check"value="1" {% if user.Permission.Check == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.check }}
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" id="share_prepare" name="share_prepare" value="1" {% if user.Permission.Prepare == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.prepare }}
+               </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" id="share_media" name="share_media" value="1" {% if user.Permission.Media == 1 %} checked {% endif %}{# If post already has been submitted #}> {{ form.media }}
+                </label>
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <button name="save" type="submit" class="btn btn-lg btn-success btn-block" value="1" style="margin-top:10px;">{{ form.save_changes }}</button>
+    </div>
+    <div class="form-group">
+        <button type="button" class="btn btn-lg btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveRelation">{{ form.remove_relation }}</button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmRemoveRelation" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterLongTitle">{{ modal.confirm_action }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ modal.confirm_remove_relation }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ modal.close }}</button>
+                    <button name="delete" type="submit" class="btn btn-danger" value="1">{{ form.remove_relation }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<a type="button" class="btn btn-lg btn-primary btn-block" href="/userprofile/relations">{{ back }}</a>
+
+{% endblock %}

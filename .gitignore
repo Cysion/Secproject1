@@ -1,5 +1,5 @@
 env/*
-db.cnf
+db.cnf*
 twelvesteps/settings.py
 */__pycache__/*
 abs_path.cnf
@@ -8,3 +8,6 @@ logs/*.log
 logs/*.gz
 .vscode
 testdata/*.blob
+media/*
+test*
+lang*

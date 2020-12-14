@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Check{% endblock %}
+
+
+{% block content %}
+
+<section class="row p-2 justify-content-between" style="background-color: white; border-style: solid; border-color: #42cfbc;">
+    <div class="col p-0">
+        <h2 class="h2 m-2 p-0 h1 text-uppercase text-left"><i class="fas fa-envelope"></i></h2>
+    </div>
+    <div class="col-auto p-0">
+        <h1 class="h2 m-2 p-0 text-uppercase text-right"><i class="fas fa-star"></i> {{ check.title }}</h1>
+    </div>
+</section>
+
+<section class="my-2 mx-1 p-2 rounded justify-content-between" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <div class="p-0">
+        <h2 class="h4"><i class="fas fa-suitcase"></i> {{ check.green_case.subtitle }}</h2>
+    </div>
+</section>
+
+<section class="my-2 mx-1 p-1 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <div class="col-md-12">
+        <h3 class="text-uppercase text-center h5">{{ check.progress_overview }}</h3>
+        <div class="row align-items-center">
+            <div class="col-12 col-md-6 px-1 my-1">
+                <a class="btn btn-info btn-block active" href="#">{{ check.pages.0 }}</a>
+            </div>
+            <div class="col-12 col-md-6 px-1 my-1">
+                <a class="btn btn-info btn-block" href="/check/2/">{{ check.pages.1 }}</a>            
+            </div>
+            <div class="col-12 col-md-6 px-1 my-1">
+                <a class="btn btn-info btn-block" href="/check/3/">{{ check.pages.2 }}</a>            
+            </div>
+            <div class="col-12 col-md-6 px-1 my-1">
+                <a class="btn btn-info btn-block" href="/check/4/">{{ check.pages.3 }}</a>            
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr>
+
+<!--
+    Kommentar för implementation:
+    Variabler:
+    - days[0-31], 32st värden
+    - year
+    - month
+    Värden för varje dag ligger i listan 'days'.
+    days.0 är antalet dagar i månaden.
+    Efterföljande slots (1-31) fylls med färgen 'red', 'orange', eller 'green'.
+    Om dagen inte finns i månaden setts värdet för den dagen till blankt ('').
+
+    Det ska gå att söka efter en månad (och år) och få fram antal dagar i månaden samt fylla i de värden som ligger sparade i databasen in i kalendern.
+    Vi inladdning av sidan ska sök-input ifyllas med 'year' och 'month'.
+    Input har id='date' / name='date', se rad 216-226
+
+-->
+
+<section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <table class="table text-center" style="border-style: solid;">
+        <tbody>
+            <tr>
+                <td class="p-2" 
+                {% if calendar.days.1 == "red" %} style="background-color: red;"
+                {% elif calendar.days.1 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.1 == "green" %} style="background-color: green;"
+                {% endif %}>1</td>
+                <td class="p-2"
+                {% if calendar.days.2 == "red" %} style="background-color: red;"
+                {% elif calendar.days.2 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.2 == "green" %} style="background-color: green;"
+                {% endif %}>2</td>
+                <td class="p-2"
+                {% if calendar.days.3 == "red" %} style="background-color: red;"
+                {% elif calendar.days.3 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.3 == "green" %} style="background-color: green;"
+                {% endif %}>3</td>
+                <td class="p-2"
+                {% if calendar.days.4 == "red" %} style="background-color: red;"
+                {% elif calendar.days.4 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.4 == "green" %} style="background-color: green;"
+                {% endif %}>4</td>
+                <td class="p-2"
+                {% if calendar.days.5 == "red" %} style="background-color: red;"
+                {% elif calendar.days.5 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.5 == "green" %} style="background-color: green;"
+                {% endif %}>5</td>
+                <td class="p-2"
+                {% if calendar.days.6 == "red" %} style="background-color: red;"
+                {% elif calendar.days.6 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.6 == "green" %} style="background-color: green;"
+                {% endif %}>6</td>
+                <td class="p-2"
+                {% if calendar.days.7 == "red" %} style="background-color: red;"
+                {% elif calendar.days.7 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.7 == "green" %} style="background-color: green;"
+                {% endif %}>7</td>
+            </tr>
+            <tr>
+                <td class="p-2"
+                {% if calendar.days.8 == "red" %} style="background-color: red;"
+                {% elif calendar.days.8 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.8 == "green" %} style="background-color: green;"
+                {% endif %}>8</td>
+                <td class="p-2"
+                {% if calendar.days.9 == "red" %} style="background-color: red;"
+                {% elif calendar.days.9 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.9 == "green" %} style="background-color: green;"
+                {% endif %}>9</td>
+                <td class="p-2"
+                {% if calendar.days.10 == "red" %} style="background-color: red;"
+                {% elif calendar.days.10 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.10 == "green" %} style="background-color: green;"
+                {% endif %}>10</td>
+                <td class="p-2"
+                {% if calendar.days.11 == "red" %} style="background-color: red;"
+                {% elif calendar.days.11 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.11 == "green" %} style="background-color: green;"
+                {% endif %}>11</td>
+                <td class="p-2"
+                {% if calendar.days.12 == "red" %} style="background-color: red;"
+                {% elif calendar.days.12 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.12 == "green" %} style="background-color: green;"
+                {% endif %}>12</td>
+                <td class="p-2"
+                {% if calendar.days.13 == "red" %} style="background-color: red;"
+                {% elif calendar.days.13 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.13 == "green" %} style="background-color: green;"
+                {% endif %}>13</td>
+                <td class="p-2"
+                {% if calendar.days.14 == "red" %} style="background-color: red;"
+                {% elif calendar.days.14 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.14 == "green" %} style="background-color: green;"
+                {% endif %}>14</td>
+            </tr>
+            <tr>
+                <td class="p-2"
+                {% if calendar.days.15 == "red" %} style="background-color: red;"
+                {% elif calendar.days.15 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.15 == "green" %} style="background-color: green;"
+                {% endif %}>15</td>
+                <td class="p-2"
+                {% if calendar.days.16 == "red" %} style="background-color: red;"
+                {% elif calendar.days.16 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.16 == "green" %} style="background-color: green;"
+                {% endif %}>16</td>
+                <td class="p-2"
+                {% if calendar.days.17 == "red" %} style="background-color: red;"
+                {% elif calendar.days.17 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.17 == "green" %} style="background-color: green;"
+                {% endif %}>17</td>
+                <td class="p-2"
+                {% if calendar.days.18 == "red" %} style="background-color: red;"
+                {% elif calendar.days.18 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.18 == "green" %} style="background-color: green;"
+                {% endif %}>18</td>
+                <td class="p-2"
+                {% if calendar.days.19 == "red" %} style="background-color: red;"
+                {% elif calendar.days.19 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.19 == "green" %} style="background-color: green;"
+                {% endif %}>19</td>
+                <td class="p-2"
+                {% if calendar.days.20 == "red" %} style="background-color: red;"
+                {% elif calendar.days.20 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.20 == "green" %} style="background-color: green;"
+                {% endif %}>20</td>
+                <td class="p-2"
+                {% if calendar.days.21 == "red" %} style="background-color: red;"
+                {% elif calendar.days.21 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.21 == "green" %} style="background-color: green;"
+                {% endif %}>21</td>
+            </tr>
+            <tr>
+                <td class="p-2"
+                {% if calendar.days.22 == "red" %} style="background-color: red;"
+                {% elif calendar.days.22 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.22 == "green" %} style="background-color: green;"
+                {% endif %}>22</td>
+                <td class="p-2"
+                {% if calendar.days.23 == "red" %} style="background-color: red;"
+                {% elif calendar.days.23 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.23 == "green" %} style="background-color: green;"
+                {% endif %}>23</td>
+                <td class="p-2"
+                {% if calendar.days.24 == "red" %} style="background-color: red;"
+                {% elif calendar.days.24 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.24 == "green" %} style="background-color: green;"
+                {% endif %}>24</td>
+                <td class="p-2"
+                {% if calendar.days.25 == "red" %} style="background-color: red;"
+                {% elif calendar.days.25 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.25 == "green" %} style="background-color: green;"
+                {% endif %}>25</td>
+                <td class="p-2"
+                {% if calendar.days.26 == "red" %} style="background-color: red;"
+                {% elif calendar.days.26 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.26 == "green" %} style="background-color: green;"
+                {% endif %}>26</td>
+                <td class="p-2"
+                {% if calendar.days.27 == "red" %} style="background-color: red;"
+                {% elif calendar.days.27 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.27 == "green" %} style="background-color: green;"
+                {% endif %}>27</td>
+                <td class="p-2"
+                {% if days.28 == "red" %} style="background-color: red;"
+                {% elif days.28 == "orange" %} style="background-color: orange;"
+                {% elif days.28 == "green" %} style="background-color: green;"
+                {% endif %}>28</td>
+            </tr>
+            {% if calendar.days.0 in '29,30,31' %}
+            <tr>
+                <td class="p-2"
+                {% if calendar.days.29 == "red" %} style="background-color: red;"
+                {% elif calendar.days.29 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.29 == "green" %} style="background-color: green;"
+                {% endif %}>{% if calendar.days.29 in '29,30,31' %}29{% endif %}</td>
+                <td class="p-2"
+                {% if calendar.days.30 == "red" %} style="background-color: red;"
+                {% elif calendar.days.30 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.30 == "green" %} style="background-color: green;"
+                {% endif %}>{% if calendar.days.30 in '30,31' %}30{% endif %}</td>
+                <td class="p-2"
+                {% if calendar.days.31 == "red" %} style="background-color: red;"
+                {% elif calendar.days.31 == "orange" %} style="background-color: orange;"
+                {% elif calendar.days.31 == "green" %} style="background-color: green;"
+                {% endif %}>{% if calendar.days.0 in '31' %}31{% endif %}</td>
+                <td class="p-2"></td>
+                <td class="p-2"></td>
+                <td class="p-2"></td>
+                <td class="p-2"></td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    <form action="/check/1/" class="was-validated row" method="POST">
+        {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
+        <div class="form-group col-12 col-md-auto my-1">
+            <label for="date">{{ check.green_case.select_month}}: </label>
+            <input type="month" id="date" name="date"
+            min="1850-01-01" max="{% now "Y-m-d" %}" {% if POST %} value="{{POST.date}}" {% endif %}{# If post already has been submitted #} required>
+        </div>
+        <div class="form-group col-12 col-md">
+            <button type="submit" id="date" name="date" class="btn btn-info btn-block">{{ check.green_case.go }}</button>
+        </div>
+    </form>
+    <hr>
+    <div class="rounded" style="background-color: white; border-style: solid; border-color: lightgray">
+        <p class="m-1">
+            <i class="fas fa-circle" style="color: red;"></i> {{ check.green_case.red_day }}<br>
+            <i class="fas fa-circle" style="color: orange;"></i> {{ check.green_case.orange_day }}<br>
+            <i class="fas fa-circle" style="color: green;"></i> {{ check.green_case.green_day }}
+        </p>
+    </div>
+</section>
+
+<div class="row mx-0 p-1">
+    <p class="col-auto h5" style="background-color: rgb(255, 242, 204); width: auto;">{{ check.good_job }} <i class="fas fa-smile"></i></p>
+</div>
+
+
+{% endblock %}

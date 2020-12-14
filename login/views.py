@@ -1,13 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.db import transaction
 # Create your views here.
 
-from login.models import User
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
 
+import login.models
+import login.tools
+import userprofile.tools
 
 from tools.confman import get_lang
+from tools.scienceman import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -41,19 +44,26 @@ def RegisterView(request):
                 exceptions = ''
                 if index == 'email':
                     exceptions = '1234567890@!#$%&*+-/=?^_`{|}~.'
-                if containsBadChar(request.POST[index], exceptions):
+                if login.tools.containsBadChar(request.POST[index], exceptions):
                     alerts[index] = "badChar"
 
             if request.POST["password"] != request.POST["repassword"]:
                 alerts['repassword'] = "repassword"
-            if getUidFromEmail(request.POST["email"]):
+            if login.tools.getUidFromEmail(request.POST["email"]):
                 alerts['email'] = 'email_already_exists'
-
             if not alerts:
-                sessionsData = registerUser(request.POST)
-                request.session['UserId'] = sessionsData[0]
-                request.session['privKey'] = sessionsData[1].decode("utf-8")
-                return HttpResponseRedirect(reverse('userprofile:Backupkey')) # ROBIN!!!!! TITTA HÄR! Den här ska användas vid redirekt när man har successfully loggat in.
+                try:
+                    with transaction.atomic():
+                        sessionsData = login.tools.registerUser(request.POST)
+
+                except AttributeError:
+                    alerts['database'] = 'Database error'
+                else:
+                    request.session['UserId'] = sessionsData[0]
+                    request.session['PrivKey'] = sessionsData[1].decode("utf-8")
+                    request.session['Role'] = sessionsData[2]
+
+                    return HttpResponseRedirect(reverse('userprofile:Backupkey'))
 
         args = {
             'POST': request.POST,
@@ -66,70 +76,106 @@ def RegisterView(request):
         return render(request, 'login/register.html', args)
     return HttpResponseRedirect(reverse('userprofile:Profile'))
 
-def containsBadChar(stringToCheck:str, exceptions:str = ''):
-    badChar = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3").difference(set(exceptions))
-    return True if set(stringToCheck).intersection(badChar) else False
-
-
-def getUidFromEmail(newMail):
-    result = User.objects.filter(Email=newMail).values('UserId')
-    if result:
-        return result[0]["UserId"]
-    return False
-
-
-def registerUserData(uId, postData):
-    user = User.objects.filter(UserId=uId)[0]
-    user.setGender(postData['gender'])
-    user.setFirstName(postData['first_name'])
-    user.setLastName(postData['last_name'])
-    user.setDateOfBirth(postData['date_of_birth'])
-    user.save()
-
-
-def registerUser(postData): # Place function somewere else.
-    user = User(Email=postData["email"])
-    user.save()
-
-    key = gen_rsa(secret_scrambler(postData["password"], user.UserId))
-    user.setPubKey(key.publickey().export_key().decode("utf-8"))
-    user.save()
-
-    registerUserData(user.UserId, postData)
-
-    return user.UserId, key.export_key()
-
 def LoginView(request):
-    if 'UserId' not in request.session:
-        loginFail = False
-        if request.method == 'POST':
+    if 'UserId' in request.session:
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
-            result = User.objects.filter(Email=request.POST['email']).values('UserId', 'Pubkey')
+    loginFail = False
+    if request.method == 'POST':
+        try:
+            user = login.models.User.objects.filter(Email=request.POST['email'].lower())[0]
+        except Exception as e:
+            user = None
+            loginFail = True
 
-            if result:
-                key = gen_rsa(secret_scrambler(request.POST["password"], result[0]['UserId']))
-                if str(key.publickey().export_key()) == str(result[0]['Pubkey']):
-                    request.session['UserId'] = result[0]['UserId']
-                    request.session['privKey'] = key.export_key().decode("utf-8")
-                    return HttpResponseRedirect(reverse('userprofile:Profile'))
-                else:
-                    loginFail = True
+        if user:
+            key = login.models.gen_rsa(login.models.secret_scrambler(request.POST["password"], user.getUid()))
+            if str(key.publickey().export_key()) == str(user.getPubkey()):
+                request.session['UserId'] = user.getUid()
+                request.session['PrivKey'] = key.export_key().decode("utf-8")
+                request.session['Role'] = user.getRole()
+                new_entry("u1", user.getAnonId(request.session['PrivKey']), "na")
+                return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
                 loginFail = True
+        else:
+            loginFail = True
 
-        login_lang = get_lang(sections=["login"])
-        args = {
-            'post': request.POST,
-            'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-            'form': login_lang["login"]["form"],
-            'alerts': login_lang['login']['long_texts']['alerts'],
-            'wrong_login_enterd': loginFail  # A check if right login was entered
-        }
+    global_alerts = []  # The variable which is sent to template
+    if "global_alerts" in request.session.keys():  # Check if there is global alerts
+        global_alerts = request.session["global_alerts"]  # Retrive global alerts.
+        request.session["global_alerts"] = []  # Reset
 
-        return render(request, 'login/login.html', args)
-    return HttpResponseRedirect(reverse('userprofile:Profile'))
+    login_lang = get_lang(sections=["login"])
+    args = {
+        'post': request.POST,
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'global_alerts': global_alerts,  # Sending the alerts to template.
+        'form': login_lang["login"]["form"],
+        'alerts': login_lang['login']['long_texts']['alerts'],
+        'wrong_login_enterd': loginFail  # A check if right login was entered
+    }
+
+    return render(request, 'login/login.html', args)
+
 
 def forgotPasswordView(request):
+    """
+    Page when user forgot their password.
+
+    POST keys:
+        email = users email.
+        password = Users new password.
+        repassword = Repeated password.
+        priv_key = Users backup key / private key used for decrypt of data.
+
+    Alerts for email
+        email_dont_exists
+
+    alerts for password
+        repassword
+
+    alerts for priv_key
+        priv_key
+    """
+    login_lang = get_lang(sections=["login"])
+    alerts = dict()
+
+    if 'UserId' in request.session:
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
+
+    if request.method == 'POST':
+        if request.POST['password'] == request.POST['repassword']:
+            try:
+                user = login.models.User.objects.filter(Email=request.POST['email'])[0]
+            except Exception as e:
+                user = None
+            if user:
+                try:
+                    request.session['UserId'] = user.getUid()
+                    request.session['PrivKey']=userprofile.tools.changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
+                    request.session["Role"] = user.getRole()
+                    #print(request.session["Role"])
+                except ValueError as keyError:
+                    alerts["relogin"] = "relogin"
+
+                    alert = {
+                        "color": "success",  # Check https://www.w3schools.com/bootstrap4/bootstrap_alerts.asp for colors.
+                        "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
+                        "message": login_lang["login"]["long_texts"]["alerts"]["changed_password_success"]
+                    }
+                    if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                        request.session["global_alerts"] = [alert]
+                    else:
+                        request.session["global_alerts"].append(alert)
+
+                if 'relogin' not in alerts:
+                    return HttpResponseRedirect(reverse('userprofile:Backupkey'))
+            else:
+                alerts["relogin"] = "relogin"
+        else:
+            alerts["repassword"] = "repassword"
+
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -139,6 +185,13 @@ def forgotPasswordView(request):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
+        'form': login_lang["login"]["form"],
+        'alert': alerts,
+        'alerts': login_lang["login"]["long_texts"]["alerts"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'POST': request.POST,
+        'important': UNIVERSAL_LANG["universal"]["important"],
+        'forgot_password_info': login_lang["login"]["long_texts"]["forgot_password_info"]
     }
 
     return render(request, 'login/forgotpassword.html', args)

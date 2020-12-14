@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% load static %}
+{% block statics %}
+<link rel="stylesheet" href="{% static "savemeplan/savemeplan.css" %}">
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+textarea:focus {
+  background-color: {{ content.step_bg }};
+}
+</style>
+<section class="row p-2 align-items-center justify-content-between" style="background-color: white; border-style: solid; border-color: #ff66f0;">
+    <div class="col-md-4 col page-title">
+        <h4 class="m-2 p-0 text-center"><i class="fas fa-umbrella"></i>Save.Me Plan!</h4>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-3 px-1">
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'A' %} active {% endif %}" name="page" href="/savemeplan/0/">A</a>
+            </div>
+            <div class="col-3 px-1">
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'B' %} active {% endif %}" name="page" href="/savemeplan/5/">B</a>
+            </div>
+            <div class="col-3 px-1">
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'C' %} active {% endif %}" name="page" href="/savemeplan/10/">C</a>
+            </div>
+            <div class="col-3 px-1">
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'D' %} active {% endif %}" name="page" href="/savemeplan/15/">D</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="part-description" style="background-color: {{ content.step_bg }};">
+  <h4>{{ content.step_title }}:</h4>
+</div>
+
+<div class="code code_red">
+  <h4>{{ content.code_red }}</h4>
+  <p>{{ content.message.red }}</p>
+</div>
+
+<div class="code code_orange">
+  <h4>{{ content.code_orange }}</h4>
+  <p>{{ content.message.orange }}</p>
+</div>
+
+<div class="code code_yellow">
+  <h4>{{ content.code_yellow }}</h4>
+  <p>{{ content.message.yellow }}</p>
+</div>
+
+<div class="code code_blue">
+  <h4>{{ content.code_blue }}</h4>
+  <p>{{ content.message.blue }}</p>
+</div>
+
+<div class="code code_green">
+  <h4>{{ content.code_green }}</h4>
+  <p>{{ content.message.green }}</p>
+</div>
+
+<i>{{ content.chat }}</i>
+<a class="btn btn-info btn-lg btn-block" style="margin-top: 20px; margin-bottom:20px;" href="{{ content.chat_website }}" target="_blank">Chat</a>
+
+<h2>{{ content.contacts }}</h2>
+
+{% for person in content.contacts_list %}
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">{{ person.name }}</h4>
+    <a href="tel:{{ person.number }}" class="card-link">{{ person.number }}</a>
+    <p>{{ content.available }}: {{ person.available }}</p>
+  </div>
+</div>
+{% endfor %}
+
+<a type="submit" class="btn btn-primary btn-block btn-lg" href="/savemeplan/{{ content.current_step|add:"1" }}/">{{ next_step }}</a>
+
+
+{% endblock %}

@@ -3,11 +3,12 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 # Create your views here.
 
-from login.models import User
-from tools.crypto import gen_rsa, secret_scrambler
+import userprofile.models
+import login.models
 from tools.confman import get_lang
 from django.db import transaction
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt
+from tools.scienceman import new_entry
+import userprofile.tools
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 # Create your views here.
@@ -16,15 +17,16 @@ def ProfileView(request):
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
+    user1 = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
     if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
         if 'logout' in request.GET.keys():
+            new_entry("u2", user1.getAnonId(request.session['PrivKey']), "na")
             request.session.flush()
             return HttpResponseRedirect(reverse('login:Login'))
-
     login_lang = get_lang(sections=["userprofile"])
-    user1 = User.objects.filter(UserId=request.session['UserId'])[0]
-    first_name = user1.getFirstName(request.session['privKey'])
-    last_name = user1.getLastName(request.session['privKey'])
+    new_entry("g1", user1.getAnonId(request.session['PrivKey']), "prof")
+    first_name = user1.getFirstName(request.session['PrivKey'])
+    last_name = user1.getLastName(request.session['PrivKey'])
 
     global_alerts = []  # The variable which is sent to template
 
@@ -32,12 +34,17 @@ def ProfileView(request):
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+        
+    
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'global_alerts': global_alerts,
         'profile': login_lang["userprofile"]["long_texts"],
         'first_name': first_name,
-        'last_name': last_name
+        'last_name': last_name,
+        'template': template
     }
 
     return render(request, 'userprofile/profile.html', args)
@@ -45,40 +52,93 @@ def ProfileView(request):
 def EditProfileView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
-    wrong_pass = False
-    account = {}
-    user1=User.objects.filter(UserId=request.session['UserId'])[0]
-    account['firstName']=user1.getFirstName(request.session['privKey'])
-    account['lastName']=user1.getLastName(request.session['privKey'])
-    account['gender']=user1.getGender(request.session['privKey'])
-    account['email'] = user1.getEmail()
-
-    if request.method == 'POST':
-        if checkPassword(request.session['UserId'], request.session['privKey'], request.POST['password']):
-            user = User.objects.filter(UserId=request.session['UserId'])[0]
-            user.setGender(request.POST['gender'])
-            user.setFirstName(request.POST['first_name'])
-            user.setLastName(request.POST['last_name'])
-            user.save()
-            return HttpResponseRedirect(reverse('userprofile:Profile'))
-        else:
-            wrong_pass = True
-        
-
-
 
     profile_lang = get_lang(sections=["userprofile"])
     login_lang = get_lang(sections=["login"])
+
+    wrong_pass = False
+    account = {}
+    user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    account['firstName']=user.getFirstName(request.session['PrivKey'])
+    account['lastName']=user.getLastName(request.session['PrivKey'])
+    account['gender']=user.getGender(request.session['PrivKey'])
+    account['email'] = user.getEmail()
+
+    if request.method == 'POST':
+        if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
+            user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            if request.POST['gender'] == 'Other':
+                user.setGender(request.POST['gender_other'])
+            else:
+                user.setGender(request.POST['gender'])
+            user.setFirstName(request.POST['first_name'])
+            user.setLastName(request.POST['last_name'])
+            user.setEmail(request.POST['email'])
+            user.save()
+
+
+            #data collection
+            for_science = {
+                "firstname":(account['firstName'] ,user.getFirstName(request.session['PrivKey'])),
+                "lastname":(account['lastName'], user.getLastNate(request.session['PrivKey'])),
+                "gender":(account['gender'], user.getGender(request.session['PrivKey'])),
+                "email":(account['email'], user.getEmail(request.session['PrivKey']))
+            }
+            for science in for_science:
+                if for_science[science][0] != for_science[science][0]:
+                    new_entry("u3", user.getAnonId(request.session['PrivKey']), science)
+            del for_science, science
+
+
+            alert = {
+                "color": "success",  # Check https://www.w3schools.com/bootstrap4/bootstrap_alerts.asp for colors.
+                "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
+                "message": profile_lang["userprofile"]["long_texts"]["alerts"]["changed_info_success"]
+            }
+
+            if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+                request.session["global_alerts"] = [alert]
+            else:
+                request.session["global_alerts"].append(alert)
+            return HttpResponseRedirect(reverse('userprofile:Profile'))
+        else:
+            wrong_pass = True
+
+
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'form': login_lang["login"]["form"],
         'profile': profile_lang["userprofile"]["long_texts"],
+        'alerts': login_lang['login']['long_texts']['alerts'],
         "account":account,
-        'wrong_pass':wrong_pass
+        'wrong_pass':wrong_pass,
+        'template': template,
+        'profView': False
     }
 
     return render(request, 'userprofile/edit.html', args)
+
+def BackupKeyView(request):
+    if not 'UserId' in request.session.keys():
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    profile_lang = get_lang(sections=["userprofile"])
+
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
+        'PrivKey': request.session['PrivKey'],
+        'template': template
+    }
+
+    return render(request, 'userprofile/backupkey.html', args)
 
 def changePassView(request):
     """
@@ -99,12 +159,12 @@ def changePassView(request):
 
     if request.method == "POST":
 
-        if checkPassword(request.session['UserId'], request.session['privKey'], request.POST["current_password"]):
+        if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST["current_password"]):
             if request.POST['new_password'] == request.POST['new_repassword']:
-                privkey = changePass(request.session['UserId'], request.session['privKey'], request.POST["new_password"]).decode('utf-8')
+                PrivKey = userprofile.tools.changePass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"]).decode('utf-8')
 
-                if privkey:  # Check if changing password succeded
-                    request.session['privKey'] = privkey
+                if PrivKey:  # Check if changing password succeded
+                    request.session['PrivKey'] = PrivKey
                     alert = {
                         "color": "success",
                         "title": UNIVERSAL_LANG["universal"]["success"],
@@ -144,6 +204,8 @@ def changePassView(request):
         global_alerts = request.session["global_alerts"]
         request.session["global_alerts"] = []
 
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'global_alerts': global_alerts,
@@ -151,47 +213,110 @@ def changePassView(request):
         'form': login_lang["login"]["form"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'alerts': login_lang['login']['long_texts']['alerts'],
-        'alert': alerts
+        'alert': alerts,
+        'important': UNIVERSAL_LANG["universal"]["important"],
+        'template': template
     }
 
     return render(request, 'userprofile/changepassword.html', args)
 
 
-def changePass(uId, privKey, newPassword):
-    user1=User.objects.filter(UserId=uId)[0]
-    firstName=user1.getFirstName(privKey)
-    lastName=user1.getLastName(privKey)
-    gender=user1.getGender(privKey)
-    dateOfBirth=user1.getDateOfBirth(privKey)
-    symKey=user1.getSymKey(privKey)
 
-    key = gen_rsa(secret_scrambler(newPassword, uId))
-    pubkey=key.publickey().export_key()
-    with transaction.atomic():
-        user1.Pubkey = pubkey
-        user1.Gender=rsa_encrypt(pubkey, gender.encode("utf-8"))
-        user1.FirstName=rsa_encrypt(pubkey, firstName.capitalize().encode("utf-8"))
-        user1.LastName=rsa_encrypt(pubkey, lastName.capitalize().encode("utf-8"))
-        user1.DateOfBirth=rsa_encrypt(pubkey, dateOfBirth.encode("utf-8"))
-        user1.save()
-        return key.export_key()
-
-    return 0
-
-def checkPassword(uId, privKey, password):
-    return gen_rsa(secret_scrambler(password, uId)).export_key().decode("utf-8") == privKey
-
-def BackupKeyView(request):
+def relationsView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
+
+
+    users = userprofile.tools.showAllRelationsTo(request.session['UserId'], request.session['PrivKey'])
 
     profile_lang = get_lang(sections=["userprofile"])
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
-        'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
-        'privkey': request.session['privKey']
+        'relations': profile_lang["userprofile"]["relations"],
+        'users': users
     }
 
-    return render(request, 'userprofile/backupkey.html', args)
+    return render(request, 'userprofile/relations.html', args)
+
+def addRelationsView(request):
+    if 'UserId' not in request.session.keys():  # Check if user is logged in
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    profile_lang = get_lang(sections=["userprofile"])
+
+    alerts=dict()
+    if request.method == 'POST':
+        if login.models.User.objects.filter(Email=request.POST['email'].lower()):
+            recieverEmail= request.POST['email'].lower()
+        else:
+            alerts['email'] = 'email_does_not_exist'
+
+        if not alerts:
+            user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            permissions = '1'
+            permissions+='1' if 'share_savemeplan' in request.POST else '0'
+            permissions+='1' if 'share_check' in request.POST else '0'
+            permissions+='1' if 'share_prepare' in request.POST else '0'
+            permissions+='1' if 'share_media' in request.POST else '0'
+            new_entry("r1", user.getAnonId(request.session['PrivKey']), "professional: " + permissions)
+
+            if not userprofile.tools.createRelation(user.getUid(), request.session['PrivKey'], recieverEmail, permissions):
+                return HttpResponseRedirect(reverse('userprofile:Relations'))
+            else:
+                alerts['database'] = 'database_error'
+
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'relations': profile_lang["userprofile"]["relations"],
+        'form': profile_lang["userprofile"]["relations"]["form"],
+        'alerts': alerts
+    }
+    return render(request, 'userprofile/addrelations.html', args)
+
+def manageRelationsView(request):
+    profile_lang = get_lang(sections=["userprofile"])
+    relationData = dict()
+    if request.GET:
+        relationFrom = userprofile.models.RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
+        permission = dict()
+        user = relationFrom.getUserIdTo()
+        email = user.getEmail()
+        permission['Profile'] = int(relationFrom.getPermission()[0])
+        permission['SaveMePlan'] = int(relationFrom.getPermission()[1])
+        permission['Check'] = int(relationFrom.getPermission()[2])
+        permission['Prepare'] = int(relationFrom.getPermission()[3])
+        permission['Media'] = int(relationFrom.getPermission()[4])
+        relationData = {'Email':email, 'RelationFrom':request.GET['Id'], 'Permission':permission}
+
+        if request.method == 'POST':
+            if 'delete' in request.POST:
+                userprofile.tools.removeRelation(request.session['UserId'], request.session['PrivKey'], email)
+                return HttpResponseRedirect(reverse('userprofile:Relations'))
+            elif 'save' in request.POST:
+                relationFrom = userprofile.models.RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
+                permission['Profile'] = 1
+                permission['SaveMePlan'] = 1 if 'share_savemeplan' in request.POST else 0
+                permission['Check'] = 1 if 'share_check' in request.POST else 0
+                permission['Prepare'] = 1 if 'share_prepare' in request.POST else 0
+                permission['Media'] = 1 if 'share_media' in request.POST else 0
+                userprofile.tools.modifyRelation(request.session['UserId'], request.session['PrivKey'], email, permission)
+                relationData['Permission']=permission
+
+
+
+    print(relationData['Permission'])
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'relations': profile_lang["userprofile"]["relations"],
+        'form': profile_lang["userprofile"]["relations"]["form"],
+        'modal': profile_lang["userprofile"]["relations"]["modal"],
+        'user': relationData
+    }
+
+    return render(request, 'userprofile/managerelations.html', args)
+

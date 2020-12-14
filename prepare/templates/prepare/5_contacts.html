@@ -1,0 +1,171 @@
+{% extends template %}
+
+{% block title %}Prepare{% endblock %}
+
+
+{% block content %}
+
+<section class="row p-2 align-items-center justify-content-between" style="background-color: white; border-style: solid; border-color: #42cfbc;">
+    <div class="col-md-4 col ">
+        <h1 class="m-2 p-0 h4 text-uppercase text-center"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            {% if not profView %}
+                <div class="col-4 px-1">
+                    <a class="btn btn-info btn-block" name="page" value="1" href="/prepare/1/">{{ nav.library }}</a>
+                </div>
+                <div class="col-4 px-1">
+                    <a class="btn btn-info btn-block" name="page" value="5" href="/prepare/5/">{{ nav.contacts }}</a>            
+                </div>
+                <div class="col-4 px-1">
+                    <a class="btn btn-info btn-block" name="page" value="7" href="/prepare/7/">{{ nav.notes }}</a>            
+                </div>
+            {% else %}
+                <div class="col-4 px-1">
+                    {% if media %}
+                        <a class="btn btn-info btn-block" name="page" value="3" href="/professionals/{{UserId}}/prepare/3/">{{ nav.library }}</a>
+                    {% else %}
+                        <a class="btn btn-info btn-block" name="page" value="1" href="/professionals/{{UserId}}/prepare/1/">{{ nav.library }}</a>
+                    {% endif %}
+                </div>
+                
+                <div class="col-4 px-1">
+                    {% if prep %}
+                        <a class="btn btn-info btn-block" name="page" value="5" href="/professionals/{{UserId}}/prepare/5/">{{ nav.contacts }}</a>
+                    {% else %}
+                        <a class="btn btn-info btn-block" name="page" value="5">{{ nav.contacts }}</a>
+                    {% endif %}      
+                </div>
+                <div class="col-4 px-1">
+                    {% if prep %}
+                        <a class="btn btn-info btn-block" name="page" value="7" href="/professionals/{{UserId}}/prepare/7/">{{ nav.notes }}</a> 
+                    {% else %}
+                        <a class="btn btn-info btn-block" name="page" value="7">{{ nav.notes }}</a>
+                    {% endif %}          
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <h2 class="h4 text-uppercase">{{ prepare.steps.0 }} {{ prepare.steps.5 }}/{{ prepare.steps.8 }}: {{ prepare.contacts.title }}</h2>
+</section>
+
+<section class="my-2 mx-1 rounded p-2" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <div class="row">
+        <div class="col col-md-3">
+            <p class="m-0">{{ prepare.contacts.contact_name }}</p>
+        </div>
+        <div class="col col-md-3">
+            <p class="m-0">{{ prepare.contacts.phone_number }}</p>
+        </div>
+        <div class="col col-md-3">
+            <p class="m-0">{{ prepare.contacts.available }}</p>
+        </div>
+        <div class="col-12 col-md-3"></div>
+    </div>
+    <hr class="m-0" style="border-style: solid; border-color: #109075;">
+    
+    {% for contact in contacts %}
+    <div class="row align-items-center">
+        <div class="col">
+            <p class="my-1 align-middle"><strong>{{ contact.Name}}</strong></p>
+        </div>
+        <div class="col">
+            <a class="my-1 align-middle" href="tel:{{ contact.Phonenumber}}"><strong>{{ contact.Phonenumber}}</strong></a>
+        </div>
+        <div class="col">
+            <p class="my-1 align-middle"><strong>{{ contact.Available}}</strong></p>
+        </div>
+        <div class="col-12 col-md my-1 mx-0 row justify-content-end">
+            {% if not profView %}
+            <div class="col-8 col-md-auto p-1">
+                <a class="btn btn-info btn-block" href="/prepare/contacts/edit/{{contact.Id}}">{{ prepare.contacts.edit }}</a>
+            </div>
+            <div class="col-4 col-md-auto p-1">
+                <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveContact{{ contact.Id }}"><i class="fas fa-trash-alt"></i></button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <hr class="mt-0 mb-2" style="border-style: solid; border-color: #109075;">
+
+    {% if not profView %}
+    <!-- Modal -->
+    <div class="modal fade" id="confirmRemoveContact{{ contact.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterLongTitle">{{ prepare.contacts.modal.confirm_action }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ prepare.contacts.modal.confirm_remove_contact }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.contacts.modal.close }}</button>
+                    <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/contacts/edit/{{ contact.Id }}?delete=true">{{ prepare.contacts.modal.remove_contact }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    {% if not profView %}
+    <a type="button" class="btn btn-lg btn-primary btn-block" href="/prepare/contacts">Add new contact</a>
+    {% endif %}
+</section>
+
+<section class="my-3 mx-0">
+    <ul class="pagination justify-content-center">
+        {% if not profView %}
+        <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="1" href="/prepare/1">{{ prepare.steps.1 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="2" href="/prepare/2">{{ prepare.steps.2 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="3" href="/prepare/3">{{ prepare.steps.3 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="4" href="/prepare/4">{{ prepare.steps.4 }}</a></li>
+        <li class="page-item active"><a class="page-link" name="page" value="5" href="#">{{ prepare.steps.5 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="6" href="/prepare/6">{{ prepare.steps.6 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="7" href="/prepare/7">{{ prepare.steps.7 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="8" href="/prepare/8">{{ prepare.steps.8 }}</a></li>
+        {% endif %}
+
+        {% if profView %}
+            <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
+            {% if prep %}
+                <li class="page-item"><a class="page-link" name="page" value="1" href="/professionals/{{UserId}}/prepare/1/"> {{ prepare.steps.1 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="2" href="/professionals/{{UserId}}/prepare/2/">{{ prepare.steps.2 }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" name="page" value="1"> {{ prepare.steps.1 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="2">{{ prepare.steps.2 }}</a></li>
+            {% endif %}
+
+            {% if media %}
+                <li class="page-item"><a class="page-link" name="page" value="3" href="/professionals/{{UserId}}/prepare/3/">{{ prepare.steps.3 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="4" href="/professionals/{{UserId}}/prepare/4/">{{ prepare.steps.4 }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" name="page" value="3">{{ prepare.steps.3 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="4">{{ prepare.steps.4 }}</a></li>
+            {% endif %}
+
+            {% if prep %}
+                <li class="page-item active"><a class="page-link" name="page" value="5" href="#">{{ prepare.steps.5 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="6" href="/professionals/{{UserId}}/prepare/6/">{{ prepare.steps.6 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="7" href="/professionals/{{UserId}}/prepare/7/">{{ prepare.steps.7 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="8" href="/professionals/{{UserId}}/prepare/8/">{{ prepare.steps.8 }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" name="page" value="5">{{ prepare.steps.5 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="6">{{ prepare.steps.6 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="7">{{ prepare.steps.7 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="8">{{ prepare.steps.8 }}</a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+</section>
+
+{% endblock %}

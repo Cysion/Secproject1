@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Prepare{% endblock %}
+
+
+{% block content %}
+
+<div class="text-center">
+  <h2>{{ content.title }}</h2>
+</div>
+
+<section class="row my-2 mx-1 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+
+  {% if content.photo or content.video or content.youtube %}
+  <div class="col-md-6 p-1">
+    <p class="p-1 m-0" style="background-color: white; border-style: solid; border-color: lightgray">{{ content.text }}</p>
+  </div>
+  {% else %}
+  <div class="col-12 p-1">
+    <p class="p-1 m-0" style="background-color: white; border-style: solid; border-color: lightgray">{{ content.text }}</p>
+  </div>
+  {% endif %}
+
+  {% if content.photo %}
+  <div class="col-md-6 p-1">
+    <a href="/{{ content.photo }}" target="_blank"><img src="/{{ content.photo }}" class="mx-auto d-block img-fluid rounded"/></a>
+  </div>
+
+  {% elif content.video %}
+  <div class="col-md-6 p-1">
+    <video src="/{{ content.video }}" class="w-100 h-auto mx-auto d-block" controls>
+      Your browser does not support the video.
+    </video>
+  </div>
+
+  {% elif content.youtube %}
+  <div class="col-md-6 embed-responsive embed-responsive-16by9">
+    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ content.youtube }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" class="w-100 h-auto" allowfullscreen></iframe>
+  </div>
+  {% endif %}
+
+  {% if content.url_other %}
+  <div class="col-12 p-1 justify-content">
+    <a href="{{ content.url_other }}" class="btn btn-block btn-info">Link</a>
+  </div>
+  {% endif %}
+</section>
+
+<p>{{ using_space }}</p>
+
+{% if profView %}
+  {% if content.type == "s" %}
+  <a href="/professionals/{{UserId}}/prepare/3/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+  {% else %}
+  <a href="/professionals/{{UserId}}/prepare/4/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+  {% endif %}
+
+{% endif %}
+
+{% if not profView %}
+  {% if content.type == "s" %}
+    <a href="/prepare/3/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+  {% else %}
+    <a href="/prepare/4/" class="btn btn-block btn-lg btn-primary">{{ back }}</a>
+  {% endif %}
+
+<button type="button" data-toggle="modal" data-target="#confirmRemoveMemory" class="btn btn-block btn-lg btn-danger"><i class="fas fa-trash-alt"></i></button>
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmRemoveMemory" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h5 class="modal-title" id="modalCenterLongTitle">{{ prepare.memories.modal.confirm_action }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <div class="modal-body">
+              <p>{{ prepare.memories.modal.confirm_remove_memory }}</p>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.memories.modal.close }}</button>
+              <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/memory/{{ content.id }}/?delete=true">{{ prepare.memories.modal.remove_memory }}</a>
+          </div>
+      </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

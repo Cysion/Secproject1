@@ -1,7 +1,8 @@
 import logging
 import os
-from compressor import compress
-from confman import get_conf
+import gzip
+from datetime import datetime
+from tools.confman import get_conf
 
 CONF = get_conf(sections=["logs"])
 
@@ -24,12 +25,15 @@ def get_logger(name, global_level=logging.INFO, file_level=logging.INFO, term_le
     logger.addHandler(stream_handler)
     logger.info("Logger aquired")
     return logger
-    
+
+
 def log_cleaner(logdir = DEFAULT_DIR):
     for logfile in os.listdir(logdir):
         filep = os.path.join(logdir, logfile)
         filet = logfile.split(".")[-1]
         if os.path.getsize(filep) >= CONF["max_raw_size"] and filet != "gz":
-            compress(filep, addtime=0)
+            with open(filep, "rb") as inf:
+                with open(f"{filep}-{datetime.now().strftime(fmt='%Y%m%d%H%M%S')}.gz", "wb") as outf:
+                    outf.write(gzip.compress(inf.read()))
         elif filet == "gz":
             pass

@@ -2,6 +2,11 @@
 
 {% block title %}Register{% endblock %}
 
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "login/register.css" %}">
+{% endblock %}
+
 {% block content %}
 
 <form action="/login/register/" class="was-validated" method="POST">
@@ -101,10 +106,16 @@
   {% endif %}
   <div class="form-check">
     <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" name="agree_terms" id="agree_terms" value="accept" required>
+      <input type="checkbox" class="form-check-input checkbox-size" name="professional" id="professional" value="1">
+        {{ form.professional }}.
+    </label>
+  </div>
+  <div class="form-check">
+    <label class="form-check-label">
+      <input type="checkbox" class="form-check-input checkbox-size" name="agree_terms" id="agree_terms" value="accept" required>
         {{ form.agree_terms }}<a href="#">{{ form.terms }}</a>.
     </label>
-</div>
+  </div>
   <div class="form-group">
     <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.register }}" style="margin-top:10px;">
   </div>

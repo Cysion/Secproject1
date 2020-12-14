@@ -21,6 +21,8 @@
         "success":"Success",
         "warning":"Warning",
         "error":"Error",
+        "important":"Important",
+        "emergency_number":"112",
         "titles":[
           "Info",
           "Chat",
@@ -30,6 +32,7 @@
           "Prepare",
           "Save.Me",
           "Check",
+          "Clients",
           "Practice",
           "Breathe"
         ],
@@ -58,10 +61,40 @@
     "check":{
         "unformat":[],
         "title":"check",
-        "long_texts":{
-        }
-
-    },
+        "pages":["MY GREEN CASE INDEX","MY WELL-FEELING INDEX","SAVE.ME PLAN","MY PRACTICE SELF-CARE"],
+        "good_job":"Good Job!",
+        "progress_overview":"Progress overview",
+        "green_case":{
+            "subtitle":"MY GREEN CASE INDEX PROGRESS OVERVIEW",
+            "select_month":"Select month and year",
+            "go":"Go",
+            "red_day":"Red day - day with an unhealthy activity",
+            "orange_day":"Orange day - day with no health+/- activities",
+            "green_day":"Green day - day with health+ activities",
+            "green_case_index":"GREEN CASE INDEX",
+            "red_days":"Red days/days",
+            "orange_days":"orange days/days",
+            "green_days":"Green days/days"
+        },
+        "well_feeling":{
+            "subtitle":"MY WELL-FEELING INDEX PROGRESS OVERVIEW",
+            "statistics":["IDENTITY","VALUE","ACCESS","CONTROLL"]
+        },
+        "save_me_plan":{
+            "subtitle":"SAVE.ME PLAN PROGRESS OVERVIEW",
+            "statistics":{
+                "steps":["STEP","A1","A2","A3","A4","B1","B2","B3","B4","C1","C2","C3","C4"],
+                "a":["SITUATION","FEELINGS","THOUGHTS","BEHAVIORS"],
+                "b":["CALM & DISTRACT","WALK","REPLACE","PROTECT"],
+                "c":["SMS & CHAT","CALL","GO SAFE","112"]
+            }
+        },
+        "practice_self_care":{
+            "subtitle":"MY PRACTICE SELF-CARE PROGRESS OVERVIEW",
+            "steps":["STEP","1","2","3","4","5","6","7","8","9","10","11","12"],
+            "statistics":["MAGICIAN","FEELER","THINKER","COOLER","TALKER","WALKER","ECO","SMARTER","DISCOVER","SAFER","HELPER","EXPERT"]
+            }
+        },
     "danger":{
         "unformat":[],
         "title":"danger",
@@ -102,7 +135,9 @@
         "save":"Save changes",
         "current":"Current",
         "new":"New",
-        "change":"Change"
+        "change":"Change",
+        "forgot_password":"Forgot password? Reset here!",
+        "professional":"Register as a professional"
       },
       "long_texts":{
         "alerts":{
@@ -110,26 +145,56 @@
             "email_already_exists":"Email already exists! Please enter another email.",
             "repassword":"Passwords are not the same!",
             "relogin":"Login credentials incorrect!",
-            "badChar":"Field contains illegal character(s)"
+            "wrong_pass":"Password is incorrect!",
+            "badChar":"Field contains illegal character(s)",
+            "changed_password_success":"You changed you password!"
 
         },
-        "failed_login":"Wrong email or password entered"
+        "failed_login":"Wrong email or password entered",
+        "forgot_password_info":"If you successfully changed password you need to save backup key again!"
       }
     },
     "userprofile":{
       "unformat":[],
       "title":"userprofile",
+      "relations": {
+        "manage": "Manage",
+        "manage_relation":"Manage relation",
+        "call": "Call",
+        "add_new": "Add a new relation",
+        "my_relations": "My relations",
+        "form": {
+          "enter_phone_number":"Enter a phone number",
+          "required":"This field is required",
+          "email":"Email",
+          "share_data":"Select data that you want to share",
+          "profile":"Profile",
+          "savemeplan":"SaveMePlan",
+          "check":"Check",
+          "prepare":"Prepare",
+          "media":"Media",
+          "send_request":"Send relation request",
+          "save_changes":"Save changes",
+          "remove_relation":"Remove this relation"
+        },
+        "modal": {
+          "confirm_action":"Confirm your action",
+          "confirm_remove_relation":"Are you sure that you want to remove this relation?",
+          "close":"Close"
+        }
+      },
       "long_texts":{
         "edit":"Edit your info",
         "change_pass":"Change password",
         "save_backup":"Save backup key",
-        "relation": "Edit your relations",
+        "relations": "Relations",
         "logout":"Logout",
         "backupkey":"This is your backup key if you forgot your password. Please save this on a save place!. Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
-        "change_password_text":"When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
+        "change_password_text":"If you change your password then you need to save your backup key again! When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
         "alerts": {
           "alert_changed_password":"You successfully changed your password",
-          "alert_error":"Something went wrong when trying to encrypt your data"
+          "alert_error":"Something went wrong when trying to encrypt your data",
+          "changed_info_success":"You changed your info!"
         }
       }
     },
@@ -153,7 +218,7 @@
           "discl":"see p.13 in presentation"
       }
 
-},
+    },
     "practice":{
         "unformat":[],
         "title":"practice",
@@ -162,55 +227,285 @@
     },
     "prepare":{
         "unformat":[],
-        "title":"prepare",
+        "title":"Prepare",
         "%%dev_note":"step list added in case the first, second, thirds etc paradigm is preferred to fractions. index 0 is concatenated with the following entries",
-        "steps":["step ","1/8", "2/8", "3/8", "4/8", "5/8", "6/8", "7/8", "8/8"],
-        "memory":"memory",
-        "memories":"memories",
-        "how_to":"how to use 12 steps",
-        "prac_breath":"practice breathing",
-        "good_mem":"my library for supportive memories",
-        "mem_cats":["music", "games", "videos", "chat", "images", "phrases", "memes", "stories", "awards", "themes"],
-        "bad_mem":"my rubbish bin for destructive memories",
-        "sup_con":"add support contacts",
-        "acc":"accessible at time",
-        "pref_con":"preferred means of contact",
-        "call_cisis":"where do i call in a crisis",
-        "diary":"diary",
-        "ther_notes":"Therapy notes",
+        "steps":["Step","1", "2", "3", "4", "5", "6", "7", "8"],
+        "memory":"Memory",
+        "mem_cats":["Music", "Games", "Videos", "Chat", "Images", "Phrases", "Memes", "Stories", "Awards", "Themes"],
+        "mem_cats_single":["Music", "Game", "Video", "Chat", "Image", "Phrase", "Meme", "Story", "Award", "Theme"],
+        "bad_mem_cats":["Hurful words","Bad habit","Negative thoughts","Negative experience","Misstakes","Difficult feelings"],
+        "text":"Text",
+        "upload":"Upload file: max file size is",
+        "file":"File",
+        "link":"Link",
+        "add_memory":"Add memory",
+        "add_a_memory":"Add a memory",
+        "placeholder":"Enter a",
+        "menu":"Menu",
+        "save":"Save changes",
+        "memories":{
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_memory":"Are you sure that you want to remove this memory?",
+                "close":"Close",
+                "remove_memory":"Remove this memory"
+            }
+        },
+        "nav":{
+            "prepare":"Prepare",
+            "library":"Library",
+            "contacts":"Contacts",
+            "notes":"Notes"
+        },
+        "how_to":{
+            "title":"How to use 12 steps",
+            "young":"Young",
+            "middle_aged":"Middle aged",
+            "senior":"Senior",
+            "me":"ME"
+        },
+        "practice_breathing":{
+            "title":"Practice breathing",
+            "in":"Breathe IN and count",
+            "hold":"Hold your breath and count",
+            "out":"Breathe OUT and count",
+            "count":"one, two, three, four",
+            "audio_instructions":"Audio instructions"
+        },
+        "supportive_memories":{
+            "title":"My library for supportive memories",
+            "add_memory":"Add supportive memory",
+            "list_memories":"List of supportive memories",
+            "view_memory":"View this memory",
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_memory":"Are you sure that you want to remove this memory?",
+                "close":"Close",
+                "remove_memory":"Remove this memory"
+            }
+        },
+        "destructive_memories":{
+            "title":"My rubbish bin for destructive memories",
+            "title_part1":"My",
+            "title_part2":"for destructive memories",
+            "add_memory":"What would you like to place in the garbage bag?",
+            "list_memories":"List of destructive memories",
+            "view_memory":"View this memory",
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_memory":"Are you sure that you want to remove this memory?",
+                "close":"Close",
+                "remove_memory":"Remove this memory"
+            }
+        },
+        "contacts":{
+            "title":"Contacts",
+            "add_contacts":"Add contacts",
+            "edit_contacts":"Edit contacts",
+            "contact_name":"Contact name",
+            "phone_number":"Phone number",
+            "available":"Available",
+            "sup_con":"add support contacts",
+            "pref_con":"preferred means of contact",
+            "edit":"Edit",
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_contact":"Are you sure that you want to remove this contact?",
+                "close":"Close",
+                "remove_contact":"Remove this contact"
+            }
+        },
+        "where_to_call":{
+            "title":"Where do i call in a crisis?",
+            "peer_support":"PEER support",
+            "specialist_consultation":"SPECIALIST consultation",
+            "hospital":"Hospital",
+            "crisis_center":"Crisis Center",
+            "profession_support_work_related":"Same profession support - for work-related problems.",
+            "teenager":"Teenager",
+            "senior":"Senior",
+            "church":"Church",
+            "parent":"Parent",
+            "caregiver":"Caregiver",
+            "police":"Police",
+            "description1":"Depression? Anxiety? Self-harm? ADHD? Autism? Psychosis? Eating disorders? Sexual problems? Sleep problems? Suicidal thoughts? Crisis after suicide attempt or suicide? Other health problems with mental health issues?",
+            "description2":"Problem in communication in relation? Divorce? Financial issues? Legal issues? Alcohol? Drugs? Crime? Bullying? Other problems with mental health issues? Suicidal thoughts? Crisis after suicide attempt or suicide?",
+            "description3":"Students, teachers, doctors, emergency workers, police officers, soldiers, fireman, farmers, priests",
+            "in_crisis_part1":"IN CRISIS AND DO NOT KNOW WHERE TO CALL?",
+            "in_crisis_part2":"CALL",
+            "in_crisis_part3":"WE WILL GUIDE YOU!",
+            "phone_numbers":{
+                "peer_support":"0708123456",
+                "specialist_consultation":"0708123456",
+                "hospital":"0708123456",
+                "crisis_center":"0708123456",
+                "profession_support_work_related":"0708123456",
+                "in_crisis":"0708123456",
+                "teenager":"0708123456",
+                "senior":"0708123456",
+                "church":"0708123456",
+                "parent":"0708123456",
+                "caregiver":"0708123456",
+                "police":"0708123456"
+            }
+        },
+        "diary":{
+            "title":"Diary",
+            "date":"Date",
+            "text":"Text",
+            "stored_entries":"Stored entries",
+            "create_entry":"Create a new entry",
+            "add":"Add",
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_entry":"Are you sure that you want to remove this entry in your diary?",
+                "close":"Close",
+                "remove_entry":"Remove this entry"
+            }
+
+        },
+        "therapy_notes":{
+            "title":"Therapy notes",
+            "important_facts":"Note important facts in your CV.",
+            "what_helps":"What helps you feel better?",
+            "date":"Date",
+            "text":"Text",
+            "stored_entries":"Stored entries",
+            "create_entry":"Create a new entry",
+            "add":"Add",
+            "modal":{
+                "confirm_action":"Confirm your action",
+                "confirm_remove_entry":"Are you sure that you want to remove this entry in your diary?",
+                "close":"Close",
+                "remove_entry":"Remove this entry"
+            }
+        },
         "long_texts":{
+            "menu_description":"Click one of the areas above or select a step below",
             "hotline_text":"see p.19 in presentation",
-            "ther_notes":"see p.21 in presentation"
+            "ther_notes":"see p.21 in presentation",
+            "media_info":"Do you want to attach a file or url to your memory? Press one of the following buttons.",
+            "link_info":"Link can be anything. A youtube link will show the video when viewing the memory.",
+            "file_info":"File can be photo, video or music.",
+            "memory_type":"What type of memory is it?",
+            "allowed_extenssions":"These extenssions are allowed",
+            "memory_size":"This memory takes %mb% MB in space.",
+            "alerts":{
+              "no_title":"You need to enter a title for a memory!",
+              "title_to_long":"A title can be maximum 64 characters!",
+              "no_type":"You need set a type for you memory!",
+              "memory_added":"Your memory was added!",
+              "file_to_big":"This file is too big or the extenssion is not allowed!",
+              "file_error":"Something with ths file upload went wrong.",
+              "not_enough_space":"You dont have enough space to upload this media! You need to delete a memory with a photo, video or sound file if you wish to upload this!",
+              "checksum_error":"This file has been modified! You can test delete this memory and reupload this memory.",
+              "could_not_open_file":"Something went wrong when trying to open your file.",
+              "memory_deleted":"Memory was removed!",
+              "text_to_long":"Text is to long! Maximum characters is 500."
+            }
+        }
+    },
+    "professionals":{
+        "unformat":[],
+        "title":"professionals",
+        "media":"Media",
+        "long_texts":{
+          "no_clients":"You don't have any clients who share data with you"
         }
     },
     "savemeplan":{
         "unformat":[],
-        "title":"save.me plan",
+        "title":"Save.Me Plan",
         "%%dev_note":"step list added in case another paradigm is preferred to a1, a2 etc. index 0 is concatenated a space with the following entries",
-        "steps":["step ", "a1", "a2", "a3", "a4", "b1", "b2", "b3", "b4", "c1", "c2", "c3", "c4"],
+        "steps":["Step", "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4"],
+        "part":"Part",
+        "parts":["A", "B", "C", "D"],
         "tips":"tips",
-        "idprob":"identify your problem",
-        "mysit":"my situation",
-        "myemo":"my emotions",
-        "mytho":"my thoughts",
-        "mybeh":"my behaviors",
-        "sittext":"describe your problems",
-        "emotext":"describe how you are feeling",
-        "thotext":"describe what you are thinking",
-        "behtext":"describe what behaviours you want to change",
+        "part_a":"identify your problem",
+        "mysit":"My situation",
+        "myemo":"My emotions",
+        "mytho":"My thoughts",
+        "mybeh":"My behaviors",
+        "sittext":"Describe your problems",
+        "emotext":"Describe how you are feeling",
+        "thotext":"Describe what you are thinking",
+        "behtext":"Describe what behaviours you want to change",
+        "part_b":"If you are alone choose an activity:",
         "calm":"calm",
         "rout":"routines",
         "repl":"replace",
         "prot":"protect",
-        "calmtitle":"calm and distract",
+        "calmtitle":"Calm & distract",
+        "calm_step":"My Distractions",
         "calmadd":"add a calming activity",
-        "calmtext":"write what you do to feel better without harming yourself",
-        "routtitle":"add a routine if you are ready",
+        "calmtext":"Write what you do to feel better without harming yourself",
+        "routtitle":"If you are ready, add one routine",
+        "my_route":"My new routine",
         "routadd":"add your routine",
-        "routtext":"name your new routine",
-        "repltitle":"replace dangerous habits with safe ones",
-        "repladd":"add more",
+        "routtext":"Name your new routine",
+        "put_away":"Put away potentially dangerous things!",
+        "find_safe":"Find something safe!",
+        "repltitle":"Replace",
+        "repladd":"Add more",
+        "prot_title":"Protect your values, life & others",
+        "my_values":"My values",
+        "name_values":"Name your values & protections!",
+        "part_c":"If you need a support from someone...",
+        "smsto":"SMS to: ...",
+        "call":"Call ...",
+        "gosafe":"Go safe to ...",
+        "indanger": "In a danger for your life call",
+        "sms_chat":"Send SMS or chat",
+        "codered":"Code Red?",
+        "codeyel":"Code Yellow?",
+        "codeor":"Code Orange?",
+        "codeblue":"Code blue?",
+        "codegre":"Code Green?",
+        "chat_site":"https://chat.mind.se/ ",
+        "contacts":"Contacts",
+        "callhelper":"Call your helper!",
+        "safe":"Go Safe",
+        "go_to_safe":"Go to a place where you are safe!",
+        "add_safe":"Add your safe place here",
+        "if_danger":"If your life is in danger call 112!",
+        "cant_talk":"If you cannot talk, ask someone to call for you!",
+        "sos_1":"Wait for emergency help!",
+        "sos_2":"Repeat steps from Save.me Plan",
+        "sos_3":"Accept help you are offered",
+        "call_sos":"Call 112",
+        "repeat_smp":"Repeat Save.me Plan",
+        "summary":"Summary Save.me Plan",
+        "rate_sit":"Rate your situation",
+        "rate_emo":"Rate your emotions",
+        "rate_tho":"Rate your thoughts",
+        "rate_beh":"Rate your behaviors",
+        "rate_calm":"Rate your distraction",
+        "rate_rout":"Rate your routine",
+        "rate_values":"Rate your values",
+        "unbearable":"Unbearable",
+        "other":"Other",
+        "yes":"yes!",
+        "no":"no",
+        "nomild":"No/mild",
+        "next_step":"Next step",
+        "available":"Available",
+        "replace":"Replace",
+        "with": "with",
+
         "long_texts":{
+            "chat":"You can press this button to start chatting or copy the phonenumber from the contacts bellow",
+            "describe_info":"You can either choose one of the following items or write your own in textarea bellow. If you press one of the following the textarea will be filled for you.",
+            "old_session":"This is a old session of Save.me Plan. When navigating to a new step you will activate a new one.",
+            "steps":[
+              "I am activating Save.Me plan because of"
+            ],
+            "messages":{
+              "red":"Hi! I need your help NOW. I feel very bad, and I do not know what to do.",
+              "orange":"Hi! I need your help TODAY! What time can we meet ?",
+              "yellow":"Hi! I need your help. When can you call or meet me?",
+              "blue":"Hi! Can we meet to practice 12 Steps? When do you have time?",
+              "green":"Hi! I miss you. When can we have a cup of tea?"
+            },
             "sitrate":["Health problems", "Relations/Family", "Finances", "Study-related issues", "Work-related issues"],
             "emorate":["I feel really bad and I suffer", "Depressed and lonely", "Anxious and insecure", "Angry and frustrated", "Guilty and ashamed"],
             "thorate":["I see everything in \"black\"", "No meaning", "Nobody cares about me", "It will never get better", "I can't stand it any longer"],
@@ -218,7 +513,9 @@
             "calrate":["I just breathe in and out", "I am mindful of my surroundings", "I listen to music", "I go for a walk", "I create a voo-doo doll"],
             "rourate":["Notice one nice thing", "Give someone a smile", "Go for a walk", "Take a shower", "Call a friend"],
             "repgood":["Water and juice", "Fruits and vegetables", "Virtual reality", "Make-up", "Trust"],
-            "repbad":["Alcohol", "Narcotics", "Firearms", "Blades", "Accusations"]
+            "repbad":["Alcohol", "Narcotics", "Firearms", "Blades", "Accusations"],
+            "protect":["Family & friends", "Faith & my personality", "Future & hope", "Safty/crisis plan", "Fear for unnecessary death"],
+            "safe":["Bed", "Family", "Friends", "Church", "Hostpital"]
         }
     }
 }

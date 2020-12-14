@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Relations{% endblock %}
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "userprofile/relations.css" %}">
+{% endblock %}
+
+{% block content %}
+<h1>{{ relations.my_relations }}</h1>
+<div class="container">
+    {% for user in users %}
+    <div class="relations my-1 row">
+        
+        <div class="col-md">
+            <p><strong>{{ user.Email }}</strong></p>
+        </div>
+        <div class="col-md">
+            <div class="my-1">
+                <a type="button" class="btn btn-info btn-block" href="manage/?Id={{user.RelationFrom}}">{{ relations.manage }}</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<a type="button" class="btn btn-lg btn-warning btn-block" href="add">{{ relations.add_new }}</a>
+
+<a type="button" class="btn btn-lg btn-primary btn-block" href="/userprofile">{{ back }}</a>
+
+{% endblock %}

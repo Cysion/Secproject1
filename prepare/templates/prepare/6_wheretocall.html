@@ -1,0 +1,153 @@
+{% extends template %}
+
+{% block title %}Prepare{% endblock %}
+
+
+{% block content %}
+
+<section class="row p-2 align-items-center justify-content-between" style="background-color: white; border-style: solid; border-color: #42cfbc;">
+    <div class="col-md-4 col ">
+        <h1 class="m-2 p-0 h4 text-uppercase text-center"><i class="fas fa-suitcase"></i> {{ nav.prepare }}!</h1>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            {% if not profView %}
+                <div class="col-4 px-1">
+                    <a class="btn btn-info btn-block" name="page" value="1" href="/prepare/1/">{{ nav.library }}</a>
+                </div>
+                <div class="col-4 px-1">
+                    <a class="btn btn-info btn-block" name="page" value="5" href="/prepare/5/">{{ nav.contacts }}</a>            
+                </div>
+                <div class="col-4 px-1">
+                    <a class="btn btn-info btn-block" name="page" value="7" href="/prepare/7/">{{ nav.notes }}</a>            
+                </div>
+            {% else %}
+                <div class="col-4 px-1">
+                    {% if media %}
+                        <a class="btn btn-info btn-block" name="page" value="3" href="/professionals/{{UserId}}/prepare/3/">{{ nav.library }}</a>
+                    {% else %}
+                        <a class="btn btn-info btn-block" name="page" value="1" href="/professionals/{{UserId}}/prepare/1/">{{ nav.library }}</a>
+                    {% endif %}
+                </div>
+                
+                <div class="col-4 px-1">
+                    {% if prep %}
+                        <a class="btn btn-info btn-block" name="page" value="5" href="/professionals/{{UserId}}/prepare/5/">{{ nav.contacts }}</a>
+                    {% else %}
+                        <a class="btn btn-info btn-block" name="page" value="5">{{ nav.contacts }}</a>
+                    {% endif %}      
+                </div>
+                <div class="col-4 px-1">
+                    {% if prep %}
+                        <a class="btn btn-info btn-block" name="page" value="7" href="/professionals/{{UserId}}/prepare/7/">{{ nav.notes }}</a> 
+                    {% else %}
+                        <a class="btn btn-info btn-block" name="page" value="7">{{ nav.notes }}</a>
+                    {% endif %}          
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <h2 class="h4 text-uppercase">{{ prepare.steps.0 }} {{ prepare.steps.6 }}/{{ prepare.steps.8 }}: {{ prepare.where_to_call.title }}</h2>
+</section>
+
+
+<section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <div class="my-0 p-2 row">
+        <div class="col-12 col-md-4 p-2">
+            <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.peer_support }}">{{ prepare.where_to_call.peer_support }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.peer_support }}</a>    
+        </div>
+        <div class="col-12 col-md-4 p-2">
+            <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.specialist_consultation }}">{{ prepare.where_to_call.specialist_consultation }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.specialist_consultation }}</a>    
+        </div>
+        <div class="col-12 col-md-4 p-2">
+            <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.hospital }}">{{ prepare.where_to_call.hospital }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.hospital }}</a>    
+        </div>
+    </div>
+    <p>{{ prepare.where_to_call.description1 }}</p>
+    <div>
+        <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.crisis_center }}">{{ prepare.where_to_call.crisis_center }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.crisis_center }}</a>
+    </div>
+    <p>{{ prepare.where_to_call.description2 }}</p>
+    <div>
+        <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.profession_support_work_related }}">{{ prepare.where_to_call.profession_support_work_related }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.profession_support_work_related }}</a>
+    </div>
+    <p>{{ prepare.where_to_call.description3 }}</p>
+    <div class="my-1 p-2 row">
+        <div class="col-6 col-md-4 p-2">
+            <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.teenager }}">{{ prepare.where_to_call.teenager }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.teenager }}</a>    
+        </div>
+        <div class="col-6 col-md-4 my-0 p-2">
+            <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.senior }}">{{ prepare.where_to_call.senior }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.senior }}</a>    
+        </div>
+        <div class="col-6 col-md-4 my-0 p-2">
+            <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.church }}">{{ prepare.where_to_call.church }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.church }}</a>    
+        </div>
+        <div class="col-6 col-md-4 my-0 p-2">
+            <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.parent }}">{{ prepare.where_to_call.parent }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.parent }}</a>    
+        </div>
+        <div class="col-6 col-md-4 my-0 p-2">
+            <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.caregiver }}">{{ prepare.where_to_call.caregiver }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.caregiver }}</a>    
+        </div>
+        <div class="col-6 col-md-4 my-0 p-2">
+            <a class="btn btn-info btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.police }}">{{ prepare.where_to_call.police }}<br><i class="fas fa-phone-alt"></i> {{ prepare.where_to_call.phone_numbers.police }}</a>    
+        </div>
+    </div>
+    <div>
+        <a class="btn btn-danger btn-block" href="tel:{{ prepare.where_to_call.phone_numbers.in_crisis }}">{{ prepare.where_to_call.in_crisis_part1 }}<br>{{ prepare.where_to_call.in_crisis_part2 }} {{ prepare.where_to_call.phone_numbers.in_crisis }}! {{ prepare.where_to_call.in_crisis_part3 }}</a>
+    </div>
+</section>
+
+
+
+
+<section class="my-3 mx-0">
+    <ul class="pagination justify-content-center">
+        {% if not profView %}
+        <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="1" href="/prepare/1">{{ prepare.steps.1 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="2" href="/prepare/2">{{ prepare.steps.2 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="3" href="/prepare/3">{{ prepare.steps.3 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="4" href="/prepare/4">{{ prepare.steps.4 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="5" href="/prepare/5">{{ prepare.steps.5 }}</a></li>
+        <li class="page-item active"><a class="page-link" name="page" value="6" href="#">{{ prepare.steps.6 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="7" href="/prepare/7">{{ prepare.steps.7 }}</a></li>
+        <li class="page-item"><a class="page-link" name="page" value="8" href="/prepare/8">{{ prepare.steps.8 }}</a></li>
+        {% endif %}
+
+        {% if profView %}
+            <li class="page-item disabled"><a class="page-link" htef="#">{{ prepare.steps.0 }}:</a></li>
+            {% if prep %}
+                <li class="page-item"><a class="page-link" name="page" value="1" href="/professionals/{{UserId}}/prepare/1/"> {{ prepare.steps.1 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="2" href="/professionals/{{UserId}}/prepare/2/">{{ prepare.steps.2 }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" name="page" value="1"> {{ prepare.steps.1 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="2">{{ prepare.steps.2 }}</a></li>
+            {% endif %}
+
+            {% if media %}
+                <li class="page-item"><a class="page-link" name="page" value="3" href="/professionals/{{UserId}}/prepare/3/">{{ prepare.steps.3 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="4" href="/professionals/{{UserId}}/prepare/4/">{{ prepare.steps.4 }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" name="page" value="3">{{ prepare.steps.3 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="4">{{ prepare.steps.4 }}</a></li>
+            {% endif %}
+
+            {% if prep %}
+                <li class="page-item"><a class="page-link" name="page" value="5" href="/professionals/{{UserId}}/prepare/5/">{{ prepare.steps.5 }}</a></li>
+                <li class="page-item active"><a class="page-link" name="page" value="6" href="#">{{ prepare.steps.6 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="7" href="/professionals/{{UserId}}/prepare/7/">{{ prepare.steps.7 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="8" href="/professionals/{{UserId}}/prepare/8/">{{ prepare.steps.8 }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" name="page" value="5">{{ prepare.steps.5 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="6">{{ prepare.steps.6 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="7">{{ prepare.steps.7 }}</a></li>
+                <li class="page-item"><a class="page-link" name="page" value="8">{{ prepare.steps.8 }}</a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+</section>
+
+{% endblock %}
