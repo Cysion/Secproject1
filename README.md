@@ -24,17 +24,18 @@ now, and in the future when launching the app, to use the environment
 `source env/bin/activate`
 now being all set you can either use the **makefile** to set up the project (recommended)  
 `make -f makefile all`  
-or follow this step by step guide (not recommended)
-update to the latest version of the repository and pip
+or follow this step by step guide (not recommended):  
+  
+update to the latest version of the repository and pip  
 `git pull`  
 `pip install --upgrade pip`
 then install the required python libraries 
-**NOTE:** the version on most python libraries have been **FROZEN**, you will have to upgrade them **MANUALLY**
+**NOTE:** the version on most python libraries have been **FROZEN**, you will have to upgrade them **MANUALLY**  
 `pip install -r requirements.txt`  
-then you have to use the built in django database construction feature
-`python manage.py migrate`
-if the command succeds you can start the server by executing
-`python manage.py runserver`
+then you have to use the built in django database construction feature  
+`python manage.py migrate`  
+if the command succeds you can start the server by executing  
+`python manage.py runserver`  
 
 ## Built With
 * [Python](https://www.python.org/doc/) - Language and dependency management
