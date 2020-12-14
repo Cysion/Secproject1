@@ -9,6 +9,7 @@ from tools.confman import get_lang
 from django.db import transaction
 from tools.scienceman import new_entry
 import userprofile.tools
+from prepare.tools import delete_temp_files
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 # Create your views here.
@@ -16,6 +17,8 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 def ProfileView(request):
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     user1 = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
     if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
@@ -35,8 +38,6 @@ def ProfileView(request):
         request.session["global_alerts"] = []  # Reset
 
     template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
-        
-    
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -52,6 +53,8 @@ def ProfileView(request):
 def EditProfileView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     profile_lang = get_lang(sections=["userprofile"])
     login_lang = get_lang(sections=["login"])
@@ -125,6 +128,8 @@ def BackupKeyView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
+    delete_temp_files(request.session)
+
     profile_lang = get_lang(sections=["userprofile"])
 
     template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
@@ -152,6 +157,8 @@ def changePassView(request):
 
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     alerts = {}  # Dict containing input name as key and alert text key as value
     login_lang = get_lang(sections=["login"])
@@ -226,6 +233,7 @@ def relationsView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
+    delete_temp_files(request.session)
 
     users = userprofile.tools.showAllRelationsTo(request.session['UserId'], request.session['PrivKey'])
 
@@ -243,6 +251,8 @@ def relationsView(request):
 def addRelationsView(request):
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     profile_lang = get_lang(sections=["userprofile"])
 
@@ -278,6 +288,11 @@ def addRelationsView(request):
     return render(request, 'userprofile/addrelations.html', args)
 
 def manageRelationsView(request):
+    if 'UserId' not in request.session.keys():  # Check if user is logged in
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
+
     profile_lang = get_lang(sections=["userprofile"])
     relationData = dict()
     if request.GET:
@@ -319,4 +334,3 @@ def manageRelationsView(request):
     }
 
     return render(request, 'userprofile/managerelations.html', args)
-
