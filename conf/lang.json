@@ -63,7 +63,13 @@
         "title":"check",
         "pages":["MY GREEN CASE INDEX","MY WELL-FEELING INDEX","SAVE.ME PLAN","MY PRACTICE SELF-CARE"],
         "good_job":"Good Job!",
+        "red":"Red day",
+        "orange":"Orange day",
+        "green":"Green day",
+        "how_feeling":"How do you feel today?",
         "progress_overview":"Progress overview",
+        "could_not_save":"Could not save your daily checkup.",
+        "could_save":"Your todays check was saved.",
         "green_case":{
             "subtitle":"MY GREEN CASE INDEX PROGRESS OVERVIEW",
             "select_month":"Select month and year",
