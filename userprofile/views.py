@@ -7,10 +7,9 @@ import userprofile.models
 import login.models
 from tools.confman import get_lang
 from django.db import transaction
-from tools.scienceman import new_entry
+from science.views import new_entry
 import userprofile.tools
 from prepare.tools import delete_temp_files
-
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 # Create your views here.
 
@@ -83,9 +82,9 @@ def EditProfileView(request):
             #data collection
             for_science = {
                 "firstname":(account['firstName'] ,user.getFirstName(request.session['PrivKey'])),
-                "lastname":(account['lastName'], user.getLastNate(request.session['PrivKey'])),
+                "lastname":(account['lastName'], user.getLastName(request.session['PrivKey'])),
                 "gender":(account['gender'], user.getGender(request.session['PrivKey'])),
-                "email":(account['email'], user.getEmail(request.session['PrivKey']))
+                "email":(account['email'], user.getEmail())
             }
             for science in for_science:
                 if for_science[science][0] != for_science[science][0]:
