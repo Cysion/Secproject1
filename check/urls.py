@@ -11,6 +11,6 @@ urlpatterns = [
     path('2/', views.WellFeelingView, name="well-feeling"),
     path('3/', views.SaveMePlanView, name="save-me-plan"),
     path('4/', views.PracticeSelfCareView, name="practice-self-care"),
-    path('checkup/', views.CheckupView, name='Checkup')
+    path('checkup/', views.CheckupView, name='checkup')
 
 ]

@@ -56,7 +56,6 @@
         "title":"chat",
         "long_texts":{
         }
-
     },
     "check":{
         "unformat":[],
@@ -109,14 +108,15 @@
         "title":"danger",
         "long_texts":{
         }
-
     },
     "home":{
         "unformat":[],
         "title":"home",
+        "welcome":"Welcome to the 12 Steps App!",
+        "goto_login":"Login or register here",
         "long_texts":{
+            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam." 
         }
-
     },
     "login":{
       "unformat":[],
@@ -157,7 +157,6 @@
             "wrong_pass":"Password is incorrect!",
             "badChar":"Field contains illegal character(s)",
             "changed_password_success":"You changed you password!"
-
         },
         "failed_login":"Wrong email or password entered",
         "forgot_password_info":"If you successfully changed password you need to save backup key again!"
