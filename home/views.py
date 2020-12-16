@@ -12,12 +12,6 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 def IndexView(request):
 
-    #if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
-    #    if 'logout' in request.GET.keys():
-    #        request.session.flush()
-    #        return HttpResponseRedirect(reverse('login:Login'))
-
-
     home_lang = get_lang(sections=["home"])
 
     args = {
