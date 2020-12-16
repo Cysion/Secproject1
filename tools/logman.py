@@ -2,7 +2,11 @@ import logging
 import os
 import gzip
 from datetime import datetime
-from tools.confman import get_conf
+try:
+    from tools.confman import get_conf
+except ModuleNotFoundError:
+    from confman import get_conf
+
 
 CONF = get_conf(sections=["logs"])
 

@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'practice.apps.PracticeConfig',
     'prepare.apps.PrepareConfig',
     'savemeplan.apps.SavemeplanConfig',
+    'science.apps.ScienceConfig',
     'professionals.apps.ProfessionalsConfig',
     'userprofile.apps.UserprofileConfig',
     'django.contrib.admin',

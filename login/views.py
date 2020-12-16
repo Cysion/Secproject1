@@ -10,7 +10,7 @@ import login.tools
 import userprofile.tools
 
 from tools.confman import get_lang
-from tools.scienceman import new_entry
+from science.views import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 

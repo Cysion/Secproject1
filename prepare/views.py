@@ -16,11 +16,12 @@ import datetime
 
 from django.core.files import File
 import savemeplan.models
-from tools.scienceman import new_entry
+from science.views import new_entry
 import time
 import re
 import random
 import prepare.tools
+
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -89,8 +90,8 @@ def MenuView(request, page=0):
         'template': baseTemplate
     }
 
-    #if 0 < page < 9:
-    #    new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+    if 0 < page < 9:
+        new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
     return render(request, template, args)
 
 

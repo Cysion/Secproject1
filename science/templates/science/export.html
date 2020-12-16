@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "login/register.css" %}">
+{% endblock %}
+
+{% block content %}
+
+<form action="/science/export/" class="was-validated" method="POST">
+  {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
+  <div class="form-group">
+    <label for="export_key">{{ form.export_key }}: </label>
+    <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.export_key }}..."
+      id="export_key" name="export_key" {% if POST %} value="{{POST.export_key}}" {% endif %}{# If post already has been submitted #} required>
+  <div class="form-group">
+    <input type="submit" class="btn btn-lg btn-success btn-block" value="export" style="margin-top:10px;">
+  </div>
+</form>
+{% endblock %}

@@ -58,6 +58,7 @@ makemigration_all:
 	$(MAKEMIGRATION) login
 	$(MAKEMIGRATION) practice
 	$(MAKEMIGRATION) prepare
+	$(MAKEMIGRATION) science
 	$(MAKEMIGRATION) savemeplan
 	$(MAKEMIGRATION) userprofile
 
