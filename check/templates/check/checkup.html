@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Check{% endblock %}
+
+{% load static %}
+{% block statics %}
+<link rel="stylesheet" href="{% static "check/checkup.css" %}">
+{% endblock %}
+
+{% block content %}
+
+<h3 style="text-align: center;">{{ check.how_feeling }}</h3>
+
+<div class="rounded" style="background-color: white; border-style: solid; border-color: lightgray">
+    <p class="m-1">
+        <i class="fas fa-circle" style="color: red;"></i> {{ check.green_case.red_day }}<br>
+        <i class="fas fa-circle" style="color: orange;"></i> {{ check.green_case.orange_day }}<br>
+        <i class="fas fa-circle" style="color: green;"></i> {{ check.green_case.green_day }}
+    </p>
+</div>
+
+<a href="?day=red" class="btn btn-danger btn-lg btn-block" style="background-color: red; margin-top:20px;">{{ check.red }}</a>
+<a href="?day=orange" class="btn btn-warning btn-lg btn-block" style="background-color: orange; margin-top:20px;">{{ check.orange }}</a>
+<a href="?day=green" class="btn btn-success btn-lg btn-block" style="background-color: green; margin-top:20px;">{{ check.green }}</a>
+
+{% endblock %}

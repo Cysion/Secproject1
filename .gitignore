@@ -12,3 +12,5 @@ media/*
 test*
 lang*
 tests/geckodriver.log
+research
+export-key.txt

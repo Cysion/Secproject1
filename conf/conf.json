@@ -9,17 +9,12 @@
         "max_size_mb":"100",
         "max_per_user":"250"
     },
-    "sessions":{
-        "time_to_live":21600
-    },
     "research":{
-        "%%dev_note":[
-            "strf time format: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior",
-            "unix time will guarantee correct time sorting, but is less human readable. simple conversion is availible however",
-            "unix time is the standard supported format of time, use strftime with care"
-        ],
-        "timestandard":"unix",
+        "%%dev_note":["timestrf is used in naming containing folders for where entries are stored"],
         "timestrf":"%Y%m%d%H%M%S",
-        "exportdir":"research"
+        "exportdir":"research",
+        "enable_collection":"True",
+        "output_to_console":"True",
+        "key_lifetime":600
     }
 }
