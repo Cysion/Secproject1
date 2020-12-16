@@ -80,7 +80,8 @@
             "green_case_index":"GREEN CASE INDEX",
             "red_days":"Red days/days",
             "orange_days":"orange days/days",
-            "green_days":"Green days/days"
+            "green_days":"Green days/days",
+            "months": ["Months","January","February","March","April","May","June","July","August","September","October","November","December"]
         },
         "well_feeling":{
             "subtitle":"MY WELL-FEELING INDEX PROGRESS OVERVIEW",
@@ -99,8 +100,8 @@
             "subtitle":"MY PRACTICE SELF-CARE PROGRESS OVERVIEW",
             "steps":["STEP","1","2","3","4","5","6","7","8","9","10","11","12"],
             "statistics":["MAGICIAN","FEELER","THINKER","COOLER","TALKER","WALKER","ECO","SMARTER","DISCOVER","SAFER","HELPER","EXPERT"]
-            }
-        },
+        }
+    },
     "danger":{
         "unformat":[],
         "title":"danger",
@@ -206,24 +207,14 @@
     },
     "info":{
       "unformat":[],
-      "title":"info",
-      "about":"about 12 steps",
-      "howto":"how to use 12 steps",
-      "privpol":"privacy policy and GDPR",
-      "vol":"volunteering",
-      "discl":"disclaimer",
-
-      "%%dev_note":"why is this here",
-      "wellind":"wellness index",
-
-      "long_texts":{
-          "about":"see p.8 in presentation",
-          "howto":"see p.10 in presentation",
-          "privpol":"see p.12 in presentation",
-          "vol":"see p.13 in presentation",
-          "discl":"see p.13 in presentation"
-      }
-
+      "title":"Info",
+      "about":"About 12 Steps",
+      "howto":"How to use 12 Steps",
+      "privacy_gdpr":"Privacy Policy. GDPR",
+      "volunteering_disclaimer":"Volunteering. Disclaimer",
+      "tos":"Terms of Service",
+      "wellness_index":"Wellness Index",
+      "feeling":"How are you feeling?"
     },
     "practice":{
         "unformat":[],

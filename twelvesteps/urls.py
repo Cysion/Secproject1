@@ -33,6 +33,7 @@ urlpatterns = [
     path('info/', include('info.urls')),
     path('practice/', include('practice.urls')),
     path('prepare/', include('prepare.urls')),
+    path('science/', include('science.urls')),
     path('professionals/', include('professionals.urls')),
     path('savemeplan/', include('savemeplan.urls')),
     path('userprofile/', include('userprofile.urls')),
