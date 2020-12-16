@@ -1,6 +1,6 @@
 from django.db import models
 from login.models import User
-from tools.crypto import rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
+from tools.crypto import rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long, aes_encrypt, aes_decrypt
 
 # Create your models here.
 
@@ -20,29 +20,29 @@ class SaveMePlan(models.Model):
     Value = models.BinaryField(max_length=512)
     Time = models.BinaryField(max_length=512)
 
-    def setStep(self, step):
-        self.Step = rsa_encrypt(self.UserId.getPubkey(), step.encode("utf-8"))
+    def setStep(self, symkey, step):
+        self.Step = aes_encrypt(symkey, step.encode("utf-8"))
 
-    def setText(self, text):
-        self.Text = rsa_encrypt(self.UserId.getPubkey(), text.encode("utf-8"))
+    def setText(self, symkey, text):
+        self.Text = aes_encrypt(symkey, text.encode("utf-8"))
 
-    def setValue(self, value):
-        self.Value = rsa_encrypt(self.UserId.getPubkey(), value.encode("utf-8"))
+    def setValue(self, symkey, value):
+        self.Value = aes_encrypt(symkey, value.encode("utf-8"))
 
-    def setTime(self, time):
-        self.Time = rsa_encrypt(self.UserId.getPubkey(), time.encode("utf-8"))
+    def setTime(self, symkey, time):
+        self.Time = aes_encrypt(symkey, time.encode("utf-8"))
 
-    def getStep(self, privKey):
-        return rsa_decrypt(privKey.encode("utf-8"), self.Step).decode("utf8")
+    def getStep(self, symkey):
+        return aes_decrypt(symkey, self.Step).decode("utf8")
 
-    def getText(self, privKey):
-        return rsa_decrypt(privKey.encode("utf-8"), self.Text).decode("utf8")
+    def getText(self, symkey):
+        return aes_decrypt(symkey, self.Text).decode("utf8")
 
-    def getValue(self, privKey):
-        return rsa_decrypt(privKey.encode("utf-8"), self.Value).decode("utf8")
+    def getValue(self, symkey):
+        return aes_decrypt(symkey, self.Value).decode("utf8")
 
-    def getTime(self, privKey):
-        return rsa_decrypt(privKey.encode("utf-8"), self.Time).decode("utf8")
+    def getTime(self, symkey):
+        return aes_decrypt(symkey, self.Time).decode("utf8")
 
 class Contacts(models.Model):
     """

@@ -49,6 +49,7 @@ def StepView(request, step):
     delete_temp_files(request.session)
 
     user = User.objects.filter(pk=request.session['UserId'])[0]
+    symkey = user.getSymKey(request.session['PrivKey'])
 
     savemeplan_lang = get_lang(sections=['savemeplan'])
     template = ''  # Diffrent step sets diffrent template
@@ -89,7 +90,7 @@ def StepView(request, step):
                     request.session['SaveMePlanId'] = 0
 
             current_smp_session = user.savemeplan_set.filter(SaveMePlanId=request.session['SaveMePlanId'])
-            done_steps = decrypt_steps(current_smp_session, request.session['PrivKey'])
+            done_steps = decrypt_steps(current_smp_session, symkey)
 
             foundId = -1
             for item in done_steps:
@@ -104,36 +105,36 @@ def StepView(request, step):
             if step in [1, 2, 3, 4, 6, 7, 9]:  # Is using step_default.html template
 
                 if foundId == -1:
-                    savemeplan_step.setStep(steps[step])  # Save step as a user reads it
+                    savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
                 if 'describe' in request.POST.keys():
                     if len(request.POST['describe']) != 0:
                         if len(request.POST['describe']) <= 64:
-                            savemeplan_step.setText(request.POST['describe'])
+                            savemeplan_step.setText(symkey,request.POST['describe'])
                         else:
-                            savemeplan_step.setText(request.POST['describe'][:64])
+                            savemeplan_step.setText(symkey, request.POST['describe'][:64])
                             add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
                     elif foundId == -1:
-                        savemeplan_step.setText('EMPTY')
+                        savemeplan_step.setText(symkey, 'EMPTY')
                 elif foundId == -1:
-                    savemeplan_step.setText('EMPTY')
+                    savemeplan_step.setText(symkey, 'EMPTY')
 
                 if 'rating' in request.POST.keys():
                     if len(request.POST['rating']) != 0:
-                        savemeplan_step.setValue(request.POST['rating'])
+                        savemeplan_step.setValue(symkey, request.POST['rating'])
                     elif foundId == -1:
-                        savemeplan_step.setValue('-1')
+                        savemeplan_step.setValue(symkey, '-1')
                 elif foundId == -1:
-                    savemeplan_step.setValue('-1')
+                    savemeplan_step.setValue(symkey, '-1')
 
-                savemeplan_step.setTime(str(int(time.time())))
+                savemeplan_step.setTime(symkey, str(int(time.time())))
 
                 savemeplan_step.save()
 
             elif step == 8:  # Replace a bad thing with a good thing step.
 
                 if foundId == -1:
-                    savemeplan_step.setStep(steps[step])  # Save step as a user reads it
+                    savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
                 replace = ''  # Will have format <bad>;<good> IF one of them is empty they will be replaced by EMPTY
 
@@ -180,16 +181,16 @@ def StepView(request, step):
                     replace = f"{replace}EMPTY"
 
                 if replace != 'EMPTY;EMPTY':
-                    savemeplan_step.setText(replace)
+                    savemeplan_step.setText(symkey, replace)
 
-                savemeplan_step.setValue('-1')
-                savemeplan_step.setTime(str(int(time.time())))
+                savemeplan_step.setValue(symkey, '-1')
+                savemeplan_step.setTime(symkey, str(int(time.time())))
                 savemeplan_step.save()
 
             elif step == 13:  # Go to a safe place step
 
                 if foundId == -1:
-                    savemeplan_step.setStep(steps[step])  # Save step as a user reads it
+                    savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
                 goto = ''
 
@@ -208,13 +209,13 @@ def StepView(request, step):
 
                 if foundId == -1:
                     if len(goto) <= 64:
-                        savemeplan_step.setText(goto)
+                        savemeplan_step.setText(symkey, goto)
                     else:
-                        savemeplan_step.setText(goto[:64])
+                        savemeplan_step.setText(symkey, goto[:64])
                         add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
-                savemeplan_step.setValue('-1')
-                savemeplan_step.setTime(str(int(time.time())))
+                savemeplan_step.setValue(symkey, '-1')
+                savemeplan_step.setTime(symkey, str(int(time.time())))
 
                 savemeplan_step.save()
 
@@ -242,7 +243,7 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['mysit']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['sitrate']
-        top_5 = top5_options(user, 'A1', request.session['PrivKey'])  # Get most used options
+        top_5 = top5_options(user, 'A1', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
@@ -264,7 +265,7 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['myemo']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['emorate']
-        top_5 = top5_options(user, 'A2', request.session['PrivKey'])  # Get most used options
+        top_5 = top5_options(user, 'A2', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
@@ -287,7 +288,7 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['mytho']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['thorate']
-        top_5 = top5_options(user, 'A3', request.session['PrivKey'])  # Get most used options
+        top_5 = top5_options(user, 'A3', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
@@ -308,7 +309,7 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['mybeh']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['emorate']
-        top_5 = top5_options(user, 'A4', request.session['PrivKey'])  # Get most used options
+        top_5 = top5_options(user, 'A4', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
@@ -344,7 +345,7 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['calm_step']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['calrate']
-        top_5 = top5_options(user, 'B1', request.session['PrivKey'])  # Get most used options
+        top_5 = top5_options(user, 'B1', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
@@ -365,7 +366,7 @@ def StepView(request, step):
         content['step'] = savemeplan_lang['savemeplan']['my_route']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['rourate']
-        top_5 = top5_options(user, 'B2', request.session['PrivKey'])  # Get most used options
+        top_5 = top5_options(user, 'B2', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
@@ -388,7 +389,7 @@ def StepView(request, step):
 
         default_bad =  savemeplan_lang['savemeplan']['long_texts']['repbad']
         default_good = savemeplan_lang['savemeplan']['long_texts']['repgood']
-        top_5 = top_5_bad_good(user, request.session['PrivKey'])
+        top_5 = top_5_bad_good(user, symkey)
         content['options'] = list()
 
         if len(top_5[0]) < 5:
@@ -417,7 +418,7 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['my_values']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['protect']
-        top_5 = top5_options(user, 'B4', request.session['PrivKey'])  # Get most used options
+        top_5 = top5_options(user, 'B4', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
@@ -521,7 +522,7 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['go_to_safe']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['safe']
-        top_5 = top5_options(user, 'C3', request.session['PrivKey'])  # Get most used options
+        top_5 = top5_options(user, 'C3', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
@@ -560,11 +561,11 @@ def StepView(request, step):
         content['step_title'] = savemeplan_lang['savemeplan']['summary']
 
         if 'SaveMePlanId' in request.session.keys():
-            content['steps'] = get_savemeplan_items(user, request.session['PrivKey'], request.session['SaveMePlanId'])
+            content['steps'] = get_savemeplan_items(user, symkey, request.session['SaveMePlanId'])
             del request.session['SaveMePlanId']  # User is now done with this session.
         else:
             content['old'] = savemeplan_lang['savemeplan']['long_texts']['old_session']
-            content['steps'] = get_savemeplan_items(user, request.session['PrivKey'])
+            content['steps'] = get_savemeplan_items(user, symkey)
 
         for smp_step in content['steps']:
             smp_step.append(STEP_COLORS[smp_step[0]])
