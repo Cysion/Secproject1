@@ -277,13 +277,8 @@
   margin-bottom: 10px;
 }
 
-.summary_item input {
-  margin-top: 5px;
-  border-color: black;
-}
-
 .summary_step {
-  margin-top: 12px;
+  margin-top: 3px;
 }
 
 /*Used for Professionals*/

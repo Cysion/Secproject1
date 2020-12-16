@@ -116,7 +116,7 @@
         "welcome":"Welcome to the 12 Steps App!",
         "goto_login":"Login or register here",
         "long_texts":{
-            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam." 
+            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam."
         }
     },
     "login":{
@@ -432,10 +432,10 @@
         "thotext":"Describe what you are thinking",
         "behtext":"Describe what behaviours you want to change",
         "part_b":"If you are alone choose an activity:",
-        "calm":"calm",
-        "rout":"routines",
-        "repl":"replace",
-        "prot":"protect",
+        "calm":"Calm",
+        "rout":"Routines",
+        "repl":"Replace",
+        "prot":"Protect",
         "calmtitle":"Calm & distract",
         "calm_step":"My Distractions",
         "calmadd":"add a calming activity",

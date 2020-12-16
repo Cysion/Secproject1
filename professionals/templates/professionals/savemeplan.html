@@ -16,30 +16,34 @@ textarea:focus {
 
 
 <div class="part-description_summary" style="background-color: white;">
-  <h4><i class="fas fa-umbrella"></i>{{ content.step_title }}</h4>
+  <h4><i class="fas fa-umbrella"></i>{{ title }}</h4>
 </div>
 
-{% if content.old %}
-<div class="item-info">
-  <p class="text-muted text-center">{{ content.old }}</p>
-</div>
-{% endif %}
-{% for sessionId, session in content.items %}
-    {{sessionId}}
+<h3 style="text-align: center;">{{ name }}</h3>
+
+{% for sessionId, session in content.items reversed %}
+  <p class="date">{{ session.Datetime }}</p>
     {% for step, stepValue in session.items %}
-        <div class="form-row summary_item" style="background-color: {{ step.2 }}">
-        <div class="col-2">
-            <div class="summary_step">
-            <b>
-                {{ stepValue.Key }}
-            </b>
-            </div>
+    {% if step != 'Datetime' %}
+      <div class="summary_item" style="background-color: {{ stepValue.Color }}">
+        <div class="summary_step">
+          <b>
+              {{ stepValue.Key }} - {{ stepValue.Title }}:
+          </b>
         </div>
-        <div class="col-10">
-            <input type="text" class="form-control" value="{{ stepValue.Text }}" disabled>
-        </div>
-        </div>
+        {{ stepValue.Text }}
+      </div>
+    {% endif %}
     {% endfor %}
 {% endfor %}
 
 {% endblock %}
+
+<div class="summary_item" style="background-color: {{ step.2 }}">
+  <div class="summary_step">
+    <b>
+      {{ step.0 }} - {{ step.3 }}:
+    </b>
+  </div>
+  {{ step.1 }}
+</div>

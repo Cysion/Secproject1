@@ -46,17 +46,13 @@ textarea:focus {
 {% endif %}
 
 {% for step in content.steps %}
-<div class="form-row summary_item" style="background-color: {{ step.2 }}">
-  <div class="col-2">
-    <div class="summary_step">
-      <b>
-        {{ step.0 }}
-      </b>
-    </div>
+<div class="summary_item" style="background-color: {{ step.2 }}">
+  <div class="summary_step">
+    <b>
+      {{ step.0 }} - {{ step.3 }}:
+    </b>
   </div>
-  <div class="col-10">
-     <input type="text" class="form-control" value="{{ step.1 }}" disabled>
-  </div>
+  {{ step.1 }}
 </div>
 {% endfor %}
 
