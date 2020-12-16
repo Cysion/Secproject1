@@ -98,13 +98,14 @@ def LoginView(request):
                 request.session['PrivKey'] = key.export_key().decode("utf-8")
                 request.session['Role'] = user.getRole()
                 new_entry("u1", user.getAnonId(request.session['PrivKey']), "na")
-                tools.global_alerts.add_alert(
-                    request,
-                    'info',
-                    UNIVERSAL_LANG['universal']['info'],
-                    login_lang['login']['long_texts']['alerts']['daily_checkup'],
-                    '/check/checkup/'
-                )
+                if request.session['Role'] == 'User':
+                    tools.global_alerts.add_alert(
+                        request,
+                        'info',
+                        UNIVERSAL_LANG['universal']['info'],
+                        login_lang['login']['long_texts']['alerts']['daily_checkup'],
+                        '/check/checkup/'
+                    )
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
                 loginFail = True
