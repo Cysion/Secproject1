@@ -25,7 +25,7 @@ url_list["prepare"] = url_list["base"] + 'prepare/'
 
 
 credentials = {
-    'email': 'robin_hood22@gmail.com',
+    'email': 'robin_hood25@gmail.com',
     'password': 'robins_password',
 
     'first_name': 'Robin',
@@ -156,22 +156,17 @@ def test_edit_credentials():
     pass
 
 
-def test_prepare_plan():
-    """ Tests prepare plan """
-
-    # Navigate to start
-    browser.get(url_list["prepare"])
-    sleep(wait_time)
-    
-    # Page 1
+def test_prepare_page1():
     browser.get(url_list["prepare"] + '1/')
     sleep(wait_time)
 
-    # Page 2
+
+def test_prepare_page2():
     browser.get(url_list["prepare"] + '2/')
     sleep(wait_time)
 
-    # Page 3
+
+def test_prepare_page3():
     browser.get(url_list["prepare"] + '3/')
     sleep(wait_time)
 
@@ -185,6 +180,87 @@ def test_prepare_plan():
     browser.find_element_by_xpath("//*[text()='Add memory']").click()
     sleep(wait_time)
     browser.find_element_by_xpath("//*[text()='Back']").click()
+
+
+def test_prepare_page4():
+    browser.get(url_list["prepare"] + '4/')
+    sleep(wait_time)
+
+    # Add destructive memory
+    browser.get(url_list["base"] + 'prepare/memory/add/?mem_type=d') # Special case due to no identifying tags
+    sleep(wait_time)
+
+    browser.find_element_by_id("title").send_keys("My destructive memory")
+    browser.find_element_by_id("media_text").send_keys("This is the destructive phrase user " + credentials["first_name"] + " entered")
+    Select(browser.find_element_by_id("type")).select_by_visible_text('Phrase')
+    browser.find_element_by_xpath("//*[text()='Add memory']").click()
+    sleep(wait_time)
+    browser.find_element_by_xpath("//*[text()='Back']").click()
+
+
+def test_prepare_page5():
+    browser.get(url_list["prepare"] + '5/')
+    sleep(wait_time)
+
+    # Add new contact
+    browser.find_element_by_xpath("//*[text()='Add new contact']").click()
+    sleep(wait_time)
+
+    browser.find_element_by_id("name").send_keys("Test contact name")
+    browser.find_element_by_id("phonenumber").send_keys("0734165244")
+    browser.find_element_by_id("available").send_keys("test contact availability")
+    browser.find_element_by_id("available").submit()
+    sleep(wait_time)
+
+
+def test_prepare_page6():
+    browser.get(url_list["prepare"] + '6/')
+    sleep(wait_time)
+
+
+def test_prepare_page7():
+    browser.get(url_list["prepare"] + '7/')
+    sleep(wait_time)
+
+    # Add diary-entry
+    browser.find_element_by_id("date").send_keys(credentials["birth"])
+    browser.find_element_by_id("text").send_keys("This is my new diary entry")
+    browser.find_element_by_id("text").submit()
+
+
+def test_prepare_page8():
+    browser.get(url_list["prepare"] + '8/')
+    sleep(wait_time)
+
+    # Add therapy-entry
+    browser.find_element_by_id("date").send_keys(credentials["birth"])
+    browser.find_element_by_id("text").send_keys("This is my new therapy entry")
+    browser.find_element_by_id("text").submit()
+
+
+def test_prepare_plan():
+    """ Tests entire prepare plan """
+
+    test_prepare_page1()
+    test_prepare_page2()
+    test_prepare_page3()
+    test_prepare_page4()
+    test_prepare_page5()
+    test_prepare_page6()
+    test_prepare_page7()
+    test_prepare_page8()
+
+    # Navigate to start
+    browser.get(url_list["prepare"])
+    sleep(wait_time)
+    
+    # Page 2
+    browser.get(url_list["prepare"] + '2/')
+    sleep(wait_time)
+
+    # Page 3
+    browser.get(url_list["prepare"] + '3/')
+    sleep(wait_time)
 
     # Page 4
     browser.get(url_list["prepare"] + '4/')
