@@ -165,13 +165,14 @@ def test_edit_credentials():
     # Change credentials
     credentials["first_name"] = credentials["first_name"] + '_new'
     credentials["last_name"] = credentials["last_name"] + '_new'
-    credentials["email"] = credentials["email"] + '_new'
+    credentials["email"] = credentials["email"].split('@')[0] + '_new@' + credentials["email"].split('@')[1]
 
     # Change on site
     browser.find_element_by_id("first_name").send_keys(credentials["first_name"])
     browser.find_element_by_id("last_name").send_keys(credentials["last_name"])
     browser.find_element_by_id("email").send_keys(credentials["email"])
     browser.find_element_by_id("password").send_keys(credentials["password"])
+    browser.find_element_by_id("password").submit()
 
 
 def test_prepare_page1():
@@ -314,7 +315,7 @@ def main():
 
     # Quit
     print("\n> Tests complete")
-    print("-- Testing finnished --\n")
+    print("-- Testing finished --\n")
     browser.quit()
     exit(0)
 
