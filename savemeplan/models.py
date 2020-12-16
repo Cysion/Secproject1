@@ -32,6 +32,9 @@ class SaveMePlan(models.Model):
     def setTime(self, symkey, time):
         self.Time = aes_encrypt(symkey, time.encode("utf-8"))
 
+    def getId(self):
+        return self.SaveMePlanId
+
     def getStep(self, symkey):
         return aes_decrypt(symkey, self.Step).decode("utf8")
 
