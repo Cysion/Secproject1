@@ -1,12 +1,45 @@
-{% extends "base.html" %}
+{% extends "base_professionals.html" %}
 
-{% block title %}Change your password{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
-{% block statics %}
 {% load static %}
-<!-- <link rel="stylesheet" href="{% static "userprofile/profile.css" %}"> -->
+{% block statics %}
+<link rel="stylesheet" href="{% static "savemeplan/savemeplan.css" %}">
 {% endblock %}
 
 {% block content %}
+<style type="text/css">
+textarea:focus {
+  background-color: {{ content.step_bg }};
+}
+</style>
+
+
+<div class="part-description_summary" style="background-color: white;">
+  <h4><i class="fas fa-umbrella"></i>{{ content.step_title }}</h4>
+</div>
+
+{% if content.old %}
+<div class="item-info">
+  <p class="text-muted text-center">{{ content.old }}</p>
+</div>
+{% endif %}
+{% for sessionId, session in content.items %}
+    {{sessionId}}
+    {% for step, stepValue in session.items %}
+        <div class="form-row summary_item" style="background-color: {{ step.2 }}">
+        <div class="col-2">
+            <div class="summary_step">
+            <b>
+                {{ stepValue.Key }}
+            </b>
+            </div>
+        </div>
+        <div class="col-10">
+            <input type="text" class="form-control" value="{{ stepValue.Text }}" disabled>
+        </div>
+        </div>
+    {% endfor %}
+{% endfor %}
 
 {% endblock %}

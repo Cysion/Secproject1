@@ -60,6 +60,7 @@
 -->
 
 <section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
+    <h2>{{ calendar.month }} - {{ calender.year }}</h2>
     <table class="table text-center" style="border-style: solid;">
         <tbody>
             <tr>
@@ -238,24 +239,44 @@
     <form action="/check/1/" class="was-validated row" method="POST">
         {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
         <div class="form-group col-12 col-md-auto my-1">
-            <label for="date">{{ check.green_case.select_month}}: </label>
-            <input type="month" id="date" name="date"
-            min="1850-01-01" max="{% now "Y-m-d" %}" {% if POST %} value="{{POST.date}}" {% endif %}{# If post already has been submitted #} required>
+            <label for="month">{{ check.green_case.select_month}}: </label>
+            <select id="month" name="month" required>
+                <optgroup label="{{ check.green_case.months.0 }}">
+                    <option value="1">{{ check.green_case.months.1 }}</option>
+                    <option value="2">{{ check.green_case.months.2 }}</option>
+                    <option value="3">{{ check.green_case.months.3 }}</option>
+                    <option value="4">{{ check.green_case.months.4 }}</option>
+                    <option value="5">{{ check.green_case.months.5 }}</option>
+                    <option value="6">{{ check.green_case.months.6 }}</option>
+                    <option value="7">{{ check.green_case.months.7 }}</option>
+                    <option value="8">{{ check.green_case.months.8 }}</option>
+                    <option value="9">{{ check.green_case.months.9 }}</option>
+                    <option value="10">{{ check.green_case.months.10 }}</option>
+                    <option value="11">{{ check.green_case.months.11}}</option>
+                    <option value="12">{{ check.green_case.months.12 }}</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="form-group col-12 col-md my-1">
+            <label for="year">{{ check.green_case.select_year}}: </label>
+            <input type="number" min="2000" max="{% now "Y" %}" id="year" name="year" value="{% now "Y" %}"
+            {% if POST %} value="{{POST.year}}" {% endif %}{# If post already has been submitted #} required>
         </div>
         <div class="form-group col-12 col-md">
             <button type="submit" id="date" name="date" class="btn btn-info btn-block">{{ check.green_case.go }}</button>
         </div>
     </form>
     <hr>
-    <div class="rounded" style="background-color: white; border-style: solid; border-color: lightgray">
-        <p class="m-1">
+    <div class="rounded p-1" style="background-color: white; border-style: solid; border-color: lightgray">
+        <p >
             <i class="fas fa-circle" style="color: red;"></i> {{ check.green_case.red_day }}<br>
             <i class="fas fa-circle" style="color: orange;"></i> {{ check.green_case.orange_day }}<br>
             <i class="fas fa-circle" style="color: green;"></i> {{ check.green_case.green_day }}
         </p>
+        <a class="btn btn-block btn-primary" href="">{{ check.to_checkup }}</a> <!-- Insert correct link to daily checkup -->
     </div>
 </section>
-
+{{ calendar }}
 <div class="row mx-0 p-1">
     <p class="col-auto h5" style="background-color: rgb(255, 242, 204); width: auto;">{{ check.good_job }} <i class="fas fa-smile"></i></p>
 </div>
