@@ -4,6 +4,7 @@ import userprofile.models
 from django.db import transaction
 import tools.mediaman
 import prepare.tools
+import savemeplan.tools
 
 
 
@@ -11,7 +12,7 @@ def changePass(uId:int, PrivKey, newPassword:str):
     user=login.models.User.objects.filter(UserId=uId)[0]
     firstName=user.getFirstName(PrivKey)
     lastName=user.getLastName(PrivKey)
-    gender=login.modelsuser.getGender(PrivKey)
+    gender=user.getGender(PrivKey)
     dateOfBirth=user.getDateOfBirth(PrivKey)
     oldSymKey=user.getSymKey(PrivKey)
     anonId = user.getAnonId(PrivKey)
@@ -33,6 +34,7 @@ def changePass(uId:int, PrivKey, newPassword:str):
 
         prepare.tools.reencryptDiary(user, oldSymKey, newSymkey)
         prepare.tools.reencryptMedia(user.getUid(), PrivKey, pubkey, retVal[1])
+        savemeplan.tools.reencrypt_savemeplan(user, oldSymKey, newSymkey)
 
         relationsTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=user.getUid())
         for relation in relationsTo:

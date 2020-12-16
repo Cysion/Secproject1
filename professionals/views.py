@@ -10,12 +10,15 @@ import datetime
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
+from prepare.tools import delete_temp_files
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
 
 def ClientsView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     clients_lang = get_lang(sections=["professionals"])
     # YOUR CODE HERE
@@ -48,6 +51,8 @@ def ClientsView(request):
 def profileView(request, UserId):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     try:
         userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
@@ -82,7 +87,9 @@ def profileView(request, UserId):
 def prepareView(request, UserId, page):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    
+
+    delete_temp_files(request.session)
+
     prep = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'prepare')
     media = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'media')
 
@@ -98,8 +105,8 @@ def prepareView(request, UserId, page):
     diary= []
 
     if prep:
-        userPrivKey = prep.decode("utf-8") 
-        
+        userPrivKey = prep.decode("utf-8")
+
         if page == 1:
             template = 'prepare/1_howto.html'
         elif page == 2:
@@ -120,7 +127,7 @@ def prepareView(request, UserId, page):
         else:
             return HttpResponseRedirect(reverse('professionals:clients'))
         prep = True
-    
+
     if media:
         userPrivKey = media.decode("utf-8")
 
@@ -135,7 +142,7 @@ def prepareView(request, UserId, page):
         else:
             return HttpResponseRedirect(reverse('professionals:clients'))
         media = True
-    
+
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -161,6 +168,8 @@ def saveMePlanView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
+    delete_temp_files(request.session)
+
     try:
         userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
     except AttributeError:
@@ -184,6 +193,8 @@ def saveMePlanView(request, UserId):
 def CheckView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     try:
         userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")

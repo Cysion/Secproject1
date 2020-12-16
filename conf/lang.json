@@ -478,10 +478,15 @@
         "no":"no",
         "nomild":"No/mild",
         "next_step":"Next step",
+        "available":"Available",
+        "replace":"Replace",
+        "with": "with",
 
         "long_texts":{
+            "text_to_long":"Your text was too on the previous step so it got choped to the maximum lenght of 64 characters.",
             "chat":"You can press this button to start chatting or copy the phonenumber from the contacts bellow",
             "describe_info":"You can either choose one of the following items or write your own in textarea bellow. If you press one of the following the textarea will be filled for you.",
+            "old_session":"This is a old session of Save.me Plan. When navigating to a new step you will activate a new one.",
             "steps":[
               "I am activating Save.Me plan because of"
             ],
