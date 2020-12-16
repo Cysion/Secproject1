@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Info{% endblock %}
+
+
+{% block content %}
+
+<section class="rounded p-1 my-1" style="background-color: white; border-style: solid; border-color: #42cfbc;;">
+    {% for entry in text1 %}
+        {% if entry.1 == 'h1' %}
+        <h1 class="h2">{{ entry.0|safe }}</h1>
+        {% elif entry.1 == 'h2' %}
+        <h2 class="h3">{{ entry.0|safe }}</h2>
+        {% elif entry.1 == 'h3' %}
+        <h3 class="h4">{{ entry.0|safe }}</h3>
+        {% elif entry.1 == '5stars' %}
+        <p class="h3 text-center" style="color: gold;">{{ entry.0|safe }}</p>
+        {% elif entry.1 == 'li' %}
+        <ul>
+            <li>{{ entry.0|safe }}</li>
+        </ul>
+        {% elif entry.1 == 'p' %}
+        <p>{{ entry.0|safe }}</p>
+        {% endif %}
+    {% endfor %}
+</section>
+
+<section class="rounded p-1 my-1" style="background-color: white; border-style: solid; border-color: #42cfbc;;">
+    {% for entry in text2 %}
+        {% if entry.1 == 'h1' %}
+        <h1 class="h2">{{ entry.0|safe }}</h1>
+        {% elif entry.1 == 'h2' %}
+        <h2 class="h3">{{ entry.0|safe }}</h2>
+        {% elif entry.1 == 'h3' %}
+        <h3 class="h4">{{ entry.0|safe }}</h3>
+        {% elif entry.1 == '5stars' %}
+        <p class="h3 text-center" style="color: gold;">{{ entry.0|safe }}</p>
+        {% elif entry.1 == 'li' %}
+        <ul>
+            <li>{{ entry.0|safe }}</li>
+        </ul>
+        {% elif entry.1 == 'p' %}
+        <p>{{ entry.0|safe }}</p>
+        {% endif %}
+    {% endfor %}
+</section>
+
+<a class="btn btn-block btn-info" href="/info/">{{ back }}</a>
+
+
+{% endblock %}

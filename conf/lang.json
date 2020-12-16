@@ -200,24 +200,14 @@
     },
     "info":{
       "unformat":[],
-      "title":"info",
-      "about":"about 12 steps",
-      "howto":"how to use 12 steps",
-      "privpol":"privacy policy and GDPR",
-      "vol":"volunteering",
-      "discl":"disclaimer",
-
-      "%%dev_note":"why is this here",
-      "wellind":"wellness index",
-
-      "long_texts":{
-          "about":"see p.8 in presentation",
-          "howto":"see p.10 in presentation",
-          "privpol":"see p.12 in presentation",
-          "vol":"see p.13 in presentation",
-          "discl":"see p.13 in presentation"
-      }
-
+      "title":"Info",
+      "about":"About 12 Steps",
+      "howto":"How to use 12 Steps",
+      "privacy_gdpr":"Privacy Policy. GDPR",
+      "volunteering_disclaimer":"Volunteering. Disclaimer",
+      "tos":"Terms of Service",
+      "wellness_index":"Wellness Index",
+      "feeling":"How are you feeling?"
     },
     "practice":{
         "unformat":[],

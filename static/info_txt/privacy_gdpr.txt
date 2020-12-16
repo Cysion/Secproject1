@@ -1,0 +1,13 @@
+#h1 Privacy Policy. GDPR. Cookies.
+
+<strong>Data collection</strong>. The 12 Steps does not collect any personal identifying information from users. All information voluntarily entered into 12 Steps cannot be connected to an individual user. <strong>Cookies</strong>: Our servers automatically collect information from users such as the Internet protocol (IP) address used to connect the computer to the Internet, the average time spent on the app, date and time of visit, and pages clicked on, collectively known as "log data". Log data and self-reported referral source will be used in research studies measuring utilisation of the 12 Steps, the referral source data and log data to monitor and analyse use to increase 12 Steps's functionality and better adjustments for the needs of its users. This information is used in summary reports and does not identify specific users.
+
+<strong>Data storage and protection</strong>. All data collected by the 12 Steps app is stored on a server located in the EU following EU guidelines for storage of medical and identifying information. Only authorised ELLIPSE team members taking care about the 12 Steps app have access to the above described data.
+
+<strong>Data sharing</strong>. None of the data collected by 12 Steps and ELLIPSE-project is shared with any other entities or third-parties.
+
+<strong>Other websites</strong>. The 12 Steps contains links to other websites. Please note that when you click on one of these links, you are entering another website for which the 12 Steps has no responsibility. We encourage you to read the privacy statements on all such sites as their policies may differ from ours.
+
+<strong>Accountability</strong>. If you have questions or complaints concerning this Privacy Policy, please feel free to contact the ELLIPSE project/12 Steps using the web form at <a href="https://e-llipse.com/">e-llipse.com</a>.
+
+Each EU Member State has a supervisory authority for data protection. You have the right to lodge a complaint with these bodies in case of breach of your data protection rights, and the supervisory authorities will also provide forms to facilitate the complaint procedure. If the complaint is about a case of cross border data exchange, there will be cooperation between supervisory authorities. A list of data protection authorities is available here: <a href="https://ec.europa.eu/info/law/law-topic/data-protection_en">ec.europa.eu/info/law/law-topic/data-protection_en</a>.
