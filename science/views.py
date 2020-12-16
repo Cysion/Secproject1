@@ -59,20 +59,22 @@ def new_entry(action_id:str, anonid: bytes, value:str, mangle=False):
 def export_data(maxlines=1000, rootdir=CONF["research"]["exportdir"], timefrom=0, timeto=float("inf")):
     LOGGER.info("Data export initialized")
     i = 0
-    foldername = datetime.now().strftime(CONF["research"]["strftime"])
+    foldername = os.path.join(rootdir, str(datetime.now().strftime(CONF["research"]["timestrf"])))
     try:
-        os.mkdir(foldername)
+        os.makedirs(foldername)
     except FileExistsError:
         pass
+
     for package in get_all_data():
         if i%maxlines == 0:
             try:
                 file.close()
             except NameError:
                 pass
-            file = open(os.path.join(rootdir,foldername,f"entries{i}-{i+maxlines}.csv"), "a")
+            file = open(os.path.join(foldername,f"entries{i}-{i+maxlines}.csv"), "w")
         if timefrom < int(package[3]) < timeto: 
-            file.write(",".join(package))
+            print(package)
+            file.write(",".join([str(i) for i in package]) + "\n")
         i+=1
 
 
@@ -89,7 +91,7 @@ def find_me(anonid):
 
 def get_all_data() -> tuple:
     for data in ResearchData.objects.iterator():
-        yield (data.ActionId, data.AnonId, data.Value, data.Time)
+        yield (data.ActionId, get_sha(data.AnonId), data.Value, data.Time.timestamp())
 
 
 def gen_otp(minsize=1024) -> str:

@@ -15,17 +15,13 @@ from django.db import transaction
 import datetime
 
 from django.core.files import File
-<<<<<<< HEAD
-from savemeplan.models import Contacts
-from science.views import new_entry
-=======
 import savemeplan.models
-from tools.scienceman import new_entry
->>>>>>> master
+from science.views import new_entry
 import time
 import re
 import random
 import prepare.tools
+
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 

@@ -10,3 +10,4 @@ logs/*.gz
 testdata/*.blob
 media/*
 lang*
+research

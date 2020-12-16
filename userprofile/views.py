@@ -7,20 +7,9 @@ import userprofile.models
 import login.models
 from tools.confman import get_lang
 from django.db import transaction
-<<<<<<< HEAD
-from prepare.views import reencryptMedia, reencryptDiary
-from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, rsa_encrypt_long, rsa_decrypt_long
-
 from science.views import new_entry
-=======
-from tools.scienceman import new_entry
 import userprofile.tools
-<<<<<<< HEAD
->>>>>>> master
-=======
 from prepare.tools import delete_temp_files
->>>>>>> master
-
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 # Create your views here.
 
