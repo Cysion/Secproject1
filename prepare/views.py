@@ -36,6 +36,8 @@ def MenuView(request, page=0):
     if request.session['Role'] == 'professional':
         return HttpResponseRedirect(reverse('professionals:clients'))
 
+    prepare.tools.delete_temp_files(request.session)
+
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
     memories = []
@@ -81,17 +83,14 @@ def MenuView(request, page=0):
 
         template = 'prepare/menu.html'
 
-    print(prepare_lang["prepare"]["contacts"]["modal"])
-
-
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
-        'memories':memories,
-        'contacts':contacts,
-        'entries':diary,
+        'memories': memories,
+        'contacts': contacts,
+        'entries': diary,
         'template': baseTemplate
     }
 
@@ -116,6 +115,8 @@ def addMemoryView(request):
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
 
     prepare_lang = get_lang(sections=["prepare"])
     media_conf = get_conf(sections=["media"])["media"]
@@ -306,10 +307,7 @@ def MemoryView(request, id):
                 else:
                     return HttpResponseRedirect(reverse('professionals:clients'))
 
-    if "files_to_delete" in request.session.keys():  # If there is any temporary files not used anymore, delete them
-        for file in request.session["files_to_delete"]:
-            splitted_path = file.split("/")
-            delete_file("".join(splitted_path[2:]), splitted_path[1])
+    prepare.tools.delete_temp_files(request.session)
 
     content["id"] = id
     content["title"] = memory.getMediaTitle(userPrivkey)
@@ -369,7 +367,7 @@ def MemoryView(request, id):
             request.session["global_alerts"] = [alert]
         else:
             request.session["global_alerts"].append(alert)
-        
+
         new_entry("m2", user.getAnonId(userPrivkey), "na")
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
@@ -399,7 +397,7 @@ def MemoryView(request, id):
 
         try:
             file = open_file(user.getSymKey(userPrivkey), url)
-            
+
         except RuntimeError as e:
             alert = {
                 "color": "error",
@@ -479,6 +477,9 @@ def MemoryView(request, id):
 def ContactsView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
+
     alerts = {}
     if request.method == 'POST':
         exceptions = ''
@@ -489,7 +490,7 @@ def ContactsView(request):
                 exceptions = '+0123456789'
             if index == 'available':
                 exceptions = '0123456789+-/'
-            if login.views.containsBadChar(request.POST[index], exceptions):
+            if login.tools.containsBadChar(request.POST[index], exceptions):
                 alerts[index] = "badChar"
         if not alerts:
             prepare.tools.addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
@@ -511,12 +512,15 @@ def ContactsView(request):
 def editContactView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
+
     prepare_lang = get_lang(sections=["prepare"])
     alerts=dict()
-    
+
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
     contact = savemeplan.models.Contacts.objects.filter(ContactsId=id)[0]
-    
+
     if request.GET and "delete" in request.GET.keys():
         if request.GET['delete']:
             prepare.tools.removeContact(request.session["UserId"], id)
@@ -554,7 +558,9 @@ def editContactView(request, id):
 def removeDiaryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    
+
+    prepare.tools.delete_temp_files(request.session)
+
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
 
     prepare.models.Diary.objects.filter(UserId=user, DiaryId=id).delete()

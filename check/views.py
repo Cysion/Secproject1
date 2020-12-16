@@ -5,12 +5,15 @@ from django.shortcuts import render
 
 
 from tools.confman import get_lang, get_conf
+from prepare.tools import delete_temp_files
 
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 def GreenCaseView(request):
 
+    delete_temp_files(request.session)
+
     check_lang = get_lang(sections=["check"])
 
     args = {
@@ -18,12 +21,14 @@ def GreenCaseView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'check': check_lang["check"]
     }
-    
+
     return render(request, 'check/green_case.html', args)
 
-    
+
 def WellFeelingView(request):
 
+    delete_temp_files(request.session)
+
     check_lang = get_lang(sections=["check"])
 
     args = {
@@ -31,11 +36,13 @@ def WellFeelingView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'check': check_lang["check"]
     }
-    
+
     return render(request, 'check/well_feeling.html', args)
 
-    
+
 def SaveMePlanView(request):
+
+    delete_temp_files(request.session)
 
     check_lang = get_lang(sections=["check"])
 
@@ -44,12 +51,14 @@ def SaveMePlanView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'check': check_lang["check"]
     }
-    
+
     return render(request, 'check/save_me_plan.html', args)
 
 
 def PracticeSelfCareView(request):
 
+    delete_temp_files(request.session)
+
     check_lang = get_lang(sections=["check"])
 
     args = {
@@ -57,5 +66,5 @@ def PracticeSelfCareView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'check': check_lang["check"]
     }
-    
+
     return render(request, 'check/practice_self_care.html', args)

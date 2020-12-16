@@ -39,17 +39,25 @@ textarea:focus {
   <h4><i class="fas fa-umbrella"></i>{{ content.step_title }}</h4>
 </div>
 
-<div class="form-row summary_item" style="background-color: {{content.colors.A1}}">
+{% if content.old %}
+<div class="item-info">
+  <p class="text-muted text-center">{{ content.old }}</p>
+</div>
+{% endif %}
+
+{% for step in content.steps %}
+<div class="form-row summary_item" style="background-color: {{ step.2 }}">
   <div class="col-2">
     <div class="summary_step">
       <b>
-        A1
+        {{ step.0 }}
       </b>
     </div>
   </div>
   <div class="col-10">
-     <input type="text" class="form-control" value="Test" disabled>
+     <input type="text" class="form-control" value="{{ step.1 }}" disabled>
   </div>
 </div>
+{% endfor %}
 
 {% endblock %}

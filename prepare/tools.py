@@ -2,6 +2,8 @@ import login.models
 import prepare.models
 import savemeplan.models
 
+from tools.mediaman import delete_file
+
 def addContact(uId, name, phonenumber, available, privKey):
     user = login.models.User.objects.filter(UserId = uId)[0]
     contact = savemeplan.models.Contacts(UserId = user)
@@ -73,15 +75,15 @@ def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
         try:
             mediaLink = mediaObject.getLink(oldPrivKey)
         except ValueError:
-            pass    
+            pass
         else:
             if mediaLink in newFileNames:
                 print(f"Medialink old: {mediaLink}")
-                
+
                 mediaLink = newFileNames[mediaLink]
                 print(f"MediaLink new: {mediaLink}")
             mediaObject.setLink(newPubKey, mediaLink)
-        
+
         try:
             memory = mediaObject.getMemory(oldPrivKey)
         except ValueError:
@@ -135,3 +137,14 @@ def reencryptDiary(user, oldSymKey, newSymkey):
             entry.setText(newSymkey, entry.getText(oldSymKey))
             entry.setTimestamp(newSymkey, entry.getTimestamp(oldSymKey))
             entry.save()
+
+def delete_temp_files(session):
+    """Delete all temporary decrypted pictures and videos. Will delete
+    everything in session key 'files_to_delete' where a filepath is.
+
+    session = The current session. (request.session).
+    """
+    if "files_to_delete" in session.keys():  # If there is any temporary files not used anymore, delete them
+        for file in session["files_to_delete"]:
+            splitted_path = file.split("/")
+            delete_file("".join(splitted_path[2:]), splitted_path[1])
