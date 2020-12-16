@@ -47,7 +47,7 @@ def get_sha(obj) -> str:
 def new_entry(action_id:str, anonid: bytes, value:str, mangle=False):
     if not CONF["research"]["enable_collection"] == "True":
         return
-    actiontime = str(int(time.time())) if CONF["research"]["timestandard"] == "unix" else str(datetime.now().strftime(CONF["research"]["strftime"]))
+    actiontime = str(int(time.time()))
     value = ",".join(value) if type(value) == list else value
     value = get_sha(value) if mangle else value
     package = ResearchData(ActionId=action_id, AnonId=anonid, Value=value, Time=datetime)
