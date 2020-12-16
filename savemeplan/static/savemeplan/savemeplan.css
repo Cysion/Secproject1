@@ -285,3 +285,10 @@
 .summary_step {
   margin-top: 12px;
 }
+
+/*Used for Professionals*/
+.date {
+  text-align: center;
+  font-size: 20px;
+  color: grey;
+}

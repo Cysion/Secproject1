@@ -185,11 +185,22 @@ def get_all_savemeplan_items(user, symkey):
         if entry.getId() not in pageDict:
             pageDict[entry.getId()] = dict()
         step = entry.getStep(symkey)
+
+        text = entry.getText(symkey)
+
+        if step == 'B3':  # Step B3 will have on the format <bad thing>;<good thing>
+            smp_lang = get_lang(sections=['savemeplan'])
+            text = f"{smp_lang['savemeplan']['replace']} {text}"
+            text = text.replace(';', f" {smp_lang['savemeplan']['with']} ")
+
+        time = datetime.datetime.fromtimestamp(int(entry.getTime(symkey)))
+
+        pageDict[entry.getId()]['Datetime'] = time.strftime('%d/%m-%Y %H:%S')
+
         pageDict[entry.getId()][step] = {
             'Key': step,
-            'Text': entry.getText(symkey),
+            'Text': text,
             'Value': entry.getValue(symkey),
-            'Time': entry.getTime(symkey)
         }
     return pageDict
 
@@ -202,4 +213,3 @@ def reencrypt_savemeplan(user, oldSymkey, newSymkey):
         entry.setValue(newSymkey, entry.getValue(oldSymkey))
         entry.setTime(newSymkey, entry.getTime(oldSymkey))
         entry.save()
-    
