@@ -24,20 +24,19 @@ textarea:focus {
   <p class="text-muted text-center">{{ content.old }}</p>
 </div>
 {% endif %}
-{{content}}
-{% for sessionId in content %}
-    {{content.sessionId}}
-    {% for step in content.0 %}
+{% for sessionId, session in content.items %}
+    {{sessionId}}
+    {% for step, stepValue in session.items %}
         <div class="form-row summary_item" style="background-color: {{ step.2 }}">
         <div class="col-2">
             <div class="summary_step">
             <b>
-                {{ content.0.step.Text }}
+                {{ stepValue.Key }}
             </b>
             </div>
         </div>
         <div class="col-10">
-            <input type="text" class="form-control" value="{{ step.1 }}" disabled>
+            <input type="text" class="form-control" value="{{ stepValue.Text }}" disabled>
         </div>
         </div>
     {% endfor %}
