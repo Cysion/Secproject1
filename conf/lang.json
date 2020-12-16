@@ -21,6 +21,7 @@
         "success":"Success",
         "warning":"Warning",
         "error":"Error",
+        "info":"Info",
         "important":"Important",
         "emergency_number":"112",
         "titles":[
@@ -156,7 +157,8 @@
             "relogin":"Login credentials incorrect!",
             "wrong_pass":"Password is incorrect!",
             "badChar":"Field contains illegal character(s)",
-            "changed_password_success":"You changed you password!"
+            "changed_password_success":"You changed you password!",
+            "daily_checkup":"Remeber to do your daily checkup!"
 
         },
         "failed_login":"Wrong email or password entered",
