@@ -1,3 +1,6 @@
+#this makefile is designed to have limited windows compatability, not full. 
+#Be cautious when using file under non-UNIX-like syntax as it may result in 
+#undesired behaviour
 ifeq ($(OS), Windows_NT)
 	EXECUTE := py
 	TOUCH := type nul >>
