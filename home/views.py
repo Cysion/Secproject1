@@ -11,21 +11,14 @@ from tools.confman import get_lang
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 def IndexView(request):
-    if 'UserId' not in request.session.keys():  # Check if user is logged in
-        return HttpResponseRedirect(reverse('login:Login'))
 
-    if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
-        if 'logout' in request.GET.keys():
-            request.session.flush()
-            return HttpResponseRedirect(reverse('login:Login'))
+    home_lang = get_lang(sections=["home"])
 
-
-    login_lang = get_lang(sections=["userprofile"])
-
-    arg = {
-        'menu_titles': UNIVERSAL_LANG["universal"]["titles"], 'profile': login_lang["userprofile"]["long_texts"]
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'home': home_lang["home"]
     }
-    return render(request, 'home/index.html', arg)
+    return render(request, 'home/index.html', args)
 
 def ShowcaseView(request):
     try:
