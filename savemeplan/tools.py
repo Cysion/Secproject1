@@ -178,6 +178,22 @@ def get_savemeplan_items(user, symkey, id=-1):
     return savemeplan_data
 
 
+def get_all_savemeplan_items(user, symkey):
+    entries = SaveMePlan.objects.filter(UserId=user)
+    pageDict = dict()
+    for entry in entries:
+        if entry.getId() not in pageDict:
+            pageDict[entry.getId()] = dict()
+        step = entry.getStep(symkey)
+        pageDict[entry.getId()][step] = {
+            'Key': step,
+            'Text': entry.getText(symkey),
+            'Value': entry.getValue(symkey),
+            'Time': entry.getTime(symkey)
+        }
+    return pageDict
+
+
 def reencrypt_savemeplan(user, oldSymkey, newSymkey):
     entries = SaveMePlan.objects.filter(UserId=user)
     for entry in entries:

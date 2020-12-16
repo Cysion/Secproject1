@@ -1,6 +1,5 @@
-def add_alert(request, color, title, message):
-    """
-    Add a global alert to current session.
+def add_alert(request, color, title, message, link=None):
+    """Add a global alert to current session.
 
     request = the request variable containing session sent from django.
     color = either success (green), warning (yellow), danger (red), info (blue)
@@ -11,7 +10,8 @@ def add_alert(request, color, title, message):
         alert = {
             "color": color,
             "title": title,
-            "message": message
+            "message": message,
+            "link": link
         }
 
         if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.

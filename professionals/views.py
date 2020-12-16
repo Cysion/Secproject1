@@ -7,6 +7,7 @@ import login.models
 import prepare.tools
 import prepare.models
 import datetime
+import savemeplan.tools
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
@@ -171,21 +172,24 @@ def saveMePlanView(request, UserId):
     delete_temp_files(request.session)
 
     try:
-        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
+        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'saveMePlan').decode("utf-8")
     except AttributeError:
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
     user=login.models.User.objects.filter(UserId=UserId)[0]
-
+    symkey=user.getSymKey(userPrivKey)
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
+    entries = savemeplan.tools.get_all_savemeplan_items(user, symkey)
+    print (entries)
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
+        'content':entries
     }
 
     return render(request, 'professionals/savemeplan.html', args)
