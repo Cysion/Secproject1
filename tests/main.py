@@ -25,11 +25,11 @@ url_list["prepare"] = url_list["base"] + 'prepare/'
 
 
 credentials = {
-    'email': 'robin_hood25@gmail.com',
-    'password': 'robins_password',
+    'email': 'test_user1@gmail.com',
+    'password': 'test_password',
 
-    'first_name': 'Robin',
-    'last_name': 'Hood',
+    'first_name': 'Test',
+    'last_name': 'User',
     'birth': '1996-03-21',
     'gender': 'Female',
 
@@ -49,6 +49,7 @@ def error(name, text):
     exit(1)
 
 
+# Exception thrown when functional error is detected
 class ApplicationFunctionError(Exception):
     def __init__(self, description):
         self.description = description
@@ -57,7 +58,7 @@ class ApplicationFunctionError(Exception):
 # Tests
 
 def test_start_page():
-    """ Verify base-url redirects to login-page """
+    """ User enters base URL and gets redirected to startpage """
 
     # Navigate
     browser.get(url_list["base"])
@@ -69,6 +70,7 @@ def test_start_page():
 
 
 def test_invalid_login():
+    """ User tries to login with invalid account """
 
     # Navigate
     browser.get(url_list["login"])
@@ -86,6 +88,7 @@ def test_invalid_login():
 
 
 def test_create_account():
+    """ User creates an account """
 
     # Navigate
     browser.get(url_list["login"])
@@ -119,6 +122,7 @@ def test_create_account():
 
 
 def test_valid_login():
+    """ User logs in with account """
 
     # Navigate
     browser.get(url_list["login"])
@@ -140,7 +144,7 @@ def test_valid_login():
 
 
 def test_login_session():
-    """ Verifies automatic login works. OBS! Cookie must be fetched BEFORE this test """
+    """ User gets automatically logged in via cookie """
 
     browser.get(url_list["browser_home"])
     sleep(wait_time)
@@ -153,20 +157,40 @@ def test_login_session():
 
 
 def test_edit_credentials():
-    pass
+    """ User edits his/her credentials """
+
+    browser.get(url_list["profile_edit"])
+    sleep(wait_time)
+
+    # Change credentials
+    credentials["first_name"] = credentials["first_name"] + '_new'
+    credentials["last_name"] = credentials["last_name"] + '_new'
+    credentials["email"] = credentials["email"] + '_new'
+
+    # Change on site
+    browser.find_element_by_id("first_name").send_keys(credentials["first_name"])
+    browser.find_element_by_id("last_name").send_keys(credentials["last_name"])
+    browser.find_element_by_id("email").send_keys(credentials["email"])
+    browser.find_element_by_id("password").send_keys(credentials["password"])
 
 
 def test_prepare_page1():
+    """ User reads saveme-plan page 1 """
+
     browser.get(url_list["prepare"] + '1/')
     sleep(wait_time)
 
 
 def test_prepare_page2():
+    """ User reads saveme-plan page 2 """
+
     browser.get(url_list["prepare"] + '2/')
     sleep(wait_time)
 
 
 def test_prepare_page3():
+    """ User adds a memory on saveme-plan page 3 """
+
     browser.get(url_list["prepare"] + '3/')
     sleep(wait_time)
 
@@ -183,6 +207,8 @@ def test_prepare_page3():
 
 
 def test_prepare_page4():
+    """ User adds a destructive memory on saveme-plan page 4 """
+
     browser.get(url_list["prepare"] + '4/')
     sleep(wait_time)
 
@@ -199,6 +225,8 @@ def test_prepare_page4():
 
 
 def test_prepare_page5():
+    """ User adds a new contact on saveme-plan page 5 """
+
     browser.get(url_list["prepare"] + '5/')
     sleep(wait_time)
 
@@ -214,11 +242,15 @@ def test_prepare_page5():
 
 
 def test_prepare_page6():
+    """ User reads through saveme-plan page 6 """
+
     browser.get(url_list["prepare"] + '6/')
     sleep(wait_time)
 
 
 def test_prepare_page7():
+    """ User adds a diary entry on saveme-plan page 7 """
+
     browser.get(url_list["prepare"] + '7/')
     sleep(wait_time)
 
@@ -229,6 +261,8 @@ def test_prepare_page7():
 
 
 def test_prepare_page8():
+    """ User adds a therapy entry on saveme-plan page 8 """
+
     browser.get(url_list["prepare"] + '8/')
     sleep(wait_time)
 
@@ -239,7 +273,7 @@ def test_prepare_page8():
 
 
 def test_prepare_plan():
-    """ Tests entire prepare plan """
+    """ User goes through entire saveme plan """
 
     test_prepare_page1()
     test_prepare_page2()
@@ -249,101 +283,6 @@ def test_prepare_plan():
     test_prepare_page6()
     test_prepare_page7()
     test_prepare_page8()
-
-    # Navigate to start
-    browser.get(url_list["prepare"])
-    sleep(wait_time)
-    
-    # Page 2
-    browser.get(url_list["prepare"] + '2/')
-    sleep(wait_time)
-
-    # Page 3
-    browser.get(url_list["prepare"] + '3/')
-    sleep(wait_time)
-
-    # Page 4
-    browser.get(url_list["prepare"] + '4/')
-    sleep(wait_time)
-
-    # Add destructive memory
-    browser.get(url_list["base"] + 'prepare/memory/add/?mem_type=d') # Special case due to no identifying tags
-    sleep(wait_time)
-
-    browser.find_element_by_id("title").send_keys("My destructive memory")
-    browser.find_element_by_id("media_text").send_keys("This is the destructive phrase user " + credentials["first_name"] + " entered")
-    Select(browser.find_element_by_id("type")).select_by_visible_text('Phrase')
-    browser.find_element_by_xpath("//*[text()='Add memory']").click()
-    sleep(wait_time)
-    browser.find_element_by_xpath("//*[text()='Back']").click()
-
-    # Page 5
-    browser.get(url_list["prepare"] + '5/')
-    sleep(wait_time)
-
-    # Add new contact
-    browser.find_element_by_xpath("//*[text()='Add new contact']").click()
-    sleep(wait_time)
-
-    browser.find_element_by_id("name").send_keys("Test contact name")
-    browser.find_element_by_id("phonenumber").send_keys("0734165244")
-    browser.find_element_by_id("available").send_keys("test contact availability")
-    browser.find_element_by_id("available").submit()
-    sleep(wait_time)
-
-    # Read page 6
-    browser.get(url_list["prepare"] + '6/')
-    sleep(wait_time)
-
-    # Page 7
-    browser.get(url_list["prepare"] + '7/')
-    sleep(wait_time)
-
-    # Add diary-entry
-    browser.find_element_by_id("date").send_keys(credentials["birth"])
-    browser.find_element_by_id("text").send_keys("This is my new diary entry")
-    browser.find_element_by_id("text").submit()
-
-    # Page 8
-    browser.get(url_list["prepare"] + '8/')
-    sleep(wait_time)
-
-    # Add therapy-entry
-    browser.find_element_by_id("date").send_keys(credentials["birth"])
-    browser.find_element_by_id("text").send_keys("This is my new therapy entry")
-    browser.find_element_by_id("text").submit()
-
-
-def test_activate_plan():
-    """ Tests to activate plan """
-    pass
-
-
-def test_media_upload():
-    """ Verifies valid media gets uploaded correctly """
-    pass
-
-
-def test_excessive_media_upload():
-    """ Verifies overly large media gets rejected """
-    pass
-
-
-def test_data_sharing():
-    """ Verifies data gets shared between users properly """
-    pass
-
-def test_canceled_sharing():
-    """ Verifies data doesn't get shared after cancelling """
-    pass
-
-def test_forgot_password():
-    """ Verifies forgot password function """
-    pass
-
-def test_edit_credentials():
-    """ Verifies forgot password function """
-    pass
 
 
 def main():
@@ -355,6 +294,7 @@ def main():
     tests.append(('test_create_account', test_create_account))
     tests.append(('test_valid_login', test_valid_login))
     tests.append(('test_login_session', test_login_session))
+    tests.append(('test_edit_credentials', test_edit_credentials))
     tests.append(('test_prepare_plan', test_prepare_plan))
 
     print("\n-- Running tests --")
@@ -374,11 +314,12 @@ def main():
 
     # Quit
     print("\n> Tests complete")
-    print("Testing finnished\n")
+    print("-- Testing finnished --\n")
     browser.quit()
     exit(0)
 
 
 if __name__ == '__main__':
     main()
+
 
