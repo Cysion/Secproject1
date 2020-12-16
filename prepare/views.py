@@ -218,6 +218,8 @@ def addMemoryView(request):
                             request.session["global_alerts"] = [alert]
                         else:
                             request.session["global_alerts"].append(alert)
+                        
+                        new_entry("m1", user.getAnonId(request.session["PrivKey"]), file[0].split("/")[-1])
 
                         return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
@@ -261,7 +263,6 @@ def addMemoryView(request):
         'max_file_size': int(media_conf["max_size_mb"]),
         'mem_type': mem_type
     }
-    #new_entry("m1", user.getAnonId(request.session["PrivKey"]), "na")
     return render(request, 'prepare/add_memory.html', args)
 
 def MemoryView(request, id):
@@ -364,7 +365,7 @@ def MemoryView(request, id):
         else:
             request.session["global_alerts"].append(alert)
 
-        new_entry("m2", user.getAnonId(userPrivkey), "na")
+        new_entry("m2", user.getAnonId(userPrivkey), url.split("/")[-1])
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
         else:
@@ -465,8 +466,8 @@ def MemoryView(request, id):
         'profView':profView,
         'UserId': user.getUid()
     }
+    new_entry("m3", user.getAnonId(userPrivkey), url.split("/")[-1])
 
-    new_entry("m3", user.getAnonId(userPrivkey), "na")
     return render(request, 'prepare/memory.html', args)
 
 

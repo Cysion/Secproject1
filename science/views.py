@@ -24,6 +24,7 @@ ID_DESC={
     "r1":"share with",
     "p1":"contact add",
     "p2":"contact use",
+    "p3":"step open",
     "s1":"print click",
     "s2":"send click",
     "m1":"add memory",
