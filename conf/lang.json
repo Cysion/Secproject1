@@ -68,11 +68,13 @@
         "green":"Green day",
         "how_feeling":"How do you feel today?",
         "progress_overview":"Progress overview",
+        "to_checkup":"Have you done your daily checkup? Do it here",
         "could_not_save":"Could not save your daily checkup.",
         "could_save":"Your todays check was saved.",
         "green_case":{
             "subtitle":"MY GREEN CASE INDEX PROGRESS OVERVIEW",
-            "select_month":"Select month and year",
+            "select_month":"Select month",
+            "select_year":"Select year",
             "go":"Go",
             "red_day":"Red day - day with an unhealthy activity",
             "orange_day":"Orange day - day with no health+/- activities",
@@ -81,7 +83,7 @@
             "red_days":"Red days/days",
             "orange_days":"orange days/days",
             "green_days":"Green days/days",
-            "months": ["Months","January","February","March","April","May","June","July","August","September","October","November","December"]
+            "months": ["Select month","January","February","March","April","May","June","July","August","September","October","November","December"]
         },
         "well_feeling":{
             "subtitle":"MY WELL-FEELING INDEX PROGRESS OVERVIEW",
