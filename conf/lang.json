@@ -74,7 +74,8 @@
             "green_case_index":"GREEN CASE INDEX",
             "red_days":"Red days/days",
             "orange_days":"orange days/days",
-            "green_days":"Green days/days"
+            "green_days":"Green days/days",
+            "months": ["Months","January","February","March","April","May","June","July","August","September","October","November","December"]
         },
         "well_feeling":{
             "subtitle":"MY WELL-FEELING INDEX PROGRESS OVERVIEW",
@@ -93,8 +94,8 @@
             "subtitle":"MY PRACTICE SELF-CARE PROGRESS OVERVIEW",
             "steps":["STEP","1","2","3","4","5","6","7","8","9","10","11","12"],
             "statistics":["MAGICIAN","FEELER","THINKER","COOLER","TALKER","WALKER","ECO","SMARTER","DISCOVER","SAFER","HELPER","EXPERT"]
-            }
-        },
+        }
+    },
     "danger":{
         "unformat":[],
         "title":"danger",
