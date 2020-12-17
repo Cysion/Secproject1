@@ -189,7 +189,7 @@ def test_login_session():
 
     browser.get(url_list["browser_home"])
     sleep(wait_time)
-    browser.get(url_list["base"])
+    browser.get(url_list["profile"])
     sleep(wait_time)
 
     # Verify login success
@@ -328,21 +328,21 @@ def main():
 
     # -- Select tests to run --
     tests = []
-    #tests.append(('test_start_page', test_start_page))
-    #tests.append(('test_invalid_login', test_invalid_login))
+    tests.append(('test_start_page', test_start_page))
+    tests.append(('test_invalid_login', test_invalid_login))
     tests.append(('test_create_account', test_create_account))
     tests.append(('test_logout', test_logout))
-    #tests.append(('test_valid_login', test_valid_login))
-    #tests.append(('test_login_session', test_login_session))
-    #tests.append(('test_edit_credentials', test_edit_credentials))
-    #tests.append(('test_prepare_page1', test_prepare_page1))
-    #tests.append(('test_prepare_page2', test_prepare_page2))
-    #tests.append(('test_prepare_page3', test_prepare_page3))
-    #tests.append(('test_prepare_page4', test_prepare_page4))
-    #tests.append(('test_prepare_page5', test_prepare_page5))
-    #tests.append(('test_prepare_page6', test_prepare_page6))
-    #tests.append(('test_prepare_page7', test_prepare_page7))
-    #tests.append(('test_prepare_page8', test_prepare_page8))
+    tests.append(('test_valid_login', test_valid_login))
+    tests.append(('test_login_session', test_login_session))
+    tests.append(('test_edit_credentials', test_edit_credentials))
+    tests.append(('test_prepare_page1', test_prepare_page1))
+    tests.append(('test_prepare_page2', test_prepare_page2))
+    tests.append(('test_prepare_page3', test_prepare_page3))
+    tests.append(('test_prepare_page4', test_prepare_page4))
+    tests.append(('test_prepare_page5', test_prepare_page5))
+    tests.append(('test_prepare_page6', test_prepare_page6))
+    tests.append(('test_prepare_page7', test_prepare_page7))
+    tests.append(('test_prepare_page8', test_prepare_page8))
 
     print("\n-- RUNNING TESTS --")
     print("> Test count: " + str(len(tests)))
@@ -381,7 +381,7 @@ def main():
             print("Passed")
 
     # Quit
-    print("\n> Tests completed: " + len(tests))
+    print("\n> Tests completed: " + str(len(tests)))
     print("\n-- TESTING FINISHED --\n")
     browser.quit()
     exit(0)
