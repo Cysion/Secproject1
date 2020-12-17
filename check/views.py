@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from tools.confman import get_lang, get_conf
 from prepare.tools import delete_temp_files
+from science.views import new_entry
 # import check.models # maybe not needed to import
 import login.models
 import tools.global_alerts
@@ -33,7 +34,8 @@ def GreenCaseView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'check': check_lang["check"]
     }
-
+    user = login.models.User.objects.filter(pk=request.session['UserId'])[0]
+    new_entry("g1", user.getAnonId(request.session['PrivKey']), "check")
     return render(request, 'check/green_case.html', args)
 
 
@@ -145,7 +147,7 @@ def CheckupView(request):
                     except Exception as e:
                         check_entry.delete()
                         tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['error'], check_lang['check']['could_not_save'])
-
+                new_entry("c1", user.getAnonId(request.session['PrivKey']), request.GET['day'])
             else:
                 tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['error'], check_lang['check']['could_not_save'])
 
