@@ -84,7 +84,7 @@ def forget_me(anonid):
 def find_me(anonid):
     #select all in table with anonid and return
     for data in ResearchData.objects.filter(AnonId=anonid).iterator():
-        yield (data.ActionId, get_sha(data.AnonId), data.Value, data.Time.timestamp())
+        yield (ID_DESC[data.ActionId], data.Value, data.Time.now())
 
 
 def get_all_data() -> tuple:
