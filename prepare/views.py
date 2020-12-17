@@ -219,7 +219,6 @@ def addMemoryView(request):
                             request.session["global_alerts"] = [alert]
                         else:
                             request.session["global_alerts"].append(alert)
-                        
 
                         return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 

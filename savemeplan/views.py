@@ -6,7 +6,7 @@ from django.urls import reverse
 from tools.confman import get_lang  # Needed for retrieving text from language file
 from savemeplan.models import SaveMePlan, Contacts
 from login.models import User
-from savemeplan.tools import top5_options, top_5_bad_good, extend_top5, decrypt_steps, get_savemeplan_items
+from savemeplan.tools import top5_options, top_5_bad_good, extend_top5, decrypt_steps, get_savemeplan_items, get_step_data
 from prepare.tools import delete_temp_files
 from tools.global_alerts import add_alert
 from science.views import new_entry
@@ -249,6 +249,9 @@ def StepView(request, step):
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
 
+        if 'SaveMePlanId' in request.session.keys():
+            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A1')
+
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['sittext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_sit']  # Rating text
         content['1'] = savemeplan_lang['savemeplan']['unbearable']  # Rating 1 text
@@ -270,6 +273,9 @@ def StepView(request, step):
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
+
+        if 'SaveMePlanId' in request.session.keys():
+            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A2')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['emotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_emo']  # Rating text
@@ -294,6 +300,9 @@ def StepView(request, step):
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
 
+        if 'SaveMePlanId' in request.session.keys():
+            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A3')
+
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['thotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_tho']
         content['1'] = savemeplan_lang['savemeplan']['unbearable']
@@ -314,6 +323,9 @@ def StepView(request, step):
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
+
+        if 'SaveMePlanId' in request.session.keys():
+            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A4')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['emotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_beh']
@@ -351,6 +363,9 @@ def StepView(request, step):
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
 
+        if 'SaveMePlanId' in request.session.keys():
+            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B1')
+
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['calmtext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_calm']
         content['1'] = savemeplan_lang['savemeplan']['unbearable']
@@ -372,6 +387,9 @@ def StepView(request, step):
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
 
+        if 'SaveMePlanId' in request.session.keys():
+            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B2')
+
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['routtext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_rout']
         content['1'] = savemeplan_lang['savemeplan']['yes']
@@ -392,6 +410,12 @@ def StepView(request, step):
         default_good = savemeplan_lang['savemeplan']['long_texts']['repgood']
         top_5 = top_5_bad_good(user, symkey)
         content['options'] = list()
+
+        if 'SaveMePlanId' in request.session.keys():
+            text = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B3').split(';')
+            if len(text) == 2:
+                content['text_bad'] = text[0]
+                content['text_good'] = text[1]
 
         if len(top_5[0]) < 5:
             top_5[0] = extend_top5(top_5[0], default_bad)
@@ -423,6 +447,9 @@ def StepView(request, step):
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
+
+        if 'SaveMePlanId' in request.session.keys():  # Check if user allready submittet a value.
+            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B4')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['name_values']
         content['rate'] = savemeplan_lang['savemeplan']['rate_values']
@@ -527,6 +554,9 @@ def StepView(request, step):
         if len(top_5) < 5:
             top_5 = extend_top5(top_5, default_options)
         content['options'] = top_5
+
+        if 'SaveMePlanId' in request.session.keys():
+            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'C3')
 
         content['other_placeholder'] = savemeplan_lang['savemeplan']['add_safe']
         content['other'] = savemeplan_lang['savemeplan']['other']

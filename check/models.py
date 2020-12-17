@@ -15,17 +15,18 @@ class Check(models.Model):
 
     CheckId = models.AutoField(primary_key=True)
     UserId = models.ForeignKey(User, on_delete=models.CASCADE)
-    Date = models.BinaryField(max_length=512)
+    Date = models.DateField()
     Rating = models.BinaryField(max_length=512)
 
-    def setDate(self, symkey, date):
-        self.Date = aes_encrypt(symkey, date.encode('utf-8'))
+    def setDate(self, date):
+        print(date)
+        self.Date = date
 
     def setRating(self, symkey, rating):
         self.Rating = aes_encrypt(symkey, rating.encode('utf-8'))
 
-    def getDate(self, symkey):
-        return aes_decrypt(symkey, self.Date).decode('utf-8')
+    def getDate(self):
+        return self.Date
 
     def getRating(self, symkey):
         return aes_decrypt(symkey, self.Rating).decode('utf-8')
