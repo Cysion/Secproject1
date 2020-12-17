@@ -1,0 +1,22 @@
+{% extends template %}
+
+{% block title %}Profile{% endblock %}
+
+{% block statics %}
+{% load static %}
+<link rel="stylesheet" href="{% static "userprofile/profile.css" %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-12">
+  <div class="profile">
+    <h1>{{ first_name }} {{ last_name }}</h1>
+     <a type="button" class="btn btn-lg btn-success btn-block" href="researchdata">Show your research data</a>
+     <a type="button" class="btn btn-lg btn-warning btn-block" href="gdpr/">Remove all of your research data</a>
+     <a type="button" class="btn btn-lg btn-danger btn-block" name="delete" value="1" href="?logout=1">Remove all of your data (remove account)</a>
+  </div>
+
+</div>
+
+{% endblock %}
