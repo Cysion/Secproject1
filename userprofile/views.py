@@ -71,10 +71,13 @@ def EditProfileView(request):
             if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
                 if request.POST['password']:
                     with transaction.atomic():
-                        user = User.objects.filter(UserId=request.session['UserId'])[0]
-                        if not request.POST['researchData']:
+                        user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+                        
+                        print(request.POST)
+                        if not 'researchData' in request.POST.keys():
                             forget_me(user.getAnonid(request.session['PrivKey']))
-                        User.objects.filter(UserId=request.session['UserId']).delete()
+                        login.models.User.objects.filter(UserId=request.session['UserId']).delete()
+                        request.session.flush()
                     return HttpResponseRedirect(reverse('login:Login'))
             else:
                 return HttpResponseRedirect(reverse('userprofile:Edit-profile'))
