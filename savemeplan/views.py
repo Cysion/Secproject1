@@ -9,7 +9,7 @@ from login.models import User
 from savemeplan.tools import top5_options, top_5_bad_good, extend_top5, decrypt_steps, get_savemeplan_items
 from prepare.tools import delete_temp_files
 from tools.global_alerts import add_alert
-
+from science.views import new_entry
 import time
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
@@ -222,6 +222,7 @@ def StepView(request, step):
             return HttpResponseRedirect(reverse('savemeplan:Step', args=(step+1,)))
 
     if step == 0:  # Part A
+        new_entry("g1", user.getAnonId(request.session['PrivKey']), f"save")
 
         template = 'savemeplan/part.html'
         title = f"{title} - {savemeplan_lang['savemeplan']['part'].upper()} {savemeplan_lang['savemeplan']['parts'][0]}"  # Tab title
@@ -596,5 +597,5 @@ def StepView(request, step):
         'next_step': next_step,
         'back': UNIVERSAL_LANG['universal']['back']
     }
-
+    new_entry("s3", user.getAnonId(request.session['PrivKey']), f"step {step}")
     return render(request, template, args)

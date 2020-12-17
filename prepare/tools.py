@@ -1,7 +1,7 @@
 import login.models
 import prepare.models
 import savemeplan.models
-
+from science.views import new_entry
 from tools.mediaman import delete_file
 
 def addContact(uId, name, phonenumber, available, privKey):
@@ -10,11 +10,8 @@ def addContact(uId, name, phonenumber, available, privKey):
     contact.setName(name)
     contact.setPhonenumber(phonenumber)
     contact.setAvailable(available)
-    print(contact.getName(privKey))
-    print(contact.getPhonenumber(privKey))
-    print(contact.getAvailable(privKey))
     contact.save()
-
+    
 def showContacts(uId, PrivKey):
     user = login.models.User.objects.filter(UserId=uId)[0]
     contactsToReturn = []
