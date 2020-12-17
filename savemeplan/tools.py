@@ -146,7 +146,7 @@ def decrypt_steps(steps, symkey):
 
     return dec_steps
 
-def get_savemeplan_items(user, symkey, id=-1):
+def get_savemeplan_items(user, symkey, id=-1, b3_pritty=True):
     """Get all items from savemeplan. Returns a list with step data. Step data
     is a list with values in index order (0) Step, (1) Text and (2) Rating.
 
@@ -166,7 +166,7 @@ def get_savemeplan_items(user, symkey, id=-1):
             smp_step = step.getStep(symkey)
             smp_text = step.getText(symkey)
 
-            if smp_step == 'B3':  # Step B3 will have on the format <bad thing>;<good thing>
+            if b3_pritty and smp_step == 'B3':  # Step B3 will have on the format <bad thing>;<good thing>
                 smp_lang = get_lang(sections=['savemeplan'])
                 smp_text = f"{smp_lang['savemeplan']['replace']} {smp_text}"
                 smp_text = smp_text.replace(';', f" {smp_lang['savemeplan']['with']} ")
@@ -176,6 +176,15 @@ def get_savemeplan_items(user, symkey, id=-1):
         savemeplan_data.sort(key=lambda x: x[0])  # Sort by step.
 
     return savemeplan_data
+
+def get_step_data(SaveMePlanId, user, symkey, step):
+    data = ''
+    done_steps = get_savemeplan_items(user, symkey, SaveMePlanId, False)
+    for itt_step in done_steps:
+        if itt_step[0] == step:
+            data = itt_step[1]
+
+    return data
 
 
 def get_all_savemeplan_items(user, symkey):

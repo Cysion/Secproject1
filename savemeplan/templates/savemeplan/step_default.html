@@ -57,7 +57,7 @@ textarea:focus {
 <form action="/savemeplan/{{ content.current_step }}/" method="POST">
   {% csrf_token %}
   <div class="form-group">
-    <textarea class="form-control" rows="5" id="describe" name="describe" style="background-color: {{ content.step_bg }};" placeholder="{{ content.describe_placeholder }}..." maxlength="64">{{ content.textarea_text }}</textarea>
+    <textarea class="form-control" rows="5" id="describe" name="describe" style="background-color: {{ content.step_bg }};" placeholder="{{ content.describe_placeholder }}..." maxlength="64">{% if content.text %}{{ content.text }}{% else %}{{ content.textarea_text }}{% endif %}</textarea>
   </div>
   <div class="form-group rating">
     <label for="rating">{{ content.rate }}<br>1 - {{ content.1 }}<br>{% if content.4 %}4 - {{ content.4 }}{% else %} 9 - {{ content.9 }}{% endif %}</label>
