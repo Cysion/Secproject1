@@ -118,5 +118,5 @@ def gdpr_csv(anonid: bytes, linebreak = "\n") -> str:
     outstr = ""
     packages = find_me(anonid)
     for package in packages:
-        outstr += ",".join([str(i) for i in package]) + linebreak
+        outstr += "\t" + "\t".join([str(i) for i in package]) + linebreak
     return outstr
