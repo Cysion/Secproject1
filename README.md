@@ -28,7 +28,7 @@ or follow this step by step guide (not recommended):
   
 update to the latest version of the repository and pip  
 `git pull`  
-`pip install --upgrade pip`
+`pip install --upgrade pip`  
 then install the required python libraries 
 **NOTE:** the version on most python libraries have been **FROZEN**, you will have to upgrade them **MANUALLY**  
 `pip install -r requirements.txt`  
