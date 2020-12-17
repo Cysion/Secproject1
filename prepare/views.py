@@ -16,11 +16,12 @@ import datetime
 
 from django.core.files import File
 import savemeplan.models
-from tools.scienceman import new_entry
+from science.views import new_entry
 import time
 import re
 import random
 import prepare.tools
+
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -30,6 +31,8 @@ def MenuView(request, page=0):
         return HttpResponseRedirect(reverse('login:Login'))
     if request.session['Role'] == 'professional':
         return HttpResponseRedirect(reverse('professionals:clients'))
+
+    prepare.tools.delete_temp_files(request.session)
 
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
@@ -87,8 +90,8 @@ def MenuView(request, page=0):
         'template': baseTemplate
     }
 
-    #if 0 < page < 9:
-    #    new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+    if 0 < page < 9:
+        new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
     return render(request, template, args)
 
 
@@ -108,6 +111,8 @@ def addMemoryView(request):
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
 
     prepare_lang = get_lang(sections=["prepare"])
     media_conf = get_conf(sections=["media"])["media"]
@@ -213,6 +218,8 @@ def addMemoryView(request):
                             request.session["global_alerts"] = [alert]
                         else:
                             request.session["global_alerts"].append(alert)
+                        
+                        new_entry("m1", user.getAnonId(request.session["PrivKey"]), file[0].split("/")[-1])
 
                         return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
@@ -256,7 +263,6 @@ def addMemoryView(request):
         'max_file_size': int(media_conf["max_size_mb"]),
         'mem_type': mem_type
     }
-    #new_entry("m1", user.getAnonId(request.session["PrivKey"]), "na")
     return render(request, 'prepare/add_memory.html', args)
 
 def MemoryView(request, id):
@@ -298,10 +304,7 @@ def MemoryView(request, id):
                 else:
                     return HttpResponseRedirect(reverse('professionals:clients'))
 
-    if "files_to_delete" in request.session.keys():  # If there is any temporary files not used anymore, delete them
-        for file in request.session["files_to_delete"]:
-            splitted_path = file.split("/")
-            delete_file("".join(splitted_path[2:]), splitted_path[1])
+    prepare.tools.delete_temp_files(request.session)
 
     content["id"] = id
     content["title"] = memory.getMediaTitle(userPrivkey)
@@ -362,7 +365,7 @@ def MemoryView(request, id):
         else:
             request.session["global_alerts"].append(alert)
 
-        new_entry("m2", user.getAnonId(userPrivkey), "na")
+        new_entry("m2", user.getAnonId(userPrivkey), url.split("/")[-1])
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
         else:
@@ -463,14 +466,17 @@ def MemoryView(request, id):
         'profView':profView,
         'UserId': user.getUid()
     }
+    new_entry("m3", user.getAnonId(userPrivkey), url.split("/")[-1])
 
-    new_entry("m3", user.getAnonId(userPrivkey), "na")
     return render(request, 'prepare/memory.html', args)
 
 
 def ContactsView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
+
     alerts = {}
     if request.method == 'POST':
         exceptions = ''
@@ -485,6 +491,7 @@ def ContactsView(request):
                 alerts[index] = "badChar"
         if not alerts:
             prepare.tools.addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
+            new_entry("p1", user.getAnonId(request.session["PrivKey"]), request.POST['phonenumber'], mangle=True)
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
 
     prepare_lang = get_lang(sections=["prepare"])
@@ -503,6 +510,9 @@ def ContactsView(request):
 def editContactView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
+
     prepare_lang = get_lang(sections=["prepare"])
     alerts=dict()
 
@@ -546,6 +556,8 @@ def editContactView(request, id):
 def removeDiaryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    prepare.tools.delete_temp_files(request.session)
 
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
 

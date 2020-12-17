@@ -21,6 +21,7 @@
         "success":"Success",
         "warning":"Warning",
         "error":"Error",
+        "info":"Info",
         "important":"Important",
         "emergency_number":"112",
         "titles":[
@@ -56,17 +57,24 @@
         "title":"chat",
         "long_texts":{
         }
-
     },
     "check":{
         "unformat":[],
         "title":"check",
         "pages":["MY GREEN CASE INDEX","MY WELL-FEELING INDEX","SAVE.ME PLAN","MY PRACTICE SELF-CARE"],
         "good_job":"Good Job!",
+        "red":"Red day",
+        "orange":"Orange day",
+        "green":"Green day",
+        "how_feeling":"How do you feel today?",
         "progress_overview":"Progress overview",
+        "to_checkup":"Have you done your daily checkup? Do it here",
+        "could_not_save":"Could not save your daily checkup.",
+        "could_save":"Your todays check was saved.",
         "green_case":{
             "subtitle":"MY GREEN CASE INDEX PROGRESS OVERVIEW",
-            "select_month":"Select month and year",
+            "select_month":"Select month",
+            "select_year":"Select year",
             "go":"Go",
             "red_day":"Red day - day with an unhealthy activity",
             "orange_day":"Orange day - day with no health+/- activities",
@@ -74,7 +82,8 @@
             "green_case_index":"GREEN CASE INDEX",
             "red_days":"Red days/days",
             "orange_days":"orange days/days",
-            "green_days":"Green days/days"
+            "green_days":"Green days/days",
+            "months": ["Select month","January","February","March","April","May","June","July","August","September","October","November","December"]
         },
         "well_feeling":{
             "subtitle":"MY WELL-FEELING INDEX PROGRESS OVERVIEW",
@@ -93,21 +102,22 @@
             "subtitle":"MY PRACTICE SELF-CARE PROGRESS OVERVIEW",
             "steps":["STEP","1","2","3","4","5","6","7","8","9","10","11","12"],
             "statistics":["MAGICIAN","FEELER","THINKER","COOLER","TALKER","WALKER","ECO","SMARTER","DISCOVER","SAFER","HELPER","EXPERT"]
-            }
-        },
+        }
+    },
     "danger":{
         "unformat":[],
         "title":"danger",
         "long_texts":{
         }
-
     },
     "home":{
         "unformat":[],
         "title":"home",
+        "welcome":"Welcome to the 12 Steps App!",
+        "goto_login":"Login or register here",
         "long_texts":{
+            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam."
         }
-
     },
     "login":{
       "unformat":[],
@@ -147,7 +157,8 @@
             "relogin":"Login credentials incorrect!",
             "wrong_pass":"Password is incorrect!",
             "badChar":"Field contains illegal character(s)",
-            "changed_password_success":"You changed you password!"
+            "changed_password_success":"You changed you password!",
+            "daily_checkup":"Remeber to do your daily checkup!"
 
         },
         "failed_login":"Wrong email or password entered",
@@ -200,24 +211,14 @@
     },
     "info":{
       "unformat":[],
-      "title":"info",
-      "about":"about 12 steps",
-      "howto":"how to use 12 steps",
-      "privpol":"privacy policy and GDPR",
-      "vol":"volunteering",
-      "discl":"disclaimer",
-
-      "%%dev_note":"why is this here",
-      "wellind":"wellness index",
-
-      "long_texts":{
-          "about":"see p.8 in presentation",
-          "howto":"see p.10 in presentation",
-          "privpol":"see p.12 in presentation",
-          "vol":"see p.13 in presentation",
-          "discl":"see p.13 in presentation"
-      }
-
+      "title":"Info",
+      "about":"About 12 Steps",
+      "howto":"How to use 12 Steps",
+      "privacy_gdpr":"Privacy Policy. GDPR",
+      "volunteering_disclaimer":"Volunteering. Disclaimer",
+      "tos":"Terms of Service",
+      "wellness_index":"Wellness Index",
+      "feeling":"How are you feeling?"
     },
     "practice":{
         "unformat":[],
@@ -431,10 +432,10 @@
         "thotext":"Describe what you are thinking",
         "behtext":"Describe what behaviours you want to change",
         "part_b":"If you are alone choose an activity:",
-        "calm":"calm",
-        "rout":"routines",
-        "repl":"replace",
-        "prot":"protect",
+        "calm":"Calm",
+        "rout":"Routines",
+        "repl":"Replace",
+        "prot":"Protect",
         "calmtitle":"Calm & distract",
         "calm_step":"My Distractions",
         "calmadd":"add a calming activity",
@@ -493,6 +494,7 @@
         "with": "with",
 
         "long_texts":{
+            "text_to_long":"Your text was too on the previous step so it got choped to the maximum lenght of 64 characters.",
             "chat":"You can press this button to start chatting or copy the phonenumber from the contacts bellow",
             "describe_info":"You can either choose one of the following items or write your own in textarea bellow. If you press one of the following the textarea will be filled for you.",
             "old_session":"This is a old session of Save.me Plan. When navigating to a new step you will activate a new one.",

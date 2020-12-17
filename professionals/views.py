@@ -7,15 +7,19 @@ import login.models
 import prepare.tools
 import prepare.models
 import datetime
+import savemeplan.tools
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
+from prepare.tools import delete_temp_files
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
 
 def ClientsView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     clients_lang = get_lang(sections=["professionals"])
     # YOUR CODE HERE
@@ -48,6 +52,8 @@ def ClientsView(request):
 def profileView(request, UserId):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     try:
         userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
@@ -82,7 +88,9 @@ def profileView(request, UserId):
 def prepareView(request, UserId, page):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    
+
+    delete_temp_files(request.session)
+
     prep = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'prepare')
     media = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'media')
 
@@ -98,8 +106,8 @@ def prepareView(request, UserId, page):
     diary= []
 
     if prep:
-        userPrivKey = prep.decode("utf-8") 
-        
+        userPrivKey = prep.decode("utf-8")
+
         if page == 1:
             template = 'prepare/1_howto.html'
         elif page == 2:
@@ -120,7 +128,7 @@ def prepareView(request, UserId, page):
         else:
             return HttpResponseRedirect(reverse('professionals:clients'))
         prep = True
-    
+
     if media:
         userPrivKey = media.decode("utf-8")
 
@@ -135,7 +143,7 @@ def prepareView(request, UserId, page):
         else:
             return HttpResponseRedirect(reverse('professionals:clients'))
         media = True
-    
+
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -161,22 +169,67 @@ def saveMePlanView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
+    savemeplan_lang = get_lang(sections=['savemeplan'])
+
+    STEP_COLORS = {  # Main color for that step.
+        'A1': '#f77979',
+        'A2': '#ff9cf2',
+        'A3': '#cfcfcf',
+        'A4': '#f7c074',
+        'B1': '#c2904e',
+        'B2': '#8bff87',
+        'B3': '#adf8ff',
+        'B4': '#88b9eb',
+        'C1': '#50cc68',
+        'C2': '#5f85d9',
+        'C3': '#52e8ff',
+        'C4': '#ff4040',
+    }
+
+    STEP_TITLES = {
+        'A1': savemeplan_lang['savemeplan']['mysit'],
+        'A2': savemeplan_lang['savemeplan']['myemo'],
+        'A3': savemeplan_lang['savemeplan']['mytho'],
+        'A4': savemeplan_lang['savemeplan']['mybeh'],
+        'B1': savemeplan_lang['savemeplan']['calm'],
+        'B2': savemeplan_lang['savemeplan']['rout'],
+        'B3': savemeplan_lang['savemeplan']['repl'],
+        'B4': savemeplan_lang['savemeplan']['prot'],
+        'C3': savemeplan_lang['savemeplan']['gosafe'],
+    }
+
+    delete_temp_files(request.session)
+
+
+    title = savemeplan_lang['savemeplan']['title']
+
     try:
-        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
+        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'saveMePlan').decode("utf-8")
     except AttributeError:
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
-    user=login.models.User.objects.filter(UserId=UserId)[0]
-
+    user = login.models.User.objects.filter(UserId=UserId)[0]
+    symkey = user.getSymKey(userPrivKey)
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
+    entries = savemeplan.tools.get_all_savemeplan_items(user, symkey)
+
+    for session in entries.values():
+        for key, step in session.items():
+            if key != 'Datetime':
+                step['Color'] = STEP_COLORS[step['Key']]
+                step['Title'] = STEP_TITLES[step['Key']]
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
+        'content': entries,
+        'title': title,
+        'name': f"{user.getFirstName(userPrivKey)} {user.getLastName(userPrivKey)}"
     }
 
     return render(request, 'professionals/savemeplan.html', args)
@@ -184,6 +237,8 @@ def saveMePlanView(request, UserId):
 def CheckView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
 
     try:
         userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")

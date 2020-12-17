@@ -8,9 +8,10 @@ from django.db import transaction
 import login.models
 import login.tools
 import userprofile.tools
+import tools.global_alerts
 
 from tools.confman import get_lang
-from tools.scienceman import new_entry
+from science.views import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -80,6 +81,8 @@ def LoginView(request):
     if 'UserId' in request.session:
         return HttpResponseRedirect(reverse('userprofile:Profile'))
 
+    login_lang = get_lang(sections=["login"])
+
     loginFail = False
     if request.method == 'POST':
         try:
@@ -95,6 +98,14 @@ def LoginView(request):
                 request.session['PrivKey'] = key.export_key().decode("utf-8")
                 request.session['Role'] = user.getRole()
                 new_entry("u1", user.getAnonId(request.session['PrivKey']), "na")
+                if request.session['Role'] == 'User':
+                    tools.global_alerts.add_alert(
+                        request,
+                        'info',
+                        UNIVERSAL_LANG['universal']['info'],
+                        login_lang['login']['long_texts']['alerts']['daily_checkup'],
+                        '/check/checkup/'
+                    )
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
                 loginFail = True
@@ -106,7 +117,6 @@ def LoginView(request):
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
-    login_lang = get_lang(sections=["login"])
     args = {
         'post': request.POST,
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],

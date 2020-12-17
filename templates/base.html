@@ -21,7 +21,7 @@
         <div class="row">
           <li class="nav-item">
             <div class="menu-item rounded-circle" style="border:3px solid Black;">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="/info/">
                 <i class="fas fa-info-circle"></i>
               </a>
             </div>
@@ -66,7 +66,8 @@
       {% for alert in global_alerts %}
       <div class="alert alert-{{ alert.color }} alert-dismissible fade show">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <strong>{{ alert.title }}!</strong> {{ alert.message }}
+        <strong>{{ alert.title }}!</strong> {{ alert.message }}<br>
+        {% if alert.link %}<a href="{{ alert.link }}" class="btn btn-outline-dark btn-block" style="margin-top: 10px;">link</a>{% endif %}
       </div>
       {% endfor %}
       {% block content %}{% endblock %}

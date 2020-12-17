@@ -6,13 +6,13 @@ from tools.confman import get_lang
 import datetime
 
 
-def top5_options(user, step, PrivKey):
+def top5_options(user, step, symkey):
     """
     Get top 5 most used options on Save.me Plan for user.
 
     user=The logged in user as User object
     step=The step in Save.me Plan
-    PrivKey=Users Private key used for decryption
+    symkey=Users AES-key used for decryption in this function
 
     Returns a list with strings.
     """
@@ -20,10 +20,10 @@ def top5_options(user, step, PrivKey):
     all_options_on_step = dict()  # Key is a option a user have entered and value is frequency
 
     for savemeplan_item in savemeplan_step:  # Get all matching steps and count frequency
-        dec_step = savemeplan_item.getStep(PrivKey)
+        dec_step = savemeplan_item.getStep(symkey)
 
         if dec_step == step:
-            step_text = savemeplan_item.getText(PrivKey)
+            step_text = savemeplan_item.getText(symkey)
 
             if step_text in all_options_on_step:
                 all_options_on_step[step_text] += 1
@@ -46,12 +46,12 @@ def top5_options(user, step, PrivKey):
 
     return top_5
 
-def top_5_bad_good(user, PrivKey):
+def top_5_bad_good(user, symkey):
     """
     Get top 5 most used good and bad options on Save.me Plan for user.
 
     user=The logged in user as User object
-    PrivKey=Users Private key used for decryption
+    symkey=Users AES-key used for decryption in this function
 
     Returns a list where index 0 is bad list and 1 is good list.
     """
@@ -61,10 +61,10 @@ def top_5_bad_good(user, PrivKey):
     all_good_options_on_step = dict()  # Key is a option a user have entered and value is frequency
 
     for savemeplan_item in savemeplan_step:  # Get all matching steps and count frequency
-        dec_step = savemeplan_item.getStep(PrivKey)
+        dec_step = savemeplan_item.getStep(symkey)
 
         if dec_step == step:
-            step_text = savemeplan_item.getText(PrivKey)
+            step_text = savemeplan_item.getText(symkey)
             dec_text_split = step_text.split(';')
             dec_bad = dec_text_split[0]
             dec_good = dec_text_split[1]
@@ -130,23 +130,23 @@ def extend_top5(top5, default):
                     top_5_len += 1
     return top5
 
-def decrypt_steps(steps, PrivKey):
+def decrypt_steps(steps, symkey):
     """Decrypts all steps in 'steps'.
     Returns a list with elements as tuples. First element in tuple is id
     and second is decrypted step.
 
     steps = list with SaveMePlan objects.
-    PrivKey = Users privatekey/decryptionkey
+    symkey=Users AES-key used for decryption in this function
     """
     dec_steps = []
 
     for step in steps:
-        temp = (step.id, step.getStep(PrivKey))
+        temp = (step.id, step.getStep(symkey))
         dec_steps.append(temp)
 
     return dec_steps
 
-def get_savemeplan_items(user, PrivKey, id=-1):
+def get_savemeplan_items(user, symkey, id=-1):
     """Get all items from savemeplan. Returns a list with step data. Step data
     is a list with values in index order (0) Step, (1) Text and (2) Rating.
 
@@ -163,8 +163,8 @@ def get_savemeplan_items(user, PrivKey, id=-1):
         steps = user.savemeplan_set.filter(SaveMePlanId=id)
 
         for step in steps:
-            smp_step = step.getStep(PrivKey)
-            smp_text = step.getText(PrivKey)
+            smp_step = step.getStep(symkey)
+            smp_text = step.getText(symkey)
 
             if smp_step == 'B3':  # Step B3 will have on the format <bad thing>;<good thing>
                 smp_lang = get_lang(sections=['savemeplan'])
@@ -176,3 +176,40 @@ def get_savemeplan_items(user, PrivKey, id=-1):
         savemeplan_data.sort(key=lambda x: x[0])  # Sort by step.
 
     return savemeplan_data
+
+
+def get_all_savemeplan_items(user, symkey):
+    entries = SaveMePlan.objects.filter(UserId=user)
+    pageDict = dict()
+    for entry in entries:
+        if entry.getId() not in pageDict:
+            pageDict[entry.getId()] = dict()
+        step = entry.getStep(symkey)
+
+        text = entry.getText(symkey)
+
+        if step == 'B3':  # Step B3 will have on the format <bad thing>;<good thing>
+            smp_lang = get_lang(sections=['savemeplan'])
+            text = f"{smp_lang['savemeplan']['replace']} {text}"
+            text = text.replace(';', f" {smp_lang['savemeplan']['with']} ")
+
+        time = datetime.datetime.fromtimestamp(int(entry.getTime(symkey)))
+
+        pageDict[entry.getId()]['Datetime'] = time.strftime('%d/%m-%Y %H:%S')
+
+        pageDict[entry.getId()][step] = {
+            'Key': step,
+            'Text': text,
+            'Value': entry.getValue(symkey),
+        }
+    return pageDict
+
+
+def reencrypt_savemeplan(user, oldSymkey, newSymkey):
+    entries = SaveMePlan.objects.filter(UserId=user)
+    for entry in entries:
+        entry.setStep(newSymkey, entry.getStep(oldSymkey))
+        entry.setText(newSymkey, entry.getText(oldSymkey))
+        entry.setValue(newSymkey, entry.getValue(oldSymkey))
+        entry.setTime(newSymkey, entry.getTime(oldSymkey))
+        entry.save()

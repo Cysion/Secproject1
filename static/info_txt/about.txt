@@ -1,0 +1,37 @@
+#h1 About 12 Steps
+
+#h2 Description of application:
+
+The 12 Steps self-care application has been designed to be a part of a mental health self-care aiming to improve the awareness and proficiency in your mental health skills. It allows you to practice the skills and monitor progress. You can use this app with your family member, a friend or alone. It can be used in different healthcare and social care settings. We do hope that the application will be your guardian tool that can help you even in the situation, when no other help is accessible. Everyone can use this app: young, middle-aged or senior, living in a city or in a country.
+
+The 12 Steps self-care application is filled with many useful tools and information that can help you stay safe during the difficult time in your life:
+
+* Learn a basic breathing exercise for managing ex. panic attacks.
+
+* Work with Opportunity Wellness Index to develop skills to feel more OK with yourself! Just answer the questions, and then repeat the process in tact with developing a new more resilient identity.
+
+* Learn how to manage difficult situations, annoying, negative emotions, thoughts and behaviours. Practice and follow your progress.
+
+* Design your own safety plan including crisis phone numbers. A safety/crisis plan may help you to stay safe during turbulent times when you are in a mental crisis, especially when you feel anxious, depressed or when you are thinking about self-harm. Research, clinical practice and logic show us that safety plan can be an effective way of dealing with different crisis situations, including suicidality. Suicidal ideation and feelings come in waves and often we need to work hard to stay safe until a dangerous wave passes by.
+
+<strong>Remember!</strong> The self-care skills demand your time and practice. The self-care app 12 Steps is interactive - it will show progress you are doing while training some of the skills. You will find in the app also some basic phone numbers to mental health helplines in Austria, Hungary, Norway, Poland and Sweden.
+
+#h2 Developer contact information:
+
+The 12 Steps self-care app was created by the the partners of the project ELLIPSE co-financed by the ERASMUS+ program of the European Union (<a href="https://e-llipse.com/">e-llipse.com</a>).
+
+The ELLIPSE-project partners: University of Vienna (Austria), LFSS (Norway), Oriold (Hungary), University of Warsaw, Jagiellonian University and Polish Association of Suicidology (PTS) (Poland), SPES Blekinge and Region Blekinge (project coordinator) (Sweden).
+
+<strong>APP website:</strong> <a href="https://e-llipse.com/">e-llipse.com</a>
+
+<strong>Countries:</strong> Austria, Hungary, Norway, Poland and Sweden.
+
+<strong>Languages:</strong> English, Austrian, Hungarian, Norwegian, Polish and Swedish.
+
+#h2 How did we create 12 Steps?
+
+Everything has its beginning. And so was also with 12 Steps. The ELLIPSE-project team started working on 12 Steps in January 2020.
+
+Firstly, we reviewed the scientific publications in the topic of the Save Plan applications. Secondly, we compared 10 Save Plan applications from the Play Store. Thirdly, Anna Baran, a psychiatrist and a coordinator of the ELLIPSE-project, created a first draft of the application. Fourthly, we discussed the development of the application on the ZOOM-meetings with the ELLIPSE-project partners. All project partners had a possibility to leave their comments. A researcher, Anja Cus, a PhD researcher from University of Vienna, added important input. The draft underwent many improvements due to the engagement of the ELLIPSE-partners, especially occupational
+
+therapists, nurses and patients of the Psychiatry Department Blekinge Hospital and Maiellen Stensmark, a suicide loss survivor representing SPES Blekinge. PTS and Infograficy.pl improved the design. Thanks to the effective cooperation with professor Markus Fiedler, professor ... and BTH students (names?) the test version of application is ready to use ...
