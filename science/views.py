@@ -132,6 +132,7 @@ def export_view(request):
 def gdpr_csv(anonid: bytes) -> str:
     outstr = ""
     packages = find_me(anonid)
-    outstr += ",".join([str(i) for i in packages]) + "\n"
+    for package in packages:
+        outstr += ",".join([str(i) for i in package]) + "\n"
     return outstr
 
