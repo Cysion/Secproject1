@@ -181,7 +181,8 @@ def modifyRelation(uId, PrivKey, recieverEmail, permission):
         return 0
     return 1
 
-def removeAllOfUsersRelations(uId)
+def removeAllOfUsersRelations(uId):
+    pass
 
 
 def getPermissions(userId, recieverId, recieverPrivKey):
