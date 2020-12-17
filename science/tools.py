@@ -114,9 +114,9 @@ def gen_otp(minsize=1024) -> str:
 
 
 
-def gdpr_csv(anonid: bytes) -> str:
+def gdpr_csv(anonid: bytes, linebreak = "\n") -> str:
     outstr = ""
     packages = find_me(anonid)
     for package in packages:
-        outstr += ",".join([str(i) for i in package]) + "\n"
+        outstr += ",".join([str(i) for i in package]) + linebreak
     return outstr
