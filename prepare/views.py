@@ -491,6 +491,7 @@ def ContactsView(request):
                 alerts[index] = "badChar"
         if not alerts:
             prepare.tools.addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
+            new_entry("p1", user.getAnonId(request.session["PrivKey"]), request.POST['phonenumber'], mangle=True)
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
 
     prepare_lang = get_lang(sections=["prepare"])
