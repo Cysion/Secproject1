@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from tools.confman import get_lang, get_conf
 from info.tools import open_text
-from science.views import new_entry
+from science.tools import new_entry
 import login.models
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])

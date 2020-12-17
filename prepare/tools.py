@@ -1,7 +1,7 @@
 import login.models
 import prepare.models
 import savemeplan.models
-from science.views import new_entry
+from science.tools import new_entry
 from tools.mediaman import delete_file
 
 def addContact(uId, name, phonenumber, available, privKey):

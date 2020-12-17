@@ -16,7 +16,7 @@ import datetime
 
 from django.core.files import File
 import savemeplan.models
-from science.views import new_entry
+from science.tools import new_entry
 import time
 import re
 import random

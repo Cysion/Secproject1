@@ -9,7 +9,7 @@ from login.models import User
 from savemeplan.tools import top5_options, top_5_bad_good, extend_top5, decrypt_steps, get_savemeplan_items, get_step_data
 from prepare.tools import delete_temp_files
 from tools.global_alerts import add_alert
-from science.views import new_entry
+from science.tools import new_entry
 import time
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.

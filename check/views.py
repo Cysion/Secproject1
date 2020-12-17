@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from tools.confman import get_lang, get_conf
 from prepare.tools import delete_temp_files
-from science.views import new_entry
+from science.tools import new_entry
 # import check.models # maybe not needed to import
 import login.models
 import tools.global_alerts
