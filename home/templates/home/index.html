@@ -1,8 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Home title {% endblock %}
+{% block title %}12 Steps App{% endblock %}
 
 {% block content %}
-<h1>Hello, world</h1>
-<a type="button" class="btn btn-lg btn-danger btn-block" name="logout" value="1" href="?logout=1">{{ profile.logout }}</a>
+<h2>{{ home.welcome }}</h2>
+<p>{{ home.long_texts.description }}</p>
+
+<a type="button" class="btn btn-lg btn-primary btn-block" name="logout" value="1" href="/login/">{{ home.goto_login }}</a>
+
+<p></p>
+<div class="my-2 px-1 embed-responsive embed-responsive-16by9">
+    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> <!--REPLACE-->
+</div>
+
+
 {% endblock %}

@@ -559,6 +559,18 @@ def StepView(request, step):
         title = f"{title} - {savemeplan_lang['savemeplan']['part'].upper()} {savemeplan_lang['savemeplan']['parts'][3]}"
         content['part'] = 'D'
 
+        STEP_TITLES = {
+            'A1': savemeplan_lang['savemeplan']['mysit'],
+            'A2': savemeplan_lang['savemeplan']['myemo'],
+            'A3': savemeplan_lang['savemeplan']['mytho'],
+            'A4': savemeplan_lang['savemeplan']['mybeh'],
+            'B1': savemeplan_lang['savemeplan']['calm'],
+            'B2': savemeplan_lang['savemeplan']['rout'],
+            'B3': savemeplan_lang['savemeplan']['repl'],
+            'B4': savemeplan_lang['savemeplan']['prot'],
+            'C3': savemeplan_lang['savemeplan']['gosafe'],
+        }
+
         content['step_title'] = savemeplan_lang['savemeplan']['summary']
 
         if 'SaveMePlanId' in request.session.keys():
@@ -570,6 +582,7 @@ def StepView(request, step):
 
         for smp_step in content['steps']:
             smp_step.append(STEP_COLORS[smp_step[0]])
+            smp_step.append(STEP_TITLES[smp_step[0]])
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
