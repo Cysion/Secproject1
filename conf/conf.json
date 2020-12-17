@@ -16,5 +16,16 @@
         "enable_collection":"True",
         "output_to_console":"True",
         "key_lifetime":600
+    },
+    "survey":{
+      "%%dev_note":"This contain after how many days a user should get notification about survey and which survey",
+      "links":{
+        "1":"https://docs.google.com/forms/d/e/1FAIpQLSe3ktxVOB1TaNuksC0ggLCq9F310OztfHdcEB6jx22fuksF-w/viewform?usp=sf_link",
+        "7":"https://docs.google.com/forms/d/e/1FAIpQLSe3ktxVOB1TaNuksC0ggLCq9F310OztfHdcEB6jx22fuksF-w/viewform?usp=sf_link",
+        "30":"https://docs.google.com/forms/d/e/1FAIpQLSe3ktxVOB1TaNuksC0ggLCq9F310OztfHdcEB6jx22fuksF-w/viewform?usp=sf_link",
+        "60":"https://docs.google.com/forms/d/e/1FAIpQLSe3ktxVOB1TaNuksC0ggLCq9F310OztfHdcEB6jx22fuksF-w/viewform?usp=sf_link",
+        "180":"https://docs.google.com/forms/d/e/1FAIpQLSe3ktxVOB1TaNuksC0ggLCq9F310OztfHdcEB6jx22fuksF-w/viewform?usp=sf_link",
+        "365":"https://docs.google.com/forms/d/e/1FAIpQLSe3ktxVOB1TaNuksC0ggLCq9F310OztfHdcEB6jx22fuksF-w/viewform?usp=sf_link"
+      }
     }
 }
