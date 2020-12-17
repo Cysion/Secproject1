@@ -184,6 +184,7 @@ def addMemoryView(request):
 
                                     memory.setMediaSize(user.getPubkey(), request.FILES["media"].size)
                                     memory.setLink(user.getPubkey(), file[0])
+                                    new_entry("m1", user.getAnonId(request.session["PrivKey"]), file[0].split("/")[-1])
 
                                 except RuntimeError as e:
                                     alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
@@ -218,8 +219,12 @@ def addMemoryView(request):
                             request.session["global_alerts"] = [alert]
                         else:
                             request.session["global_alerts"].append(alert)
+<<<<<<< HEAD
 
                         new_entry("m1", user.getAnonId(request.session["PrivKey"]), file[0].split("/")[-1])
+=======
+                        
+>>>>>>> origin/master
 
                         return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
@@ -490,6 +495,7 @@ def ContactsView(request):
                 alerts[index] = "badChar"
         if not alerts:
             prepare.tools.addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
+            new_entry("p1", user.getAnonId(request.session["PrivKey"]), request.POST['phonenumber'], mangle=True)
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
 
     prepare_lang = get_lang(sections=["prepare"])

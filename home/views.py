@@ -11,12 +11,13 @@ from tools.confman import get_lang
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 def IndexView(request):
-
+    logedIn = True if 'UserId' in request.session.keys() else False
     home_lang = get_lang(sections=["home"])
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-        'home': home_lang["home"]
+        'home': home_lang["home"],
+        'loged_in': logedIn
     }
     return render(request, 'home/index.html', args)
 
