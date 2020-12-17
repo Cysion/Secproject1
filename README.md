@@ -34,7 +34,7 @@ then install the required python libraries
 `pip install -r requirements.txt`  
 then you have to use the built in django database construction feature  
 `python manage.py migrate`  
-if the command succeds you can start the server by executing  
+if the command succeds you can start the development server by executing  
 `python manage.py runserver`  
 
 ## Built With
