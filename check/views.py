@@ -11,6 +11,7 @@ from science.tools import new_entry
 import login.models
 import tools.global_alerts
 import datetime
+import check.tools
 
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
@@ -113,13 +114,15 @@ def CheckupView(request):
         return HttpResponseRedirect(reverse('login:Login'))
 
     check_lang = get_lang(sections=["check"])
+    day = datetime.date(2020, 12, 12)
 
     if request.GET:
         if 'day' in request.GET.keys():
             if request.GET['day'] in ['red', 'orange', 'green']:  # Check if user has manipulated values.
                 user = login.models.User.objects.filter(pk=request.session['UserId'])[0]
                 symkey = user.getSymKey(request.session['PrivKey'])
-                today = datetime.datetime.now().strftime('%Y-%m-%d')
+                today = datetime.date.today()
+                check.tools.fillcheck(user, symkey)
 
                 all_checks = user.check_set.order_by('CheckId').reverse()
                 if len(all_checks) > 0:
@@ -127,12 +130,11 @@ def CheckupView(request):
                 else:
                     last_check = None
 
-                if last_check and last_check.getDate(symkey) == today:
+                if last_check and last_check.getDate() == today:
                     check_entry = last_check
                 else:
                     try:
-                        check_entry = user.check_set.create()
-                        check_entry.setDate(symkey, today)
+                        check_entry = user.check_set.create(Date=today)
                     except Exception as e:
                         tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['error'], check_lang['check']['could_not_save'])
                         check_entry = None
