@@ -38,7 +38,7 @@ if the command succeds you can start the development server by executing
 `python manage.py runserver`  
 
 ## Deployment
-There are a couple of things that are vital to the deployment of a django webserver. Refer to the [django deployment](https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/) as our implementation deploys as standard.  
+There are a couple of things that are vital to the deployment of a django webserver. Refer to the [django deployment checklist](https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/) as our implementation deploys as standard.  
 
 ## Built With
 * [Python](https://www.python.org/doc/) - Language and dependency management
