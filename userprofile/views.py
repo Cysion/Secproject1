@@ -7,7 +7,7 @@ import userprofile.models
 import login.models
 from tools.confman import get_lang
 from django.db import transaction
-from science.views import new_entry
+from science.tools import new_entry, forget_me, gdpr_csv
 import userprofile.tools
 from prepare.tools import delete_temp_files
 UNIVERSAL_LANG = get_lang(sections=["universal"])
@@ -66,6 +66,18 @@ def EditProfileView(request):
     account['gender']=user.getGender(request.session['PrivKey'])
     account['email'] = user.getEmail()
 
+    if request.GET:
+        if request.GET['delete']:
+            if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
+                if request.POST['password']:
+                    with transaction.atomic():
+                        user = User.objects.filter(UserId=request.session['UserId'])[0]
+                        if not request.POST['researchData']:
+                            forget_me(user.getAnonid(request.session['PrivKey']))
+                        User.objects.filter(UserId=request.session['UserId']).delete()
+                    return HttpResponseRedirect(reverse('login:Login'))
+            else:
+                return HttpResponseRedirect(reverse('userprofile:Edit-profile'))
     if request.method == 'POST':
         if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
             user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
@@ -113,6 +125,7 @@ def EditProfileView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'form': login_lang["login"]["form"],
+        'userprofile': profile_lang["userprofile"],
         'profile': profile_lang["userprofile"]["long_texts"],
         'alerts': login_lang['login']['long_texts']['alerts'],
         "account":account,
@@ -333,3 +346,43 @@ def manageRelationsView(request):
     }
 
     return render(request, 'userprofile/managerelations.html', args)
+
+
+def gdprView(request):
+    if 'UserId' not in request.session.keys():  # Check if user is logged in
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
+    profile_lang = get_lang(sections=["userprofile"])
+
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'template': template
+    }
+
+    return render(request, 'userprofile/gdpr.html', args)
+
+
+def researchDataView(request):
+    if 'UserId' not in request.session.keys():  # Check if user is logged in
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    delete_temp_files(request.session)
+    profile_lang = get_lang(sections=["userprofile"])
+
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
+    user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
+    text = gdpr_csv(user.getAnonId(request.session['PrivKey']))
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'template': template,
+        'text': text
+    }
+
+    return render(request, 'userprofile/researchdata.html', args)

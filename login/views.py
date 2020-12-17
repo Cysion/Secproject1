@@ -11,7 +11,7 @@ import userprofile.tools
 import tools.global_alerts
 
 from tools.confman import get_lang
-from science.views import new_entry
+from science.tools import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
