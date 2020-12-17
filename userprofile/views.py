@@ -113,6 +113,7 @@ def EditProfileView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'form': login_lang["login"]["form"],
+        'userprofile': profile_lang["userprofile"],
         'profile': profile_lang["userprofile"]["long_texts"],
         'alerts': login_lang['login']['long_texts']['alerts'],
         "account":account,
