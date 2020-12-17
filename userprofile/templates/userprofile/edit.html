@@ -119,7 +119,7 @@ Edit User Profile
 <div class="modal fade" id="confirmRemoveAccount" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-      <form action="/userprofile/edit/?delete=true" class="was-validated" method="POST"> <!-- Kanske inte helt korrekt-->  
+      <form action="/userprofile/edit/?delete=true" class="was-validated" method="POST">
         {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
         <div class="modal-header">
           <h5 class="modal-title" id="modalCenterLongTitle">{{ userprofile.edit.modal.confirm_action }}</h5>

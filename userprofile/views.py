@@ -6,6 +6,7 @@ from django.urls import reverse
 import userprofile.models
 import login.models
 from tools.confman import get_lang
+import tools.mediaman
 from django.db import transaction
 from science.tools import new_entry, forget_me, gdpr_csv
 import userprofile.tools
@@ -70,12 +71,12 @@ def EditProfileView(request):
         if request.GET['delete']:
             if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
                 if request.POST['password']:
+                    user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
                     with transaction.atomic():
-                        user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
-                        
-                        print(request.POST)
                         if not 'researchData' in request.POST.keys():
-                            forget_me(user.getAnonid(request.session['PrivKey']))
+                            forget_me(user.getAnonId(request.session['PrivKey']))
+                        userprofile.tools.removeAllOfUsersRelations(request.session['UserId'], request.session['PrivKey'])
+                        tools.mediaman.delete_all_files(user.getAnonId(request.session['PrivKey']))
                         login.models.User.objects.filter(UserId=request.session['UserId']).delete()
                         request.session.flush()
                     return HttpResponseRedirect(reverse('login:Login'))
@@ -363,6 +364,7 @@ def gdprView(request):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
+        'userprofile': profile_lang["userprofile"],
         'template': template
     }
 
@@ -378,6 +380,14 @@ def researchDataView(request):
 
     template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
 
+    if request.GET:
+        print(request.GET)
+        if 'cleared' in request.GET.keys():
+            print(request.GET['cleared'])
+            if request.GET['cleared'] == 'true':
+                user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+                forget_me(user.getAnonId(request.session['PrivKey']))
+                 
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
     text = gdpr_csv(user.getAnonId(request.session['PrivKey']))
 
