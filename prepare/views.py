@@ -184,6 +184,7 @@ def addMemoryView(request):
 
                                     memory.setMediaSize(user.getPubkey(), request.FILES["media"].size)
                                     memory.setLink(user.getPubkey(), file[0])
+                                    new_entry("m1", user.getAnonId(request.session["PrivKey"]), file[0].split("/")[-1])
 
                                 except RuntimeError as e:
                                     alerts["file"] = prepare_lang["prepare"]["long_texts"]["alerts"]["file_to_big"]
@@ -219,7 +220,6 @@ def addMemoryView(request):
                         else:
                             request.session["global_alerts"].append(alert)
                         
-                        new_entry("m1", user.getAnonId(request.session["PrivKey"]), file[0].split("/")[-1])
 
                         return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
@@ -233,7 +233,6 @@ def addMemoryView(request):
                 alerts["title"] = prepare_lang["prepare"]["long_texts"]["alerts"]["title_to_long"]
             else:
                 alerts["title"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_title"]
-            memory.delete()
 
         if "link" in request.POST.keys():  # Displaying text input type
             media_type = "url"
