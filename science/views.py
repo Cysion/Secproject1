@@ -74,7 +74,6 @@ def export_data(maxlines=1000, rootdir=CONF["research"]["exportdir"], timefrom=0
                 pass
             file = open(os.path.join(foldername,f"entries{i}-{i+maxlines}.csv"), "w")
         if timefrom < int(package[3]) < timeto: 
-            print(package)
             file.write(",".join([str(i) for i in package]) + "\n")
         i+=1
 
@@ -87,7 +86,8 @@ def forget_me(anonid):
 
 def find_me(anonid):
     #select all in table with anonid and return
-    return ResearchData.objects.filter(AnonId=anonid)
+    for data in ResearchData.objects.filter(AnonId=anonid).iterator():
+        yield (data.ActionId, get_sha(data.AnonId), data.Value, data.Time.timestamp())
 
 
 def get_all_data() -> tuple:
@@ -128,4 +128,10 @@ def export_view(request):
         }
     }
     return render(request, 'science/export.html', args)
+
+def gdpr_csv(anonid: bytes) -> str:
+    outstr = ""
+    packages = find_me(anonid)
+    outstr += ",".join([str(i) for i in packages]) + "\n"
+    return outstr
 
