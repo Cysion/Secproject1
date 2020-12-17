@@ -4,7 +4,7 @@ An app built for the [e-llipse](e-llipse.com) project team for studying suicide 
 ### Prerequisites
 A mySQL compliant database is required to run the code unmodified, however all databases supported by django are indirectly supported by 12stepsapp
 
-### Installation and deployment
+### Installation
 Installation instructions written for a Linux/UNIX system, installation on other systems might be similar, but will require some autonomy.
 After cloning this code repository, you chould set up the database and enter the details of the database into the **conf/db.cnf** file
 ```
@@ -36,6 +36,9 @@ then you have to use the built in django database construction feature
 `python manage.py migrate`  
 if the command succeds you can start the development server by executing  
 `python manage.py runserver`  
+
+## Deployment
+There are a couple of things that are vital to the deployment of a django webserver. Refer to the [django deployment](https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/) as our implementation deploys as standard.  
 
 ## Built With
 * [Python](https://www.python.org/doc/) - Language and dependency management
