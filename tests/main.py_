@@ -74,7 +74,7 @@ class ApplicationFunctionException(Exception):
         self.solutions = solutions
 
 
-# -- Tests --
+# Tests
 
 def test_start_page():
     """ User enters base URL and gets redirected to startpage """
@@ -90,7 +90,7 @@ def test_start_page():
 
 def test_invalid_login():
     """ User tries to login with invalid account """
-    # OBS! Requires 'credentials' to be non-registered!
+    # OBS! Requires dictionary 'credentials' to contain **non-registered** credentials.
 
     # Navigate
     browser.get(url_list["login"])
@@ -109,7 +109,7 @@ def test_invalid_login():
 
 def test_create_account():
     """ User creates an account """
-    # OBS! Requires 'credentials' to be non-registered!
+    # OBS! Requires dictionary 'credentials' to contain **non-registered** credentials.
 
     # Navigate
     browser.get(url_list["login"])
@@ -138,28 +138,6 @@ def test_create_account():
         raise ApplicationFunctionException("Did not get redirected to backup-key URL after registration", ["User '" + credentials["email"] + "' has already been registered", "Registration of specified user failed"])
 
     credentials["priv_key"] = browser.find_element_by_class_name("form-control").get_attribute("value")
-
-
-def test_logout():
-    """ User logs out """
-    # OBS! Assumes user is already logged in!
-
-    # Navigate
-    browser.get(url_list["login"])
-    sleep(wait_time)
-
-    # Log out
-    browser.find_element_by_xpath("//*[text()='Logout']").click()
-    sleep(wait_time)
-
-    # Verify logged out
-    browser.get(url_list["browser_home"])
-    sleep(wait_time)
-    browser.get(url_list["profile"])
-    sleep(wait_time)
-
-    if browser.current_url == url_list["profile"]:
-        raise ApplicationFunctionException("User session remains active after logout", ["Logging out does not remove cookie or session"])
 
 
 def test_valid_login():
@@ -328,21 +306,20 @@ def main():
 
     # -- Select tests to run --
     tests = []
-    #tests.append(('test_start_page', test_start_page))
-    #tests.append(('test_invalid_login', test_invalid_login))
+    tests.append(('test_start_page', test_start_page))
+    tests.append(('test_invalid_login', test_invalid_login))
     tests.append(('test_create_account', test_create_account))
-    tests.append(('test_logout', test_logout))
-    #tests.append(('test_valid_login', test_valid_login))
-    #tests.append(('test_login_session', test_login_session))
-    #tests.append(('test_edit_credentials', test_edit_credentials))
-    #tests.append(('test_prepare_page1', test_prepare_page1))
-    #tests.append(('test_prepare_page2', test_prepare_page2))
-    #tests.append(('test_prepare_page3', test_prepare_page3))
-    #tests.append(('test_prepare_page4', test_prepare_page4))
-    #tests.append(('test_prepare_page5', test_prepare_page5))
-    #tests.append(('test_prepare_page6', test_prepare_page6))
-    #tests.append(('test_prepare_page7', test_prepare_page7))
-    #tests.append(('test_prepare_page8', test_prepare_page8))
+    tests.append(('test_valid_login', test_valid_login))
+    tests.append(('test_login_session', test_login_session))
+    tests.append(('test_edit_credentials', test_edit_credentials))
+    tests.append(('test_prepare_page1', test_prepare_page1))
+    tests.append(('test_prepare_page2', test_prepare_page2))
+    tests.append(('test_prepare_page3', test_prepare_page3))
+    tests.append(('test_prepare_page4', test_prepare_page4))
+    tests.append(('test_prepare_page5', test_prepare_page5))
+    tests.append(('test_prepare_page6', test_prepare_page6))
+    tests.append(('test_prepare_page7', test_prepare_page7))
+    tests.append(('test_prepare_page8', test_prepare_page8))
 
     print("\n-- RUNNING TESTS --")
     print("> Test count: " + str(len(tests)))
@@ -379,9 +356,9 @@ def main():
             error(test[0], str(e))
         else:
             print("Passed")
+    print("> Tests complete")
 
     # Quit
-    print("\n> Tests completed: " + len(tests))
     print("\n-- TESTING FINISHED --\n")
     browser.quit()
     exit(0)
