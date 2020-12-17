@@ -219,12 +219,6 @@ def addMemoryView(request):
                             request.session["global_alerts"] = [alert]
                         else:
                             request.session["global_alerts"].append(alert)
-<<<<<<< HEAD
-
-                        new_entry("m1", user.getAnonId(request.session["PrivKey"]), file[0].split("/")[-1])
-=======
-                        
->>>>>>> origin/master
 
                         return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
