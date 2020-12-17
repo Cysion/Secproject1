@@ -112,30 +112,41 @@ Edit User Profile
 </form>
 
 {% if not profView %}
-<div class="col-8 col-md-auto p-1">
-    <a class="btn btn-info btn-block" href="/prepare/contacts/edit/{{contact.Id}}">{{ prepare.contacts.edit }}</a>
-</div>
-<div class="col-4 col-md-auto p-1">
-    <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveContact{{ contact.Id }}"><i class="fas fa-trash-alt"></i></button>
+<div class="col-4 col-md-auto p-0 my-2">
+    <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveAccount">{{ userprofile.edit.remove_account }}</i></button>
 </div>
 
-<div class="modal fade" id="confirmRemoveContact{{ contact.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="confirmRemoveAccount" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-          <h5 class="modal-title" id="modalCenterLongTitle">{{ prepare.contacts.modal.confirm_action }}</h5>
+    <div class="modal-content">
+      <form action="/userprofile/edit/?delete=true" class="was-validated" method="POST"> <!-- Kanske inte helt korrekt-->  
+        {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCenterLongTitle">{{ userprofile.edit.modal.confirm_action }}</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">&times;</span>
           </button>
+        </div>
+        <div class="modal-body">
+          <p>{{ userprofile.edit.modal.research_data }}</p>
+
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="researchData">
+            <label for="reseachData">{{ userprofile.edit.modal.save_research }}</label>
           </div>
-          <div class="modal-body">
-              <p>{{ userprofile.edit.modal.confirm_remove_account }}</p>
+
+          <div class="form-group">
+            <label for="password">{{ form.password }}: </label>
+            <input type="password" class="form-control" placeholder="{{ form.placeholder }} {{ form.password }}..."
+            maxlength="64" id="password" name="password" {% if profView %}disabled{% endif %} required>
           </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.contacts.modal.close }}</button>
-              <a name="delete" type="button" class="btn btn-danger" value="1" href="/userprofile/edit?delete=true">{{ prepare.contacts.modal.remove_account }}</a>
-          </div>
-      </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ userprofile.edit.modal.close }}</button>
+          <input type="submit" class="btn btn-danger" value="{{ userprofile.edit.modal.confirm }}">
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 {% endif %}
