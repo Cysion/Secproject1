@@ -9,6 +9,7 @@ import login.models
 import login.tools
 import userprofile.tools
 import tools.global_alerts
+import datetime
 
 from tools.confman import get_lang
 from science.tools import new_entry
@@ -115,7 +116,6 @@ def LoginView(request):
                         login_lang['login']['long_texts']['alerts']['daily_checkup'],
                         '/check/checkup/'
                     )
-
                     login.tools.survey_time(request, user, request.session['PrivKey'])
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:

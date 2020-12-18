@@ -30,7 +30,7 @@ def registerUser(postData): # Place function somewere else.
     user.setRole('professional') if 'professional' in postData else user.setRole('User')
     user.setAnonId(key.export_key().decode("utf-8"))
     user.setSymkey()
-    user.setCreationDate(datetime.date.today())
+    user.setCreationDate(datetime.date.today().strftime('%Y-%m-%d'))
     user.save()
     #new_entry("PROFILE", user.getAnonId(key.export_key()), f"{postData['date_of_birth']}|{postData['gender'] if postData['gender'] != 'Other' else postData['gender_other']}")
     return user.getUid(), key.export_key(), user.getRole()
