@@ -11,6 +11,7 @@ from prepare.tools import delete_temp_files
 from tools.global_alerts import add_alert
 from science.tools import new_entry
 import time
+import savemeplan.tools
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
 
@@ -629,3 +630,66 @@ def StepView(request, step):
     }
     new_entry("s3", user.getAnonId(request.session['PrivKey']), f"step {step}")
     return render(request, template, args)
+
+def HistoryView(request):
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
+
+    savemeplan_lang = get_lang(sections=['savemeplan'])
+
+    STEP_COLORS = {  # Main color for that step.
+        'A1': '#f77979',
+        'A2': '#ff9cf2',
+        'A3': '#cfcfcf',
+        'A4': '#f7c074',
+        'B1': '#c2904e',
+        'B2': '#8bff87',
+        'B3': '#adf8ff',
+        'B4': '#88b9eb',
+        'C1': '#50cc68',
+        'C2': '#5f85d9',
+        'C3': '#52e8ff',
+        'C4': '#ff4040',
+    }
+
+    STEP_TITLES = {
+        'A1': savemeplan_lang['savemeplan']['mysit'],
+        'A2': savemeplan_lang['savemeplan']['myemo'],
+        'A3': savemeplan_lang['savemeplan']['mytho'],
+        'A4': savemeplan_lang['savemeplan']['mybeh'],
+        'B1': savemeplan_lang['savemeplan']['calm'],
+        'B2': savemeplan_lang['savemeplan']['rout'],
+        'B3': savemeplan_lang['savemeplan']['repl'],
+        'B4': savemeplan_lang['savemeplan']['prot'],
+        'C3': savemeplan_lang['savemeplan']['gosafe'],
+    }
+
+    delete_temp_files(request.session)
+
+
+    title = savemeplan_lang['savemeplan']['title']
+
+    user = User.objects.filter(pk=request.session['UserId'])[0]
+    symkey = user.getSymKey(request.session['PrivKey'])
+    global_alerts = []  # The variable which is sent to template
+    if "global_alerts" in request.session.keys():  # Check if there is global alerts
+        global_alerts = request.session["global_alerts"]  # Retrive global alerts.
+        request.session["global_alerts"] = []  # Reset
+
+    entries = savemeplan.tools.get_all_savemeplan_items(user, symkey)
+
+    for session in entries.values():
+        for key, step in session.items():
+            if key != 'Datetime':
+                step['Color'] = STEP_COLORS[step['Key']]
+                step['Title'] = STEP_TITLES[step['Key']]
+    entries['part'] = 'history'
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
+        'global_alerts': global_alerts,  # Sending the alerts to template.
+        'content': entries,
+        'title': title,
+        'template': 'base.html'
+    }
+
+    return render(request, 'savemeplan/savemeplan_history.html', args)

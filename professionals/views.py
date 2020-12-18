@@ -229,10 +229,12 @@ def saveMePlanView(request, UserId):
         'global_alerts': global_alerts,  # Sending the alerts to template.
         'content': entries,
         'title': title,
-        'name': f"{user.getFirstName(userPrivKey)} {user.getLastName(userPrivKey)}"
+        'name': f"{user.getFirstName(userPrivKey)} {user.getLastName(userPrivKey)}",
+        'prof': True,
+        'template': 'base_professionals.html'
     }
 
-    return render(request, 'professionals/savemeplan.html', args)
+    return render(request, 'savemeplan/savemeplan_history.html', args)
 
 def CheckView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
