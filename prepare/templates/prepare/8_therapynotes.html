@@ -78,7 +78,7 @@
             <p>{{ entry.EntryDate }}</p>
         </div>
         <div class="col-12 col-md">
-            <p class="p-1 m-0" style="background-color: white; border-style: solid; border-color: lightgray">{{ entry.Text }} </br> {{ entry.Author }} </p>
+            <p class="p-1 m-0" style="background-color: white; border-style: solid; border-color: lightgray">{{ entry.Text }} </br> {{ entry.Author }} ({{entry.AuthorId}}) </p>
         </div>
         {% if entry.Owner %}
         <div class="col-12 col-md-auto m-1">

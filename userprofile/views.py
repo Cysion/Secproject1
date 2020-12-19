@@ -38,6 +38,7 @@ def ProfileView(request):
         request.session["global_alerts"] = []  # Reset
 
     template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    profView = True if request.session["Role"] == "Professional" else False
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -45,7 +46,8 @@ def ProfileView(request):
         'profile': login_lang["userprofile"]["long_texts"],
         'first_name': first_name,
         'last_name': last_name,
-        'template': template
+        'template': template,
+        'profView' : profView
     }
 
     return render(request, 'userprofile/profile.html', args)
@@ -187,7 +189,7 @@ def changePassView(request):
 
         if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST["current_password"]):
             if request.POST['new_password'] == request.POST['new_repassword']:
-                PrivKey = userprofile.tools.changePass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"]).decode('utf-8')
+                PrivKey = userprofile.tools.changePass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"],request.session['Role']).decode('utf-8')
 
                 if PrivKey:  # Check if changing password succeded
                     request.session['PrivKey'] = PrivKey
@@ -252,16 +254,18 @@ def relationsView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
+    if request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
+
     delete_temp_files(request.session)
-
     users = userprofile.tools.showAllRelationsTo(request.session['UserId'], request.session['PrivKey'])
-
     profile_lang = get_lang(sections=["userprofile"])
-
+    template = "base.html"
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'relations': profile_lang["userprofile"]["relations"],
+        'template' : template,
         'users': users
     }
 

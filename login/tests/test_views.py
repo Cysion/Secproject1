@@ -2,7 +2,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from login.views import RegisterView, LoginView, forgotPasswordView, registerUser
+from login.views import RegisterView, LoginView, forgotPasswordView
+from login.tools import registerUser
 from login.models import User
 from tools.crypto import gen_rsa, secret_scrambler
 

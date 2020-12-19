@@ -29,7 +29,7 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 def MenuView(request, page=0):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    if request.session['Role'] == 'professional':
+    if request.session['Role'] == 'Professional':
         return HttpResponseRedirect(reverse('professionals:clients'))
 
     prepare.tools.delete_temp_files(request.session)
