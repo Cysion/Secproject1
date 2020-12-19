@@ -74,8 +74,10 @@ full_clean: clean
 	$(RMRF) env
 	$(RMRF) lang
 	$(RMRF) conf/lang.out.json
-
-
+	$(RMRF) export-key.txt
+	$(RMRF) abs_path.cnf
+	$(RMRF) db.cnf
+	
 clean:
 	@echo  --- cleaning up ---
 	$(RMRF) */migrations
