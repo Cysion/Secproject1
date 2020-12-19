@@ -92,7 +92,7 @@ def MenuView(request, page=0):
         template = 'prepare/8_therapynotes.html'
     else:
         #Science segment
-        new_entry("g1", user.getAnonId(request.session['PrivKey']), "prep")
+        new_entry("g1", user.getAnonId(request.session['PrivKey']), "prep", role=request.session['Role'])
 
         template = 'prepare/menu.html'
 
@@ -380,7 +380,7 @@ def MemoryView(request, id):
         else:
             request.session["global_alerts"].append(alert)
 
-        new_entry("m2", user.getAnonId(userPrivkey), url.split("/")[-1])
+        new_entry("m2", user.getAnonId(userPrivkey), url.split("/")[-1], role=request.session['Role'])
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
         else:
@@ -481,7 +481,7 @@ def MemoryView(request, id):
         'profView':profView,
         'UserId': user.getUid()
     }
-    new_entry("m3", user.getAnonId(userPrivkey), url.split("/")[-1])
+    new_entry("m3", user.getAnonId(userPrivkey), url.split("/")[-1], role=request.session['Role'])
 
     return render(request, 'prepare/memory.html', args)
 
@@ -506,7 +506,7 @@ def ContactsView(request):
                 alerts[index] = "badChar"
         if not alerts:
             prepare.tools.addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
-            new_entry("p1", user.getAnonId(request.session["PrivKey"]), request.POST['phonenumber'], mangle=True)
+            new_entry("p1", user.getAnonId(request.session["PrivKey"]), request.POST['phonenumber'], mangle=True, role=request.session['Role'])
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
 
     prepare_lang = get_lang(sections=["prepare"])
