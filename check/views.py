@@ -7,11 +7,14 @@ from django.urls import reverse
 from tools.confman import get_lang, get_conf
 from prepare.tools import delete_temp_files
 from science.tools import new_entry
+from calendar import monthrange
+from datetime import date
 # import check.models # maybe not needed to import
 import login.models
 import tools.global_alerts
 import datetime
 import check.tools
+import check.models
 
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
@@ -21,6 +24,58 @@ def GreenCaseView(request):
         return HttpResponseRedirect(reverse('login:Login'))
 
     delete_temp_files(request.session)
+
+
+    calendar = { # Calendar variables
+        'days': [],
+        'year': '',
+        'month': ''
+    }
+
+    if request.method == 'POST': # Searched month & year
+        if request.POST.keys():
+            if 'month' and 'year' in request.POST.keys():
+                user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+
+                calendar['year'] = request.POST['year']
+                calendar['month'] = request.POST['month']
+
+                first_date = datetime.date(int(request.POST['year']), int(request.POST['month']), 1) # First day in the month
+                num_days = monthrange(int(request.POST['year']), int(request.POST['month'])) # Number of days in month
+                last_date = datetime.date(int(request.POST['year']), int(request.POST['month']), num_days[1]) # Last day in month
+
+                calendar['days'].append(num_days[1]) # Provide number of days in month for calendar
+
+                for day in range(num_days[1]): # Prepare slots for each day
+                    calendar['days'].append('')
+
+                objects = user.check_set.filter(Date__range=(first_date, last_date)) # Retrieve data from database
+
+                for day in objects: # Fill in data into calendar
+                    calendar['days'].insert(day.getDate().day, day.getRating(user.getSymKey(request.session['PrivKey'])))
+
+    else:
+        user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+
+        today = datetime.date.today()
+        calendar['year'] = today.year
+        calendar['month'] = today.month
+
+        first_date = datetime.date(today.year, today.month, 1) # First day in the month
+        num_days = monthrange(today.year, today.month) # Number of days in month
+        last_date = datetime.date(today.year,today.month, num_days[1]) # Last day in month
+
+        calendar['days'].append(num_days[1]) # Provide number of days in month for calendar
+
+        for day in range(num_days[1]): # Prepare slots for each day
+            calendar['days'].append('')
+
+        objects = user.check_set.filter(Date__range=(first_date, last_date)) # Retrieve data from database
+        
+        for day in objects: # Fill in data into calendar
+            calendar['days'].insert(day.getDate().day, day.getRating(user.getSymKey(request.session['PrivKey'])))
+
+
 
     check_lang = get_lang(sections=["check"])
 
@@ -33,7 +88,8 @@ def GreenCaseView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'global_alerts': global_alerts,  # Sending the alerts to template.
         'back': UNIVERSAL_LANG["universal"]["back"],
-        'check': check_lang["check"]
+        'check': check_lang["check"],
+        'calendar': calendar
     }
     user = login.models.User.objects.filter(pk=request.session['UserId'])[0]
     new_entry("g1", user.getAnonId(request.session['PrivKey']), "check")
