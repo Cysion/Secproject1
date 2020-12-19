@@ -186,7 +186,10 @@ def removeAllOfUsersRelations(uId, PrivKey):
     userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(PrivKey)).delete()
     userprofile.models.RelationTo.objects.filter(UserIdFrom=user).delete()
 
-
+def removeAllOfProfessionalsRelations(uId, PrivKey):
+    user = login.models.User.objects.filter(UserId=uId)[0]
+    userprofile.models.RelationFrom.objects.filter(UserIdTo=user).delete()
+    userprofile.models.RelationTo.objects.filter(AnonymityIdTo=user.getAnonId(PrivKey)).delete()
 
 def getPermissions(userId, recieverId, recieverPrivKey):
     reciever = login.models.User.objects.filter(UserId=recieverId)[0]

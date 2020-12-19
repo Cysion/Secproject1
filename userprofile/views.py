@@ -75,7 +75,10 @@ def EditProfileView(request):
                     with transaction.atomic():
                         if not 'researchData' in request.POST.keys():
                             forget_me(user.getAnonId(request.session['PrivKey']))
-                        userprofile.tools.removeAllOfUsersRelations(request.session['UserId'], request.session['PrivKey'])
+                        if request.session['Role'] == 'User':
+                            userprofile.tools.removeAllOfUsersRelations(request.session['UserId'], request.session['PrivKey'])
+                        elif request.session['Role'] == 'Professional':
+                            userprofile.tools.removeAllOfProfessionalsRelations(request.session['UserId'], request.session['PrivKey'])
                         tools.mediaman.delete_all_files(user.getAnonId(request.session['PrivKey']))
                         login.models.User.objects.filter(UserId=request.session['UserId']).delete()
                         request.session.flush()
