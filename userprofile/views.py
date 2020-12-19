@@ -375,7 +375,6 @@ def gdprView(request):
 
 
 def researchDataView(request):
-    print("donk")
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
