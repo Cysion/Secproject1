@@ -1,6 +1,5 @@
 env/*
-db.cnf*
-twelvesteps/settings.py
+db.cnf
 */__pycache__/*
 abs_path.cnf
 */migrations/*

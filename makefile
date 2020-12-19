@@ -1,3 +1,6 @@
+#this makefile is designed to have limited windows compatability, not full. 
+#Be cautious when using file under non-UNIX-like syntax as it may result in 
+#undesired behaviour
 ifeq ($(OS), Windows_NT)
 	EXECUTE := py
 	TOUCH := type nul >>
@@ -15,7 +18,7 @@ MANAGE = $(EXECUTE) manage.py
 MAKEMIGRATION = $(MANAGE) makemigrations
 
 
-all: upgrade env deps dev makemigration_all migrate
+all: upgrade env deps makemigration_all migrate
 
 env:
 	@echo  --- generating virtual environment ---
@@ -62,8 +65,18 @@ makemigration_all:
 	$(MAKEMIGRATION) savemeplan
 	$(MAKEMIGRATION) userprofile
 
+make_pkg: full_clean
+	git checkout production
+	git pull
+	tar -zcvf 12stepsapp-production-branch.tar.gz *
+
+full_clean: clean
+	$(RMRF) env
+	$(RMRF) lang
+	$(RMRF) conf/lang.out.json
+
+
 clean:
 	@echo  --- cleaning up ---
-	#$(RMRF) env
 	$(RMRF) */migrations
 	$(RMRF) */__pycache__
