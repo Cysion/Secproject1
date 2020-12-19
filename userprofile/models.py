@@ -39,6 +39,9 @@ class RelationFrom(models.Model):
     def setPermission(self, permission):
         self.Permission = permission
 
+    def setUserIdFromEncrypted(self, toPubKey, userIdTo):
+        self.UserIdFromEncrypted = rsa_encrypt(toPubKey,str(userIdTo).encode("utf-8"))
+
 class RelationTo(models.Model):
     """User relation table. This table is for users to see which relationship
     the user have with other users (Friend or therapist for example).
@@ -92,3 +95,6 @@ class RelationTo(models.Model):
 
     def setUserIdToEncryptedFrom(self, fromPubKey, userIdTo):
         self.UserIdToEncryptedFrom = rsa_encrypt(fromPubKey, str(userIdTo).encode("utf-8"))
+    
+    def setUserIdToEncryptedTo(self, toPubKey, userIdTo):
+        self.UserIdToEncryptedTo = rsa_encrypt(toPubKey, str(userIdTo).encode("utf-8"))

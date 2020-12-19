@@ -10,7 +10,8 @@ class ResearchData(models.Model):
     """
 
     ResearchDataId = models.AutoField(primary_key=True)
-    ActionId = models.CharField(max_length=7)
-    AnonId = models.BinaryField(max_length=512)
+    ActionId = models.CharField(max_length=3)
+    AnonId = models.BinaryField(max_length=128)
     Time = models.DateTimeField(auto_now=True)
     Value = models.CharField(max_length=255)
+    Role = models.CharField(max_length=16)

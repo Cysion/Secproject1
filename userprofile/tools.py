@@ -8,7 +8,7 @@ import savemeplan.tools
 
 
 
-def changePass(uId:int, PrivKey, newPassword:str):
+def changePass(uId:int, PrivKey, newPassword:str, role:str):
     user=login.models.User.objects.filter(UserId=uId)[0]
     firstName=user.getFirstName(PrivKey)
     lastName=user.getLastName(PrivKey)
@@ -36,12 +36,24 @@ def changePass(uId:int, PrivKey, newPassword:str):
         prepare.tools.reencryptMedia(user.getUid(), PrivKey, pubkey, retVal[1])
         savemeplan.tools.reencrypt_savemeplan(user, oldSymKey, newSymkey)
 
-        relationsTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=user.getUid())
-        for relation in relationsTo:
-            reciever = login.models.User.objects.filter(UserId=relation.getUserIdToDecryptedFrom(PrivKey))[0]
-            relation.setFromPrivEncrypted(reciever.getPubkey(), key.export_key().decode("utf-8"))
-            relation.setUserIdToEncryptedFrom(pubkey, reciever.getUid())
-            relation.save()
+        if role == 'User':
+            relationsTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=user.getUid())
+            for relation in relationsTo:
+                reciever = login.models.User.objects.filter(UserId=relation.getUserIdToDecryptedFrom(PrivKey))[0]
+                relation.setFromPrivEncrypted(reciever.getPubkey(), key.export_key().decode("utf-8"))
+                relation.setUserIdToEncryptedFrom(pubkey, reciever.getUid())
+                relation.save()
+        elif role == 'Professional':
+            relationsTo = userprofile.models.RelationTo.objects.filter(AnonymityIdTo=user.getAnonId(PrivKeyNew))
+            for relation in relationsTo:
+                relation.setUserIdToEncryptedTo(pubkey, relation.getUserIdToDecryptedTo(PrivKey))
+                relation.setFromPrivEncrypted(pubkey, relation.getFromPrivDecrypted(PrivKey).decode("utf-8"))
+                relation.save()
+            relationsFrom = userprofile.models.RelationFrom.objects.filter(UserIdTo=user.getUid())
+            for relation in relationsFrom:
+                relation.setUserIdFromEncrypted(pubkey, relation.getUserIdFromDecrypted(PrivKey))
+                relation.save()
+
 
         return key.export_key()
 
@@ -181,6 +193,15 @@ def modifyRelation(uId, PrivKey, recieverEmail, permission):
         return 0
     return 1
 
+def removeAllOfUsersRelations(uId, PrivKey):
+    user = login.models.User.objects.filter(UserId=uId)[0]
+    userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(PrivKey)).delete()
+    userprofile.models.RelationTo.objects.filter(UserIdFrom=user).delete()
+
+def removeAllOfProfessionalsRelations(uId, PrivKey):
+    user = login.models.User.objects.filter(UserId=uId)[0]
+    userprofile.models.RelationFrom.objects.filter(UserIdTo=user).delete()
+    userprofile.models.RelationTo.objects.filter(AnonymityIdTo=user.getAnonId(PrivKey)).delete()
 
 def getPermissions(userId, recieverId, recieverPrivKey):
     reciever = login.models.User.objects.filter(UserId=recieverId)[0]

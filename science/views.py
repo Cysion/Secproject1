@@ -11,10 +11,10 @@ import science.tools
 
 def export_view(request):
     LOGGER = science.tools.get_logger("scienceview")
-    one_time_pass = gen_otp().split(":")[1]
+    one_time_pass = science.tools.gen_otp().split(":")[1]
     if request.method == 'POST':
         if request.POST["export_key"] == one_time_pass:
-            export_data()
+            science.tools.export_data()
         else:
             LOGGER.warning("Wrong export key used!")
     args = {
