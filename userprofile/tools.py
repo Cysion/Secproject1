@@ -16,6 +16,7 @@ def changePass(uId:int, PrivKey, newPassword:str, role:str):
     dateOfBirth=user.getDateOfBirth(PrivKey)
     oldSymKey=user.getSymKey(PrivKey)
     anonId = user.getAnonId(PrivKey)
+    creationDate = user.getCreationDate(PrivKey)
 
     key = tools.crypto.gen_rsa(tools.crypto.secret_scrambler(newPassword, uId))
     pubkey=key.publickey().export_key()
@@ -30,6 +31,7 @@ def changePass(uId:int, PrivKey, newPassword:str, role:str):
         newSymkey = retVal[0]
         user.setSymkey(newSymkey)
         user.setAnonId(PrivKeyNew)
+        user.setCreationDate(creationDate)
         user.save()
 
         prepare.tools.reencryptDiary(user, oldSymKey, newSymkey)

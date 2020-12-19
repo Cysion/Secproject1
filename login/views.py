@@ -116,6 +116,7 @@ def LoginView(request):
                         login_lang['login']['long_texts']['alerts']['daily_checkup'],
                         '/check/checkup/'
                     )
+                    print(user.getName(request.session['PrivKey']))
                     login.tools.survey_time(request, user, request.session['PrivKey'])
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
