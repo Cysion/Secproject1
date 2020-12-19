@@ -119,9 +119,24 @@ def prepareView(request, UserId, page):
             template = 'prepare/6_wheretocall.html'
         elif page == 7:
             symKey = user.getSymKey(userPrivKey)
-            diary = prepare.tools.showDiary(user.getUid(), symKey)
+            diary = prepare.tools.showDiary(user.getUid(), symKey, 'Diary', request.session['UserId'])
             template = 'prepare/7_diary.html'
         elif page == 8:
+            symKey = user.getSymKey(userPrivKey)
+            if request.method == 'POST':
+                if 'date' in request.POST.keys() and 'text' in request.POST.keys():
+                    now = str(datetime.datetime.now())
+                    diaryEntry = prepare.models.Diary(UserId = user)
+                    print(f"'{login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey'])}'")
+                    diaryEntry.setAuthorId(symKey, request.session['UserId'])
+                    diaryEntry.setAuthor(symKey, str(login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey'])))
+                    diaryEntry.setDate(symKey, request.POST['date'])
+                    text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
+                    diaryEntry.setEntryType(symKey, 'Notes')
+                    diaryEntry.setText(symKey, text)
+                    diaryEntry.setTimestamp(symKey, now)
+                    diaryEntry.save()
+            diary = prepare.tools.showDiary(user.getUid(), symKey, 'Notes', request.session['UserId'])
             template = 'prepare/8_therapynotes.html'
         elif page == 3 or page == 4:
             pass
@@ -229,10 +244,12 @@ def saveMePlanView(request, UserId):
         'global_alerts': global_alerts,  # Sending the alerts to template.
         'content': entries,
         'title': title,
-        'name': f"{user.getFirstName(userPrivKey)} {user.getLastName(userPrivKey)}"
+        'name': f"{user.getFirstName(userPrivKey)} {user.getLastName(userPrivKey)}",
+        'prof': True,
+        'template': 'base_professionals.html'
     }
 
-    return render(request, 'professionals/savemeplan.html', args)
+    return render(request, 'savemeplan/savemeplan_history.html', args)
 
 def CheckView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.

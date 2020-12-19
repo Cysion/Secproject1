@@ -36,6 +36,7 @@ class User(models.Model):
     )
     Symkey = models.BinaryField(max_length=512)
     AnonId = models.BinaryField(max_length=512)
+    CreationDate = models.BinaryField(max_length=512)
 
     def getUid(self):
         return self.UserId
@@ -48,12 +49,14 @@ class User(models.Model):
 
     def getLastName(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.LastName).decode("utf-8")
+    
+    def getName(self, privKey):
+            return f"{self.getFirstName(privKey)} {self.getLastName(privKey)}"
 
     def getDateOfBirth(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.DateOfBirth).decode("utf-8")
 
     def getSymKey(self, privKey):
-        """PrivKey är decodad"""
         return rsa_decrypt(privKey.encode("utf-8"), self.Symkey)
 
     def getEmail(self):
@@ -68,6 +71,8 @@ class User(models.Model):
     def getAnonId(self, privKey):
         return rsa_decrypt_long(privKey, self.AnonId)
 
+    def getCreationDate(self, privKey):
+        return rsa_decrypt_long(privKey, self.CreationDate).decode('utf-8')
 
     def setPubKey(self, pubKey):
         self.Pubkey=pubKey
@@ -120,6 +125,9 @@ class User(models.Model):
     def setAnonId(self, privKey):
         self.AnonId=rsa_encrypt_long(self.Pubkey, gen_anon_id(self.UserId, self.getDateOfBirth(privKey)))
 
+    def setCreationDate(self, creation):
+        self.CreationDate = rsa_encrypt(self.Pubkey, str(creation).encode('utf-8'))
+
 
 
 class Action(models.Model):
@@ -143,4 +151,3 @@ class ResearchData(models.Model):
     ActionId = models.ForeignKey(Action, on_delete=models.CASCADE)
     AnonId = models.BinaryField(max_length=512)
     Time = models.DateTimeField(auto_now=True)
-

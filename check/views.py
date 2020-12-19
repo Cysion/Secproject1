@@ -9,7 +9,7 @@ from prepare.tools import delete_temp_files
 from science.tools import new_entry
 from calendar import monthrange
 from datetime import date
-# import check.models # maybe not needed to import
+
 import login.models
 import tools.global_alerts
 import datetime
@@ -92,7 +92,7 @@ def GreenCaseView(request):
         'calendar': calendar
     }
     user = login.models.User.objects.filter(pk=request.session['UserId'])[0]
-    new_entry("g1", user.getAnonId(request.session['PrivKey']), "check")
+    new_entry("g1", user.getAnonId(request.session['PrivKey']), "check", role=request.session['Role'])
     return render(request, 'check/green_case.html', args)
 
 
@@ -205,7 +205,7 @@ def CheckupView(request):
                     except Exception as e:
                         check_entry.delete()
                         tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['error'], check_lang['check']['could_not_save'])
-                new_entry("c1", user.getAnonId(request.session['PrivKey']), request.GET['day'])
+                new_entry("c1", user.getAnonId(request.session['PrivKey']), request.GET['day'], role=request.session['Role'])
             else:
                 tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['error'], check_lang['check']['could_not_save'])
 
