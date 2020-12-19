@@ -83,13 +83,14 @@
 
 .replace_bad_item {
   min-height: 50px;
-  max-height: 100px;
+  max-height: 160px;
   margin-top: 20px;
   border: 1px solid red;
   border-radius: 3px;
   background-color: #f5c6cb;
   width:100%;
   font-size: 20px;
+  word-wrap: break-word;
 }
 
 .replace_bad_item input {
@@ -98,7 +99,7 @@
 
 .replace_good_item {
   min-height: 50px;
-  max-height: 100px;
+  max-height: 160px;
   width:100%;
   margin-top: 20px;
   margin-left: -15px !important;
@@ -106,6 +107,8 @@
   border-radius: 3px;
   background-color: #c3e6cb;
   font-size: 20px;
+  word-wrap: break-word;
+
 }
 
 .replace_good_item input {

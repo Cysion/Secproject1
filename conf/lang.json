@@ -38,6 +38,7 @@
           "Breathe"
         ],
         "long_texts":{
+          "survey":"We would like you to take a survey about how you think of 12 Steps."
         }
     },
     "breathe":{
@@ -116,7 +117,7 @@
         "welcome":"Welcome to the 12 Steps App!",
         "goto_login":"Login or register here",
         "long_texts":{
-            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam."
+            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam." 
         }
     },
     "login":{
@@ -193,7 +194,19 @@
           "confirm_remove_relation":"Are you sure that you want to remove this relation?",
           "close":"Close"
         }
-      },
+    },
+    "edit":{
+        "remove_account":"Remove account",
+        "modal": {
+            "confirm_action":"Confirm your action",
+            "confirm_remove_account":"Are you sure that you want to remove this account?",
+            "enter_password":"Enter your password to verify",
+            "research_data":"Would you allow us to save your research data? This data includes all datapoints of what you have done in the App, collected anonymously. The only identifying data that is stored are your birthday and gender.",
+            "save_research":"Save reseach data",
+            "close":"Close",
+            "confirm":"Confirm"
+        }
+    },
       "long_texts":{
         "edit":"Edit your info",
         "change_pass":"Change password",

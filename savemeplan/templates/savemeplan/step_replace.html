@@ -55,23 +55,23 @@ textarea:focus {
     <div class="row">
       <div class="col-6">
         <label class="form-check-label replace_bad_item text-center">
-        <input type="radio" ckass="form-check-input" name="bad" value="{{ option.0 }}">  {{ option.0 }}</label>
+        <input type="radio" name="bad" value="{{ option.0 }}">  {{ option.0 }}</label>
       </div>
       <div class="col-6">
         <label class="form-check-label replace_good_item text-center">
-        <input type="radio" ckass="form-check-input" name="good" value="{{ option.1 }}">  {{ option.1 }}</label>
+        <input type="radio" name="good" value="{{ option.1 }}">  {{ option.1 }}</label>
       </div>
     </div>
     {% endfor %}
     <div class="row">
       <div class="col-6">
         <label class="form-check-label replace_bad_item text-center">
-          <input type="radio" class="form-check-input" id="bad" name="bad" value="other">  Other
+          <input type="radio" class="form-check-input" id="bad" name="bad" value="other" {% if content.text_bad %} checked {% endif %}>  Other
         </label>
       </div>
       <div class="col-6">
         <label class="form-check-label replace_good_item text-center">
-          <input type="radio" class="form-check-input" id="good" name="good" value="other"> Other
+          <input type="radio" class="form-check-input" id="good" name="good" value="other" {% if content.text_good %} checked {% endif %}> Other
         </label>
       </div>
     </div>
@@ -80,13 +80,13 @@ textarea:focus {
     <div class="col-6">
       <div class="form-group replace_bad_item_text">
         <label for="bad_other">{{ content.other }}:</label>
-        <input type="text" class="form-control" placeholder="{{ content.other_placeholder }}..." id="bad_other" name="bad_other">
+        <input type="text" class="form-control" placeholder="{{ content.other_placeholder }}..." id="bad_other" name="bad_other" {% if content.text_bad %} value="{{ content.text_bad }}" {% endif %} maxlength="32">
       </div>
     </div>
     <div class="col-6">
       <div class="form-group replace_good_item_text">
         <label for="good_other">{{ content.other }}:</label>
-        <input type="text" class="form-control" placeholder="{{ content.other_placeholder }}..." id="good_other" name="good_other">
+        <input type="text" class="form-control" placeholder="{{ content.other_placeholder }}..." id="good_other" name="good_other" {% if content.text_good %} value="{{ content.text_good }}" {% endif %} maxlength="32">
       </div>
     </div>
   </div>

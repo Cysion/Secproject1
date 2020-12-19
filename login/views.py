@@ -11,7 +11,7 @@ import userprofile.tools
 import tools.global_alerts
 
 from tools.confman import get_lang
-from science.views import new_entry
+from science.tools import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
@@ -64,6 +64,15 @@ def RegisterView(request):
                     request.session['PrivKey'] = sessionsData[1].decode("utf-8")
                     request.session['Role'] = sessionsData[2]
 
+                    if request.session['Role'] == 'User':
+                        tools.global_alerts.add_alert(
+                            request,
+                            'info',
+                            UNIVERSAL_LANG['universal']['info'],
+                            login_lang['login']['long_texts']['alerts']['daily_checkup'],
+                            '/check/checkup/'
+                        )
+
                     return HttpResponseRedirect(reverse('userprofile:Backupkey'))
 
         args = {
@@ -106,6 +115,8 @@ def LoginView(request):
                         login_lang['login']['long_texts']['alerts']['daily_checkup'],
                         '/check/checkup/'
                     )
+
+                    login.tools.survey_time(request, user, request.session['PrivKey'])
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
                 loginFail = True
