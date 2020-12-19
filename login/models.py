@@ -49,12 +49,14 @@ class User(models.Model):
 
     def getLastName(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.LastName).decode("utf-8")
+    
+    def getName(self, privKey):
+            return f"{self.getFirstName(privKey)} {self.getLastName(privKey)}"
 
     def getDateOfBirth(self, privKey):
         return rsa_decrypt(privKey.encode("utf-8"), self.DateOfBirth).decode("utf-8")
 
     def getSymKey(self, privKey):
-        """PrivKey är decodad"""
         return rsa_decrypt(privKey.encode("utf-8"), self.Symkey)
 
     def getEmail(self):

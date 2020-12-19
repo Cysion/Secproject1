@@ -64,14 +64,31 @@ def MenuView(request, page=0):
             if 'date' in request.POST.keys() and 'text' in request.POST.keys():
                 now = str(datetime.datetime.now())
                 diaryEntry = prepare.models.Diary(UserId = user)
+                diaryEntry.setAuthorId(symKey, request.session['UserId'])
+                diaryEntry.setAuthor(symKey, login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey']))
                 diaryEntry.setDate(symKey, request.POST['date'])
                 text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
+                diaryEntry.setEntryType(symKey, 'Diary')
                 diaryEntry.setText(symKey, text)
                 diaryEntry.setTimestamp(symKey, now)
                 diaryEntry.save()
-        diary = prepare.tools.showDiary(user.getUid(), symKey)
+        diary = prepare.tools.showDiary(user.getUid(), symKey, 'Diary', request.session['UserId'])
         template = 'prepare/7_diary.html'
     elif page == 8:
+        symKey = user.getSymKey(request.session['PrivKey'])
+        if request.method == 'POST':
+            if 'date' in request.POST.keys() and 'text' in request.POST.keys():
+                now = str(datetime.datetime.now())
+                diaryEntry = prepare.models.Diary(UserId = user)
+                diaryEntry.setAuthorId(symKey, request.session['UserId'])
+                diaryEntry.setAuthor(symKey, login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey']))
+                diaryEntry.setDate(symKey, request.POST['date'])
+                text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
+                diaryEntry.setEntryType(symKey, 'Notes')
+                diaryEntry.setText(symKey, text)
+                diaryEntry.setTimestamp(symKey, now)
+                diaryEntry.save()
+        diary = prepare.tools.showDiary(user.getUid(), symKey, 'Notes', request.session['UserId'])
         template = 'prepare/8_therapynotes.html'
     else:
         #Science segment
@@ -554,10 +571,42 @@ def editContactView(request, id):
 def removeDiaryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-
+    
     prepare.tools.delete_temp_files(request.session)
+    
 
-    user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
+    if request.session['Role'] == 'User':
+        user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
+        entryToRemove= prepare.models.Diary.objects.filter(UserId=user, DiaryId=id)
+        PrivKey = request.session['PrivKey']
+        symKey = user.getSymKey(PrivKey)
+        if entryToRemove[0].getAuthorId(symKey) == request.session['UserId']:
+                if entryToRemove[0].getEntryType(symKey) == 'Diary':
+                    entryToRemove.delete()
+                    return HttpResponseRedirect(reverse('prepare:menu-page', args=(7,)))
+                elif entryToRemove[0].getEntryType(symKey) == 'Notes':
+                    entryToRemove.delete()
+                    return HttpResponseRedirect(reverse('prepare:menu-page', args=(8,)))
+        return HttpResponseRedirect(reverse('prepare:menu-page'))
 
-    prepare.models.Diary.objects.filter(UserId=user, DiaryId=id).delete()
-    return HttpResponseRedirect(reverse('prepare:menu-page', args=(7,)))
+    elif request.session['Role'] == 'Professional':
+        entryToRemove= prepare.models.Diary.objects.filter(DiaryId=id)
+        user = entryToRemove[0].getUserId()
+        userPrivKey = userprofile.tools.sharesDataWith(user.getUid(), request.session['UserId'], request.session['PrivKey'], 'prepare')
+        symKey = user.getSymKey(userPrivKey.decode("utf-8"))
+        if userPrivKey:
+            userPrivKey = userPrivKey[0]
+            if entryToRemove[0].getAuthorId(symKey) == request.session['UserId']:
+                if entryToRemove[0].getEntryType(symKey) == 'Diary':
+                    entryToRemove.delete()
+                    return HttpResponseRedirect(reverse('professionals:prepare', args=(user.getUid(),7)))
+                elif entryToRemove[0].getEntryType(symKey) == 'Notes':
+                    entryToRemove.delete()
+                    return HttpResponseRedirect(reverse('professionals:prepare', args=(user.getUid(),8)))
+        return HttpResponseRedirect(reverse('professionals:clients'))
+
+    else:
+        return HttpResponseRedirect(reverse('login:Login'))
+    
+    
+    

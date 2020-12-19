@@ -78,13 +78,16 @@
             <p>{{ entry.EntryDate }}</p>
         </div>
         <div class="col-12 col-md">
-            <p class="p-1 m-0" style="background-color: white; border-style: solid; border-color: lightgray">{{ entry.Text }}</p>
+            <p class="p-1 m-0" style="background-color: white; border-style: solid; border-color: lightgray">{{ entry.Text }} </br> {{ entry.Author }} </p>
         </div>
+        {% if entry.Owner %}
         <div class="col-12 col-md-auto m-1">
             <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveEntry{{ entry.Id }}"><i class="fas fa-trash-alt"></i></button>
         </div>
+        {% endif %}
     </div>
     
+    {% if entry.Owner %}
     <!-- Modal -->
     <div class="modal fade" id="confirmRemoveEntry{{ entry.Id }}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -100,19 +103,23 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ prepare.therapy_notes.modal.close }}</button>
-                    <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/8/{{ entry.Id }}?delete=true">{{ prepare.therapy_notes.modal.remove_entry }}</a>
+                    <a name="delete" type="button" class="btn btn-danger" value="1" href="/prepare/7/{{ entry.Id }}?delete=true">{{ prepare.therapy_notes.modal.remove_entry }}</a>
                 </div>
             </div>
         </div>
     </div>
+    {% endif %}
     <hr class="mx-0 my-1" style="border-style: solid; border-color: #109075;">
     {% endfor %}
 
     
     
     <h3>{{ prepare.diary.create_entry }}</h3>
-
-    <form action="/prepare/7/" class="was-validated" method="POST">
+    {% if not profView %}
+        <form action="/prepare/8/" class="was-validated" method="POST">
+    {% else %}
+    <form action="/professionals/{{UserId}}/prepare/8/" class="was-validated" method="POST">  
+    {% endif %}
     {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
         <div class="row">
             <div class="form-group col-12 col-md-auto">

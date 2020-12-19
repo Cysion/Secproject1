@@ -98,20 +98,26 @@ def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
         mediaObject.save()
 
 
-def showDiary(uId, symKey):
+def showDiary(uId, symKey, entryType, uIdSession):
     user=login.models.User.objects.filter(UserId=uId)[0]
     diary = []
     entries = prepare.models.Diary.objects.filter(UserId=user)
     entries = sortDiary(entries, symKey)
     for entry in entries:
-        entry = {
-            'EntryDate' : entry.getDate(symKey),
-            'Text' : entry.getText(symKey),
-            'TimestampCreated' : entry.getTimestamp(symKey),
-            'Id' : entry.getDiaryId()
-        }
-        diary.append(entry)
+        print(entry.EntryType)
+        if entry.getEntryType(symKey) == entryType:
+            entry = {
+                'EntryDate' : entry.getDate(symKey),
+                'Text' : entry.getText(symKey),
+                'TimestampCreated' : entry.getTimestamp(symKey),
+                'Id' : entry.getDiaryId(),
+                'Author' : entry.getAuthor(symKey),
+                'AuthorId' : entry.getAuthorId(symKey),
+                'Owner' : entry.getAuthorId(symKey) == uIdSession
+            }
+            diary.append(entry)
     return diary
+
 
 def sortDiary(diary, symKey):
     if len(diary) > 1:
@@ -130,7 +136,10 @@ def sortDiary(diary, symKey):
 def reencryptDiary(user, oldSymKey, newSymkey):
     entries = prepare.models.Diary.objects.filter(UserId=user)
     for entry in entries:
+            entry.setAuthorId(newSymkey, entry.getAuthorId(oldSymKey))
+            entry.setAuthor(newSymkey, entry.getAuthor(oldSymKey))
             entry.setDate(newSymkey, entry.getDate(oldSymKey))
+            entry.setEntryType(newSymkey, entry.getEntryType(oldSymKey))
             entry.setText(newSymkey, entry.getText(oldSymKey))
             entry.setTimestamp(newSymkey, entry.getTimestamp(oldSymKey))
             entry.save()
