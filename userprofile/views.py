@@ -23,11 +23,11 @@ def ProfileView(request):
     user1 = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
     if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
         if 'logout' in request.GET.keys():
-            new_entry("u2", user1.getAnonId(request.session['PrivKey']), "na")
+            new_entry("u2", user1.getAnonId(request.session['PrivKey']), "na", role=request.session['Role'])
             request.session.flush()
             return HttpResponseRedirect(reverse('login:Login'))
     login_lang = get_lang(sections=["userprofile"])
-    new_entry("g1", user1.getAnonId(request.session['PrivKey']), "prof")
+    new_entry("g1", user1.getAnonId(request.session['PrivKey']), "prof", role=request.session['Role'])
     first_name = user1.getFirstName(request.session['PrivKey'])
     last_name = user1.getLastName(request.session['PrivKey'])
 
@@ -104,7 +104,7 @@ def EditProfileView(request):
             }
             for science in for_science:
                 if for_science[science][0] != for_science[science][0]:
-                    new_entry("u3", user.getAnonId(request.session['PrivKey']), science)
+                    new_entry("u3", user.getAnonId(request.session['PrivKey']), science, role=request.session['Role'])
             del for_science, science
 
 
@@ -286,7 +286,7 @@ def addRelationsView(request):
             permissions+='1' if 'share_check' in request.POST else '0'
             permissions+='1' if 'share_prepare' in request.POST else '0'
             permissions+='1' if 'share_media' in request.POST else '0'
-            new_entry("r1", user.getAnonId(request.session['PrivKey']), "professional: " + permissions)
+            new_entry("r1", user.getAnonId(request.session['PrivKey']), "professional: " + permissions, role=request.session['Role'])
 
             if not userprofile.tools.createRelation(user.getUid(), request.session['PrivKey'], recieverEmail, permissions):
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
@@ -372,6 +372,7 @@ def gdprView(request):
 
 
 def researchDataView(request):
+    print("donk")
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 

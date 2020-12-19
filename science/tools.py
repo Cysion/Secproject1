@@ -15,7 +15,7 @@ ID_DESC={
     "g3":"page leave",
     "u1":"user logon",
     "u2":"user logoff",
-    "u3":"prof change",
+    "u3":"profile edit",
     "i1":"howto access",
     "r1":"share with",
     "p1":"contact add",
@@ -27,7 +27,7 @@ ID_DESC={
     "m1":"add memory",
     "m2":"del memory",
     "m3":"view memory",
-    "c1":"wellness ind"
+    "c1":"wellness index"
 }
 
 CONF = get_conf()
@@ -42,16 +42,17 @@ def get_sha(obj) -> str:
     return hashhold.hexdigest()
 
 
-def new_entry(action_id:str, anonid: bytes, value:str, mangle=False):
+def new_entry(action_id:str, anonid: bytes, value:str, role="User", mangle=False):
     if not CONF["research"]["enable_collection"] == "True":
         return
+    anonid = get_sha(anonid)
     actiontime = str(int(time.time()))
     value = ",".join(value) if type(value) == list else value
     value = get_sha(value) if mangle else value
-    package = ResearchData(ActionId=action_id, AnonId=anonid, Value=value, Time=datetime)
+    package = ResearchData(ActionId=action_id, AnonId=anonid.encode("utf-8"), Value=value, Time=datetime, Role=role)
     package.save()
     if CONF["research"]["output_to_console"] == "True":
-        LOGGER.info(f"SciPak {anonid[0:5]} '{ID_DESC[action_id]}' and value '{value}' at time {actiontime}")
+        LOGGER.info(f"SciPak {role}: {anonid[0:5]} '{ID_DESC[action_id]}' and value '{value}' at {actiontime}")
 
 
 def export_data(maxlines=1000, rootdir=CONF["research"]["exportdir"], timefrom=0, timeto=float("inf")):
@@ -83,13 +84,14 @@ def forget_me(anonid):
 
 def find_me(anonid):
     #select all in table with anonid and return
+    anonid = get_sha(anonid).encode("utf-8")
     for data in ResearchData.objects.filter(AnonId=anonid).iterator():
         yield (ID_DESC[data.ActionId], data.Value, data.Time.now())
 
 
 def get_all_data() -> tuple:
     for data in ResearchData.objects.iterator():
-        yield (data.ActionId, get_sha(data.AnonId), data.Value, data.Time.timestamp())
+        yield (data.ActionId, get_sha(data.AnonId), data.Value, data.Time.timestamp(), data.Role)
 
 
 def gen_otp(minsize=1024) -> str:
