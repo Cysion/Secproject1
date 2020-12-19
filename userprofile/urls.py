@@ -12,6 +12,6 @@ urlpatterns = [
     path('relations/', views.relationsView, name="Relations"),
     path('relations/add/', views.addRelationsView, name="Add-relations"),
     path('gdpr/', views.gdprView, name="GDPR"),
-    path('gdpr/researchdata', views.researchDataView, name="Research-data"),
+    path('gdpr/researchdata/', views.researchDataView, name="Research-data"),
     path('relations/manage/', views.manageRelationsView, name="Manage-relations")
 ]

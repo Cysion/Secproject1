@@ -216,10 +216,11 @@ def delete_all_files(anonid, rootdir = CONF["media_base_dir"]):
     anonid = anonid of the directory to be purged
     rootdir = the root of all media storage sent to the default_storage class"""
     dirname = get_sha1(anonid)
-    files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
-    for file in files:
-        fullpath = f"{dirname}/{file}"
-        delete_file(fullpath)
+    if default_storage.exists(f"{rootdir}/{dirname}"):
+        files = default_storage.listdir(f"{rootdir}/{dirname}")[1]
+        for file in files:
+            fullpath = f"{dirname}/{file}"
+            delete_file(fullpath)
 
 
 def val_from_header(header, val):

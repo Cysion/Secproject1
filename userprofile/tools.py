@@ -181,6 +181,12 @@ def modifyRelation(uId, PrivKey, recieverEmail, permission):
         return 0
     return 1
 
+def removeAllOfUsersRelations(uId, PrivKey):
+    user = login.models.User.objects.filter(UserId=uId)[0]
+    userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(PrivKey)).delete()
+    userprofile.models.RelationTo.objects.filter(UserIdFrom=user).delete()
+
+
 
 def getPermissions(userId, recieverId, recieverPrivKey):
     reciever = login.models.User.objects.filter(UserId=recieverId)[0]
