@@ -10,7 +10,7 @@ from userprofile.tools import createRelation, updateRelationTo, showAllRelations
 class TestStress(TestCase):
     """ Stress-test for user relations """
 
-    n_professionals = 5
+    n_professionals = 10
     users_per_professional = 3
     n_norm_users = n_professionals * users_per_professional
 
@@ -20,7 +20,7 @@ class TestStress(TestCase):
     def test_stress(self):
         """ Running userprofile stress-tests """
 
-        print("\n-- Initializing stress-test --\n")
+        print("\n\n-- Initializing stress-test --\n")
 
         # Set credentials for normal users
         normal_email_head = "test_email"
@@ -37,7 +37,7 @@ class TestStress(TestCase):
         }
 
         # Generate normal users
-        print("Generating " + str(self.n_norm_users) + " normal users...")
+        print("Generating " + str(self.n_norm_users) + " normal users... (this may take some time)")
         normal_users = []
         for i in range(self.n_norm_users):
             normal_credentials["email"] = normal_email_head + str(i) + normal_email_tail
@@ -74,9 +74,12 @@ class TestStress(TestCase):
         # Create relations from each normal to corresponding professional user
         # > Using createRelation(user_id, priv_key, rec_email, perms): bool success
         print("\nCreating relations:")
+        prev_prof_user = -1
         for i, user in enumerate(normal_users):
             co_prof_user = int(i // self.n_professionals)
-            print("* Relating normal user[" + str(i) + "] to professional user[" + str(co_prof_user) + "], ", end = '')
+            if co_prof_user != prev_prof_user:
+                print("* Creating relations from professional user[" + str(co_prof_user) + "]...")
+                prev_prof_user = co_prof_user
 
             # Condition should be 'if not' but isn't due to incomplete coding. Will eventually fail with time
             if createRelation(user[0], user[1], prof_users[co_prof_user][2], self.permissions):
@@ -88,26 +91,48 @@ class TestStress(TestCase):
 
         print("\n-- Running stress-tests --\n")
 
-        # Stress-test function showAllRelationsFrom()
+        # Stress-test function showAllRelationsFrom() for normal users
+        # > Using showAllRelationsFrom(receiver_id, receiver_priv_key): list userDict
+        print("Measuring operation: showAllRelations() for " + str(self.n_norm_users) + " with 1 relation each")
+
+        t0 = time()
+        for user in normal_users:
+            related_user = showAllRelationsFrom(user[0], user[1])
+        t1 = time()
+        
+        timing = t1 - t0
+        mean = timing / self.n_norm_users
+        print("> Resulting time: " + str(round(timing, 4)) + " seconds (~" + str(round(mean, 4)) + " seconds per normal user)")
+
+        print("")
+
+        # Stress-test function showAllRelationsFrom() for professional users
         # > Using showAllRelationsFrom(receiver_id, receiver_priv_key): list userDict
         print("Measuring operation: showAllRelations() for " + str(self.n_professionals) + " with " + str(self.users_per_professional) + " relations each")
+
         t0 = time()
         for user in prof_users:
             related_users = showAllRelationsFrom(user[0], user[1])
         t1 = time()
-        print("> Resulting time: " + str(t1 - t0) + " seconds")
+        
+        timing = t1 - t0
+        mean = timing / self.n_professionals
+        print("> Resulting time: " + str(round(timing, 4)) + " seconds (~" + str(round(mean, 4)) + " seconds per professional user)")
 
         print("")
 
         # Stress-test function updateRelationTo()
         # > Using updateRelationTo(receiver_id, receiver_priv_key): bool success
         print("Measuring operation: updateRelationTo() for " + str(self.n_norm_users) + " users")
-        results = []
+
         t0 = time()
         for user in prof_users:
             updateRelationTo(user[0], user[1])
         t1 = time()
-        print("> Result time: " + str(t1 - t0) + " seconds")
+
+        timing = t1 - t0
+        mean = timing / self.n_professionals
+        print("> Resulting time: " + str(round(timing, 4)) + " seconds (~" + str(round(mean, 4)) + " seconds per professional)")
 
 
         print("\n-- Stress-tests complete --\n")
