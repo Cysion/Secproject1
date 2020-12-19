@@ -401,6 +401,7 @@ def researchDataView(request):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
+        'userprofile': profile_lang["userprofile"],
         'template': template,
         'text': text
     }
