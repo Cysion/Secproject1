@@ -35,7 +35,8 @@
           "Check",
           "Clients",
           "Practice",
-          "Breathe"
+          "Breathe",
+          "https://chat.mind.se/"
         ],
         "long_texts":{
           "survey":"We would like you to take a survey about how you think of 12 Steps."
@@ -117,7 +118,7 @@
         "welcome":"Welcome to the 12 Steps App!",
         "goto_login":"Login or register here",
         "long_texts":{
-            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam." 
+            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam."
         }
     },
     "login":{
@@ -478,7 +479,7 @@
         "codeor":"Code Orange?",
         "codeblue":"Code blue?",
         "codegre":"Code Green?",
-        "chat_site":"https://chat.mind.se/ ",
+        "chat_site":"https://chat.mind.se/",
         "contacts":"Contacts",
         "callhelper":"Call your helper!",
         "safe":"Go Safe",
