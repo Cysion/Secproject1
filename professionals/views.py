@@ -28,8 +28,8 @@ def ClientsView(request):
     Permissions (dict) with key as Profile, SaveMePlan, Check, Prepare or Media
     Values as 1 or 0 where 1 is got access and 0 denied access."""
 
-    userprofile.tools.updateRelationTo(request.session['UserId'], request.session['PrivKey'])
-    clients = userprofile.tools.showAllRelationsFrom(request.session['UserId'], request.session['PrivKey'])
+    userprofile.tools.update_relation_to(request.session['UserId'], request.session['PrivKey'])
+    clients = userprofile.tools.show_all_relations_from(request.session['UserId'], request.session['PrivKey'])
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts

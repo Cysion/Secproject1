@@ -19,6 +19,7 @@ def change_pass(user_id:int, privkey, new_password:str, role:str):
 
     Returns the new private key if successful or 0 if failed.
     """
+
     user=login.models.User.objects.filter(UserId=user_id)[0]
     first_name=user.getFirstName(privkey)
     last_name=user.getLastName(privkey)
@@ -77,25 +78,36 @@ def check_password(user_id:int, privkey, password:str):
     user_id = User id
     privkey = Old private key
     password = Entered password
+
+    Returns True if password is correct, False if password is wrong
     """
+
     return tools.crypto.gen_rsa(tools.crypto.secret_scrambler(password, user_id)).export_key().decode("utf-8") == privkey
 
 
-def createRelation(uId:int, PrivKey, recieverEmail:str, permissions:str):
-    """Returns 1 if relation is added or 0 if it failed.
-    permissions is a binary string containing 5 bits representing
-    Profile
-    SaveMePlan
-    Check
-    Prepare
-    Media
+def create_relation(user_id:int, privkey, reciever_email:str, permissions:str):
+    """Creates new entries in RelationFrom and RelationTo. update_relation_to needs to be run
+    from the recievers end for the tables to be complete.
+
+    user_id = User id
+    privkey = Old private key
+    reciever_email = Recievers email address
+    permissions = Binary string containing 5 bits representing:
+        Profile
+        SaveMePlan
+        Check
+        Prepare
+        Media
+
+    Returns 1 if relation is added or 0 if it failed.
     """
-    user = login.models.User.objects.filter(UserId=uId)[0]
-    reciever = login.models.User.objects.filter(Email=recieverEmail.lower())[0]
+
+    user = login.models.User.objects.filter(UserId=user_id)[0]
+    reciever = login.models.User.objects.filter(Email=reciever_email.lower())[0]
 
     with transaction.atomic():
         relationFromEntry = userprofile.models.RelationFrom(
-            AnonymityIdFrom = user.getAnonId(PrivKey),
+            AnonymityIdFrom = user.getAnonId(privkey),
             UserIdTo = reciever,
             Permission = permissions,
             UserIdFromEncrypted = tools.crypto.rsa_encrypt( reciever.getPubkey(), str(user.getUid()).encode("utf-8"))
@@ -107,34 +119,39 @@ def createRelation(uId:int, PrivKey, recieverEmail:str, permissions:str):
             Permission = permissions,
             UserIdToEncryptedTo = tools.crypto.rsa_encrypt(reciever.getPubkey(),str(reciever.getUid()).encode("utf-8")),
             UserIdToEncryptedFrom = tools.crypto.rsa_encrypt(user.getPubkey(),str(reciever.getUid()).encode("utf-8")),
-            FromPrivEncrypted = tools.crypto.rsa_encrypt_long(reciever.getPubkey(), PrivKey.encode("utf-8"))
+            FromPrivEncrypted = tools.crypto.rsa_encrypt_long(reciever.getPubkey(), privkey.encode("utf-8"))
         )
         relationToEntry.save()
     return 0
 
-def updateRelationTo(recieverUId:int, recieverPrivKey):
+def update_relation_to(reciever_user_id:int, reciever_privkey):
     """Because a user sharing data cannot complete the RelationTo entry, it has to be updated by the reciever.
+
+    reciever_user_id = user id of reciever
+    reciever_privkey = private key of reciever
+
     Returns 1 on success, 0 on failure"""
-    reciever = login.models.User.objects.filter(UserId=recieverUId)[0]
-    relationsFrom = userprofile.models.RelationFrom.objects.filter(UserIdTo=reciever)
-    relationsToReciever = userprofile.models.RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
-    if(len(relationsFrom) != len(relationsToReciever)):
-        diff = abs(len(relationsFrom) - len(relationsToReciever))
+
+    reciever = login.models.User.objects.filter(UserId=reciever_user_id)[0]
+    relations_from = userprofile.models.RelationFrom.objects.filter(UserIdTo=reciever)
+    relations_to_reciever = userprofile.models.RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId(reciever_privkey))
+    if(len(relations_from) != len(relations_to_reciever)):
+        diff = abs(len(relations_from) - len(relations_to_reciever))
         print(diff)
-        for relationFrom in relationsFrom:
-            relationFrom.getUserIdFromDecrypted(recieverPrivKey)
-            relationsTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=login.models.User.objects.filter(UserId=relationFrom.getUserIdFromDecrypted(recieverPrivKey))[0])
-            for relationTo in relationsTo:
-                print(relationTo)
+        for relation_from in relations_from:
+            relation_from.getUserIdFromDecrypted(reciever_privkey)
+            relations_to = userprofile.models.RelationTo.objects.filter(UserIdFrom=login.models.User.objects.filter(UserId=relation_from.getUserIdFromDecrypted(reciever_privkey))[0])
+            for relation_to in relations_to:
+                print(relation_to)
                 try:
-                    uIdTo = relationTo.getUserIdToDecryptedTo(recieverPrivKey)
+                    user_id_to = relation_to.getUserIdToDecryptedTo(reciever_privkey)
                 except ValueError:
                     pass
                 else:
-                    if uIdTo == reciever.getUid():
-                        if relationTo.getAnonymityIdTo() != reciever.getAnonId(recieverPrivKey):
-                            relationTo.setAnonymityIdTo(reciever.getAnonId(recieverPrivKey))
-                            relationTo.save()
+                    if user_id_to == reciever.getUid():
+                        if relation_to.getAnonymityIdTo() != reciever.getAnonId(reciever_privkey):
+                            relation_to.setAnonymityIdTo(reciever.getAnonId(reciever_privkey))
+                            relation_to.save()
                             diff -= 1
                             if not diff:
 
@@ -144,21 +161,33 @@ def updateRelationTo(recieverUId:int, recieverPrivKey):
         return 1
 
 
-def showAllRelationsTo(uId, PrivKey):
-    """Returns the email address of everyone who the user shares data with"""
-    user = login.models.User.objects.filter(UserId=uId)[0]
-    relationsFrom = userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(PrivKey))
-    return [{'Email':relation.getUserIdTo().getEmail(), 'RelationFrom': relation.getRelationFromId()} for relation in relationsFrom]
+def show_all_relations_to(user_id, privkey):
+    """Returns the email address of everyone who the user shares data with and the corresponding RelationFrom id"""
+
+    user = login.models.User.objects.filter(UserId=user_id)[0]
+    relations_from = userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privkey))
+    return [{'Email':relation.getUserIdTo().getEmail(), 'RelationFrom': relation.getRelationFromId()} for relation in relations_from]
 
 
-def showAllRelationsFrom(recieverUId, recieverPrivKey):
-    reciever = login.models.User.objects.filter(UserId=recieverUId)[0]
-    relationsTo = userprofile.models.RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
+def show_all_relations_from(reciever_user_id, reciever_privkey):
+    """Returns a dictionary for each user who shares data with the reciever. The dictionary contains:
+        FirstName
+        LastName
+        UserId
+        Permissions = dictionary containing:
+            Profile = 1 or 0 (grant or deny permission)
+            SaveMePlan = 1 or 0 (grant or deny permission)
+            Check = 1 or 0 (grant or deny permission)
+            Prepare = 1 or 0 (grant or deny permission)
+            Media = 1 or 0 (grant or deny permission)"""
+
+    reciever = login.models.User.objects.filter(UserId=reciever_user_id)[0]
+    relations_to = userprofile.models.RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId(reciever_privkey))
     toReturn = []
-    for relation in relationsTo:
+    for relation in relations_to:
         userDict = dict()
-        userDict['FirstName'] = relation.getUserIdFrom().getFirstName(relation.getFromPrivDecrypted(recieverPrivKey).decode("utf-8"))
-        userDict['LastName'] = relation.getUserIdFrom().getLastName(relation.getFromPrivDecrypted(recieverPrivKey).decode("utf-8"))
+        userDict['FirstName'] = relation.getUserIdFrom().getFirstName(relation.getFromPrivDecrypted(reciever_privkey).decode("utf-8"))
+        userDict['LastName'] = relation.getUserIdFrom().getLastName(relation.getFromPrivDecrypted(reciever_privkey).decode("utf-8"))
         userDict['UserId'] = relation.getUserIdFrom().getUid()
         permissions = dict()
         permissions['Profile'] = int(relation.getPermission()[0])
@@ -170,17 +199,18 @@ def showAllRelationsFrom(recieverUId, recieverPrivKey):
         toReturn.append(userDict)
     return toReturn
 
-def removeRelation(uId, PrivKey, recieverEmail):
-    user = login.models.User.objects.filter(UserId=uId)[0]
-    reciever = login.models.User.objects.filter(Email=recieverEmail.lower())[0]
+def remove_relation(user_id, privkey, reciever_email):
+    """Removes a specific relation from user with user_id and reciever with reciever_email"""
+    user = login.models.User.objects.filter(UserId=user_id)[0]
+    reciever = login.models.User.objects.filter(Email=reciever_email.lower())[0]
 
     with transaction.atomic():
-        userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(PrivKey), UserIdTo=reciever.getUid()).delete()
-        relationsTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=user)
-        for relationTo in relationsTo:
-            if relationTo.getUserIdToDecryptedFrom(PrivKey) == reciever.getUid():
-                relationToId = relationTo.getRelationToId()
-                relationsTo.filter(RelationToId=relationToId).delete()
+        userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privkey), UserIdTo=reciever.getUid()).delete()
+        relations_to = userprofile.models.RelationTo.objects.filter(UserIdFrom=user)
+        for relation_to in relations_to:
+            if relation_to.getUserIdToDecryptedFrom(privkey) == reciever.getUid():
+                relation_to_id = relation_to.getRelationToId()
+                relations_to.filter(RelationToId=relation_to_id).delete()
         return 0
     return 1
 

@@ -269,7 +269,7 @@ def relationsView(request):
         return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
-    users = userprofile.tools.showAllRelationsTo(request.session['UserId'], request.session['PrivKey'])
+    users = userprofile.tools.show_all_relations_to(request.session['UserId'], request.session['PrivKey'])
     profile_lang = get_lang(sections=["userprofile"])
     template = "base.html"
     args = {
@@ -306,7 +306,7 @@ def addRelationsView(request):
             permissions+='1' if 'share_media' in request.POST else '0'
             new_entry("r1", user.getAnonId(request.session['PrivKey']), "professional: " + permissions, role=request.session['Role'])
 
-            if not userprofile.tools.createRelation(user.getUid(), request.session['PrivKey'], recieverEmail, permissions):
+            if not userprofile.tools.create_relation(user.getUid(), request.session['PrivKey'], recieverEmail, permissions):
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             else:
                 alerts['database'] = 'database_error'
@@ -343,7 +343,7 @@ def manageRelationsView(request):
 
         if request.method == 'POST':
             if 'delete' in request.POST:
-                userprofile.tools.removeRelation(request.session['UserId'], request.session['PrivKey'], email)
+                userprofile.tools.remove_relation(request.session['UserId'], request.session['PrivKey'], email)
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             elif 'save' in request.POST:
                 relationFrom = userprofile.models.RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]
