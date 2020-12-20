@@ -42,7 +42,7 @@ def MenuView(request, page=0):
     diary= []
     user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
 
-    baseTemplate = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    basetemplate = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     if page == 1:
         template = 'prepare/1_howto.html'
@@ -135,6 +135,8 @@ def addMemoryView(request):
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     prepare.tools.delete_temp_files(request.session)
 
@@ -296,7 +298,7 @@ def MemoryView(request, id):
         # User doesn't belong here
         mediaOwnerId=memory.getUserId().getUid()
         try:
-            userPrivkey = userprofile.tools.sharesDataWith(mediaOwnerId, request.session["UserId"], userPrivkey, 'media').decode("utf-8")
+            userPrivkey = userprofile.tools.shares_data_with(mediaOwnerId, request.session["UserId"], userPrivkey, 'media').decode("utf-8")
         except AttributeError:
             if request.session['Role'] == 'User':
                 return HttpResponseRedirect(reverse('prepare:menu'))#Http404("Memory does not exist!")
@@ -436,6 +438,8 @@ def MemoryView(request, id):
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
@@ -444,7 +448,8 @@ def MemoryView(request, id):
         "back": UNIVERSAL_LANG["universal"]["back"],
         'prepare': prepare_lang["prepare"],
         'profView':profView,
-        'UserId': user.getUid()
+        'UserId': user.getUid(),
+        "template":template 
     }
     new_entry("m3", user.getAnonId(userPrivkey), url.split("/")[-1], role=request.session['Role'])
 
@@ -557,7 +562,7 @@ def removeDiaryView(request, id):
     elif request.session['Role'] == 'Professional':
         entryToRemove= prepare.models.Diary.objects.filter(DiaryId=id)
         user = entryToRemove[0].getUserId()
-        userPrivKey = userprofile.tools.sharesDataWith(user.getUid(), request.session['UserId'], request.session['PrivKey'], 'prepare')
+        userPrivKey = userprofile.tools.shares_data_with(user.getUid(), request.session['UserId'], request.session['PrivKey'], 'prepare')
         symKey = user.getSymKey(userPrivKey.decode("utf-8"))
         if userPrivKey:
             userPrivKey = userPrivKey[0]

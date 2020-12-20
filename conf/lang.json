@@ -143,7 +143,7 @@
         "not_registered":"No account? Register here",
         "characters":"characters.",
         "required":"This field is required",
-        "field_requirements":"and cannot be less than 4 more than 128",
+        "field_requirements":"and cannot be less than 6 or more than 128",
         "save":"Save changes",
         "current":"Current",
         "new":"New",
@@ -230,7 +230,9 @@
         "alerts": {
           "alert_changed_password":"You successfully changed your password",
           "alert_error":"Something went wrong when trying to encrypt your data",
-          "changed_info_success":"You changed your info!"
+          "changed_info_success":"You changed your info!",
+          "email_does_not_exist":"This email is not connected to a user!",
+          "relation_allready_exists":"Relation allready exists!"
         }
       }
     },
@@ -479,7 +481,7 @@
         "part_c":"If you need a support from someone...",
         "smsto":"SMS to: ...",
         "call":"Call ...",
-        "gosafe":"Go safe to ...",
+        "gosafe":"Go safe to",
         "indanger": "In a danger for your life call",
         "sms_chat":"Send SMS or chat",
         "codered":"Code Red?",

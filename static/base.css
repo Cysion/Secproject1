@@ -1,7 +1,4 @@
 * {
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
 }
 
 body {
@@ -44,4 +41,8 @@ body {
 
 .alert {
   text-align: center !important;
+}
+
+.btn {
+  -webkit-appearance: none !important;
 }

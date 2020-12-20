@@ -54,7 +54,7 @@ textarea:focus {
         <div class="summary_step">
           <b>
               {{ stepValue.Key }} - {{ stepValue.Title }}:
-          </b> {{ rating }}: {{ stepValue.Value }}
+          </b> {% if stepValue.Value != '-1' %}{{ rating }}: {{ stepValue.Value }}{% endif %}
         </div>
         {{ stepValue.Text }}
       </div>
@@ -63,12 +63,3 @@ textarea:focus {
 {% endfor %}
 
 {% endblock %}
-
-<div class="summary_item" style="background-color: {{ step.2 }}">
-  <div class="summary_step">
-    <b>
-      {{ step.0 }} - {{ step.3 }}:
-    </b>
-  </div>
-  {{ step.1 }}
-</div>

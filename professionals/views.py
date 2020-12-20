@@ -8,6 +8,9 @@ import prepare.tools
 import prepare.models
 import datetime
 import savemeplan.tools
+
+from calendar import monthrange
+from datetime import date
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
@@ -15,18 +18,18 @@ from prepare.tools import delete_temp_files
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
 
-def ClientsView(request):
+def clients_view(request):
+    """View for viewing list of clients for a professional users
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
     clients_lang = get_lang(sections=["professionals"])
-    # YOUR CODE HERE
-    """ Clients should be a list with dicts. With following keys:
-    FirstName (string), LastName (string),
-    Permissions (dict) with key as Profile, SaveMePlan, Check, Prepare or Media
-    Values as 1 or 0 where 1 is got access and 0 denied access."""
 
     userprofile.tools.update_relation_to(request.session['UserId'], request.session['PrivKey'])
     clients = userprofile.tools.show_all_relations_from(request.session['UserId'], request.session['PrivKey'])
@@ -49,14 +52,19 @@ def ClientsView(request):
 
 
 
-def profileView(request, UserId):
+def profile_view(request, UserId):
+    """View for viewing cclients' profile page information
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
     try:
-        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
+        userPrivKey = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
     except AttributeError:
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
@@ -85,20 +93,25 @@ def profileView(request, UserId):
     return render(request, 'userprofile/edit.html', args)
 
 
-def prepareView(request, UserId, page):
+def prepare_view(request, UserId, page):
+    """View for clients' prepare history
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
-    prep = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'prepare')
-    media = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'media')
+    prep = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'prepare')
+    media = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'media')
 
     if not prep and not media:
         return HttpResponseRedirect(reverse('professionals:clients'))
 
     user=login.models.User.objects.filter(UserId=UserId)[0]
-    permissions = userprofile.tools.getPermissions(UserId, request.session['UserId'], request.session['PrivKey'])
+    permissions = userprofile.tools.get_permissions(UserId, request.session['UserId'], request.session['PrivKey'])
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
     memories = []
@@ -180,9 +193,14 @@ def prepareView(request, UserId, page):
     return render(request, template, args)
 
 
-def saveMePlanView(request, UserId):
+def saveme_plan_view(request, UserId):
+    """View for viewing clients' save.me plan history
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     savemeplan_lang = get_lang(sections=['savemeplan'])
 
@@ -219,7 +237,7 @@ def saveMePlanView(request, UserId):
     title = savemeplan_lang['savemeplan']['title']
 
     try:
-        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'saveMePlan').decode("utf-8")
+        userPrivKey = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'saveMePlan').decode("utf-8")
     except AttributeError:
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
@@ -251,19 +269,75 @@ def saveMePlanView(request, UserId):
 
     return render(request, 'savemeplan/savemeplan_history.html', args)
 
-def CheckView(request, UserId):
+def check_view(request, UserId):
+    """View of clients' check for professionals
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
     try:
-        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
+        userPrivKey = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
     except AttributeError:
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
-    user=login.models.User.objects.filter(UserId=UserId)[0]
+
+    check_lang = get_lang(sections=["check"])
+    user = login.models.User.objects.filter(UserId=UserId)[0]
+    symkey = user.getSymKey(userPrivKey)
+
+    calendar = { # Calendar variables
+        'days': [],
+        'year': '',
+        'month': ''
+    }
+
+    if request.method == 'POST': # Searched month & year
+        if request.POST.keys():
+            if 'month' and 'year' in request.POST.keys():
+
+                calendar['year'] = request.POST['year']
+                calendar['month'] = request.POST['month']
+
+                first_date = datetime.date(int(request.POST['year']), int(request.POST['month']), 1) # First day in the month
+                num_days = monthrange(int(request.POST['year']), int(request.POST['month'])) # Number of days in month
+                last_date = datetime.date(int(request.POST['year']), int(request.POST['month']), num_days[1]) # Last day in month
+
+                calendar['days'].append(num_days[1]) # Provide number of days in month for calendar
+
+                for day in range(num_days[1]): # Prepare slots for each day
+                    calendar['days'].append('')
+
+                objects = user.check_set.filter(Date__range=(first_date, last_date)) # Retrieve data from database
+
+                for day in objects: # Fill in data into calendar
+                    calendar['days'].insert(day.getDate().day, day.getRating(symkey))
+
+    else:
+
+        today = datetime.date.today()
+        calendar['year'] = today.year
+        calendar['month'] = today.month
+
+        first_date = datetime.date(today.year, today.month, 1) # First day in the month
+        num_days = monthrange(today.year, today.month) # Number of days in month
+        last_date = datetime.date(today.year,today.month, num_days[1]) # Last day in month
+
+        calendar['days'].append(num_days[1]) # Provide number of days in month for calendar
+
+        for day in range(num_days[1]): # Prepare slots for each day
+            calendar['days'].append('')
+
+        objects = user.check_set.filter(Date__range=(first_date, last_date)) # Retrieve data from database
+
+        for day in objects: # Fill in data into calendar
+            calendar['days'].insert(day.getDate().day, day.getRating(symkey))
+
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -273,6 +347,10 @@ def CheckView(request, UserId):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'check': check_lang["check"],
+        'calendar': calendar,
+        'template' : 'base_professionals.html'
     }
 
-    return render(request, 'professionals/check.html', args)
+    return render(request, 'check/green_case.html', args)

@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-# Create your views here.
 
 import userprofile.models
 import login.models
@@ -11,26 +10,27 @@ from django.db import transaction
 from science.tools import new_entry, forget_me, gdpr_csv
 import userprofile.tools
 from prepare.tools import delete_temp_files
-UNIVERSAL_LANG = get_lang(sections=["universal"])
-# Create your views here.
 
-def ProfileView(request):
+UNIVERSAL_LANG = get_lang(sections=["universal"])
+
+def profile_view(request):
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
     delete_temp_files(request.session)
 
-    user1 = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
     if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
         if 'logout' in request.GET.keys():
-            new_entry("u2", user1.getAnonId(request.session['PrivKey']), "na", role=request.session['Role'])
+            new_entry("u2", user.getAnonId(request.session['PrivKey']), "na", role=request.session['Role'])
             request.session.flush()
             return HttpResponseRedirect(reverse('login:Login'))
+
     profile_lang = get_lang(sections=["userprofile"])
     login_lang = get_lang(sections=["login"])
-    new_entry("g1", user1.getAnonId(request.session['PrivKey']), "prof", role=request.session['Role'])
-    first_name = user1.getFirstName(request.session['PrivKey'])
-    last_name = user1.getLastName(request.session['PrivKey'])
+    new_entry("g1", user.getAnonId(request.session['PrivKey']), "prof", role=request.session['Role'])
+    first_name = user.getFirstName(request.session['PrivKey'])
+    last_name = user.getLastName(request.session['PrivKey'])
 
     global_alerts = []  # The variable which is sent to template
 
@@ -38,7 +38,7 @@ def ProfileView(request):
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
     profView = True if request.session["Role"] == "Professional" else False
 
     args = {
@@ -55,7 +55,7 @@ def ProfileView(request):
 
     return render(request, 'userprofile/profile.html', args)
 
-def EditProfileView(request):
+def Editprofile_view(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -81,9 +81,9 @@ def EditProfileView(request):
                         if not 'researchData' in request.POST.keys():
                             forget_me(user.getAnonId(request.session['PrivKey']))
                         if request.session['Role'] == 'User':
-                            userprofile.tools.removeAllOfUsersRelations(request.session['UserId'], request.session['PrivKey'])
+                            userprofile.tools.remove_all_of_users_relations(request.session['UserId'], request.session['PrivKey'])
                         elif request.session['Role'] == 'Professional':
-                            userprofile.tools.removeAllOfProfessionalsRelations(request.session['UserId'], request.session['PrivKey'])
+                            userprofile.tools.remove_all_of_professionals_relations(request.session['UserId'], request.session['PrivKey'])
                         tools.mediaman.delete_all_files(user.getAnonId(request.session['PrivKey']))
                         login.models.User.objects.filter(UserId=request.session['UserId']).delete()
                         request.session.flush()
@@ -102,7 +102,6 @@ def EditProfileView(request):
             user.setEmail(request.POST['email'])
             user.save()
 
-
             #data collection
             for_science = {
                 "firstname":(account['firstName'] ,user.getFirstName(request.session['PrivKey'])),
@@ -115,14 +114,14 @@ def EditProfileView(request):
                     new_entry("u3", user.getAnonId(request.session['PrivKey']), science, role=request.session['Role'])
             del for_science, science
 
-
             alert = {
-                "color": "success",  # Check https://www.w3schools.com/bootstrap4/bootstrap_alerts.asp for colors.
+                "color": "success",
                 "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
                 "message": profile_lang["userprofile"]["long_texts"]["alerts"]["changed_info_success"]
             }
 
-            if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
+            # Check if global_elerts is in session allready.
+            if "global_alerts" not in request.session.keys():
                 request.session["global_alerts"] = [alert]
             else:
                 request.session["global_alerts"].append(alert)
@@ -130,8 +129,7 @@ def EditProfileView(request):
         else:
             wrong_pass = True
 
-
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -148,44 +146,47 @@ def EditProfileView(request):
 
     return render(request, 'userprofile/edit.html', args)
 
-def BackupKeyView(request):
+def backup_key_view(request):
+    """Used to display a users private key used to restore the account and reset the password in case the password is forgotten.
+    Requires a correct password in request.POST
+    """
+
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
     delete_temp_files(request.session)
 
     profile_lang = get_lang(sections=["userprofile"])
-
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
-
-    args = {
-            'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-            'back': UNIVERSAL_LANG["universal"]["back"],
-            'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
-            'template': template,
-            'PrivKey' : ""
-        }
-            
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
+    privkey = ''
 
     if request.method == 'POST':
         if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
-            args["PrivKey"] = request.session['PrivKey']
+            privkey = request.session['PrivKey']
         else:
-            args["PrivKey"] = profile_lang["userprofile"]["long_texts"]["wrongpass"]
+            privkey = profile_lang["userprofile"]["long_texts"]["wrongpass"]
 
     elif "seen_backup" in request.session:
         if not request.session["seen_backup"]:
             request.session["seen_backup"] = 1
-            args["PrivKey"] = request.session['PrivKey']
-            
+            privkey = request.session['PrivKey']
+
+    args = {
+        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
+        'template': template,
+        'PrivKey' : privkey
+    }
 
     return render(request, 'userprofile/backupkey.html', args)
 
-def changePassView(request):
-    """
-    A interface for changeing password.
 
-    Post variables:
+def change_pass_view(request):
+    """
+    A interface for changing password.
+
+    If submitting a request to change password, request.POST will contain the following keys:
         current_password = Users current password. Used for verification.
         new_password = Users new password.
         new_repassword = Users new password reentered.
@@ -201,7 +202,6 @@ def changePassView(request):
     profile_lang = get_lang(sections=["userprofile"])
 
     if request.method == "POST":
-
         if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST["current_password"]):
             if request.POST['new_password'] == request.POST['new_repassword']:
                 if len(request.POST["new_password"]) > 5 and len(request.POST["new_password"]) < 129:
@@ -249,7 +249,7 @@ def changePassView(request):
         global_alerts = request.session["global_alerts"]
         request.session["global_alerts"] = []
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -266,11 +266,14 @@ def changePassView(request):
     return render(request, 'userprofile/changepassword.html', args)
 
 
+def relations_view(request):
+    """Displays all of a users relations (who the user is sharing data with)
+    """
 
-def relationsView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
-
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
     if request.session["Role"] != "User":
         return HttpResponseRedirect(reverse('userprofile:Profile'))
 
@@ -288,9 +291,21 @@ def relationsView(request):
 
     return render(request, 'userprofile/relations.html', args)
 
-def addRelationsView(request):
+
+def add_relations_view(request):
+    """Used to add a new relation.
+
+    If submitting a request to add a relation, request.POST will contain the following keys:
+        email = Email address of the reciever
+        share_savemeplan = 1 if savemeplan should be shared, else 0
+        share_check = 1 if check should be shared, else 0
+        share_prepare = 1 if prepare should be shared, else 0
+        share_media = 1 if media should be shared, else 0
+    """
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
@@ -317,19 +332,33 @@ def addRelationsView(request):
             else:
                 alerts['database'] = 'database_error'
 
-
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'relations': profile_lang["userprofile"]["relations"],
         'form': profile_lang["userprofile"]["relations"]["form"],
-        'alerts': alerts
+        'alerts': alerts,
+        "alert": profile_lang["userprofile"]["long_texts"]["alerts"],
+        "warning": UNIVERSAL_LANG["universal"]["warning"]
     }
     return render(request, 'userprofile/addrelations.html', args)
 
-def manageRelationsView(request):
+
+def manage_relations_view(request):
+    """Used to change permissions in a relation
+    If submitting a request to change a relation, request.POST will contain the following keys:
+        share_savemeplan = 1 if savemeplan should be shared, else 0
+        share_check = 1 if check should be shared, else 0
+        share_prepare = 1 if prepare should be shared, else 0
+        share_media = 1 if media should be shared, else 0
+
+    request.GET is used to send RelationFromId
+        """
+
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
@@ -358,10 +387,8 @@ def manageRelationsView(request):
                 permission['Check'] = 1 if 'share_check' in request.POST else 0
                 permission['Prepare'] = 1 if 'share_prepare' in request.POST else 0
                 permission['Media'] = 1 if 'share_media' in request.POST else 0
-                userprofile.tools.modifyRelation(request.session['UserId'], request.session['PrivKey'], email, permission)
+                userprofile.tools.modify_relation(request.session['UserId'], request.session['PrivKey'], email, permission)
                 relationData['Permission']=permission
-
-
 
     print(relationData['Permission'])
     args = {
@@ -376,33 +403,43 @@ def manageRelationsView(request):
     return render(request, 'userprofile/managerelations.html', args)
 
 
-def gdprView(request):
+def gdpr_view(request):
+    """Used to display options regarding handling of user data and research data.
+    """
+
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
     delete_temp_files(request.session)
     profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'userprofile': profile_lang["userprofile"],
+        'form': login_lang["login"]["form"],
         'template': template
     }
 
     return render(request, 'userprofile/gdpr.html', args)
 
 
-def researchDataView(request):
+def research_data_view(request):
+    """Used to display all research data that has been collected on a user.
+
+    request.GET is used for deletion of a relation.
+    """
+
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
     delete_temp_files(request.session)
     profile_lang = get_lang(sections=["userprofile"])
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     if request.GET:
         print(request.GET)
@@ -411,7 +448,7 @@ def researchDataView(request):
             if request.GET['cleared'] == 'true':
                 user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
                 forget_me(user.getAnonId(request.session['PrivKey']))
-                 
+
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
     text = gdpr_csv(user.getAnonId(request.session['PrivKey']))
 

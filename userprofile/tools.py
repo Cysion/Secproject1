@@ -104,6 +104,9 @@ def create_relation(user_id:int, privkey, reciever_email:str, permissions:str):
 
     user = login.models.User.objects.filter(UserId=user_id)[0]
     reciever = login.models.User.objects.filter(Email=reciever_email.lower())[0]
+    
+    if userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privkey),UserIdTo = reciever):
+        return 1
 
     with transaction.atomic():
         relationFromEntry = userprofile.models.RelationFrom(
@@ -124,13 +127,15 @@ def create_relation(user_id:int, privkey, reciever_email:str, permissions:str):
         relationToEntry.save()
     return 0
 
+
 def update_relation_to(reciever_user_id:int, reciever_privkey):
     """Because a user sharing data cannot complete the RelationTo entry, it has to be updated by the reciever.
 
     reciever_user_id = user id of reciever
     reciever_privkey = private key of reciever
 
-    Returns 1 on success, 0 on failure"""
+    Returns 1 on success, 0 on failure.
+    """
 
     reciever = login.models.User.objects.filter(UserId=reciever_user_id)[0]
     relations_from = userprofile.models.RelationFrom.objects.filter(UserIdTo=reciever)
@@ -162,7 +167,8 @@ def update_relation_to(reciever_user_id:int, reciever_privkey):
 
 
 def show_all_relations_to(user_id, privkey):
-    """Returns the email address of everyone who the user shares data with and the corresponding RelationFrom id"""
+    """Returns the email address of everyone who the user shares data with and the corresponding RelationFrom id.
+    """
 
     user = login.models.User.objects.filter(UserId=user_id)[0]
     relations_from = userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privkey))
@@ -179,7 +185,8 @@ def show_all_relations_from(reciever_user_id, reciever_privkey):
             SaveMePlan = 1 or 0 (grant or deny permission)
             Check = 1 or 0 (grant or deny permission)
             Prepare = 1 or 0 (grant or deny permission)
-            Media = 1 or 0 (grant or deny permission)"""
+            Media = 1 or 0 (grant or deny permission)
+    """
 
     reciever = login.models.User.objects.filter(UserId=reciever_user_id)[0]
     relations_to = userprofile.models.RelationTo.objects.filter(AnonymityIdTo=reciever.getAnonId(reciever_privkey))
@@ -199,8 +206,11 @@ def show_all_relations_from(reciever_user_id, reciever_privkey):
         toReturn.append(userDict)
     return toReturn
 
+
 def remove_relation(user_id, privkey, reciever_email):
-    """Removes a specific relation from user with user_id and reciever with reciever_email"""
+    """Removes a specific relation from user with user_id and reciever with reciever_email.
+    """
+
     user = login.models.User.objects.filter(UserId=user_id)[0]
     reciever = login.models.User.objects.filter(Email=reciever_email.lower())[0]
 
@@ -214,75 +224,99 @@ def remove_relation(user_id, privkey, reciever_email):
         return 0
     return 1
 
-def modifyRelation(uId, PrivKey, recieverEmail, permission):
-    permissionString = '1'
-    permissionString += str(permission['SaveMePlan'])
-    permissionString += str(permission['Check'])
-    permissionString += str(permission['Prepare'])
-    permissionString += str(permission['Media'])
 
-    user = login.models.User.objects.filter(UserId=uId)[0]
-    reciever = login.models.User.objects.filter(Email=recieverEmail.lower())[0]
+def modify_relation(user_id, privkey, reciever_email, permission):
+    """Updates permissions in a specific relation from user with user_id and reciever with reciever_email.
+    """
+
+    permission_string = '1'
+    permission_string += str(permission['SaveMePlan'])
+    permission_string += str(permission['Check'])
+    permission_string += str(permission['Prepare'])
+    permission_string += str(permission['Media'])
+
+    user = login.models.User.objects.filter(UserId=user_id)[0]
+    reciever = login.models.User.objects.filter(Email=reciever_email.lower())[0]
     with transaction.atomic():
-        relationFrom=userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(PrivKey), UserIdTo=reciever.getUid())[0]
-        relationFrom.setPermission(permissionString)
-        relationFrom.save()
-        relationsTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=user)
-        for relationTo in relationsTo:
-            if relationTo.getUserIdToDecryptedFrom(PrivKey) == reciever.getUid():
-                relationTo.setPermission(permissionString)
-                relationTo.save()
+        relation_from=userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privkey), UserIdTo=reciever.getUid())[0]
+        relation_from.setPermission(permission_string)
+        relation_from.save()
+        relations_to = userprofile.models.RelationTo.objects.filter(UserIdFrom=user)
+        for relation_to in relations_to:
+            if relation_to.getUserIdToDecryptedFrom(privkey) == reciever.getUid():
+                relation_to.setPermission(permission_string)
+                relation_to.save()
         return 0
     return 1
 
-def removeAllOfUsersRelations(uId, PrivKey):
-    user = login.models.User.objects.filter(UserId=uId)[0]
-    userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(PrivKey)).delete()
+
+def remove_all_of_users_relations(user_id, privkey):
+    """"Removes all relations where the user with user_id is sharing data.
+    Used when removing a user.
+    """
+
+    user = login.models.User.objects.filter(UserId=user_id)[0]
+    userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privkey)).delete()
     userprofile.models.RelationTo.objects.filter(UserIdFrom=user).delete()
 
-def removeAllOfProfessionalsRelations(uId, PrivKey):
-    user = login.models.User.objects.filter(UserId=uId)[0]
-    userprofile.models.RelationFrom.objects.filter(UserIdTo=user).delete()
-    userprofile.models.RelationTo.objects.filter(AnonymityIdTo=user.getAnonId(PrivKey)).delete()
 
-def getPermissions(userId, recieverId, recieverPrivKey):
-    reciever = login.models.User.objects.filter(UserId=recieverId)[0]
-    relationTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=userId, AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
-    if relationTo:
-        relationTo = relationTo[0]
-        return relationTo.getPermission()
+def remove_all_of_professionals_relations(user_id, privkey):
+    """"Removes all relations where the user with user_id is recieving data.
+    Used when removing a user.
+    """
+
+    user = login.models.User.objects.filter(UserId=user_id)[0]
+    userprofile.models.RelationFrom.objects.filter(UserIdTo=user).delete()
+    userprofile.models.RelationTo.objects.filter(AnonymityIdTo=user.getAnonId(privkey)).delete()
+
+
+def get_permissions(user_id, reciever_id, reciever_privkey):
+    """Returns a binary string representing the permissions a reciever has to view a users data.
+    """
+
+    reciever = login.models.User.objects.filter(UserId=reciever_id)[0]
+    relation_to = userprofile.models.RelationTo.objects.filter(UserIdFrom=user_id, AnonymityIdTo=reciever.getAnonId(reciever_privkey))
+    if relation_to:
+        relation_to = relation_to[0]
+        return relation_to.getPermission()
     else:
         return '00000'
 
-def sharesDataWith(userId, recieverId, recieverPrivKey, data):
-    reciever = login.models.User.objects.filter(UserId=recieverId)[0]
-    relationTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=userId, AnonymityIdTo=reciever.getAnonId(recieverPrivKey))
-    if relationTo:
-        relationTo = relationTo[0]
-        permission = relationTo.getPermission()
+
+def shares_data_with(user_id, reciever_id, reciever_privkey, data):
+    """Checks if a reciever with reciever_id is allowed to view data from the user with user_id.
+    
+    Returns the users private key if successful, else false
+    """
+
+    reciever = login.models.User.objects.filter(UserId=reciever_id)[0]
+    relation_to = userprofile.models.RelationTo.objects.filter(UserIdFrom=user_id, AnonymityIdTo=reciever.getAnonId(reciever_privkey))
+    if relation_to:
+        relation_to = relation_to[0]
+        permission = relation_to.getPermission()
         if data == 'profile':
             if permission[0] == '1':
-                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+                return relation_to.getFromPrivDecrypted(reciever_privkey)
             else:
                 return False
         elif data == 'saveMePlan':
             if permission[1] == '1':
-                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+                return relation_to.getFromPrivDecrypted(reciever_privkey)
             else:
                 return False
         elif data == 'check':
             if permission[2] == '1':
-                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+                return relation_to.getFromPrivDecrypted(reciever_privkey)
             else:
                 return False
         elif data == 'prepare':
             if permission[3] == '1':
-                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+                return relation_to.getFromPrivDecrypted(reciever_privkey)
             else:
                 return False
         elif data == 'media':
             if permission[4] == '1':
-                return relationTo.getFromPrivDecrypted(recieverPrivKey)
+                return relation_to.getFromPrivDecrypted(reciever_privkey)
             else:
                 return False
         else:
