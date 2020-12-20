@@ -200,12 +200,12 @@ def CheckupView(request):
                         check_entry.setRating(symkey, request.GET['day'])
                         check_entry.save()
                         tools.global_alerts.add_alert(request, 'success', UNIVERSAL_LANG['universal']['success'], check_lang['check']['could_save'])
+                        new_entry("c1", user.getAnonId(request.session['PrivKey']), request.GET['day'], role=request.session['Role'])
                         return HttpResponseRedirect(reverse('check:green-case'))
 
                     except Exception as e:
                         check_entry.delete()
                         tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['error'], check_lang['check']['could_not_save'])
-                new_entry("c1", user.getAnonId(request.session['PrivKey']), request.GET['day'], role=request.session['Role'])
             else:
                 tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['error'], check_lang['check']['could_not_save'])
 
@@ -221,3 +221,4 @@ def CheckupView(request):
     }
 
     return render(request, 'check/checkup.html', args)
+
