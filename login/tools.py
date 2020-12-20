@@ -2,6 +2,7 @@ import login.models
 import datetime
 import tools.confman
 import tools.global_alerts
+from science.tools import new_entry
 
 def containsBadChar(stringToCheck:str, exceptions:str = ''):
     badChar = set("¨%\"5+1¶`<0½~¤9]&/*?6:.£7'2¡=8>|}#-´4[(±\@_{§)^€;!,¥$3").difference(set(exceptions))
@@ -32,7 +33,7 @@ def registerUser(postData): # Place function somewere else.
     user.setSymkey()
     user.setCreationDate(datetime.date.today().strftime('%Y-%m-%d'))
     user.save()
-    #new_entry("PROFILE", user.getAnonId(key.export_key()), f"{postData['date_of_birth']}|{postData['gender'] if postData['gender'] != 'Other' else postData['gender_other']}")
+    new_entry("PF", user.getAnonId(key.export_key()), f"{postData['date_of_birth']}|{postData['gender'] if postData['gender'] != 'Other' else postData['gender_other']}")
     return user.getUid(), key.export_key(), user.getRole()
 
 def survey_time(request, user, privKey):

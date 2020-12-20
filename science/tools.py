@@ -9,7 +9,7 @@ from science.models import ResearchData
 
 
 ID_DESC={
-    "PROFILE":"Anonymous user profile",
+    "PF":"Anonymous user profile",
     "g2":"page click",
     "g1":"page enter",
     "g3":"page leave",
