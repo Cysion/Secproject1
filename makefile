@@ -38,7 +38,7 @@ dev:
 
 run:
 	@echo  --- starting server ---
-	$(MANAGE) runserver
+	$(MANAGE) runserver 0.0.0.0:8000
 
 upgrade:
 	@echo  --- pulling updates from repo ---

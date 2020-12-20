@@ -35,7 +35,8 @@
           "Check",
           "Clients",
           "Practice",
-          "Breathe"
+          "Breathe",
+          "https://chat.mind.se/"
         ],
         "long_texts":{
           "survey":"We would like you to take a survey about how you think of 12 Steps."
@@ -117,7 +118,7 @@
         "welcome":"Welcome to the 12 Steps App!",
         "goto_login":"Login or register here",
         "long_texts":{
-            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam." 
+            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam."
         }
     },
     "login":{
@@ -196,7 +197,10 @@
         }
     },
     "edit":{
-        "remove_account":"Remove account",
+        "research_data_title":"Your research data",
+        "show_research_data":"Show your research data",
+        "remove_research_data":"Remove all of your research data",
+        "remove_account":"Remove all of your data (remove account)",
         "modal": {
             "confirm_action":"Confirm your action",
             "confirm_remove_account":"Are you sure that you want to remove this account?",
@@ -475,7 +479,7 @@
         "codeor":"Code Orange?",
         "codeblue":"Code blue?",
         "codegre":"Code Green?",
-        "chat_site":"https://chat.mind.se/ ",
+        "chat_site":"https://chat.mind.se/",
         "contacts":"Contacts",
         "callhelper":"Call your helper!",
         "safe":"Go Safe",
@@ -505,6 +509,7 @@
         "available":"Available",
         "replace":"Replace",
         "with": "with",
+        "download":"Download agreement",
 
         "long_texts":{
             "text_to_long":"Your text was too on the previous step so it got choped to the maximum lenght of 64 characters.",

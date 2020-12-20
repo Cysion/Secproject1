@@ -77,7 +77,10 @@ class Media(models.Model):
 class Diary(models.Model):
     DiaryId = models.AutoField(primary_key=True)
     UserId = models.ForeignKey(User, on_delete=models.CASCADE)
+    AuthorId = models.BinaryField(max_length=512)
+    Author = models.BinaryField(max_length=512)
     Date = models.BinaryField(max_length=512)
+    EntryType = models.BinaryField(max_length=512)
     Text = models.BinaryField(max_length=768)
     Timestamp = models.BinaryField(max_length=512)
 
@@ -87,8 +90,17 @@ class Diary(models.Model):
     def getUserId(self):
         return self.UserId
 
+    def getAuthor(self, symKey):
+        return aes_decrypt(symKey, self.Author).decode("utf-8")
+
+    def getAuthorId(self, symKey):
+        return int(aes_decrypt(symKey, self.AuthorId).decode("utf-8"))
+
     def getDate(self, symKey):
         return aes_decrypt(symKey, self.Date).decode("utf-8")
+
+    def getEntryType(self, symKey):
+        return aes_decrypt(symKey, self.EntryType).decode("utf-8")
 
     def getText(self, symKey):
         return aes_decrypt(symKey, self.Text).decode("utf-8")
@@ -99,8 +111,17 @@ class Diary(models.Model):
     def setUserId(self, user):
         self.UserId = user
 
+    def setAuthor(self, symKey, author):
+        self.Author = aes_encrypt(symKey, author.encode("utf-8"))
+
+    def setAuthorId(self, symKey, authorId):
+        self.AuthorId = aes_encrypt(symKey, str(authorId).encode("utf-8"))    
+
     def setDate(self, symKey, date):
         self.Date = aes_encrypt(symKey, date.encode("utf-8"))
+
+    def setEntryType(self, symKey, entryType):
+        self.EntryType = aes_encrypt(symKey, entryType.encode("utf-8"))
 
     def setText(self, symKey, text):
         self.Text = aes_encrypt(symKey, text.encode("utf-8"))
@@ -114,4 +135,7 @@ class Diary(models.Model):
         if selfDate != otherDate:
             return selfDate < otherDate
         return self.getTimestamp(symKey) < other.getTimestamp(symKey)
+
+
+
     

@@ -21,6 +21,7 @@ import time
 import re
 import random
 import prepare.tools
+import tools.global_alerts
 
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
@@ -29,7 +30,7 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 def MenuView(request, page=0):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    if request.session['Role'] == 'professional':
+    if request.session['Role'] == 'Professional':
         return HttpResponseRedirect(reverse('professionals:clients'))
 
     prepare.tools.delete_temp_files(request.session)
@@ -64,23 +65,46 @@ def MenuView(request, page=0):
             if 'date' in request.POST.keys() and 'text' in request.POST.keys():
                 now = str(datetime.datetime.now())
                 diaryEntry = prepare.models.Diary(UserId = user)
+                diaryEntry.setAuthorId(symKey, request.session['UserId'])
+                diaryEntry.setAuthor(symKey, login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey']))
                 diaryEntry.setDate(symKey, request.POST['date'])
                 text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
+                diaryEntry.setEntryType(symKey, 'Diary')
                 diaryEntry.setText(symKey, text)
                 diaryEntry.setTimestamp(symKey, now)
                 diaryEntry.save()
-        diary = prepare.tools.showDiary(user.getUid(), symKey)
+        diary = prepare.tools.showDiary(user.getUid(), symKey, 'Diary', request.session['UserId'])
         template = 'prepare/7_diary.html'
     elif page == 8:
+        symKey = user.getSymKey(request.session['PrivKey'])
+        if request.method == 'POST':
+            if 'date' in request.POST.keys() and 'text' in request.POST.keys():
+                now = str(datetime.datetime.now())
+                diaryEntry = prepare.models.Diary(UserId = user)
+                diaryEntry.setAuthorId(symKey, request.session['UserId'])
+                diaryEntry.setAuthor(symKey, login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey']))
+                diaryEntry.setDate(symKey, request.POST['date'])
+                text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
+                diaryEntry.setEntryType(symKey, 'Notes')
+                diaryEntry.setText(symKey, text)
+                diaryEntry.setTimestamp(symKey, now)
+                diaryEntry.save()
+        diary = prepare.tools.showDiary(user.getUid(), symKey, 'Notes', request.session['UserId'])
         template = 'prepare/8_therapynotes.html'
     else:
         #Science segment
-        new_entry("g1", user.getAnonId(request.session['PrivKey']), "prep")
+        new_entry("g1", user.getAnonId(request.session['PrivKey']), "prep", role=request.session['Role'])
 
         template = 'prepare/menu.html'
 
+    global_alerts = []  # The variable which is sent to template
+    if "global_alerts" in request.session.keys():  # Check if there is global alerts
+        global_alerts = request.session["global_alerts"]  # Retrive global alerts.
+        request.session["global_alerts"] = []  # Reset
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'global_alerts': global_alerts,
         'back': UNIVERSAL_LANG["universal"]["back"],
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
@@ -209,16 +233,7 @@ def addMemoryView(request):
 
                     if not alerts and not request.GET:
                         memory.save()
-                        alert = {
-                            "color": "success",
-                            "title": UNIVERSAL_LANG["universal"]["success"],
-                            "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"]
-                        }
-
-                        if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                            request.session["global_alerts"] = [alert]
-                        else:
-                            request.session["global_alerts"].append(alert)
+                        tools.global_alerts.add_alert(request, 'success', UNIVERSAL_LANG["universal"]["success"], prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"])
 
                         return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
@@ -351,19 +366,9 @@ def MemoryView(request, id):
             delete_file(url)
         redirect_path = memory.getMemory(userPrivkey)  # To know which step to redirect to.
         memory.delete()
+        tools.global_alerts.add_alert(request, 'success', UNIVERSAL_LANG["universal"]["info"], prepare_lang["prepare"]["long_texts"]["alerts"]["memory_deleted"])
 
-        alert = {
-            "color": "success",
-            "title": UNIVERSAL_LANG["universal"]["warning"],
-            "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_deleted"]
-        }
-
-        if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-            request.session["global_alerts"] = [alert]
-        else:
-            request.session["global_alerts"].append(alert)
-
-        new_entry("m2", user.getAnonId(userPrivkey), url.split("/")[-1])
+        new_entry("m2", user.getAnonId(userPrivkey), url.split("/")[-1], role=request.session['Role'])
         if redirect_path == "s":
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(3,)))
         else:
@@ -394,16 +399,7 @@ def MemoryView(request, id):
             file = open_file(user.getSymKey(userPrivkey), url)
 
         except RuntimeError as e:
-            alert = {
-                "color": "error",
-                "title": UNIVERSAL_LANG["universal"]["error"],
-                "message": prepare_lang["prepare"]["long_texts"]["alerts"]["checksum_error"]
-            }
-
-            if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                request.session["global_alerts"] = [alert]
-            else:
-                request.session["global_alerts"].append(alert)
+            tools.global_alerts.add_alert(request, 'danger', UNIVERSAL_LANG["universal"]["error"], prepare_lang["prepare"]["long_texts"]["alerts"]["checksum_error"])
             return HttpResponseRedirect(reverse('prepare:menu'))
 
         for line in file[0].split("\n"):
@@ -436,16 +432,7 @@ def MemoryView(request, id):
                 else:
                     request.session["files_to_delete"] = [content[memtype]]
             except Exception as e:
-                alert = {
-                    "color": "error",
-                    "title": UNIVERSAL_LANG["universal"]["error"],
-                    "message": prepare_lang["prepare"]["long_texts"]["alerts"]["could_not_open_file"]
-                }
-
-                if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                    request.session["global_alerts"] = [alert]
-                else:
-                    request.session["global_alerts"].append(alert)
+                tools.global_alerts.add_alert(request, 'danger', UNIVERSAL_LANG["universal"]["error"], prepare_lang["prepare"]["long_texts"]["alerts"]["could_not_open_file"])
                 return HttpResponseRedirect(reverse('prepare:menu'))
 
     using_space = prepare_lang["prepare"]["long_texts"]["memory_size"].replace("%mb%", str(int(content["size"])))
@@ -464,7 +451,7 @@ def MemoryView(request, id):
         'profView':profView,
         'UserId': user.getUid()
     }
-    new_entry("m3", user.getAnonId(userPrivkey), url.split("/")[-1])
+    new_entry("m3", user.getAnonId(userPrivkey), url.split("/")[-1], role=request.session['Role'])
 
     return render(request, 'prepare/memory.html', args)
 
@@ -489,7 +476,7 @@ def ContactsView(request):
                 alerts[index] = "badChar"
         if not alerts:
             prepare.tools.addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
-            new_entry("p1", user.getAnonId(request.session["PrivKey"]), request.POST['phonenumber'], mangle=True)
+            new_entry("p1", user.getAnonId(request.session["PrivKey"]), request.POST['phonenumber'], mangle=True, role=request.session['Role'])
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
 
     prepare_lang = get_lang(sections=["prepare"])
@@ -557,7 +544,36 @@ def removeDiaryView(request, id):
 
     prepare.tools.delete_temp_files(request.session)
 
-    user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
 
-    prepare.models.Diary.objects.filter(UserId=user, DiaryId=id).delete()
-    return HttpResponseRedirect(reverse('prepare:menu-page', args=(7,)))
+    if request.session['Role'] == 'User':
+        user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
+        entryToRemove= prepare.models.Diary.objects.filter(UserId=user, DiaryId=id)
+        PrivKey = request.session['PrivKey']
+        symKey = user.getSymKey(PrivKey)
+        if entryToRemove[0].getAuthorId(symKey) == request.session['UserId']:
+                if entryToRemove[0].getEntryType(symKey) == 'Diary':
+                    entryToRemove.delete()
+                    return HttpResponseRedirect(reverse('prepare:menu-page', args=(7,)))
+                elif entryToRemove[0].getEntryType(symKey) == 'Notes':
+                    entryToRemove.delete()
+                    return HttpResponseRedirect(reverse('prepare:menu-page', args=(8,)))
+        return HttpResponseRedirect(reverse('prepare:menu-page'))
+
+    elif request.session['Role'] == 'Professional':
+        entryToRemove= prepare.models.Diary.objects.filter(DiaryId=id)
+        user = entryToRemove[0].getUserId()
+        userPrivKey = userprofile.tools.sharesDataWith(user.getUid(), request.session['UserId'], request.session['PrivKey'], 'prepare')
+        symKey = user.getSymKey(userPrivKey.decode("utf-8"))
+        if userPrivKey:
+            userPrivKey = userPrivKey[0]
+            if entryToRemove[0].getAuthorId(symKey) == request.session['UserId']:
+                if entryToRemove[0].getEntryType(symKey) == 'Diary':
+                    entryToRemove.delete()
+                    return HttpResponseRedirect(reverse('professionals:prepare', args=(user.getUid(),7)))
+                elif entryToRemove[0].getEntryType(symKey) == 'Notes':
+                    entryToRemove.delete()
+                    return HttpResponseRedirect(reverse('professionals:prepare', args=(user.getUid(),8)))
+        return HttpResponseRedirect(reverse('professionals:clients'))
+
+    else:
+        return HttpResponseRedirect(reverse('login:Login'))

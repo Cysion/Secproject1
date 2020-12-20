@@ -14,10 +14,15 @@ def IndexView(request):
     logedIn = True if 'UserId' in request.session.keys() else False
     home_lang = get_lang(sections=["home"])
 
+    if logedIn:
+        template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    else:
+        template = "base.html"
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'home': home_lang["home"],
-        'loged_in': logedIn
+        'loged_in': logedIn,
+        'template' : template
     }
     return render(request, 'home/index.html', args)
 

@@ -28,13 +28,13 @@
                 <a class="btn btn-info btn-block active" href="#">{{ check.pages.0 }}</a>
             </div>
             <div class="col-12 col-md-6 px-1 my-1">
-                <a class="btn btn-info btn-block" href="/check/2/">{{ check.pages.1 }}</a>            
+                <a class="btn btn-info btn-block" href="/check/2/">{{ check.pages.1 }}</a>
             </div>
             <div class="col-12 col-md-6 px-1 my-1">
-                <a class="btn btn-info btn-block" href="/check/3/">{{ check.pages.2 }}</a>            
+                <a class="btn btn-info btn-block" href="/check/3/">{{ check.pages.2 }}</a>
             </div>
             <div class="col-12 col-md-6 px-1 my-1">
-                <a class="btn btn-info btn-block" href="/check/4/">{{ check.pages.3 }}</a>            
+                <a class="btn btn-info btn-block" href="/check/4/">{{ check.pages.3 }}</a>
             </div>
         </div>
     </div>
@@ -42,29 +42,36 @@
 
 <hr>
 
-<!--
-    Kommentar för implementation:
-    Variabler:
-    - days[0-31], 32st värden
-    - year
-    - month
-    Värden för varje dag ligger i listan 'days'.
-    days.0 är antalet dagar i månaden.
-    Efterföljande slots (1-31) fylls med färgen 'red', 'orange', eller 'green'.
-    Om dagen inte finns i månaden setts värdet för den dagen till blankt ('').
-
-    Det ska gå att söka efter en månad (och år) och få fram antal dagar i månaden samt fylla i de värden som ligger sparade i databasen in i kalendern.
-    Vi inladdning av sidan ska sök-input ifyllas med 'year' och 'month'.
-    Input har id='date' / name='date', se rad 216-226
-
--->
-
 <section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
-    <h2>{{ calendar.month }} - {{ calender.year }}</h2>
+    {% if calendar.month == '1' %}
+    <h2>{{ check.green_case.months.1 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '2' %}
+    <h2>{{ check.green_case.months.2 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '3' %}
+    <h2>{{ check.green_case.months.3 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '4' %}
+    <h2>{{ check.green_case.months.4 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '5' %}
+    <h2>{{ check.green_case.months.5 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '6' %}
+    <h2>{{ check.green_case.months.6 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '7' %}
+    <h2>{{ check.green_case.months.7 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '8' %}
+    <h2>{{ check.green_case.months.8 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '9' %}
+    <h2>{{ check.green_case.months.9 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '10' %}
+    <h2>{{ check.green_case.months.10 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '11' %}
+    <h2>{{ check.green_case.months.11 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '12' %}
+    <h2>{{ check.green_case.months.12 }} - {{ calendar.year }}</h2>
+    {% endif %}
     <table class="table text-center" style="border-style: solid;">
         <tbody>
             <tr>
-                <td class="p-2" 
+                <td class="p-2"
                 {% if calendar.days.1 == "red" %} style="background-color: red;"
                 {% elif calendar.days.1 == "orange" %} style="background-color: orange;"
                 {% elif calendar.days.1 == "green" %} style="background-color: green;"
@@ -211,23 +218,23 @@
                 {% elif days.28 == "green" %} style="background-color: green;"
                 {% endif %}>28</td>
             </tr>
-            {% if calendar.days.0 in '29,30,31' %}
+            {% if calendar.days.0 > 28 %}
             <tr>
                 <td class="p-2"
                 {% if calendar.days.29 == "red" %} style="background-color: red;"
                 {% elif calendar.days.29 == "orange" %} style="background-color: orange;"
                 {% elif calendar.days.29 == "green" %} style="background-color: green;"
-                {% endif %}>{% if calendar.days.29 in '29,30,31' %}29{% endif %}</td>
+                {% endif %}>{% if calendar.days.0 > 28 %}29{% endif %}</td>
                 <td class="p-2"
                 {% if calendar.days.30 == "red" %} style="background-color: red;"
                 {% elif calendar.days.30 == "orange" %} style="background-color: orange;"
                 {% elif calendar.days.30 == "green" %} style="background-color: green;"
-                {% endif %}>{% if calendar.days.30 in '30,31' %}30{% endif %}</td>
+                {% endif %}>{% if calendar.days.0 > 29 %}30{% endif %}</td>
                 <td class="p-2"
                 {% if calendar.days.31 == "red" %} style="background-color: red;"
                 {% elif calendar.days.31 == "orange" %} style="background-color: orange;"
                 {% elif calendar.days.31 == "green" %} style="background-color: green;"
-                {% endif %}>{% if calendar.days.0 in '31' %}31{% endif %}</td>
+                {% endif %}>{% if calendar.days.0 > 30 %}31{% endif %}</td>
                 <td class="p-2"></td>
                 <td class="p-2"></td>
                 <td class="p-2"></td>
@@ -242,18 +249,18 @@
             <label for="month">{{ check.green_case.select_month}}: </label>
             <select id="month" name="month" required>
                 <optgroup label="{{ check.green_case.months.0 }}">
-                    <option value="1">{{ check.green_case.months.1 }}</option>
-                    <option value="2">{{ check.green_case.months.2 }}</option>
-                    <option value="3">{{ check.green_case.months.3 }}</option>
-                    <option value="4">{{ check.green_case.months.4 }}</option>
-                    <option value="5">{{ check.green_case.months.5 }}</option>
-                    <option value="6">{{ check.green_case.months.6 }}</option>
-                    <option value="7">{{ check.green_case.months.7 }}</option>
-                    <option value="8">{{ check.green_case.months.8 }}</option>
-                    <option value="9">{{ check.green_case.months.9 }}</option>
-                    <option value="10">{{ check.green_case.months.10 }}</option>
-                    <option value="11">{{ check.green_case.months.11}}</option>
-                    <option value="12">{{ check.green_case.months.12 }}</option>
+                    <option value="1" {% if calendar.year == '1' %} selected {% endif %}>{{ check.green_case.months.1 }}</option>
+                    <option value="2" {% if calendar.year == '2' %} selected {% endif %}>{{ check.green_case.months.2 }}</option>
+                    <option value="3" {% if calendar.year == '3' %} selected {% endif %}>{{ check.green_case.months.3 }}</option>
+                    <option value="4" {% if calendar.year == '4' %} selected {% endif %}>{{ check.green_case.months.4 }}</option>
+                    <option value="5" {% if calendar.year == '5' %} selected {% endif %}>{{ check.green_case.months.5 }}</option>
+                    <option value="6" {% if calendar.year == '6' %} selected {% endif %}>{{ check.green_case.months.6 }}</option>
+                    <option value="7" {% if calendar.year == '7' %} selected {% endif %}>{{ check.green_case.months.7 }}</option>
+                    <option value="8" {% if calendar.year == '8' %} selected {% endif %}>{{ check.green_case.months.8 }}</option>
+                    <option value="9" {% if calendar.year == '9' %} selected {% endif %}>{{ check.green_case.months.9 }}</option>
+                    <option value="10" {% if calendar.year == '10' %} selected {% endif %}>{{ check.green_case.months.10 }}</option>
+                    <option value="11" {% if calendar.year == '11' %} selected {% endif %}>{{ check.green_case.months.11}}</option>
+                    <option value="12" {% if calendar.year == '12' %} selected {% endif %}>{{ check.green_case.months.12 }}</option>
                 </optgroup>
             </select>
         </div>
@@ -273,10 +280,10 @@
             <i class="fas fa-circle" style="color: orange;"></i> {{ check.green_case.orange_day }}<br>
             <i class="fas fa-circle" style="color: green;"></i> {{ check.green_case.green_day }}
         </p>
-        <a class="btn btn-block btn-primary" href="">{{ check.to_checkup }}</a> <!-- Insert correct link to daily checkup -->
+        <a class="btn btn-block btn-primary" href="/check/checkup/">{{ check.to_checkup }}</a>
     </div>
 </section>
-{{ calendar }}
+
 <div class="row mx-0 p-1">
     <p class="col-auto h5" style="background-color: rgb(255, 242, 204); width: auto;">{{ check.good_job }} <i class="fas fa-smile"></i></p>
 </div>

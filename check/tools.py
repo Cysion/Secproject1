@@ -1,5 +1,6 @@
 import datetime
 import login.models
+import check.models
 import random
 
 def fillcheck(user, symkey):
@@ -27,3 +28,10 @@ def fillcheck(user, symkey):
             last_entry = user.check_set.create(Date=last_entry_date)
             last_entry.setRating(symkey, random_data)
             last_entry.save()
+
+
+def reencrypt_check(user, oldSymkey, newSymkey):
+    entries = check.models.Check.objects.filter(UserId=user)
+    for entry in entries:
+        entry.setRating(newSymkey, entry.getRating(oldSymkey))
+        entry.save()

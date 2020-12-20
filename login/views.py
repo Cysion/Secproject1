@@ -9,6 +9,7 @@ import login.models
 import login.tools
 import userprofile.tools
 import tools.global_alerts
+import datetime
 
 from tools.confman import get_lang
 from science.tools import new_entry
@@ -115,7 +116,7 @@ def LoginView(request):
                         login_lang['login']['long_texts']['alerts']['daily_checkup'],
                         '/check/checkup/'
                     )
-
+                    print(user.getName(request.session['PrivKey']))
                     login.tools.survey_time(request, user, request.session['PrivKey'])
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
@@ -174,9 +175,8 @@ def forgotPasswordView(request):
             if user:
                 try:
                     request.session['UserId'] = user.getUid()
-                    request.session['PrivKey']=userprofile.tools.changePass(user.UserId, request.POST['priv_key'], request.POST['password']).decode("utf-8")
                     request.session["Role"] = user.getRole()
-                    #print(request.session["Role"])
+                    request.session['PrivKey']=userprofile.tools.changePass(user.UserId, request.POST['priv_key'], request.POST['password'], request.session["Role"]).decode("utf-8")
                 except ValueError as keyError:
                     alerts["relogin"] = "relogin"
 
