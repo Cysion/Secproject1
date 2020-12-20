@@ -28,7 +28,7 @@
 <div class="modal fade" id="confirmPassword" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-      <form action="/userprofile/backupkey/" class="was-validated" method="POST"> <!-- Modify if needed -->
+      <form action="/userprofile/backupkey/" class="was-validated" method="POST">
         {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
         <div class="modal-header">
           <h5 class="modal-title" id="modalCenterLongTitle">{{ userprofile.modal.confirm_action }}</h5>
