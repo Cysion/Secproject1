@@ -225,6 +225,7 @@
         "relations": "Relations",
         "logout":"Logout",
         "backupkey":"This is your backup key if you forgot your password. Please save this on a save place! Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
+        "wrongpass":"You have entered the wrong password so we cannot get your backup key!",
         "change_password_text":"If you change your password then you need to save your backup key again! When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
         "alerts": {
           "alert_changed_password":"You successfully changed your password",
