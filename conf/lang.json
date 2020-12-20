@@ -171,6 +171,12 @@
     "userprofile":{
       "unformat":[],
       "title":"userprofile",
+      "modal": {
+        "confirm_action":"Confirm your action",
+        "enter_password":"Enter your password to verify",
+        "close":"Close",
+        "confirm":"Confirm"
+      },
       "relations": {
         "manage": "Manage",
         "manage_relation":"Manage relation",

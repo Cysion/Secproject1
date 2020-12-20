@@ -14,14 +14,44 @@
     <h1>{{ first_name }} {{ last_name }}</h1>
      <a type="button" class="btn btn-lg btn-primary btn-block" href="edit/">{{ profile.edit }}</a>
      <a type="button" class="btn btn-lg btn-primary btn-block" href="changepassword/">{{ profile.change_pass }}</a>
-     <a type="button" class="btn btn-lg btn-primary btn-block" href="backupkey/">{{ profile.save_backup }}</a>
+     <button class="btn btn-lg btn-primary btn-block" data-toggle="modal" data-target="#confirmPassword">{{ profile.save_backup }}</button>
      {% if not profView %}
      <a type="button" class="btn btn-lg btn-success btn-block" href="relations">{{ profile.relations }}</a>
      {% endif %}
      <a type="button" class="btn btn-lg btn-warning btn-block" href="gdpr/">GDPR</a>
      <a type="button" class="btn btn-lg btn-danger btn-block" name="logout" value="1" href="?logout=1">{{ profile.logout }}</a>
   </div>
-
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmPassword" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form action="/userprofile/backupkey/" class="was-validated" method="POST">
+        {% csrf_token %} {# Protects against Cross Site Request Forgeries #}
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCenterLongTitle">{{ userprofile.modal.confirm_action }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="password">{{ form.password }}: </label>
+            <input type="password" class="form-control" placeholder="{{ form.placeholder }} {{ form.password }}..."
+            maxlength="64" id="password" name="password" {% if profView %}disabled{% endif %} required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ userprofile.modal.close }}</button>
+          <input type="submit" class="btn btn-danger" value="{{ userprofile.modal.confirm }}">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 
 {% endblock %}
