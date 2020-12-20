@@ -138,9 +138,9 @@ def edit_profile_view(request):
                 "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
                 "message": profile_lang["userprofile"]["long_texts"]["alerts"]["changed_info_success"]
             }
-            
+
             # Check if global_elerts is in session allready.
-            if "global_alerts" not in request.session.keys():  
+            if "global_alerts" not in request.session.keys():
                 request.session["global_alerts"] = [alert]
             else:
                 request.session["global_alerts"].append(alert)
@@ -177,7 +177,7 @@ def backup_key_view(request):
 
     profile_lang = get_lang(sections=["userprofile"])
     template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
-    privkey = '' 
+    privkey = ''
 
     if request.method == 'POST':
         if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
@@ -197,7 +197,7 @@ def backup_key_view(request):
         'template': template,
         'PrivKey' : privkey
     }
-            
+
     return render(request, 'userprofile/backupkey.html', args)
 
 
@@ -313,7 +313,7 @@ def relations_view(request):
 
 def add_relations_view(request):
     """Used to add a new relation.
-    
+
     If submitting a request to add a relation, request.POST will contain the following keys:
         email = Email address of the reciever
         share_savemeplan = 1 if savemeplan should be shared, else 0
@@ -356,7 +356,9 @@ def add_relations_view(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'relations': profile_lang["userprofile"]["relations"],
         'form': profile_lang["userprofile"]["relations"]["form"],
-        'alerts': alerts
+        'alerts': alerts,
+        "alert": profile_lang["userprofile"]["long_texts"]["alerts"],
+        "warning": UNIVERSAL_LANG["universal"]["warning"]
     }
     return render(request, 'userprofile/addrelations.html', args)
 
@@ -446,7 +448,7 @@ def gdpr_view(request):
 
 def research_data_view(request):
     """Used to display all research data that has been collected on a user.
-    
+
     request.GET is used for deletion of a relation.
     """
 
@@ -465,7 +467,7 @@ def research_data_view(request):
             if request.GET['cleared'] == 'true':
                 user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
                 forget_me(user.getAnonId(request.session['PrivKey']))
-                 
+
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
     text = gdpr_csv(user.getAnonId(request.session['PrivKey']))
 
