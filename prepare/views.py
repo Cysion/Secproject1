@@ -298,7 +298,7 @@ def MemoryView(request, id):
         # User doesn't belong here
         mediaOwnerId=memory.getUserId().getUid()
         try:
-            userPrivkey = userprofile.tools.sharesDataWith(mediaOwnerId, request.session["UserId"], userPrivkey, 'media').decode("utf-8")
+            userPrivkey = userprofile.tools.shares_data_with(mediaOwnerId, request.session["UserId"], userPrivkey, 'media').decode("utf-8")
         except AttributeError:
             if request.session['Role'] == 'User':
                 return HttpResponseRedirect(reverse('prepare:menu'))#Http404("Memory does not exist!")
@@ -562,7 +562,7 @@ def removeDiaryView(request, id):
     elif request.session['Role'] == 'Professional':
         entryToRemove= prepare.models.Diary.objects.filter(DiaryId=id)
         user = entryToRemove[0].getUserId()
-        userPrivKey = userprofile.tools.sharesDataWith(user.getUid(), request.session['UserId'], request.session['PrivKey'], 'prepare')
+        userPrivKey = userprofile.tools.shares_data_with(user.getUid(), request.session['UserId'], request.session['PrivKey'], 'prepare')
         symKey = user.getSymKey(userPrivKey.decode("utf-8"))
         if userPrivKey:
             userPrivKey = userPrivKey[0]
