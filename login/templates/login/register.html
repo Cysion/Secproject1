@@ -90,14 +90,19 @@
   <div class="form-group">
     <label for="password">{{ form.password }}: </label>
     <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.password }}..."
-    maxlength="128" id="password" name="password" required>
-    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 128 {{ form.characters }} </div>
+    minlenght="6" maxlength="128" id="password" name="password" required>
+    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} {{ form.characters }} </div>
   </div>
+  {% if alert.password %}
+  <div class="alert alert-danger">
+    <strong>{{ alerts.warning }}!</strong> {{ alerts.password_length }}
+  </div>
+  {% endif %}
   <div class="form-group">
     <label for="repassword">{{ form.repassword }}: </label>
     <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.repassword }}..."
-    maxlength="128" id="repassword" name="repassword" required>
-    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 128 {{ form.characters }}</div>
+    minlenght="6" maxlength="128" id="repassword" name="repassword" required>
+    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} {{ form.characters }}</div>
   </div>
   {% if alert.repassword %}
   <div class="alert alert-danger">
