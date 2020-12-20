@@ -54,7 +54,7 @@ def ClientsView(request):
 
 
 
-def profileView(request, UserId):
+def profile_view(request, UserId):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
     elif request.session["Role"] == "User":
