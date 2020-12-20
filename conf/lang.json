@@ -230,7 +230,9 @@
         "alerts": {
           "alert_changed_password":"You successfully changed your password",
           "alert_error":"Something went wrong when trying to encrypt your data",
-          "changed_info_success":"You changed your info!"
+          "changed_info_success":"You changed your info!",
+          "email_does_not_exist":"This email is not connected to a user!",
+          "relation_allready_exists":"Relation allready exists!"
         }
       }
     },
