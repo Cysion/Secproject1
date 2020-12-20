@@ -105,121 +105,130 @@ def StepView(request, step):
                 savemeplan_step = SaveMePlan.objects.filter(pk=foundId)[0]
 
             if step in [1, 2, 3, 4, 6, 7, 9]:  # Is using step_default.html template
+                if len(request.POST['describe']) != 0:
+                    if foundId == -1:
+                        savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
-                if foundId == -1:
-                    savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
-
-                if 'describe' in request.POST.keys():
-                    if len(request.POST['describe']) != 0:
-                        if len(request.POST['describe']) <= 64:
-                            savemeplan_step.setText(symkey,request.POST['describe'])
-                        else:
-                            savemeplan_step.setText(symkey, request.POST['describe'][:64])
-                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                    if 'describe' in request.POST.keys():
+                        if len(request.POST['describe']) != 0:
+                            if len(request.POST['describe']) <= 64:
+                                savemeplan_step.setText(symkey,request.POST['describe'])
+                            else:
+                                savemeplan_step.setText(symkey, request.POST['describe'][:64])
+                                add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                        elif foundId == -1:
+                            savemeplan_step.setText(symkey, 'EMPTY')
                     elif foundId == -1:
                         savemeplan_step.setText(symkey, 'EMPTY')
-                elif foundId == -1:
-                    savemeplan_step.setText(symkey, 'EMPTY')
 
-                if 'rating' in request.POST.keys():
-                    if len(request.POST['rating']) != 0:
-                        savemeplan_step.setValue(symkey, request.POST['rating'])
+                    if 'rating' in request.POST.keys():
+                        if len(request.POST['rating']) != 0:
+                            savemeplan_step.setValue(symkey, request.POST['rating'])
+                        elif foundId == -1:
+                            savemeplan_step.setValue(symkey, '-1')
                     elif foundId == -1:
                         savemeplan_step.setValue(symkey, '-1')
-                elif foundId == -1:
-                    savemeplan_step.setValue(symkey, '-1')
 
-                savemeplan_step.setTime(symkey, str(int(time.time())))
+                    savemeplan_step.setTime(symkey, str(int(time.time())))
 
-                savemeplan_step.save()
-
+                    savemeplan_step.save()
+                elif foundId != -1:
+                    savemeplan_step.delete()
             elif step == 8:  # Replace a bad thing with a good thing step.
+                if 'bad' and 'good' in request.POST.keys():
+                    if (request.POST['bad'] == 'bad_other'
+                        and request.POST['good'] == 'good_other'
+                        and len(request.POST['bad_other']) == 0
+                        and len(request.POST['good_other']) == 0):
+                        if foundId == -1:
+                            savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
-                if foundId == -1:
-                    savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
+                        replace = ''  # Will have format <bad>;<good> IF one of them is empty they will be replaced by EMPTY
 
-                replace = ''  # Will have format <bad>;<good> IF one of them is empty they will be replaced by EMPTY
+                        if 'bad' in request.POST.keys():
+                            if request.POST['bad'] != 'other':
+                                if len(request.POST['bad']) <= 64:
+                                    replace = f"{request.POST['bad']};"
+                                else:
+                                    replace = f"{request.POST['bad'][:64]};"
+                                    add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
-                if 'bad' in request.POST.keys():
-                    if request.POST['bad'] != 'other':
-                        if len(request.POST['bad']) <= 64:
-                            replace = f"{request.POST['bad']};"
-                        else:
-                            replace = f"{request.POST['bad'][:64]};"
-                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
-
-                    else:
-                        if len(request.POST['bad_other']) != 0:
-                            if len(request.POST['bad_other']) <= 64:
-                                replace = f"{request.POST['bad_other']};"
                             else:
-                                replace = f"{request.POST['bad_other'][:64]};"
-                                add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                                if len(request.POST['bad_other']) != 0:
+                                    if len(request.POST['bad_other']) <= 64:
+                                        replace = f"{request.POST['bad_other']};"
+                                    else:
+                                        replace = f"{request.POST['bad_other'][:64]};"
+                                        add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
+                                else:
+                                    replace = 'EMPTY;'
                         else:
                             replace = 'EMPTY;'
-                else:
-                    replace = 'EMPTY;'
 
-                if 'good' in request.POST.keys():
-                    if request.POST['good'] != 'other':
-                        if len(request.POST['good']) <= 64:
-                            replace = f"{replace}{request.POST['good']}"
-                        else:
-                            replace = f"{request.POST['good'][:64]};"
-                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                        if 'good' in request.POST.keys():
+                            if request.POST['good'] != 'other':
+                                if len(request.POST['good']) <= 64:
+                                    replace = f"{replace}{request.POST['good']}"
+                                else:
+                                    replace = f"{request.POST['good'][:64]};"
+                                    add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
-                    else:
-                        if len(request.POST['good_other']) != 0:
-                            if len(request.POST['good_other']) <= 64:
-                                replace = f"{replace}{request.POST['good_other']}"
                             else:
-                                replace = f"{request.POST['good_other'][:64]};"
-                                add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                                if len(request.POST['good_other']) != 0:
+                                    if len(request.POST['good_other']) <= 64:
+                                        replace = f"{replace}{request.POST['good_other']}"
+                                    else:
+                                        replace = f"{request.POST['good_other'][:64]};"
+                                        add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                                else:
+                                    replace = f"{replace}EMPTY"
+
                         else:
                             replace = f"{replace}EMPTY"
-
-                else:
-                    replace = f"{replace}EMPTY"
-
-                if replace != 'EMPTY;EMPTY':
-                    savemeplan_step.setText(symkey, replace)
-
-                savemeplan_step.setValue(symkey, '-1')
-                savemeplan_step.setTime(symkey, str(int(time.time())))
-                savemeplan_step.save()
+                        if replace != 'EMPTY;EMPTY':
+                            savemeplan_step.setText(symkey, replace)
+                            savemeplan_step.setValue(symkey, '-1')
+                            savemeplan_step.setTime(symkey, str(int(time.time())))
+                            savemeplan_step.save()
+                    elif foundId != -1:
+                        savemeplan_step.delete()
+                elif foundId != -1:
+                    savemeplan_step.delete()
 
             elif step == 13:  # Go to a safe place step
-
-                if foundId == -1:
-                    savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
-
-                goto = ''
-
                 if 'place' in request.POST.keys():
-                    if request.POST['place'] != 'other':
-                        goto = request.POST['place']
+                    if foundId == -1:
+                        savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
-                    else:
-                        if len(request.POST['place_other']) != 0:
-                            goto = request.POST['place_other']
+                    goto = ''
+
+                    if 'place' in request.POST.keys():
+                        if request.POST['place'] != 'other':
+                            goto = request.POST['place']
+
                         else:
-                            goto = 'EMPTY'
+                            if len(request.POST['place_other']) != 0:
+                                goto = request.POST['place_other']
+                            else:
+                                goto = 'EMPTY'
 
-                else:
-                    goto = 'EMPTY'
-
-                if foundId == -1:
-                    if len(goto) <= 64:
-                        savemeplan_step.setText(symkey, goto)
                     else:
-                        savemeplan_step.setText(symkey, goto[:64])
-                        add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                        goto = 'EMPTY'
 
-                savemeplan_step.setValue(symkey, '-1')
-                savemeplan_step.setTime(symkey, str(int(time.time())))
+                    if foundId == -1:
+                        if len(goto) <= 64:
+                            savemeplan_step.setText(symkey, goto)
+                        else:
+                            savemeplan_step.setText(symkey, goto[:64])
+                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
-                savemeplan_step.save()
+                    savemeplan_step.setValue(symkey, '-1')
+                    savemeplan_step.setTime(symkey, str(int(time.time())))
+
+                    savemeplan_step.save()
+                elif foundId != -1:
+                    savemeplan_step.delete()
 
             return HttpResponseRedirect(reverse('savemeplan:Step', args=(step+1,)))
 
