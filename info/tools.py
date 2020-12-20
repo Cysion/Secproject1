@@ -1,5 +1,6 @@
 from pathlib import Path
 from django.utils.safestring import mark_safe
+from twelvesteps.settings import STATIC_ROOT
 
 def open_text(txt):
     """
@@ -10,7 +11,7 @@ def open_text(txt):
     Returns a list of tuples, where each tuple consist of text and type of text.
     """
 
-    data_folder = Path('static/info_txt/')
+    data_folder = Path(STATIC_ROOT + 'info_txt/')
     file_to_open = data_folder / txt
     f = open(file_to_open, 'r')
     file_text = f.read()
