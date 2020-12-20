@@ -15,9 +15,8 @@ class TestUrls(SimpleTestCase):
 
 
     def test_Showcase_resolves(self):
-        """ Asserts that URL for view 'Showcase' resolves """
+        # Asserts that URL for view 'Showcase' resolves
 
         url = reverse('home:Showcase')
         self.assertEquals(resolve(url).func, ShowcaseView)
-
 
