@@ -691,7 +691,8 @@ def HistoryView(request):
         'global_alerts': global_alerts,  # Sending the alerts to template.
         'content': entries,
         'title': title,
-        'template': 'base.html'
+        'template': 'base.html',
+        'history': savemeplan_lang['savemeplan']['history']
     }
 
     return render(request, 'savemeplan/savemeplan_history.html', args)

@@ -21,7 +21,7 @@
 
     <div class="form-group">
         <label for="name">Phonenumber: </label>
-        <input type="text" class="form-control" placeholder="{{ form.placeholder }} Phonenumber..."
+        <input type="tel" class="form-control" placeholder="{{ form.placeholder }} Phonenumber..."
           maxlength="64" id="phonenumber" name="phonenumber" {% if POST %} value="{{POST.phonenumber}}" {% endif %}{# If post already has been submitted #} required>
         <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
       </div>
