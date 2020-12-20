@@ -3,7 +3,7 @@ from sys import exit
 from time import time
 
 from django.test import TestCase
-from login.tools import registerUser
+from login.tools import register_user
 from userprofile.tools import createRelation, updateRelationTo, showAllRelationsFrom
 
 
@@ -43,7 +43,7 @@ class TestStress(TestCase):
             normal_credentials["email"] = normal_email_head + str(i) + normal_email_tail
 
             # Add tuple of (id, private_key, email, co_prof_user) to list
-            user_id, priv_key, _ = registerUser(normal_credentials)
+            user_id, priv_key, _ = register_user(normal_credentials)
             co_prof_user = int(i // self.n_professionals)
             normal_users.append( (user_id, priv_key.decode("utf-8"), normal_credentials["email"], co_prof_user) )
 
@@ -68,7 +68,7 @@ class TestStress(TestCase):
             prof_credentials["email"] = prof_email_head + str(i) + prof_email_tail
 
             # Add tuple of (id, private_key, email) to list
-            user_id, priv_key, _ = registerUser(prof_credentials)
+            user_id, priv_key, _ = register_user(prof_credentials)
             prof_users.append( (user_id, priv_key.decode("utf-8"), prof_credentials["email"]) )
 
         # Create relations from each normal to corresponding professional user

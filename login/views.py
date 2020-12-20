@@ -2,8 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db import transaction
-# Create your views here.
-
 
 import login.models
 import login.tools
@@ -16,12 +14,11 @@ from science.tools import new_entry
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
-def RegisterView(request):
-    '''
-    This view will display the registration page and when submitting a
+def register_view(request):
+    '''This view will display the registration page and when submitting a
     registration it will enter here.
 
-    If submitting a registration POST will contain the following.
+    If submitting a registration request.POST will contain the following keys:
         first_name - Users first name
         last_name - Users last name
         date_of_birth - When user was born
@@ -36,29 +33,32 @@ def RegisterView(request):
             right one.
         agree_terms - Värdet ska vara "accept"
     '''
+
     if 'UserId' not in request.session:
         alerts = {}
-
-        login_lang = get_lang(sections=["login"])  # Get language text for form.
-        # Check if a user have submitted a form.
+        
+        # Get language text for form.
+        login_lang = get_lang(sections=["login"])  
+        
+        # Check if a user has submitted a form.
         if request.method == 'POST':
             for index in ['first_name','last_name','gender','gender_other', 'email']:
                 exceptions = ''
                 if index == 'email':
                     exceptions = '1234567890@!#$%&*+-/=?^_`{|}~.'
-                if login.tools.containsBadChar(request.POST[index], exceptions):
+                if login.tools.contains_bad_char(request.POST[index], exceptions):
                     alerts[index] = "badChar"
 
             if request.POST["password"] != request.POST["repassword"]:
                 alerts['repassword'] = "repassword"
             if len(request.POST["password"]) < 6 or len(request.POST["password"]) > 128:
                 alerts["password"] = 'bad_length'
-            if login.tools.getUidFromEmail(request.POST["email"]):
+            if login.models.User.objects.filter(Email=request.POST["email"]):
                 alerts['email'] = 'email_already_exists'
             if not alerts:
                 try:
                     with transaction.atomic():
-                        sessionsData = login.tools.registerUser(request.POST)
+                        sessionsData = login.tools.register_user(request.POST)
 
                 except AttributeError:
                     alerts['database'] = 'Database error'
@@ -75,7 +75,6 @@ def RegisterView(request):
                             login_lang['login']['long_texts']['alerts']['daily_checkup'],
                             '/check/checkup/'
                         )
-
                     return HttpResponseRedirect(reverse('userprofile:Backupkey'))
 
         args = {
@@ -89,19 +88,26 @@ def RegisterView(request):
         return render(request, 'login/register.html', args)
     return HttpResponseRedirect(reverse('userprofile:Profile'))
 
-def LoginView(request):
+def login_view(request):
+    """This view will display the login page and when submitting login credentials
+    it will enter here.
+
+    If submitting login credentials request.POST will contain the following keys:
+        email - Users email.
+        password - Users entered non hashed password
+    """
     if 'UserId' in request.session:
         return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     login_lang = get_lang(sections=["login"])
 
-    loginFail = False
+    login_fail = False
     if request.method == 'POST':
         try:
             user = login.models.User.objects.filter(Email=request.POST['email'].lower())[0]
         except Exception as e:
             user = None
-            loginFail = True
+            login_fail = True
 
         if user:
             key = login.models.gen_rsa(login.models.secret_scrambler(request.POST["password"], user.getUid()))
@@ -122,9 +128,9 @@ def LoginView(request):
                     login.tools.survey_time(request, user, request.session['PrivKey'])
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
-                loginFail = True
+                login_fail = True
         else:
-            loginFail = True
+            login_fail = True
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -137,13 +143,13 @@ def LoginView(request):
         'global_alerts': global_alerts,  # Sending the alerts to template.
         'form': login_lang["login"]["form"],
         'alerts': login_lang['login']['long_texts']['alerts'],
-        'wrong_login_enterd': loginFail  # A check if right login was entered
+        'wrong_login_enterd': login_fail  # A check if right login was entered
     }
 
     return render(request, 'login/login.html', args)
 
 
-def forgotPasswordView(request):
+def forgot_password_view(request):
     """
     Page when user forgot their password.
 
