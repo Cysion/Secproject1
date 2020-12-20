@@ -6,10 +6,10 @@ app_name = 'info'
 urlpatterns = [
     # ex: /polls/
     #path('', views.IndexView.as_view(), name='index'),
-    path('', views.Menu_view, name="menu"),
-    path('about/', views.AboutView, name="about"),
-    path('howto/', views.HowToView, name="how-to"),
-    path('privacy_gdpr/', views.Privacygdpr_view, name="privacy-gdpr"),
-    path('volunteering_disclaimer/', views.VolunteeringDisclaimerView, name="volunteering-disclaimer"),
-    path('tos/', views.ToSView, name="terms-of-service")
+    path('', views.menu_view, name="menu"),
+    path('about/', views.about_view, name="about"),
+    path('howto/', views.how_to_view, name="how-to"),
+    path('privacy_gdpr/', views.privacy_gdpr_view, name="privacy-gdpr"),
+    path('volunteering_disclaimer/', views.volunteering_disclaimer_view, name="volunteering-disclaimer"),
+    path('tos/', views.tos_view, name="terms-of-service")
 ]
