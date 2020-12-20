@@ -6,7 +6,7 @@ import login.models
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
-def MenuView(request):
+def Menu_view(request):
 
     info_lang = get_lang(sections=["info"])
     try:

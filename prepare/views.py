@@ -26,7 +26,15 @@ import tools.global_alerts
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 
-def MenuView(request, page=0):
+def Menu_view(request, page=0):
+    """Main view for the prepare app.
+    If a diary entry is created on page 7 or 8, request.POST contains the following keys:
+        date = Date of the diary entry, used for sorting
+        text = Content of the diary entry
+
+    request.GET is used to track which page should be displayed.
+    """
+
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
     if request.session['Role'] == 'Professional':
@@ -59,36 +67,36 @@ def MenuView(request, page=0):
     elif page == 6:
         template = 'prepare/6_wheretocall.html'
     elif page == 7:
-        symKey = user.getSymKey(request.session['PrivKey'])
+        symkey = user.getSymKey(request.session['PrivKey'])
         if request.method == 'POST':
             if 'date' in request.POST.keys() and 'text' in request.POST.keys():
                 now = str(datetime.datetime.now())
-                diaryEntry = prepare.models.Diary(UserId = user)
-                diaryEntry.setAuthorId(symKey, request.session['UserId'])
-                diaryEntry.setAuthor(symKey, login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey']))
-                diaryEntry.setDate(symKey, request.POST['date'])
+                diary_entry = prepare.models.Diary(UserId = user)
+                diary_entry.setAuthorId(symkey, request.session['UserId'])
+                diary_entry.setAuthor(symkey, login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey']))
+                diary_entry.setDate(symkey, request.POST['date'])
                 text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
-                diaryEntry.setEntryType(symKey, 'Diary')
-                diaryEntry.setText(symKey, text)
-                diaryEntry.setTimestamp(symKey, now)
-                diaryEntry.save()
-        diary = prepare.tools.show_diary(user.getUid(), symKey, 'Diary', request.session['UserId'])
+                diary_entry.setEntryType(symkey, 'Diary')
+                diary_entry.setText(symkey, text)
+                diary_entry.setTimestamp(symkey, now)
+                diary_entry.save()
+        diary = prepare.tools.show_diary(user.getUid(), symkey, 'Diary', request.session['UserId'])
         template = 'prepare/7_diary.html'
     elif page == 8:
-        symKey = user.getSymKey(request.session['PrivKey'])
+        symkey = user.getSymKey(request.session['PrivKey'])
         if request.method == 'POST':
             if 'date' in request.POST.keys() and 'text' in request.POST.keys():
                 now = str(datetime.datetime.now())
-                diaryEntry = prepare.models.Diary(UserId = user)
-                diaryEntry.setAuthorId(symKey, request.session['UserId'])
-                diaryEntry.setAuthor(symKey, login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey']))
-                diaryEntry.setDate(symKey, request.POST['date'])
+                diary_entry = prepare.models.Diary(UserId = user)
+                diary_entry.setAuthorId(symkey, request.session['UserId'])
+                diary_entry.setAuthor(symkey, login.models.User.objects.filter(UserId=request.session['UserId'])[0].getName(request.session['PrivKey']))
+                diary_entry.setDate(symkey, request.POST['date'])
                 text = request.POST['text'] if len(request.POST['text']) <= 500 else request.POST['text'][0:500]
-                diaryEntry.setEntryType(symKey, 'Notes')
-                diaryEntry.setText(symKey, text)
-                diaryEntry.setTimestamp(symKey, now)
-                diaryEntry.save()
-        diary = prepare.tools.show_diary(user.getUid(), symKey, 'Notes', request.session['UserId'])
+                diary_entry.setEntryType(symkey, 'Notes')
+                diary_entry.setText(symkey, text)
+                diary_entry.setTimestamp(symkey, now)
+                diary_entry.save()
+        diary = prepare.tools.show_diary(user.getUid(), symkey, 'Notes', request.session['UserId'])
         template = 'prepare/8_therapynotes.html'
     else:
         #Science segment
@@ -115,10 +123,11 @@ def MenuView(request, page=0):
 
     if 0 < page < 9:
         new_entry("p3", user.getAnonId(request.session['PrivKey']), f"step {page}")
+    
     return render(request, template, args)
 
 
-def addMemoryView(request):
+def add_memory_view(request):
     """View for adding memories.
 
     POST keys:
@@ -177,7 +186,6 @@ def addMemoryView(request):
                 memory.setMediaSize(user.getPubkey(), 0)
                 memory.setMemory(user.getPubkey(), mem_type)
 
-
                 if 'type' in request.POST.keys() and len(request.POST["type"]) > 0:
                     memory.setMediaType(user.getPubkey(), request.POST["type"])
 
@@ -233,7 +241,6 @@ def addMemoryView(request):
 
                         return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
-
                 else:  # If no type is entered
                     alerts["type"] = prepare_lang["prepare"]["long_texts"]["alerts"]["no_type"]
                     memory.delete()
@@ -274,8 +281,8 @@ def addMemoryView(request):
     }
     return render(request, 'prepare/add_memory.html', args)
 
-def MemoryView(request, id):
 
+def memory_view(request, id):
 
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
@@ -455,7 +462,14 @@ def MemoryView(request, id):
     return render(request, 'prepare/memory.html', args)
 
 
-def ContactsView(request):
+def contacts_view(request):
+    """Used to add a new contact.
+    If submitting a request to add a new contact, request.POST contains the following keys:
+        name = Name of the contact
+        phonenumber = Phonenumber of the contact
+        available = When the contact is available
+    """
+
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -491,7 +505,16 @@ def ContactsView(request):
     return render(request, 'prepare/add_contact.html', args)
 
 
-def editContactView(request, id):
+def edit_contact_view(request, id):
+    """Used to edit a contact.
+    If submitting a request to change a new contact, request.POST contains the following keys:
+        name = Name of the contact
+        phonenumber = Phonenumber of the contact
+        available = When the contact is available
+        
+    request.GET is used for deletion of a contact and to keep track of the contact id.
+    """
+
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -516,13 +539,12 @@ def editContactView(request, id):
         contact.save()
         return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
 
-    contactData = dict({
+    contact_data = dict({
         'Id': contact.ContactsId,
         'Name': contact.getName(request.session['PrivKey']),
         'Phonenumber':contact.getPhonenumber(request.session['PrivKey']),
         'Available':contact.getAvailable(request.session['PrivKey'])
     })
-
 
     args = {
         'POST': request.POST,
@@ -531,46 +553,50 @@ def editContactView(request, id):
         'alert': alerts,
         'prepare': prepare_lang["prepare"],
         'modal': prepare_lang["prepare"]["contacts"]["modal"],
-        'contact':contactData
+        'contact':contact_data
 
     }
     return render(request, 'prepare/edit_contact.html', args)
 
 
-def removeDiaryView(request, id):
+def remove_diary_view(request, id):
+    """Used to remove a diary entry. Only allows deletion by the user who wrote the entry.
+
+    request.GET is used to keep track of the diary id
+    """
+
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
     prepare.tools.delete_temp_files(request.session)
 
-
     if request.session['Role'] == 'User':
         user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
-        entryToRemove= prepare.models.Diary.objects.filter(UserId=user, DiaryId=id)
-        PrivKey = request.session['PrivKey']
-        symKey = user.getSymKey(PrivKey)
-        if entryToRemove[0].getAuthorId(symKey) == request.session['UserId']:
-                if entryToRemove[0].getEntryType(symKey) == 'Diary':
-                    entryToRemove.delete()
+        entry_to_remove = prepare.models.Diary.objects.filter(UserId=user, DiaryId=id)
+        privkey = request.session['PrivKey']
+        symkey = user.getSymKey(privkey)
+        if entry_to_remove[0].getAuthorId(symkey) == request.session['UserId']:
+                if entry_to_remove[0].getEntryType(symkey) == 'Diary':
+                    entry_to_remove.delete()
                     return HttpResponseRedirect(reverse('prepare:menu-page', args=(7,)))
-                elif entryToRemove[0].getEntryType(symKey) == 'Notes':
-                    entryToRemove.delete()
+                elif entry_to_remove[0].getEntryType(symkey) == 'Notes':
+                    entry_to_remove.delete()
                     return HttpResponseRedirect(reverse('prepare:menu-page', args=(8,)))
         return HttpResponseRedirect(reverse('prepare:menu-page'))
 
     elif request.session['Role'] == 'Professional':
-        entryToRemove= prepare.models.Diary.objects.filter(DiaryId=id)
-        user = entryToRemove[0].getUserId()
-        userPrivKey = userprofile.tools.shares_data_with(user.getUid(), request.session['UserId'], request.session['PrivKey'], 'prepare')
-        symKey = user.getSymKey(userPrivKey.decode("utf-8"))
-        if userPrivKey:
-            userPrivKey = userPrivKey[0]
-            if entryToRemove[0].getAuthorId(symKey) == request.session['UserId']:
-                if entryToRemove[0].getEntryType(symKey) == 'Diary':
-                    entryToRemove.delete()
+        entry_to_remove= prepare.models.Diary.objects.filter(DiaryId=id)
+        user = entry_to_remove[0].getUserId()
+        user_priv_key = userprofile.tools.shares_data_with(user.getUid(), request.session['UserId'], request.session['PrivKey'], 'prepare')
+        symkey = user.getSymKey(user_priv_key.decode("utf-8"))
+        if user_priv_key:
+            user_priv_key = user_priv_key[0]
+            if entry_to_remove[0].getAuthorId(symkey) == request.session['UserId']:
+                if entry_to_remove[0].getEntryType(symkey) == 'Diary':
+                    entry_to_remove.delete()
                     return HttpResponseRedirect(reverse('professionals:prepare', args=(user.getUid(),7)))
-                elif entryToRemove[0].getEntryType(symKey) == 'Notes':
-                    entryToRemove.delete()
+                elif entry_to_remove[0].getEntryType(symkey) == 'Notes':
+                    entry_to_remove.delete()
                     return HttpResponseRedirect(reverse('professionals:prepare', args=(user.getUid(),8)))
         return HttpResponseRedirect(reverse('professionals:clients'))
 
