@@ -12,12 +12,9 @@
 <div class="col-sm-12">
   <div class="profile">
     <h1>{{ first_name }} {{ last_name }}</h1>
-     <a type="button" class="btn btn-lg btn-success btn-block" href="researchdata">{{ userprofile.edit.show_research_data }}</a>
-     <a type="button" class="btn btn-lg btn-warning btn-block" href="researchdata/?cleared=true">{{ userprofile.edit.remove_research_data }}</a>
-     
-     <div class="col-4 col-md-auto p-0 my-2">
-        <button class="btn btn-lg btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveAccount">{{ userprofile.edit.remove_account }}</i></button>
-    </div>
+    <a type="button" class="btn btn-lg btn-success btn-block" href="researchdata">{{ userprofile.edit.show_research_data }}</a>
+    <a type="button" class="btn btn-lg btn-warning btn-block" href="researchdata/?cleared=true">{{ userprofile.edit.remove_research_data }}</a>
+    <button class="btn btn-lg btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveAccount">{{ userprofile.edit.remove_account }}</i></button>
     
   <a class="btn btn-block btn-info" href="/userprofile/">{{ back }}</a>
     
