@@ -104,6 +104,9 @@ def create_relation(user_id:int, privkey, reciever_email:str, permissions:str):
 
     user = login.models.User.objects.filter(UserId=user_id)[0]
     reciever = login.models.User.objects.filter(Email=reciever_email.lower())[0]
+    
+    if userprofile.models.RelationFrom.objects.filter(AnonymityIdFrom=user.getAnonId(privkey),UserIdTo = reciever):
+        return 1
 
     with transaction.atomic():
         relationFromEntry = userprofile.models.RelationFrom(
