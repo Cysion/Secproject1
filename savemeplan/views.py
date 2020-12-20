@@ -47,7 +47,8 @@ def StepView(request, step):
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
     delete_temp_files(request.session)
 
     user = User.objects.filter(pk=request.session['UserId'])[0]
