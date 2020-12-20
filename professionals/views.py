@@ -8,6 +8,9 @@ import prepare.tools
 import prepare.models
 import datetime
 import savemeplan.tools
+
+from calendar import monthrange
+from datetime import date
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
@@ -263,7 +266,58 @@ def CheckView(request, UserId):
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
-    user=login.models.User.objects.filter(UserId=UserId)[0]
+
+    check_lang = get_lang(sections=["check"])
+    user = login.models.User.objects.filter(UserId=UserId)[0]
+    symkey = user.getSymKey(userPrivKey)
+
+    calendar = { # Calendar variables
+        'days': [],
+        'year': '',
+        'month': ''
+    }
+
+    if request.method == 'POST': # Searched month & year
+        if request.POST.keys():
+            if 'month' and 'year' in request.POST.keys():
+
+                calendar['year'] = request.POST['year']
+                calendar['month'] = request.POST['month']
+
+                first_date = datetime.date(int(request.POST['year']), int(request.POST['month']), 1) # First day in the month
+                num_days = monthrange(int(request.POST['year']), int(request.POST['month'])) # Number of days in month
+                last_date = datetime.date(int(request.POST['year']), int(request.POST['month']), num_days[1]) # Last day in month
+
+                calendar['days'].append(num_days[1]) # Provide number of days in month for calendar
+
+                for day in range(num_days[1]): # Prepare slots for each day
+                    calendar['days'].append('')
+
+                objects = user.check_set.filter(Date__range=(first_date, last_date)) # Retrieve data from database
+
+                for day in objects: # Fill in data into calendar
+                    calendar['days'].insert(day.getDate().day, day.getRating(symkey))
+
+    else:
+
+        today = datetime.date.today()
+        calendar['year'] = today.year
+        calendar['month'] = today.month
+
+        first_date = datetime.date(today.year, today.month, 1) # First day in the month
+        num_days = monthrange(today.year, today.month) # Number of days in month
+        last_date = datetime.date(today.year,today.month, num_days[1]) # Last day in month
+
+        calendar['days'].append(num_days[1]) # Provide number of days in month for calendar
+
+        for day in range(num_days[1]): # Prepare slots for each day
+            calendar['days'].append('')
+
+        objects = user.check_set.filter(Date__range=(first_date, last_date)) # Retrieve data from database
+
+        for day in objects: # Fill in data into calendar
+            calendar['days'].insert(day.getDate().day, day.getRating(symkey))
+
 
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -273,6 +327,10 @@ def CheckView(request, UserId):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
+        'back': UNIVERSAL_LANG["universal"]["back"],
+        'check': check_lang["check"],
+        'calendar': calendar,
+        'template' : 'base_professionals.html'
     }
 
-    return render(request, 'professionals/check.html', args)
+    return render(request, 'check/green_case.html', args)
