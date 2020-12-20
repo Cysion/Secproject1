@@ -66,7 +66,7 @@ def register_view(request):
                     request.session['UserId'] = sessionsData[0]
                     request.session['PrivKey'] = sessionsData[1].decode("utf-8")
                     request.session['Role'] = sessionsData[2]
-
+                    request.session['seen_backup'] = 0
                     if request.session['Role'] == 'User':
                         tools.global_alerts.add_alert(
                             request,
@@ -184,7 +184,7 @@ def forgot_password_view(request):
                 try:
                     request.session['UserId'] = user.getUid()
                     request.session["Role"] = user.getRole()
-                    request.session['PrivKey']=userprofile.tools.changePass(user.UserId, request.POST['priv_key'], request.POST['password'], request.session["Role"]).decode("utf-8")
+                    request.session['PrivKey']=userprofile.tools.change_pass(user.UserId, request.POST['priv_key'], request.POST['password'], request.session["Role"]).decode("utf-8")
                 except ValueError as keyError:
                     alerts["relogin"] = "relogin"
 

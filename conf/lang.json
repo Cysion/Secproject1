@@ -171,6 +171,12 @@
     "userprofile":{
       "unformat":[],
       "title":"userprofile",
+      "modal": {
+        "confirm_action":"Confirm your action",
+        "enter_password":"Enter your password to verify",
+        "close":"Close",
+        "confirm":"Confirm"
+      },
       "relations": {
         "manage": "Manage",
         "manage_relation":"Manage relation",
@@ -187,7 +193,7 @@
           "check":"Check",
           "prepare":"Prepare",
           "media":"Media",
-          "send_request":"Send relation request",
+          "share_selected_data":"Share selected data",
           "save_changes":"Save changes",
           "remove_relation":"Remove this relation"
         },
@@ -219,6 +225,7 @@
         "relations": "Relations",
         "logout":"Logout",
         "backupkey":"This is your backup key if you forgot your password. Please save this on a save place! Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
+        "wrongpass":"You have entered the wrong password so we cannot get your backup key!",
         "change_password_text":"If you change your password then you need to save your backup key again! When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
         "alerts": {
           "alert_changed_password":"You successfully changed your password",
@@ -512,6 +519,7 @@
         "with": "with",
         "download":"Download agreement",
         "history":"History",
+        "rating":"Rating",
 
         "long_texts":{
             "text_to_long":"Your text was too on the previous step so it got choped to the maximum lenght of 64 characters.",

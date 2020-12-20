@@ -26,7 +26,8 @@ def ProfileView(request):
             new_entry("u2", user1.getAnonId(request.session['PrivKey']), "na", role=request.session['Role'])
             request.session.flush()
             return HttpResponseRedirect(reverse('login:Login'))
-    login_lang = get_lang(sections=["userprofile"])
+    profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
     new_entry("g1", user1.getAnonId(request.session['PrivKey']), "prof", role=request.session['Role'])
     first_name = user1.getFirstName(request.session['PrivKey'])
     last_name = user1.getLastName(request.session['PrivKey'])
@@ -43,7 +44,9 @@ def ProfileView(request):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'global_alerts': global_alerts,
-        'profile': login_lang["userprofile"]["long_texts"],
+        'form': login_lang["login"]["form"],
+        'userprofile':profile_lang["userprofile"],
+        'profile': profile_lang["userprofile"]["long_texts"],
         'first_name': first_name,
         'last_name': last_name,
         'template': template,
@@ -71,7 +74,7 @@ def EditProfileView(request):
 
     if request.GET:
         if request.GET['delete']:
-            if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
+            if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
                 if request.POST['password']:
                     user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
                     with transaction.atomic():
@@ -88,7 +91,7 @@ def EditProfileView(request):
             else:
                 return HttpResponseRedirect(reverse('userprofile:Edit-profile'))
     if request.method == 'POST':
-        if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
+        if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
             user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
             if request.POST['gender'] == 'Other':
                 user.setGender(request.POST['gender_other'])
@@ -155,14 +158,26 @@ def BackupKeyView(request):
 
     template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
 
-
     args = {
-        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-        'back': UNIVERSAL_LANG["universal"]["back"],
-        'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
-        'PrivKey': request.session['PrivKey'],
-        'template': template
-    }
+            'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+            'back': UNIVERSAL_LANG["universal"]["back"],
+            'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
+            'template': template,
+            'PrivKey' : ""
+        }
+            
+
+    if request.method == 'POST':
+        if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
+            args["PrivKey"] = request.session['PrivKey']
+        else:
+            args["PrivKey"] = profile_lang["userprofile"]["long_texts"]["wrongpass"]
+
+    elif "seen_backup" in request.session:
+        if not request.session["seen_backup"]:
+            request.session["seen_backup"] = 1
+            args["PrivKey"] = request.session['PrivKey']
+            
 
     return render(request, 'userprofile/backupkey.html', args)
 
@@ -187,41 +202,43 @@ def changePassView(request):
 
     if request.method == "POST":
 
-        if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST["current_password"]):
+        if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST["current_password"]):
             if request.POST['new_password'] == request.POST['new_repassword']:
-                PrivKey = userprofile.tools.changePass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"],request.session['Role']).decode('utf-8')
+                if len(request.POST["new_password"]) > 5 and len(request.POST["new_password"]) < 129:
+                    PrivKey = userprofile.tools.change_pass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"],request.session['Role']).decode('utf-8')
 
-                if PrivKey:  # Check if changing password succeded
-                    request.session['PrivKey'] = PrivKey
-                    alert = {
-                        "color": "success",
-                        "title": UNIVERSAL_LANG["universal"]["success"],
-                        "message": profile_lang["userprofile"]["long_texts"]["alerts"]["alert_changed_password"]
-                    }
-
-                    if "global_alerts" not in request.session.keys():
-                        request.session["global_alerts"] = [alert]
-                    else:
-                        request.session["global_alerts"].append(alert)
-                    return HttpResponseRedirect(reverse('userprofile:Profile'))
-
-                else:  # Password change failed
-                    alert = {
-                        "color": "danger",
-                        "title": UNIVERSAL_LANG["universal"]["error"],
-                        "message": profile_lang["userprofile"]["long_texts"]["alert_error"]
-                    }
-
-                    if "global_alerts" not in request.session.keys():
+                    if PrivKey:  # Check if changing password succeded
+                        request.session['PrivKey'] = PrivKey
                         alert = {
                             "color": "success",
                             "title": UNIVERSAL_LANG["universal"]["success"],
-                            "message": profile_lang["userprofile"]["long_texts"]["alert_changed_password"]
+                            "message": profile_lang["userprofile"]["long_texts"]["alerts"]["alert_changed_password"]
                         }
-                        request.session["global_alerts"] = [alert]
-                    else:
-                        request.session["global_alerts"].append(alert)
 
+                        if "global_alerts" not in request.session.keys():
+                            request.session["global_alerts"] = [alert]
+                        else:
+                            request.session["global_alerts"].append(alert)
+                        return HttpResponseRedirect(reverse('userprofile:Profile'))
+
+                    else:  # Password change failed
+                        alert = {
+                            "color": "danger",
+                            "title": UNIVERSAL_LANG["universal"]["error"],
+                            "message": profile_lang["userprofile"]["long_texts"]["alert_error"]
+                        }
+
+                        if "global_alerts" not in request.session.keys():
+                            alert = {
+                                "color": "success",
+                                "title": UNIVERSAL_LANG["universal"]["success"],
+                                "message": profile_lang["userprofile"]["long_texts"]["alert_changed_password"]
+                            }
+                            request.session["global_alerts"] = [alert]
+                        else:
+                            request.session["global_alerts"].append(alert)
+                else:
+                    alerts["password"] = 'bad_length'
             else:  # new_password and new_repasswords are not the same
                 alerts["repassword"] = "repassword"
         else:  # current_password is not the right one
@@ -258,7 +275,7 @@ def relationsView(request):
         return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
-    users = userprofile.tools.showAllRelationsTo(request.session['UserId'], request.session['PrivKey'])
+    users = userprofile.tools.show_all_relations_to(request.session['UserId'], request.session['PrivKey'])
     profile_lang = get_lang(sections=["userprofile"])
     template = "base.html"
     args = {
@@ -295,7 +312,7 @@ def addRelationsView(request):
             permissions+='1' if 'share_media' in request.POST else '0'
             new_entry("r1", user.getAnonId(request.session['PrivKey']), "professional: " + permissions, role=request.session['Role'])
 
-            if not userprofile.tools.createRelation(user.getUid(), request.session['PrivKey'], recieverEmail, permissions):
+            if not userprofile.tools.create_relation(user.getUid(), request.session['PrivKey'], recieverEmail, permissions):
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             else:
                 alerts['database'] = 'database_error'
@@ -332,7 +349,7 @@ def manageRelationsView(request):
 
         if request.method == 'POST':
             if 'delete' in request.POST:
-                userprofile.tools.removeRelation(request.session['UserId'], request.session['PrivKey'], email)
+                userprofile.tools.remove_relation(request.session['UserId'], request.session['PrivKey'], email)
                 return HttpResponseRedirect(reverse('userprofile:Relations'))
             elif 'save' in request.POST:
                 relationFrom = userprofile.models.RelationFrom.objects.filter(RelationFromId=request.GET['Id'])[0]

@@ -467,7 +467,7 @@ def ContactsView(request):
                 exceptions = '+0123456789'
             if index == 'available':
                 exceptions = '0123456789+-/'
-            if login.tools.containsBadChar(request.POST[index], exceptions):
+            if login.tools.contains_bad_char(request.POST[index], exceptions):
                 alerts[index] = "badChar"
         if not alerts:
             prepare.tools.addContact(user.getUid(), request.POST['name'], request.POST['phonenumber'], request.POST['available'], request.session['PrivKey'])
