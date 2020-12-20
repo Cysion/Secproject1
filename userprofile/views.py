@@ -388,6 +388,7 @@ def gdprView(request):
 
     delete_temp_files(request.session)
     profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
 
     template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
 
@@ -395,6 +396,7 @@ def gdprView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'userprofile': profile_lang["userprofile"],
+        'form': login_lang["login"]["form"],
         'template': template
     }
 
