@@ -9,11 +9,13 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 def MenuView(request):
 
     info_lang = get_lang(sections=["info"])
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
-        'info': info_lang["info"]
+        'info': info_lang["info"],
+        "template":template
     }
     try:
         user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
@@ -32,11 +34,14 @@ def AboutView(request):
         
     text = open_text(txt)
 
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'info': info_lang["info"],
-        'text': text
+        'text': text,
+        "template":template 
     }
     try:
         user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
@@ -56,11 +61,15 @@ def HowToView(request):
         
     text = open_text(txt)
 
+
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'info': info_lang["info"],
-        'text': text
+        'text': text,
+        "template":template 
     }
     try:
         user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
@@ -80,11 +89,14 @@ def PrivacyGDPRView(request):
         
     text = open_text(txt)
 
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'info': info_lang["info"],
-        'text': text
+        'text': text,
+        "template":template 
     }
     try:
         user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
@@ -106,12 +118,15 @@ def VolunteeringDisclaimerView(request):
     text1 = open_text(txt1)
     text2 = open_text(txt2)
 
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'info': info_lang["info"],
-        'text1': text1,
-        'text2': text2
+        'text': text1,
+        "text2": text2,
+        "template":template 
     }
     
     try:
@@ -131,11 +146,14 @@ def ToSView(request):
         
     text = open_text(txt)
 
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'back': UNIVERSAL_LANG["universal"]["back"],
         'info': info_lang["info"],
-        'text': text
+        'text': text,
+        "template":template 
     }
     try:
         user = login.models.User.objects.filter(pk=request.session["UserId"])[0]

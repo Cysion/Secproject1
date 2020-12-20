@@ -18,6 +18,8 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lan
 def ClientsView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
@@ -52,6 +54,8 @@ def ClientsView(request):
 def profileView(request, UserId):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
@@ -88,6 +92,8 @@ def profileView(request, UserId):
 def prepareView(request, UserId, page):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
@@ -183,6 +189,8 @@ def prepareView(request, UserId, page):
 def saveMePlanView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     savemeplan_lang = get_lang(sections=['savemeplan'])
 
@@ -254,6 +262,8 @@ def saveMePlanView(request, UserId):
 def CheckView(request, UserId):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] == "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 

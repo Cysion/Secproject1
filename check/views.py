@@ -22,6 +22,8 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 def GreenCaseView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
@@ -99,7 +101,8 @@ def GreenCaseView(request):
 def WellFeelingView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
     delete_temp_files(request.session)
 
     check_lang = get_lang(sections=["check"])
@@ -122,6 +125,8 @@ def WellFeelingView(request):
 def SaveMePlanView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
@@ -145,6 +150,8 @@ def SaveMePlanView(request):
 def PracticeSelfCareView(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
@@ -168,6 +175,8 @@ def CheckupView(request):
     """Daily checkup page where user says how their day is. Using method GET for value."""
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     check_lang = get_lang(sections=["check"])
     day = datetime.date(2020, 12, 12)

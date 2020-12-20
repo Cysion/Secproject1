@@ -135,6 +135,8 @@ def addMemoryView(request):
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     prepare.tools.delete_temp_files(request.session)
 
@@ -436,6 +438,8 @@ def MemoryView(request, id):
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
+    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.
         'global_alerts': global_alerts,  # Sending the alerts to template.
@@ -444,7 +448,8 @@ def MemoryView(request, id):
         "back": UNIVERSAL_LANG["universal"]["back"],
         'prepare': prepare_lang["prepare"],
         'profView':profView,
-        'UserId': user.getUid()
+        'UserId': user.getUid(),
+        "template":template 
     }
     new_entry("m3", user.getAnonId(userPrivkey), url.split("/")[-1], role=request.session['Role'])
 
