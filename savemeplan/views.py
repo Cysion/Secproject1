@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 # Create your views here.
 
@@ -12,6 +12,7 @@ from tools.global_alerts import add_alert
 from science.tools import new_entry
 import time
 import savemeplan.tools
+import mimetypes
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
 
@@ -693,3 +694,13 @@ def HistoryView(request):
     }
 
     return render(request, 'savemeplan/savemeplan_history.html', args)
+
+def downloadContractView(request):
+    fl_path = 'media/save.me_agreement.pdf'
+    filename = 'save.me_agreement.pdf'
+
+    fl = open(fl_path, 'rb')
+    mime_type, _ = mimetypes.guess_type(fl_path)
+    response = HttpResponse(fl, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    return response

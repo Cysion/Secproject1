@@ -6,5 +6,6 @@ app_name = 'savemeplan'
 urlpatterns = [
     path('', views.StartView, name='Start'),
     path('<int:step>/', views.StepView, name="Step"),
-    path('history/', views.HistoryView, name="History")
+    path('history/', views.HistoryView, name="History"),
+    path('agreement.pdf', views.downloadContractView, name="agreement")
 ]
