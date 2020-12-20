@@ -2,9 +2,6 @@ from django.db import models
 from tools.crypto import gen_rsa, secret_scrambler, rsa_encrypt, rsa_decrypt, gen_aes, gen_anon_id, rsa_encrypt_long, rsa_decrypt_long
 
 
-
-# Create your models here.
-
 class User(models.Model):
     '''
     This is the User model which will have information about the user.
@@ -127,27 +124,3 @@ class User(models.Model):
 
     def setCreationDate(self, creation):
         self.CreationDate = rsa_encrypt(self.Pubkey, str(creation).encode('utf-8'))
-
-
-
-class Action(models.Model):
-    """
-    Is connected to ResearchData.
-    The description will contain a descritive message about what a user has
-    done.
-    """
-
-    ActionId = models.AutoField(primary_key=True)
-    Description = models.CharField(max_length=255)
-
-class ResearchData(models.Model):
-    """
-    Data researchers should have.
-    AnonymityCode = is a code which is generated from data from a users and
-    cannot be reversed.
-    """
-
-    ResearchDataId = models.AutoField(primary_key=True)
-    ActionId = models.ForeignKey(Action, on_delete=models.CASCADE)
-    AnonId = models.BinaryField(max_length=512)
-    Time = models.DateTimeField(auto_now=True)

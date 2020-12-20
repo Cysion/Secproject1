@@ -17,7 +17,7 @@ def open_text(txt):
     text = []
 
     sections = file_text.split("\n\n")
-    
+
     for section in sections:
 
         if section.find('#h1 ') == 0: # header level 1

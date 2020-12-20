@@ -2,8 +2,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from login.views import LoginView, forgotPasswordView
-from login.tools import registerUser
+from login.views import login_view, forgot_password_view
+from login.tools import register_user
 from login.models import User
 from tools.crypto import gen_rsa, secret_scrambler
 
@@ -24,7 +24,7 @@ class TestViews(TestCase):
         # Directly register user
         self.email = 'testmail@gmail.com'
         self.password = 'test_password'
-        uid = registerUser(dict(
+        uid = register_user(dict(
             email = self.email,
             password = self.password,
             gender = 'male',
