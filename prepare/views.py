@@ -26,7 +26,7 @@ import tools.global_alerts
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 
-def Menu_view(request, page=0):
+def menu_view(request, page=0):
     """Main view for the prepare app.
     If a diary entry is created on page 7 or 8, request.POST contains the following keys:
         date = Date of the diary entry, used for sorting
