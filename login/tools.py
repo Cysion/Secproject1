@@ -44,7 +44,7 @@ def register_user(post_data):
     user.setSymkey()
     user.setCreationDate(datetime.date.today().strftime('%Y-%m-%d'))
     user.save()
-    new_entry("PF", user.getAnonId(key.export_key()), f"{postData['date_of_birth']}|{postData['gender'] if postData['gender'] != 'Other' else postData['gender_other']}")
+    new_entry("PF", user.getAnonId(key.export_key()), f"{post_data['date_of_birth']}|{post_data['gender'] if post_data['gender'] != 'Other' else post_data['gender_other']}")
     return user.getUid(), key.export_key(), user.getRole()
 
 def survey_time(request, user, privkey):
