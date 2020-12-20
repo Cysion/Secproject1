@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
-# Create your views here.
 
 import login.models
 import userprofile.tools
@@ -42,20 +41,20 @@ def MenuView(request, page=0):
     diary= []
     user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
 
-    basetemplate = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
+    base_template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     if page == 1:
         template = 'prepare/1_howto.html'
     elif page == 2:
         template = 'prepare/2_practicebreathing.html'
     elif page == 3:
-        memories = prepare.tools.showAllmemories(request.session['UserId'], request.session['PrivKey'], 's')
+        memories = prepare.tools.show_all_memories(request.session['UserId'], request.session['PrivKey'], 's')
         template = 'prepare/3_supportivememories.html'
     elif page == 4:
-        memories = prepare.tools.showAllmemories(request.session['UserId'], request.session['PrivKey'], 'd')
+        memories = prepare.tools.show_all_memories(request.session['UserId'], request.session['PrivKey'], 'd')
         template = 'prepare/4_destructivememories.html'
     elif page == 5:
-        contacts=prepare.tools.showContacts(request.session['UserId'], request.session['PrivKey'])
+        contacts=prepare.tools.show_contacts(request.session['UserId'], request.session['PrivKey'])
         template = 'prepare/5_contacts.html'
     elif page == 6:
         template = 'prepare/6_wheretocall.html'
@@ -73,7 +72,7 @@ def MenuView(request, page=0):
                 diaryEntry.setText(symKey, text)
                 diaryEntry.setTimestamp(symKey, now)
                 diaryEntry.save()
-        diary = prepare.tools.showDiary(user.getUid(), symKey, 'Diary', request.session['UserId'])
+        diary = prepare.tools.show_diary(user.getUid(), symKey, 'Diary', request.session['UserId'])
         template = 'prepare/7_diary.html'
     elif page == 8:
         symKey = user.getSymKey(request.session['PrivKey'])
@@ -89,7 +88,7 @@ def MenuView(request, page=0):
                 diaryEntry.setText(symKey, text)
                 diaryEntry.setTimestamp(symKey, now)
                 diaryEntry.save()
-        diary = prepare.tools.showDiary(user.getUid(), symKey, 'Notes', request.session['UserId'])
+        diary = prepare.tools.show_diary(user.getUid(), symKey, 'Notes', request.session['UserId'])
         template = 'prepare/8_therapynotes.html'
     else:
         #Science segment
@@ -111,7 +110,7 @@ def MenuView(request, page=0):
         'memories': memories,
         'contacts': contacts,
         'entries': diary,
-        'template': baseTemplate
+        'template': base_template
     }
 
     if 0 < page < 9:
@@ -506,7 +505,7 @@ def editContactView(request, id):
 
     if request.GET and "delete" in request.GET.keys():
         if request.GET['delete']:
-            prepare.tools.removeContact(request.session["UserId"], id)
+            prepare.tools.remove_contact(request.session["UserId"], id)
             return HttpResponseRedirect(reverse('prepare:menu-page', args=(5,)))
 
     if request.method=='POST':
