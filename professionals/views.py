@@ -56,7 +56,7 @@ def profileView(request, UserId):
     delete_temp_files(request.session)
 
     try:
-        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
+        userPrivKey = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
     except AttributeError:
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
@@ -91,14 +91,14 @@ def prepareView(request, UserId, page):
 
     delete_temp_files(request.session)
 
-    prep = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'prepare')
-    media = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'media')
+    prep = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'prepare')
+    media = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'media')
 
     if not prep and not media:
         return HttpResponseRedirect(reverse('professionals:clients'))
 
     user=login.models.User.objects.filter(UserId=UserId)[0]
-    permissions = userprofile.tools.getPermissions(UserId, request.session['UserId'], request.session['PrivKey'])
+    permissions = userprofile.tools.get_permissions(UserId, request.session['UserId'], request.session['PrivKey'])
     prepare_lang = get_lang(sections=["prepare"])
     template = 'prepare/menu.html'
     memories = []
@@ -219,7 +219,7 @@ def saveMePlanView(request, UserId):
     title = savemeplan_lang['savemeplan']['title']
 
     try:
-        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'saveMePlan').decode("utf-8")
+        userPrivKey = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'saveMePlan').decode("utf-8")
     except AttributeError:
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
@@ -258,7 +258,7 @@ def CheckView(request, UserId):
     delete_temp_files(request.session)
 
     try:
-        userPrivKey = userprofile.tools.sharesDataWith(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
+        userPrivKey = userprofile.tools.shares_data_with(UserId, request.session['UserId'], request.session['PrivKey'], 'profile').decode("utf-8")
     except AttributeError:
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:

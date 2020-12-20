@@ -81,9 +81,9 @@ def EditProfileView(request):
                         if not 'researchData' in request.POST.keys():
                             forget_me(user.getAnonId(request.session['PrivKey']))
                         if request.session['Role'] == 'User':
-                            userprofile.tools.removeAllOfUsersRelations(request.session['UserId'], request.session['PrivKey'])
+                            userprofile.tools.remove_all_of_users_relations(request.session['UserId'], request.session['PrivKey'])
                         elif request.session['Role'] == 'Professional':
-                            userprofile.tools.removeAllOfProfessionalsRelations(request.session['UserId'], request.session['PrivKey'])
+                            userprofile.tools.remove_all_of_professionals_relations(request.session['UserId'], request.session['PrivKey'])
                         tools.mediaman.delete_all_files(user.getAnonId(request.session['PrivKey']))
                         login.models.User.objects.filter(UserId=request.session['UserId']).delete()
                         request.session.flush()
@@ -358,7 +358,7 @@ def manageRelationsView(request):
                 permission['Check'] = 1 if 'share_check' in request.POST else 0
                 permission['Prepare'] = 1 if 'share_prepare' in request.POST else 0
                 permission['Media'] = 1 if 'share_media' in request.POST else 0
-                userprofile.tools.modifyRelation(request.session['UserId'], request.session['PrivKey'], email, permission)
+                userprofile.tools.modify_relation(request.session['UserId'], request.session['PrivKey'], email, permission)
                 relationData['Permission']=permission
 
 
