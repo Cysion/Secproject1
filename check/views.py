@@ -20,7 +20,14 @@ import check.models
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 def green_case_view(request):
-    """View for checking how your month is going."""
+    """View for checking how your month is going.
+
+    post variables:
+    Used for showing this calender.
+    month = month as number.
+    year = Year in YYYY.
+
+    """
     if 'UserId' not in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
     elif request.session["Role"] != "User":
@@ -178,7 +185,11 @@ def practice_self_care_view(request):
     return render(request, 'check/practice_self_care.html', args)
 
 def checkup_view(request):
-    """Daily checkup page where user says how their day is. Using method GET for value."""
+    """Daily checkup page where user says how their day is. Using method GET for value.
+
+    get variables:
+    day = is either green, orange or red. Used to describe how your day is going
+    """
     if 'UserId' not in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
     elif request.session["Role"] != "User":

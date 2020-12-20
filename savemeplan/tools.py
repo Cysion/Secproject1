@@ -179,6 +179,13 @@ def get_savemeplan_items(user, symkey, id=-1, b3_pritty=True):
     return savemeplan_data
 
 def get_step_data(SaveMePlanId, user, symkey, step):
+    """Decrpt data from a step on Save.Me Plan. Returns (text, rating) in tuple. 
+
+    SaveMePlanId = Save.Me Plan session id
+    user = User object.
+    symkey = users symetric key.
+    step = which step on Save.Me Plan
+    """
     data = ''
     rating = ''
     done_steps = get_savemeplan_items(user, symkey, SaveMePlanId, False)
