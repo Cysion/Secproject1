@@ -133,9 +133,8 @@ def well_feeling_view(request):
     return render(request, 'check/well_feeling.html', args)
 
 
-def save_me_plan_view(request):
-    """Not fully implemented. Check how your Save.Me Plan is going."""
-    if 'UserId' not in request.session.keys():  # This is a check if a user is logged in.
+def saveme_plan_view(request):
+    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
     elif request.session["Role"] != "User":
         return HttpResponseRedirect(reverse('userprofile:Profile'))

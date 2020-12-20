@@ -18,7 +18,10 @@ from prepare.tools import delete_temp_files
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
 
-def ClientsView(request):
+def clients_view(request):
+    """View for viewing list of clients for a professional users
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
     elif request.session["Role"] == "User":
@@ -27,11 +30,6 @@ def ClientsView(request):
     delete_temp_files(request.session)
 
     clients_lang = get_lang(sections=["professionals"])
-    # YOUR CODE HERE
-    """ Clients should be a list with dicts. With following keys:
-    FirstName (string), LastName (string),
-    Permissions (dict) with key as Profile, SaveMePlan, Check, Prepare or Media
-    Values as 1 or 0 where 1 is got access and 0 denied access."""
 
     userprofile.tools.update_relation_to(request.session['UserId'], request.session['PrivKey'])
     clients = userprofile.tools.show_all_relations_from(request.session['UserId'], request.session['PrivKey'])
@@ -55,6 +53,9 @@ def ClientsView(request):
 
 
 def profile_view(request, UserId):
+    """View for viewing cclients' profile page information
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
     elif request.session["Role"] == "User":
@@ -92,7 +93,10 @@ def profile_view(request, UserId):
     return render(request, 'userprofile/edit.html', args)
 
 
-def prepareView(request, UserId, page):
+def prepare_view(request, UserId, page):
+    """View for clients' prepare history
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
     elif request.session["Role"] == "User":
@@ -189,7 +193,10 @@ def prepareView(request, UserId, page):
     return render(request, template, args)
 
 
-def saveMePlanView(request, UserId):
+def saveme_plan_view(request, UserId):
+    """View for viewing clients' save.me plan history
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
     elif request.session["Role"] == "User":
@@ -262,7 +269,10 @@ def saveMePlanView(request, UserId):
 
     return render(request, 'savemeplan/savemeplan_history.html', args)
 
-def CheckView(request, UserId):
+def check_view(request, UserId):
+    """View of clients' check for professionals
+    request = request from django core
+    """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
     elif request.session["Role"] == "User":
