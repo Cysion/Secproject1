@@ -21,6 +21,7 @@ import time
 import re
 import random
 import prepare.tools
+import tools.global_alerts
 
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
@@ -96,8 +97,14 @@ def MenuView(request, page=0):
 
         template = 'prepare/menu.html'
 
+    global_alerts = []  # The variable which is sent to template
+    if "global_alerts" in request.session.keys():  # Check if there is global alerts
+        global_alerts = request.session["global_alerts"]  # Retrive global alerts.
+        request.session["global_alerts"] = []  # Reset
+
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+        'global_alerts': global_alerts,
         'back': UNIVERSAL_LANG["universal"]["back"],
         'prepare': prepare_lang["prepare"],
         'nav': prepare_lang["prepare"]["nav"],
@@ -226,16 +233,7 @@ def addMemoryView(request):
 
                     if not alerts and not request.GET:
                         memory.save()
-                        alert = {
-                            "color": "success",
-                            "title": UNIVERSAL_LANG["universal"]["success"],
-                            "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"]
-                        }
-
-                        if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                            request.session["global_alerts"] = [alert]
-                        else:
-                            request.session["global_alerts"].append(alert)
+                        tools.global_alerts.add_alert(request, 'success', UNIVERSAL_LANG["universal"]["success"], prepare_lang["prepare"]["long_texts"]["alerts"]["memory_added"])
 
                         return HttpResponseRedirect(reverse('prepare:memory', args=(memory.MediaId,)))  # Redirect to created memory
 
@@ -368,17 +366,7 @@ def MemoryView(request, id):
             delete_file(url)
         redirect_path = memory.getMemory(userPrivkey)  # To know which step to redirect to.
         memory.delete()
-
-        alert = {
-            "color": "success",
-            "title": UNIVERSAL_LANG["universal"]["warning"],
-            "message": prepare_lang["prepare"]["long_texts"]["alerts"]["memory_deleted"]
-        }
-
-        if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-            request.session["global_alerts"] = [alert]
-        else:
-            request.session["global_alerts"].append(alert)
+        tools.global_alerts.add_alert(request, 'success', UNIVERSAL_LANG["universal"]["info"], prepare_lang["prepare"]["long_texts"]["alerts"]["memory_deleted"])
 
         new_entry("m2", user.getAnonId(userPrivkey), url.split("/")[-1], role=request.session['Role'])
         if redirect_path == "s":
@@ -411,16 +399,7 @@ def MemoryView(request, id):
             file = open_file(user.getSymKey(userPrivkey), url)
 
         except RuntimeError as e:
-            alert = {
-                "color": "error",
-                "title": UNIVERSAL_LANG["universal"]["error"],
-                "message": prepare_lang["prepare"]["long_texts"]["alerts"]["checksum_error"]
-            }
-
-            if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                request.session["global_alerts"] = [alert]
-            else:
-                request.session["global_alerts"].append(alert)
+            tools.global_alerts.add_alert(request, 'danger', UNIVERSAL_LANG["universal"]["error"], prepare_lang["prepare"]["long_texts"]["alerts"]["checksum_error"])
             return HttpResponseRedirect(reverse('prepare:menu'))
 
         for line in file[0].split("\n"):
@@ -453,16 +432,7 @@ def MemoryView(request, id):
                 else:
                     request.session["files_to_delete"] = [content[memtype]]
             except Exception as e:
-                alert = {
-                    "color": "error",
-                    "title": UNIVERSAL_LANG["universal"]["error"],
-                    "message": prepare_lang["prepare"]["long_texts"]["alerts"]["could_not_open_file"]
-                }
-
-                if "global_alerts" not in request.session.keys():  # Check if global_elerts is in session allready.
-                    request.session["global_alerts"] = [alert]
-                else:
-                    request.session["global_alerts"].append(alert)
+                tools.global_alerts.add_alert(request, 'danger', UNIVERSAL_LANG["universal"]["error"], prepare_lang["prepare"]["long_texts"]["alerts"]["could_not_open_file"])
                 return HttpResponseRedirect(reverse('prepare:menu'))
 
     using_space = prepare_lang["prepare"]["long_texts"]["memory_size"].replace("%mb%", str(int(content["size"])))
@@ -571,9 +541,9 @@ def editContactView(request, id):
 def removeDiaryView(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-    
+
     prepare.tools.delete_temp_files(request.session)
-    
+
 
     if request.session['Role'] == 'User':
         user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
@@ -607,6 +577,3 @@ def removeDiaryView(request, id):
 
     else:
         return HttpResponseRedirect(reverse('login:Login'))
-    
-    
-    
