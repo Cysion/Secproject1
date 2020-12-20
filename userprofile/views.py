@@ -26,7 +26,8 @@ def ProfileView(request):
             new_entry("u2", user1.getAnonId(request.session['PrivKey']), "na", role=request.session['Role'])
             request.session.flush()
             return HttpResponseRedirect(reverse('login:Login'))
-    login_lang = get_lang(sections=["userprofile"])
+    profile_lang = get_lang(sections=["userprofile"])
+    login_lang = get_lang(sections=["login"])
     new_entry("g1", user1.getAnonId(request.session['PrivKey']), "prof", role=request.session['Role'])
     first_name = user1.getFirstName(request.session['PrivKey'])
     last_name = user1.getLastName(request.session['PrivKey'])
@@ -43,7 +44,9 @@ def ProfileView(request):
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'global_alerts': global_alerts,
-        'profile': login_lang["userprofile"]["long_texts"],
+        'form': login_lang["login"]["form"],
+        'userprofile':profile_lang["userprofile"],
+        'profile': profile_lang["userprofile"]["long_texts"],
         'first_name': first_name,
         'last_name': last_name,
         'template': template,
