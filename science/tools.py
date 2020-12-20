@@ -87,7 +87,7 @@ def export_data(maxlines=1000, rootdir=CONF["research"]["exportdir"], timefrom=0
 
 def forget_me(anonid):
     #select all in table with anonid and burn it
-    ResearchData.objects.filter(AnonId=anonid).delete()
+    ResearchData.objects.filter(AnonId=get_sha(anonid).encode("utf-8")).delete()
     return
 
 
