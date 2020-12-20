@@ -160,7 +160,8 @@
             "wrong_pass":"Password is incorrect!",
             "badChar":"Field contains illegal character(s)",
             "changed_password_success":"You changed you password!",
-            "daily_checkup":"Remeber to do your daily checkup!"
+            "daily_checkup":"Remeber to do your daily checkup!",
+            "password_length":"Your password need to be between 6 and 128 in lenght!"
 
         },
         "failed_login":"Wrong email or password entered",
