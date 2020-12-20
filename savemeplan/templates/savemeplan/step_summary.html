@@ -49,11 +49,11 @@ textarea:focus {
 {% endif %}
 
 {% for step in content.steps %}
-<div class="summary_item" style="background-color: {{ step.2 }}">
+<div class="summary_item" style="background-color: {{ step.3 }}">
   <div class="summary_step">
     <b>
-      {{ step.0 }} - {{ step.3 }}:
-    </b>
+      {{ step.0 }} - {{ step.4 }}:
+    </b>{{ content.rating }}: {{ step.2 }}
   </div>
   {{ step.1 }}
 </div>

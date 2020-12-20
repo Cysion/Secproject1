@@ -165,13 +165,14 @@ def get_savemeplan_items(user, symkey, id=-1, b3_pritty=True):
         for step in steps:
             smp_step = step.getStep(symkey)
             smp_text = step.getText(symkey)
+            smp_rating = step.getValue(symkey)
 
             if b3_pritty and smp_step == 'B3':  # Step B3 will have on the format <bad thing>;<good thing>
                 smp_lang = get_lang(sections=['savemeplan'])
                 smp_text = f"{smp_lang['savemeplan']['replace']} {smp_text}"
                 smp_text = smp_text.replace(';', f" {smp_lang['savemeplan']['with']} ")
 
-            savemeplan_data.append([smp_step, smp_text])
+            savemeplan_data.append([smp_step, smp_text, smp_rating])
 
         savemeplan_data.sort(key=lambda x: x[0])  # Sort by step.
 
@@ -179,12 +180,14 @@ def get_savemeplan_items(user, symkey, id=-1, b3_pritty=True):
 
 def get_step_data(SaveMePlanId, user, symkey, step):
     data = ''
+    rating = ''
     done_steps = get_savemeplan_items(user, symkey, SaveMePlanId, False)
     for itt_step in done_steps:
         if itt_step[0] == step:
             data = itt_step[1]
+            rating = int(itt_step[2])
 
-    return data
+    return (data, rating)
 
 
 def get_all_savemeplan_items(user, symkey):

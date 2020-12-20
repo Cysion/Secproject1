@@ -270,6 +270,8 @@ def changePassView(request):
 def relationsView(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     if request.session["Role"] != "User":
         return HttpResponseRedirect(reverse('userprofile:Profile'))
@@ -291,6 +293,8 @@ def relationsView(request):
 def addRelationsView(request):
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 
@@ -330,6 +334,8 @@ def addRelationsView(request):
 def manageRelationsView(request):
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     delete_temp_files(request.session)
 

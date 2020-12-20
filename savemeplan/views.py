@@ -47,7 +47,8 @@ def StepView(request, step):
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
     delete_temp_files(request.session)
 
     user = User.objects.filter(pk=request.session['UserId'])[0]
@@ -135,11 +136,14 @@ def StepView(request, step):
                 elif foundId != -1:
                     savemeplan_step.delete()
             elif step == 8:  # Replace a bad thing with a good thing step.
+                print(request.POST.keys())
                 if 'bad' and 'good' in request.POST.keys():
-                    if (request.POST['bad'] == 'bad_other'
-                        and request.POST['good'] == 'good_other'
-                        and len(request.POST['bad_other']) == 0
-                        and len(request.POST['good_other']) == 0):
+                    print(request.POST['bad'])
+                    print(request.POST['good'])
+                    if (((request.POST['bad'] == 'bad_other' and len(request.POST['bad_other']) != 0)
+                        and (request.POST['good'] == 'good_other'
+                        and len(request.POST['good_other']) != 0))
+                        or request.POST['bad'] != 'bad_other' or request.POST['good'] != 'good_other'):
                         if foundId == -1:
                             savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
@@ -261,7 +265,7 @@ def StepView(request, step):
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A1')
+            content['data'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A1')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['sittext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_sit']  # Rating text
@@ -286,7 +290,7 @@ def StepView(request, step):
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A2')
+            content['data'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A2')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['emotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_emo']  # Rating text
@@ -312,7 +316,7 @@ def StepView(request, step):
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A3')
+            content['data'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A3')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['thotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_tho']
@@ -336,7 +340,7 @@ def StepView(request, step):
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A4')
+            content['data'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A4')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['emotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_beh']
@@ -375,7 +379,7 @@ def StepView(request, step):
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B1')
+            content['data'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B1')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['calmtext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_calm']
@@ -399,7 +403,7 @@ def StepView(request, step):
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B2')
+            content['data'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B2')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['routtext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_rout']
@@ -423,7 +427,8 @@ def StepView(request, step):
         content['options'] = list()
 
         if 'SaveMePlanId' in request.session.keys():
-            text = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B3').split(';')
+            text = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B3')[0].split(';')
+            print(text)
             if len(text) == 2:
                 content['text_bad'] = text[0]
                 content['text_good'] = text[1]
@@ -460,7 +465,7 @@ def StepView(request, step):
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():  # Check if user allready submittet a value.
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B4')
+            content['data'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B4')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['name_values']
         content['rate'] = savemeplan_lang['savemeplan']['rate_values']
@@ -567,7 +572,7 @@ def StepView(request, step):
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'C3')
+            content['data'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'C3')
 
         content['other_placeholder'] = savemeplan_lang['savemeplan']['add_safe']
         content['other'] = savemeplan_lang['savemeplan']['other']
@@ -621,6 +626,7 @@ def StepView(request, step):
         else:
             content['old'] = savemeplan_lang['savemeplan']['long_texts']['old_session']
             content['steps'] = get_savemeplan_items(user, symkey)
+            content['rating'] = savemeplan_lang['savemeplan']['rating']
 
         for smp_step in content['steps']:
             smp_step.append(STEP_COLORS[smp_step[0]])
@@ -701,7 +707,8 @@ def HistoryView(request):
         'content': entries,
         'title': title,
         'template': 'base.html',
-        'history': savemeplan_lang['savemeplan']['history']
+        'history': savemeplan_lang['savemeplan']['history'],
+        'rating': savemeplan_lang['savemeplan']['rating']
     }
 
     return render(request, 'savemeplan/savemeplan_history.html', args)
