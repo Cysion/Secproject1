@@ -30,8 +30,8 @@ def fillcheck(user, symkey):
             last_entry.save()
 
 
-def reencrypt_check(user, oldSymkey, newSymkey):
+def reencrypt_check(user, old_symkey, new_symkey):
     entries = check.models.Check.objects.filter(UserId=user)
     for entry in entries:
-        entry.setRating(newSymkey, entry.getRating(oldSymkey))
+        entry.setRating(new_symkey, entry.getRating(old_symkey))
         entry.save()

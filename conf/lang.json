@@ -143,7 +143,7 @@
         "not_registered":"No account? Register here",
         "characters":"characters.",
         "required":"This field is required",
-        "field_requirements":"and cannot be more then",
+        "field_requirements":"and cannot be less than 4 more than 128",
         "save":"Save changes",
         "current":"Current",
         "new":"New",
@@ -160,7 +160,8 @@
             "wrong_pass":"Password is incorrect!",
             "badChar":"Field contains illegal character(s)",
             "changed_password_success":"You changed you password!",
-            "daily_checkup":"Remeber to do your daily checkup!"
+            "daily_checkup":"Remeber to do your daily checkup!",
+            "password_length":"Your password need to be between 6 and 128 in lenght!"
 
         },
         "failed_login":"Wrong email or password entered",
@@ -217,7 +218,7 @@
         "save_backup":"Save backup key",
         "relations": "Relations",
         "logout":"Logout",
-        "backupkey":"This is your backup key if you forgot your password. Please save this on a save place!. Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
+        "backupkey":"This is your backup key if you forgot your password. Please save this on a save place! Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
         "change_password_text":"If you change your password then you need to save your backup key again! When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
         "alerts": {
           "alert_changed_password":"You successfully changed your password",
@@ -404,7 +405,7 @@
             "ther_notes":"see p.21 in presentation",
             "media_info":"Do you want to attach a file or url to your memory? Press one of the following buttons.",
             "link_info":"Link can be anything. A youtube link will show the video when viewing the memory.",
-            "file_info":"File can be photo, video or music.",
+            "file_info":"File can be photo or video.",
             "memory_type":"What type of memory is it?",
             "allowed_extenssions":"These extenssions are allowed",
             "memory_size":"This memory takes %mb% MB in space.",
@@ -510,6 +511,7 @@
         "replace":"Replace",
         "with": "with",
         "download":"Download agreement",
+        "history":"History",
 
         "long_texts":{
             "text_to_long":"Your text was too on the previous step so it got choped to the maximum lenght of 64 characters.",

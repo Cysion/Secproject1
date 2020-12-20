@@ -162,11 +162,6 @@ def addMemoryView(request):
         # Photos
         ".JPG", ".JPEG", ".EXIF", ".GIF", ".BMP", ".PNG",
         ".WEBP", ".HEIF",
-
-        # Sound
-        ".AA", ".AAX", ".AIFF", ".ALAC", ".DVF", ".M4A", ".M4B",
-        ".MMF", ".MP3", ".MPC", ".OPUS", ".RF64", ".MAV", ".WMA",
-        ".WV"
     ]
 
     media_type = ""  # Used for displaying url input or file input on page.

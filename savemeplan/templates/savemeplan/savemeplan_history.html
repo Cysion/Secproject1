@@ -33,7 +33,7 @@ textarea:focus {
                 <a class="btn btn-outline-info btn-block part-button {% if content.part == 'D' %} active {% endif %}" name="page" href="/savemeplan/15/">D</a>
             </div>
             <div class="col-4 px-1">
-                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'history' %} active {% endif %}" name="page" href="/savemeplan/history/">History</a>
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'history' %} active {% endif %}" name="page" href="/savemeplan/history/">{{ history }}</a>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@ textarea:focus {
 
 <h3 style="text-align: center;">{{ name }}</h3>
 
-{% for sessionId, session in content.items %}
+{% for session in content.values reversed %}
   <p class="date">{{ session.Datetime }}</p>
     {% for step, stepValue in session.items %}
     {% if step != 'Datetime' %}

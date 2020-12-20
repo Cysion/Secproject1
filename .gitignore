@@ -13,3 +13,5 @@ lang*
 functional_tests/geckodriver.log
 research
 export-key.txt
+conf/db.cnf
+conf/secret_key
