@@ -10,9 +10,11 @@ from savemeplan.tools import top5_options, top_5_bad_good, extend_top5, decrypt_
 from prepare.tools import delete_temp_files
 from tools.global_alerts import add_alert
 from science.tools import new_entry
+from twelvesteps.settings import MEDIA_ROOT
 import time
 import savemeplan.tools
 import mimetypes
+
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
 
@@ -698,7 +700,7 @@ def HistoryView(request):
     return render(request, 'savemeplan/savemeplan_history.html', args)
 
 def downloadContractView(request):
-    fl_path = 'media/save.me_agreement.pdf'
+    fl_path = MEDIA_ROOT + 'save.me_agreement.pdf'
     filename = 'save.me_agreement.pdf'
 
     fl = open(fl_path, 'rb')
