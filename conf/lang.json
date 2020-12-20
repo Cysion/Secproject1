@@ -187,7 +187,7 @@
           "check":"Check",
           "prepare":"Prepare",
           "media":"Media",
-          "send_request":"Send relation request",
+          "share_selected_data":"Share selected data",
           "save_changes":"Save changes",
           "remove_relation":"Remove this relation"
         },

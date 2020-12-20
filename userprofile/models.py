@@ -7,13 +7,11 @@ from login.models import User
 class RelationFrom(models.Model):
     """User relation table. This table is for users to see which relationship
     the user have with other users (Friend or therapist for example).
-
-    UserIdTo: Friend, Family or therapist user id.
-    AnonymityIdFrom: The current user. To see which this user have
-    relationsships to.
-    Permission: a bit string where 0 says no permission and 1 says
-    got permission for each permission entry.
-    Key: The public key of the UserIdTo.
+    
+    AnonymityIdFrom: Anonymity id of sharing user
+    UserIdTo: User id of reciever
+    Permission: Binary string where 0 denies and 1 grants permission
+    UserIdFromEncrypted: User id of sharing user encrypted with recievers public key
     """
     RelationFromId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     AnonymityIdFrom = models.BinaryField(blank=False)
@@ -46,12 +44,12 @@ class RelationTo(models.Model):
     """User relation table. This table is for users to see which relationship
     the user have with other users (Friend or therapist for example).
 
-    UserIdTo: Friend, Family or therapist user id.
-    AnonymityIdFrom: The current user. To see which this user have
-    relationsships to.
-    Permission: a bit string where 0 says no permission and 1 says
-    got permission for each permission entry.
-    Key: The public key of the AnonymityIdTo.
+    UserIdFrom: User id of sharing user
+    AnonymityIdTo: Anonymity id of reciever
+    Permission: Binary string where 0 denies and 1 grants permission
+    UserIdToEncryptedTo: User id of reciever encrypted with recievers public key
+    UserIdToEncryptedFrom: User id of reciever encrypted with sharing users public key
+    FromPrivEncrypted: Private key of sharing user encrypted with recievers public key
     """
     RelationToId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     UserIdFrom = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -60,7 +58,6 @@ class RelationTo(models.Model):
     UserIdToEncryptedTo = models.BinaryField(max_length=512)
     UserIdToEncryptedFrom = models.BinaryField(max_length=512)
     FromPrivEncrypted = models.BinaryField(max_length=512)
-
 
     def getRelationToId(self):
         return self.RelationToId
@@ -73,7 +70,6 @@ class RelationTo(models.Model):
 
     def getUserIdToDecryptedFrom(self, fromPrivKey):
         return int(rsa_decrypt(fromPrivKey.encode("utf-8"), self.UserIdToEncryptedFrom).decode("utf-8"))
-
 
     def getPermission(self):
         return self.Permission
