@@ -42,7 +42,7 @@ def MenuView(request, page=0):
     diary= []
     user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
 
-    baseTemplate = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    basetemplate = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     if page == 1:
         template = 'prepare/1_howto.html'
@@ -438,7 +438,7 @@ def MemoryView(request, id):
         global_alerts = request.session["global_alerts"]  # Retrive global alerts.
         request.session["global_alerts"] = []  # Reset
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],  # This is the menu-titles text retrieved from language file.

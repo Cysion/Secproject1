@@ -9,7 +9,7 @@ UNIVERSAL_LANG = get_lang(sections=["universal"])
 def MenuView(request):
 
     info_lang = get_lang(sections=["info"])
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -34,7 +34,7 @@ def AboutView(request):
         
     text = open_text(txt)
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -62,7 +62,7 @@ def HowToView(request):
     text = open_text(txt)
 
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -81,7 +81,7 @@ def HowToView(request):
     return render(request, 'info/howto.html', args)
 
 
-def PrivacyGDPRView(request):
+def Privacygdpr_view(request):
 
     info_lang = get_lang(sections=["info"])
 
@@ -89,7 +89,7 @@ def PrivacyGDPRView(request):
         
     text = open_text(txt)
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -118,7 +118,7 @@ def VolunteeringDisclaimerView(request):
     text1 = open_text(txt1)
     text2 = open_text(txt2)
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
@@ -146,7 +146,7 @@ def ToSView(request):
         
     text = open_text(txt)
 
-    template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+    template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
     args = {
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],

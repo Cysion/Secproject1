@@ -15,7 +15,7 @@ def IndexView(request):
     home_lang = get_lang(sections=["home"])
 
     if logedIn:
-        template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
+        template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
     else:
         template = "base.html"
     args = {
