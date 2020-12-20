@@ -157,15 +157,21 @@ def BackupKeyView(request):
     profile_lang = get_lang(sections=["userprofile"])
 
     template = "base.html" if request.session["Role"] == "User" else "base_professionals.html"
-
-
+    
     args = {
-        'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
-        'back': UNIVERSAL_LANG["universal"]["back"],
-        'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
-        'PrivKey': request.session['PrivKey'],
-        'template': template
-    }
+            'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
+            'back': UNIVERSAL_LANG["universal"]["back"],
+            'backup': profile_lang["userprofile"]["long_texts"]["backupkey"],
+            'template': template,
+            'wrong_pass':False,
+            'PrivKey' : ""
+        }
+    if request.method == 'POST':
+        if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
+            args["PrivKey"] = request.session['PrivKey']
+        else:
+            args["wrong_pass"] = True
+            
 
     return render(request, 'userprofile/backupkey.html', args)
 
