@@ -9,64 +9,76 @@ import check.tools
 
 
 
-def changePass(uId:int, PrivKey, newPassword:str, role:str):
-    user=login.models.User.objects.filter(UserId=uId)[0]
-    firstName=user.getFirstName(PrivKey)
-    lastName=user.getLastName(PrivKey)
-    gender=user.getGender(PrivKey)
-    dateOfBirth=user.getDateOfBirth(PrivKey)
-    oldSymKey=user.getSymKey(PrivKey)
-    anonId = user.getAnonId(PrivKey)
-    creationDate = user.getCreationDate(PrivKey)
+def change_pass(user_id:int, privkey, new_password:str, role:str):
+    """Changes a users password and reencrypts all data.
 
-    key = tools.crypto.gen_rsa(tools.crypto.secret_scrambler(newPassword, uId))
+    user_id = User id of user changing password
+    privkey = Old private key of user changing password
+    new_password = New password
+    role = Either 'User' or 'Professional'
+
+    Returns the new private key if successful or 0 if failed.
+    """
+    user=login.models.User.objects.filter(UserId=user_id)[0]
+    first_name=user.getFirstName(privkey)
+    last_name=user.getLastName(privkey)
+    gender=user.getGender(privkey)
+    date_of_birth=user.getDateOfBirth(privkey)
+    old_symKey=user.getSymKey(privkey)
+    anon_id = user.getAnonId(privkey)
+    creation_date = user.getCreationDate(privkey)
+
+    key = tools.crypto.gen_rsa(tools.crypto.secret_scrambler(new_password, user_id))
     pubkey=key.publickey().export_key()
-    PrivKeyNew = key.export_key().decode("utf-8")
+    privkey_new = key.export_key().decode("utf-8")
     with transaction.atomic():
         user.setPubKey(pubkey)
         user.setGender(gender)
-        user.setFirstName(firstName.capitalize())
-        user.setLastName(lastName.capitalize())
-        user.setDateOfBirth(dateOfBirth)
-        retVal = tools.mediaman.reencrypt_user(anonId, oldSymKey)
-        newSymkey = retVal[0]
-        user.setSymkey(newSymkey)
-        user.setAnonId(PrivKeyNew)
-        user.setCreationDate(creationDate)
+        user.setFirstName(first_name.capitalize())
+        user.setLastName(last_name.capitalize())
+        user.setDateOfBirth(date_of_birth)
+        ret_val = tools.mediaman.reencrypt_user(anon_id, old_symKey)
+        new_symkey = ret_val[0]
+        user.setSymkey(new_symkey)
+        user.setAnonId(privkey_new)
+        user.setCreationDate(creation_date)
         user.save()
 
-        prepare.tools.reencryptDiary(user, oldSymKey, newSymkey)
-        prepare.tools.reencryptMedia(user.getUid(), PrivKey, pubkey, retVal[1])
-        savemeplan.tools.reencrypt_savemeplan(user, oldSymKey, newSymkey)
-        check.tools.reencrypt_check(user,oldSymKey, newSymkey)
+        prepare.tools.reencryptDiary(user, old_symKey, new_symkey)
+        prepare.tools.reencryptMedia(user.getUid(), privkey, pubkey, ret_val[1])
+        savemeplan.tools.reencrypt_savemeplan(user, old_symKey, new_symkey)
+        check.tools.reencrypt_check(user, old_symKey, new_symkey)
 
         if role == 'User':
-            relationsTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=user.getUid())
-            for relation in relationsTo:
-                reciever = login.models.User.objects.filter(UserId=relation.getUserIdToDecryptedFrom(PrivKey))[0]
+            relations_to = userprofile.models.RelationTo.objects.filter(UserIdFrom=user.getUid())
+            for relation in relations_to:
+                reciever = login.models.User.objects.filter(UserId=relation.getUserIdToDecryptedFrom(privkey))[0]
                 relation.setFromPrivEncrypted(reciever.getPubkey(), key.export_key().decode("utf-8"))
                 relation.setUserIdToEncryptedFrom(pubkey, reciever.getUid())
                 relation.save()
         elif role == 'Professional':
-            relationsTo = userprofile.models.RelationTo.objects.filter(AnonymityIdTo=user.getAnonId(PrivKeyNew))
-            for relation in relationsTo:
-                relation.setUserIdToEncryptedTo(pubkey, relation.getUserIdToDecryptedTo(PrivKey))
-                relation.setFromPrivEncrypted(pubkey, relation.getFromPrivDecrypted(PrivKey).decode("utf-8"))
+            relations_to = userprofile.models.RelationTo.objects.filter(AnonymityIdTo=user.getAnonId(privkey_new))
+            for relation in relations_to:
+                relation.setUserIdToEncryptedTo(pubkey, relation.getUserIdToDecryptedTo(privkey))
+                relation.setFromPrivEncrypted(pubkey, relation.getFromPrivDecrypted(privkey).decode("utf-8"))
                 relation.save()
-            relationsFrom = userprofile.models.RelationFrom.objects.filter(UserIdTo=user.getUid())
-            for relation in relationsFrom:
-                relation.setUserIdFromEncrypted(pubkey, relation.getUserIdFromDecrypted(PrivKey))
+            relations_from = userprofile.models.RelationFrom.objects.filter(UserIdTo=user.getUid())
+            for relation in relations_from:
+                relation.setUserIdFromEncrypted(pubkey, relation.getUserIdFromDecrypted(privkey))
                 relation.save()
-
 
         return key.export_key()
 
     return 0
 
-def checkPassword(uId:int, PrivKey, password:str):
-    return tools.crypto.gen_rsa(tools.crypto.secret_scrambler(password, uId)).export_key().decode("utf-8") == PrivKey
 
-
+def check_password(user_id:int, privkey, password:str):
+    """Checks a password against the private key of a logged in user
+    user_id = User id
+    privkey = Old private key
+    password = Entered password
+    """
+    return tools.crypto.gen_rsa(tools.crypto.secret_scrambler(password, user_id)).export_key().decode("utf-8") == privkey
 
 
 def createRelation(uId:int, PrivKey, recieverEmail:str, permissions:str):
@@ -81,7 +93,6 @@ def createRelation(uId:int, PrivKey, recieverEmail:str, permissions:str):
     user = login.models.User.objects.filter(UserId=uId)[0]
     reciever = login.models.User.objects.filter(Email=recieverEmail.lower())[0]
 
-    #try:
     with transaction.atomic():
         relationFromEntry = userprofile.models.RelationFrom(
             AnonymityIdFrom = user.getAnonId(PrivKey),
@@ -99,9 +110,6 @@ def createRelation(uId:int, PrivKey, recieverEmail:str, permissions:str):
             FromPrivEncrypted = tools.crypto.rsa_encrypt_long(reciever.getPubkey(), PrivKey.encode("utf-8"))
         )
         relationToEntry.save()
-    #except: #Exeption as e: #Possible exceptions here
-        #return 1
-    #else:
     return 0
 
 def updateRelationTo(recieverUId:int, recieverPrivKey):
