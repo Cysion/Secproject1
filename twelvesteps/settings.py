@@ -33,13 +33,13 @@ readable for everyone.
 Change to a new SECRET_KEY on deployment server
 """
 
-with open('/home/infograf/12stepsapp/conf/secret_key') as f:
+with open('/home/kevin/Projekt/env/Secproject1/conf/secret_key') as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['12steps.kengstrom.se']
 
 
 # Application definition
@@ -122,7 +122,7 @@ DATABASES = {
         'ENGINE': 'mysql.connector.django',
         'OPTIONS': {
             'autocommit': True,
-            'read_default_file': "/home/infograf/12stepsapp/conf/db.conf",
+            'read_default_file': "/home/kevin/Projekt/env/Secproject1/conf/db.cnf",
         },
     }
 }
@@ -164,6 +164,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+STATIC_ROOT = '/var/www/12steps/static/'
+
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
@@ -172,5 +174,8 @@ STATICFILES_DIRS = [
 
 #DEFAULT_FILE_STORAGE = "FileSystemStorage"
 
-MEDIA_ROOT = BASE_DIR / "media/"
+MEDIA_ROOT = "/var/www/12steps/media/"
 MEDIA_URL = '/media/'
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True

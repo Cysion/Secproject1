@@ -1,6 +1,7 @@
 import json
-
-DEFAULT_PATH = "conf/"
+import os
+import logging
+DEFAULT_PATH = "/home/kevin/Projekt/env/Secproject1/conf/"
 
 
 def get_lang(path=DEFAULT_PATH + "lang.json", sections = []) -> dict:
