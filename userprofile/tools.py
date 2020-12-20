@@ -71,10 +71,14 @@ def change_pass(user_id:int, privkey, new_password:str, role:str):
 
     return 0
 
-def checkPassword(uId:int, PrivKey, password:str):
-    return tools.crypto.gen_rsa(tools.crypto.secret_scrambler(password, uId)).export_key().decode("utf-8") == PrivKey
 
-
+def check_password(user_id:int, privkey, password:str):
+    """Checks a password against the private key of a logged in user
+    user_id = User id
+    privkey = Old private key
+    password = Entered password
+    """
+    return tools.crypto.gen_rsa(tools.crypto.secret_scrambler(password, user_id)).export_key().decode("utf-8") == privkey
 
 
 def createRelation(uId:int, PrivKey, recieverEmail:str, permissions:str):
@@ -89,7 +93,6 @@ def createRelation(uId:int, PrivKey, recieverEmail:str, permissions:str):
     user = login.models.User.objects.filter(UserId=uId)[0]
     reciever = login.models.User.objects.filter(Email=recieverEmail.lower())[0]
 
-    #try:
     with transaction.atomic():
         relationFromEntry = userprofile.models.RelationFrom(
             AnonymityIdFrom = user.getAnonId(PrivKey),
@@ -107,9 +110,6 @@ def createRelation(uId:int, PrivKey, recieverEmail:str, permissions:str):
             FromPrivEncrypted = tools.crypto.rsa_encrypt_long(reciever.getPubkey(), PrivKey.encode("utf-8"))
         )
         relationToEntry.save()
-    #except: #Exeption as e: #Possible exceptions here
-        #return 1
-    #else:
     return 0
 
 def updateRelationTo(recieverUId:int, recieverPrivKey):

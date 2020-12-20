@@ -71,7 +71,7 @@ def EditProfileView(request):
 
     if request.GET:
         if request.GET['delete']:
-            if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
+            if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
                 if request.POST['password']:
                     user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
                     with transaction.atomic():
@@ -88,7 +88,7 @@ def EditProfileView(request):
             else:
                 return HttpResponseRedirect(reverse('userprofile:Edit-profile'))
     if request.method == 'POST':
-        if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
+        if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
             user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
             if request.POST['gender'] == 'Other':
                 user.setGender(request.POST['gender_other'])
@@ -187,41 +187,43 @@ def changePassView(request):
 
     if request.method == "POST":
 
-        if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST["current_password"]):
+        if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST["current_password"]):
             if request.POST['new_password'] == request.POST['new_repassword']:
-                PrivKey = userprofile.tools.change_pass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"],request.session['Role']).decode('utf-8')
+                if len(request.POST["new_password"]) > 5 and len(request.POST["new_password"]) < 129:
+                    PrivKey = userprofile.tools.change_pass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"],request.session['Role']).decode('utf-8')
 
-                if PrivKey:  # Check if changing password succeded
-                    request.session['PrivKey'] = PrivKey
-                    alert = {
-                        "color": "success",
-                        "title": UNIVERSAL_LANG["universal"]["success"],
-                        "message": profile_lang["userprofile"]["long_texts"]["alerts"]["alert_changed_password"]
-                    }
-
-                    if "global_alerts" not in request.session.keys():
-                        request.session["global_alerts"] = [alert]
-                    else:
-                        request.session["global_alerts"].append(alert)
-                    return HttpResponseRedirect(reverse('userprofile:Profile'))
-
-                else:  # Password change failed
-                    alert = {
-                        "color": "danger",
-                        "title": UNIVERSAL_LANG["universal"]["error"],
-                        "message": profile_lang["userprofile"]["long_texts"]["alert_error"]
-                    }
-
-                    if "global_alerts" not in request.session.keys():
+                    if PrivKey:  # Check if changing password succeded
+                        request.session['PrivKey'] = PrivKey
                         alert = {
                             "color": "success",
                             "title": UNIVERSAL_LANG["universal"]["success"],
-                            "message": profile_lang["userprofile"]["long_texts"]["alert_changed_password"]
+                            "message": profile_lang["userprofile"]["long_texts"]["alerts"]["alert_changed_password"]
                         }
-                        request.session["global_alerts"] = [alert]
-                    else:
-                        request.session["global_alerts"].append(alert)
 
+                        if "global_alerts" not in request.session.keys():
+                            request.session["global_alerts"] = [alert]
+                        else:
+                            request.session["global_alerts"].append(alert)
+                        return HttpResponseRedirect(reverse('userprofile:Profile'))
+
+                    else:  # Password change failed
+                        alert = {
+                            "color": "danger",
+                            "title": UNIVERSAL_LANG["universal"]["error"],
+                            "message": profile_lang["userprofile"]["long_texts"]["alert_error"]
+                        }
+
+                        if "global_alerts" not in request.session.keys():
+                            alert = {
+                                "color": "success",
+                                "title": UNIVERSAL_LANG["universal"]["success"],
+                                "message": profile_lang["userprofile"]["long_texts"]["alert_changed_password"]
+                            }
+                            request.session["global_alerts"] = [alert]
+                        else:
+                            request.session["global_alerts"].append(alert)
+                else:
+                    alerts["password"] = 'bad_length'
             else:  # new_password and new_repasswords are not the same
                 alerts["repassword"] = "repassword"
         else:  # current_password is not the right one
