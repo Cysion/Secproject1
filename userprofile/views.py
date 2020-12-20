@@ -189,7 +189,7 @@ def changePassView(request):
 
         if userprofile.tools.checkPassword(request.session['UserId'], request.session['PrivKey'], request.POST["current_password"]):
             if request.POST['new_password'] == request.POST['new_repassword']:
-                PrivKey = userprofile.tools.changePass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"],request.session['Role']).decode('utf-8')
+                PrivKey = userprofile.tools.change_pass(request.session['UserId'], request.session['PrivKey'], request.POST["new_password"],request.session['Role']).decode('utf-8')
 
                 if PrivKey:  # Check if changing password succeded
                     request.session['PrivKey'] = PrivKey
