@@ -5,6 +5,7 @@ from django.db import transaction
 import tools.mediaman
 import prepare.tools
 import savemeplan.tools
+import check.tools
 
 
 
@@ -37,6 +38,7 @@ def changePass(uId:int, PrivKey, newPassword:str, role:str):
         prepare.tools.reencryptDiary(user, oldSymKey, newSymkey)
         prepare.tools.reencryptMedia(user.getUid(), PrivKey, pubkey, retVal[1])
         savemeplan.tools.reencrypt_savemeplan(user, oldSymKey, newSymkey)
+        check.tools.reencrypt_check(user,oldSymKey, newSymkey)
 
         if role == 'User':
             relationsTo = userprofile.models.RelationTo.objects.filter(UserIdFrom=user.getUid())

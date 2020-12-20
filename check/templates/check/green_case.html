@@ -43,7 +43,31 @@
 <hr>
 
 <section class="my-2 mx-1 p-2 rounded" style="background-color: #d4fef8; border-style: solid; border-color: #109075;">
-    <h2>{{ calendar.month }} - {{ calendar.year }}</h2>
+    {% if calendar.month == '1' %}
+    <h2>{{ check.green_case.months.1 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '2' %}
+    <h2>{{ check.green_case.months.2 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '3' %}
+    <h2>{{ check.green_case.months.3 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '4' %}
+    <h2>{{ check.green_case.months.4 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '5' %}
+    <h2>{{ check.green_case.months.5 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '6' %}
+    <h2>{{ check.green_case.months.6 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '7' %}
+    <h2>{{ check.green_case.months.7 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '8' %}
+    <h2>{{ check.green_case.months.8 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '9' %}
+    <h2>{{ check.green_case.months.9 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '10' %}
+    <h2>{{ check.green_case.months.10 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '11' %}
+    <h2>{{ check.green_case.months.11 }} - {{ calendar.year }}</h2>
+    {% elif calendar.month == '12' %}
+    <h2>{{ check.green_case.months.12 }} - {{ calendar.year }}</h2>
+    {% endif %}
     <table class="table text-center" style="border-style: solid;">
         <tbody>
             <tr>
