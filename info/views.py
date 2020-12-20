@@ -15,8 +15,12 @@ def MenuView(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'info': info_lang["info"]
     }
-    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
-    new_entry("g1", user.getAnonId(request.session["PrivKey"]), "info")
+    try:
+        user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    except KeyError:
+        pass
+    else:
+        new_entry("g1", user.getAnonId(request.session["PrivKey"]), "info")
     return render(request, 'info/menu.html', args)
 
 
@@ -34,8 +38,12 @@ def AboutView(request):
         'info': info_lang["info"],
         'text': text
     }
-    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
-    new_entry("i1", user.getAnonId(request.session["PrivKey"]), "abt")
+    try:
+        user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    except KeyError:
+        pass
+    else:
+        new_entry("i1", user.getAnonId(request.session["PrivKey"]), "abt")
     
     return render(request, 'info/about.html', args)
 
@@ -54,8 +62,12 @@ def HowToView(request):
         'info': info_lang["info"],
         'text': text
     }
-    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
-    new_entry("i1", user.getAnonId(request.session["PrivKey"]), "how")
+    try:
+        user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    except KeyError:
+        pass
+    else:
+        new_entry("i1", user.getAnonId(request.session["PrivKey"]), "how")
     
     return render(request, 'info/howto.html', args)
 
@@ -74,8 +86,12 @@ def PrivacyGDPRView(request):
         'info': info_lang["info"],
         'text': text
     }
-    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
-    new_entry("i1", user.getAnonId(request.session["PrivKey"]), "gdpr")
+    try:
+        user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    except KeyError:
+        pass
+    else:
+        new_entry("i1", user.getAnonId(request.session["PrivKey"]), "gdpr")
     
     return render(request, 'info/privacy-gdpr.html', args)
 
@@ -98,8 +114,12 @@ def VolunteeringDisclaimerView(request):
         'text2': text2
     }
     
-    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
-    new_entry("i1", user.getAnonId(request.session["PrivKey"]), "vol")
+    try:
+        user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    except KeyError:
+        pass
+    else:
+        new_entry("i1", user.getAnonId(request.session["PrivKey"]), "vol")
     return render(request, 'info/volunteering_disclaimer.html', args)
 
 
@@ -117,7 +137,11 @@ def ToSView(request):
         'info': info_lang["info"],
         'text': text
     }
-    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
-    new_entry("i1", user.getAnonId(request.session["PrivKey"]), "tos")
+    try:
+        user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    except KeyError:
+        pass
+    else:
+        new_entry("i1", user.getAnonId(request.session["PrivKey"]), "tos")
     
     return render(request, 'info/tos.html', args)
