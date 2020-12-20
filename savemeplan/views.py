@@ -604,6 +604,7 @@ def StepView(request, step):
         }
 
         content['step_title'] = savemeplan_lang['savemeplan']['summary']
+        content['download'] = savemeplan_lang['savemeplan']['download']
 
         if 'SaveMePlanId' in request.session.keys():
             content['steps'] = get_savemeplan_items(user, symkey, request.session['SaveMePlanId'])

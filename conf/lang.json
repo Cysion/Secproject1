@@ -509,6 +509,7 @@
         "available":"Available",
         "replace":"Replace",
         "with": "with",
+        "download":"Download agreement",
 
         "long_texts":{
             "text_to_long":"Your text was too on the previous step so it got choped to the maximum lenght of 64 characters.",
