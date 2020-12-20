@@ -66,7 +66,7 @@ def register_view(request):
                     request.session['UserId'] = sessionsData[0]
                     request.session['PrivKey'] = sessionsData[1].decode("utf-8")
                     request.session['Role'] = sessionsData[2]
-
+                    request.session['seen_backup'] = 0
                     if request.session['Role'] == 'User':
                         tools.global_alerts.add_alert(
                             request,
