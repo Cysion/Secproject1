@@ -46,7 +46,7 @@ textarea:focus {
 
 <h3 style="text-align: center;">{{ name }}</h3>
 
-{% for sessionId, session in content.items reversed %}
+{% for sessionId, session in content.items %}
   <p class="date">{{ session.Datetime }}</p>
     {% for step, stepValue in session.items %}
     {% if step != 'Datetime' %}
