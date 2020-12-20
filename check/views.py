@@ -73,7 +73,7 @@ def GreenCaseView(request):
             calendar['days'].append('')
 
         objects = user.check_set.filter(Date__range=(first_date, last_date)) # Retrieve data from database
-        
+
         for day in objects: # Fill in data into calendar
             calendar['days'].insert(day.getDate().day, day.getRating(user.getSymKey(request.session['PrivKey'])))
 
@@ -91,7 +91,8 @@ def GreenCaseView(request):
         'global_alerts': global_alerts,  # Sending the alerts to template.
         'back': UNIVERSAL_LANG["universal"]["back"],
         'check': check_lang["check"],
-        'calendar': calendar
+        'calendar': calendar,
+        'template': 'base.html'
     }
     user = login.models.User.objects.filter(pk=request.session['UserId'])[0]
     new_entry("g1", user.getAnonId(request.session['PrivKey']), "check", role=request.session['Role'])
@@ -230,4 +231,3 @@ def CheckupView(request):
     }
 
     return render(request, 'check/checkup.html', args)
-
