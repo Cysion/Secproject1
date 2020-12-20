@@ -15,17 +15,13 @@
         <div class="invalid-feedback">{{ form.required }}</div>
     </div>
 
-    {% if alert.email == "badChar" %}
+    {% if alerts.email == "email_does_not_exist" %}
     <div class="alert alert-danger">
-        <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
+      <strong>{{ warning }}!</strong> {{ alert.email_does_not_exist }}
     </div>
-      {% elif alert.email == "email_dont_exist" %}
+    {% elif alerts.database == "database_error" %}
     <div class="alert alert-danger">
-      <strong>{{ alerts.warning }}!</strong> {{ alerts.email_dont_exist }}
-    </div>
-    {% elif alert.email == "email_already_exists" %}
-    <div class="alert alert-danger">
-        <strong>{{ alerts.warning }}!</strong> {{ alerts.email_already_exists }}
+        <strong>{{ warning }}!</strong> {{ alert.relation_allready_exists }}
     </div>
     {% endif %}
 

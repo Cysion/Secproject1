@@ -42,6 +42,26 @@ def step_view(request, step):
 
     step=Current step, is between 0-15. 0, 5, 10, 15 is Part A, B, C, D
     And those between is the actual steps for Save.me Plan ex 1=A1, 7=B2...
+
+    post variables:
+    step 1,2,3,4,5,6,7,9:
+    choosen_item = A text used for autofilling textarea.
+    describe = Text a user enters and want to save on step.
+    rating = A given rating to describe
+
+    step:8
+    bad = a bad thing to replace
+    good = A good thing to replace the the bad thing
+
+    if bad == other
+    use bad_other
+    if good = other
+    use good_other
+
+    step: 13
+    place = a place to go # TODO:
+    if place == other
+    use place_other
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))

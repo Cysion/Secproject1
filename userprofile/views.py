@@ -13,11 +13,7 @@ from prepare.tools import delete_temp_files
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
-
 def profile_view(request):
-    """Main profile view for a user. Used by users and professionals.
-    """
-
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -59,22 +55,7 @@ def profile_view(request):
 
     return render(request, 'userprofile/profile.html', args)
 
-def edit_profile_view(request):
-    """Used to edit user data.
-    If submitting a change request.POST will contain the following keys:
-        first_name - Users first name
-        last_name - Users last name
-        gender - Gender of the user. Is one of the following
-            Male
-            Female
-            Other
-        gender_other - If user choose gender=Other this will contain a text.
-        email - Users email.
-        password - Users entered non hashed password, will be checked and needs to be correct for change to be done.
-
-    request.GET is used for deletion of the entire account.
-    """
-
+def Editprofile_view(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -138,9 +119,9 @@ def edit_profile_view(request):
                 "title": UNIVERSAL_LANG["universal"]["success"],  # Should mostly be success, error or warning. This text is the bold text.
                 "message": profile_lang["userprofile"]["long_texts"]["alerts"]["changed_info_success"]
             }
-            
+
             # Check if global_elerts is in session allready.
-            if "global_alerts" not in request.session.keys():  
+            if "global_alerts" not in request.session.keys():
                 request.session["global_alerts"] = [alert]
             else:
                 request.session["global_alerts"].append(alert)
@@ -177,7 +158,7 @@ def backup_key_view(request):
 
     profile_lang = get_lang(sections=["userprofile"])
     template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
-    privkey = '' 
+    privkey = ''
 
     if request.method == 'POST':
         if userprofile.tools.check_password(request.session['UserId'], request.session['PrivKey'], request.POST['password']):
@@ -197,7 +178,7 @@ def backup_key_view(request):
         'template': template,
         'PrivKey' : privkey
     }
-            
+
     return render(request, 'userprofile/backupkey.html', args)
 
 
@@ -313,7 +294,7 @@ def relations_view(request):
 
 def add_relations_view(request):
     """Used to add a new relation.
-    
+
     If submitting a request to add a relation, request.POST will contain the following keys:
         email = Email address of the reciever
         share_savemeplan = 1 if savemeplan should be shared, else 0
@@ -356,7 +337,9 @@ def add_relations_view(request):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'relations': profile_lang["userprofile"]["relations"],
         'form': profile_lang["userprofile"]["relations"]["form"],
-        'alerts': alerts
+        'alerts': alerts,
+        "alert": profile_lang["userprofile"]["long_texts"]["alerts"],
+        "warning": UNIVERSAL_LANG["universal"]["warning"]
     }
     return render(request, 'userprofile/addrelations.html', args)
 
@@ -446,7 +429,7 @@ def gdpr_view(request):
 
 def research_data_view(request):
     """Used to display all research data that has been collected on a user.
-    
+
     request.GET is used for deletion of a relation.
     """
 
@@ -465,7 +448,7 @@ def research_data_view(request):
             if request.GET['cleared'] == 'true':
                 user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
                 forget_me(user.getAnonId(request.session['PrivKey']))
-                 
+
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
     text = gdpr_csv(user.getAnonId(request.session['PrivKey']))
 
