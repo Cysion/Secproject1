@@ -9,7 +9,7 @@ from science.models import ResearchData
 
 
 ID_DESC={
-    "PROFILE":"Anonymous user profile",
+    "PF":"Anonymous user profile",
     "g2":"page click",
     "g1":"page enter",
     "g3":"page leave",
@@ -35,6 +35,9 @@ CONF = get_conf()
 LOGGER = get_logger("scienceview")
 
 def get_sha(obj) -> str:
+    """returns sha256 hexdigest of obj. returns string
+    obj = bytes of object to be hashed
+    """
     obj = str(obj)
     obj += "a" * (1024-len(obj)) if len(obj) < 1024 else obj
     hashhold = hashlib.sha256()
@@ -42,7 +45,13 @@ def get_sha(obj) -> str:
     return hashhold.hexdigest()
 
 
-def new_entry(action_id:str, anonid: bytes, value:str, role="User", mangle=False):
+def new_entry(action_id:str, anonid: bytes, value, role="User", mangle=False):
+    """add new entry to research database. returns None
+    action_id = identifier of action that is translated to a description by ID_DESC
+    anonid = anonid of user that too action
+    value = special value to be assigend to the id. string or iterable
+    role = role of the user that took the action. defaults to "User"
+    mangle = only add a hashed version of the value to database"""
     if not CONF["research"]["enable_collection"] == "True":
         return
     anonid = get_sha(anonid)
@@ -83,7 +92,7 @@ def forget_me(anonid):
 
 
 def find_me(anonid):
-    #select all in table with anonid and return
+    """generator for all the research data that belongs to a user. """
     anonid = get_sha(anonid).encode("utf-8")
     for data in ResearchData.objects.filter(AnonId=anonid).iterator():
         yield (ID_DESC[data.ActionId], data.Value, data.Time.now())
