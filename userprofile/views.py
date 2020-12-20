@@ -13,11 +13,7 @@ from prepare.tools import delete_temp_files
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
-
 def profile_view(request):
-    """Main profile view for a user. Used by users and professionals.
-    """
-
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -59,22 +55,7 @@ def profile_view(request):
 
     return render(request, 'userprofile/profile.html', args)
 
-def edit_profile_view(request):
-    """Used to edit user data.
-    If submitting a change request.POST will contain the following keys:
-        first_name - Users first name
-        last_name - Users last name
-        gender - Gender of the user. Is one of the following
-            Male
-            Female
-            Other
-        gender_other - If user choose gender=Other this will contain a text.
-        email - Users email.
-        password - Users entered non hashed password, will be checked and needs to be correct for change to be done.
-
-    request.GET is used for deletion of the entire account.
-    """
-
+def Editprofile_view(request):
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
