@@ -51,6 +51,8 @@ def RegisterView(request):
 
             if request.POST["password"] != request.POST["repassword"]:
                 alerts['repassword'] = "repassword"
+            if len(request.POST["password"]) < 6 or len(request.POST["password"]) > 128:
+                alerts["password"] = 'bad_length'
             if login.tools.getUidFromEmail(request.POST["email"]):
                 alerts['email'] = 'email_already_exists'
             if not alerts:
