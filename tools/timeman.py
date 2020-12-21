@@ -1,6 +1,6 @@
 import argparse
 import threading
-import time 
+import time
 import sys
 
 

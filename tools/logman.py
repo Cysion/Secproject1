@@ -2,6 +2,7 @@ import logging
 import os
 import gzip
 from datetime import datetime
+from twelvesteps.settings import BASE_DIR
 try:
     from tools.confman import get_conf
 except ModuleNotFoundError:
@@ -10,14 +11,14 @@ except ModuleNotFoundError:
 
 CONF = get_conf(sections=["logs"])
 
-DEFAULT_DIR = "/home/kevin/Projekt/env/Secproject1/logs"
+DEFAULT_DIR = BASE_DIR / "logs"
 
 def get_logger(name, global_level=logging.INFO, file_level=logging.INFO, term_level=logging.DEBUG, save_dir=DEFAULT_DIR):
     logger = logging.getLogger(name)
     logger.setLevel(global_level)
     formatter = logging.Formatter(f"%(asctime)s - [%(name)s] - [%(levelname)s]:\t%(message)s")
 
-    file_handler = logging.FileHandler(os.path.join(DEFAULT_DIR, f"{name}.log"))
+    file_handler = logging.FileHandler(os.path.join(save_dir, f"{name}.log"))
     file_handler.setLevel(file_level)
     file_handler.setFormatter(formatter)
 
