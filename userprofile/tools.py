@@ -45,8 +45,8 @@ def change_pass(user_id:int, privkey, new_password:str, role:str):
         user.setCreationDate(creation_date)
         user.save()
 
-        prepare.tools.reencryptDiary(user, old_symKey, new_symkey)
-        prepare.tools.reencryptMedia(user.getUid(), privkey, pubkey, ret_val[1])
+        prepare.tools.reencrypt_diary(user, old_symKey, new_symkey)
+        prepare.tools.reencrypt_media(user.getUid(), privkey, pubkey, ret_val[1])
         savemeplan.tools.reencrypt_savemeplan(user, old_symKey, new_symkey)
         check.tools.reencrypt_check(user, old_symKey, new_symkey)
 

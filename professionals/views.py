@@ -126,13 +126,13 @@ def prepare_view(request, UserId, page):
         elif page == 2:
             template = 'prepare/2_practicebreathing.html'
         elif page == 5:
-            contacts=prepare.tools.showContacts(user.getUid(), userPrivKey)
+            contacts=prepare.tools.show_contacts(user.getUid(), userPrivKey)
             template = 'prepare/5_contacts.html'
         elif page == 6:
             template = 'prepare/6_wheretocall.html'
         elif page == 7:
             symKey = user.getSymKey(userPrivKey)
-            diary = prepare.tools.showDiary(user.getUid(), symKey, 'Diary', request.session['UserId'])
+            diary = prepare.tools.show_diary(user.getUid(), symKey, 'Diary', request.session['UserId'])
             template = 'prepare/7_diary.html'
         elif page == 8:
             symKey = user.getSymKey(userPrivKey)
@@ -149,7 +149,7 @@ def prepare_view(request, UserId, page):
                     diaryEntry.setText(symKey, text)
                     diaryEntry.setTimestamp(symKey, now)
                     diaryEntry.save()
-            diary = prepare.tools.showDiary(user.getUid(), symKey, 'Notes', request.session['UserId'])
+            diary = prepare.tools.show_diary(user.getUid(), symKey, 'Notes', request.session['UserId'])
             template = 'prepare/8_therapynotes.html'
         elif page == 3 or page == 4:
             pass
@@ -161,10 +161,10 @@ def prepare_view(request, UserId, page):
         userPrivKey = media.decode("utf-8")
 
         if page == 3:
-            memories = prepare.tools.showAllmemories(user.getUid(), userPrivKey, 's')
+            memories = prepare.tools.show_all_memories(user.getUid(), userPrivKey, 's')
             template = 'prepare/3_supportivememories.html'
         elif page == 4:
-            memories = prepare.tools.showAllmemories(user.getUid(), userPrivKey, 'd')
+            memories = prepare.tools.show_all_memories(user.getUid(), userPrivKey, 'd')
             template = 'prepare/4_destructivememories.html'
         elif page == 1 or page == 2 or page == 5 or page == 6 or page == 7 or page == 8:
             pass
