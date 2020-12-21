@@ -740,7 +740,7 @@ def history_view(request):
 
 def download_contract_view(request):
     """Download a empty contract."""
-    fl_path = 'media/save.me_agreement.pdf'
+    fl_path = MEDIA_ROOT + 'save.me_agreement.pdf'
     filename = 'save.me_agreement.pdf'
 
     fl = open(fl_path, 'rb')
