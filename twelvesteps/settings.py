@@ -122,7 +122,7 @@ default-character-set = utf8
 """
 
 ABS_PATH = ""
-with open("abs_path.cnf") as inf:
+with open(BASE_DIR / "abs_path.cnf") as inf:
     ABS_PATH = inf.readlines()[0].strip()
 
 

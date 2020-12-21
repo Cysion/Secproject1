@@ -1,9 +1,10 @@
 import json
+from twelvesteps.settings import BASE_DIR
 
-DEFAULT_PATH = "conf/"
+DEFAULT_PATH = BASE_DIR / "conf/"
 
 
-def get_lang(path=DEFAULT_PATH + "lang.json", sections = []) -> dict:
+def get_lang(path=DEFAULT_PATH / "lang.json", sections = []) -> dict:
     """Returns language file as dict, returns dict if successful, returns Exception is failed
     Keyword arguments:
     path = path to lang.json file, defaults to "conf/lang.json", useful for using multiple language files
@@ -32,7 +33,7 @@ def get_lang(path=DEFAULT_PATH + "lang.json", sections = []) -> dict:
     return langdict
 
 
-def get_conf(path=DEFAULT_PATH + "conf.json", sections = []):
+def get_conf(path=DEFAULT_PATH / "conf.json", sections = []):
     """Returns config file as dict
     path = path to conf.json file, defaults to "conf/conf.json", useful for using multiple language files
     sections = list of sections in the json file to return, ex ["logs", "misc"]
