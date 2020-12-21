@@ -249,25 +249,24 @@
             <label for="month">{{ check.green_case.select_month}}: </label>
             <select id="month" name="month" required>
                 <optgroup label="{{ check.green_case.months.0 }}">
-                    <option value="1" {% if calendar.year == '1' %} selected {% endif %}>{{ check.green_case.months.1 }}</option>
-                    <option value="2" {% if calendar.year == '2' %} selected {% endif %}>{{ check.green_case.months.2 }}</option>
-                    <option value="3" {% if calendar.year == '3' %} selected {% endif %}>{{ check.green_case.months.3 }}</option>
-                    <option value="4" {% if calendar.year == '4' %} selected {% endif %}>{{ check.green_case.months.4 }}</option>
-                    <option value="5" {% if calendar.year == '5' %} selected {% endif %}>{{ check.green_case.months.5 }}</option>
-                    <option value="6" {% if calendar.year == '6' %} selected {% endif %}>{{ check.green_case.months.6 }}</option>
-                    <option value="7" {% if calendar.year == '7' %} selected {% endif %}>{{ check.green_case.months.7 }}</option>
-                    <option value="8" {% if calendar.year == '8' %} selected {% endif %}>{{ check.green_case.months.8 }}</option>
-                    <option value="9" {% if calendar.year == '9' %} selected {% endif %}>{{ check.green_case.months.9 }}</option>
-                    <option value="10" {% if calendar.year == '10' %} selected {% endif %}>{{ check.green_case.months.10 }}</option>
-                    <option value="11" {% if calendar.year == '11' %} selected {% endif %}>{{ check.green_case.months.11}}</option>
-                    <option value="12" {% if calendar.year == '12' %} selected {% endif %}>{{ check.green_case.months.12 }}</option>
+                    <option value="1" {% if calendar.month == '1' %} selected {% endif %}>{{ check.green_case.months.1 }}</option>
+                    <option value="2" {% if calendar.month == '2' %} selected {% endif %}>{{ check.green_case.months.2 }}</option>
+                    <option value="3" {% if calendar.month == '3' %} selected {% endif %}>{{ check.green_case.months.3 }}</option>
+                    <option value="4" {% if calendar.month == '4' %} selected {% endif %}>{{ check.green_case.months.4 }}</option>
+                    <option value="5" {% if calendar.month == '5' %} selected {% endif %}>{{ check.green_case.months.5 }}</option>
+                    <option value="6" {% if calendar.month == '6' %} selected {% endif %}>{{ check.green_case.months.6 }}</option>
+                    <option value="7" {% if calendar.month == '7' %} selected {% endif %}>{{ check.green_case.months.7 }}</option>
+                    <option value="8" {% if calendar.month == '8' %} selected {% endif %}>{{ check.green_case.months.8 }}</option>
+                    <option value="9" {% if calendar.month == '9' %} selected {% endif %}>{{ check.green_case.months.9 }}</option>
+                    <option value="10" {% if calendar.month == '10' %} selected {% endif %}>{{ check.green_case.months.10 }}</option>
+                    <option value="11" {% if calendar.month == '11' %} selected {% endif %}>{{ check.green_case.months.11}}</option>
+                    <option value="12" {% if calendar.month == '12' %} selected {% endif %}>{{ check.green_case.months.12 }}</option>
                 </optgroup>
             </select>
         </div>
         <div class="form-group col-12 col-md my-1">
             <label for="year">{{ check.green_case.select_year}}: </label>
-            <input type="number" min="2000" max="{% now "Y" %}" id="year" name="year" value="{% now "Y" %}"
-            {% if POST %} value="{{POST.year}}" {% endif %}{# If post already has been submitted #} required>
+            <input type="number" min="2000" max="{% now "Y" %}" id="year" name="year" value="{{ calendar.year }}" required>
         </div>
         <div class="form-group col-12 col-md">
             <button type="submit" id="date" name="date" class="btn btn-info btn-block">{{ check.green_case.go }}</button>
