@@ -38,7 +38,11 @@ then you have to use the built in django database construction feature
 #### Sessions
 
 Since we are using session cookies and django dont clear expired session you need to set up an cronjob. To do this you set the argument clearsessions when running python script manage.py in projekt root folder. You need to run from the virutal enviroment you just created. Exampel
-`/home/kevin/Programmering/Projekt/env/bin/python /home/kevin/Programmering/Projekt/env/twelvesteps/manage.py clearsessions`
+
+```
+/home/kevin/Programmering/Projekt/env/bin/python /home/kevin/Programmering/Projekt/env/twelvesteps/manage.py clearsessions
+```
+
 This needs to be executed atleast once a day.
 
 ## Deployment
