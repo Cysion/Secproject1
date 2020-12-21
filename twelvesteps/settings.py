@@ -49,15 +49,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'breathe.apps.BreatheConfig',
     'call.apps.CallConfig',
     'chat.apps.ChatConfig',
     'check.apps.CheckConfig',
     'home.apps.HomeConfig',
-    'danger.apps.DangerConfig',
     'info.apps.InfoConfig',
     'login.apps.LoginConfig',
-    'practice.apps.PracticeConfig',
     'prepare.apps.PrepareConfig',
     'savemeplan.apps.SavemeplanConfig',
     'science.apps.ScienceConfig',
