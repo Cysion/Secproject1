@@ -75,7 +75,6 @@ def register_view(request):
                             login_lang['login']['long_texts']['alerts']['daily_checkup'],
                             '/check/checkup/'
                         )
-                    request.session.set_expiry(3600)
                     return HttpResponseRedirect(reverse('userprofile:Backupkey'))
 
         args = {
@@ -127,7 +126,6 @@ def login_view(request):
                     )
                     print(user.getName(request.session['PrivKey']))
                     login.tools.survey_time(request, user, request.session['PrivKey'])
-                request.session.set_expiry(3600)
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:
                 login_fail = True
