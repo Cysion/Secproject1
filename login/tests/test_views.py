@@ -94,11 +94,11 @@ class TestViews(TestCase):
             'first_name': 'Göran',
             'last_name': 'Västervik',
             'date_of_birth': '1999-03-28',
-            'gender': 'Other',
-            'gender_other': 'other_gender',
+            'gender': 'Male',
+            'gender_other': '',
             'email': 'valid_mail.99@hotmail.com',
-            'password': 'god',
-            'repassword': 'god',
+            'password': 'testpassword',
+            'repassword': 'testpassword',
             'agree_terms': 'accept'
         })
 
