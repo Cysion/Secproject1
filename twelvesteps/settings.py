@@ -36,7 +36,7 @@ Change to a new SECRET_KEY on deployment server
 with open('/home/kevin/Projekt/env/Secproject1/conf/secret_key') as f:
     SECRET_KEY = f.read().strip()
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURIfTY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
 ALLOWED_HOSTS = ['12steps.kengstrom.se']
