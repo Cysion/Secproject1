@@ -11,6 +11,11 @@ except ModuleNotFoundError:
 
 CONF = get_conf(sections=["logs"])
 
+try:
+    aquire = CONF["logger_aquired_message"] == "True"
+except KeyError:
+    aquire = False
+
 DEFAULT_DIR = BASE_DIR / "logs"
 
 def get_logger(name, global_level=logging.INFO, file_level=logging.INFO, term_level=logging.DEBUG, save_dir=DEFAULT_DIR):
@@ -28,7 +33,8 @@ def get_logger(name, global_level=logging.INFO, file_level=logging.INFO, term_le
 
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
-    logger.info("Logger aquired")
+    if aquire:
+        logger.info("Logger aquired")
     return logger
 
 
