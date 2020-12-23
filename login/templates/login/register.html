@@ -15,7 +15,7 @@
     <label for="first_name">{{ form.first_name }}: </label>
     <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.first_name }}..."
       maxlength="64" id="first_name" name="first_name" {% if POST %} value="{{POST.first_name}}" {% endif %}{# If post already has been submitted #} required>
-    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
+    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
   </div>
   {% if alert.first_name %}
   <div class="alert alert-danger">
@@ -27,7 +27,7 @@
     <label for="last_name">{{ form.last_name }}: </label>
     <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.last_name }}..."
       maxlength="64" id="last_name" name="last_name" {% if POST %} value="{{POST.last_name}}" {% endif %} required>
-    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }}</div>
+    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} {{ form.characters }}</div>
   </div>
   {% if alert.last_name %}
   <div class="alert alert-danger">
