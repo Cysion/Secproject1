@@ -355,7 +355,7 @@ def step_view(request, step):
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][4]} - {savemeplan_lang['savemeplan']['long_texts']['steps'][0]}"
         content['step'] = savemeplan_lang['savemeplan']['mybeh']
 
-        default_options = savemeplan_lang['savemeplan']['long_texts']['emorate']
+        default_options = savemeplan_lang['savemeplan']['long_texts']['behrate']
         top_5 = savemeplan.tools.top5_options(user, 'A4', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = savemeplan.tools.extend_top5(top_5, default_options)
