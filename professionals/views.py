@@ -350,7 +350,9 @@ def check_view(request, UserId):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'check': check_lang["check"],
         'calendar': calendar,
-        'template' : 'base_professionals.html'
+        'template': 'base_professionals.html',
+        'prof': True,
+        'UserId': UserId
     }
 
     return render(request, 'check/green_case.html', args)
