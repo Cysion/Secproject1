@@ -1,6 +1,7 @@
 #!/bin/python
 
 # Functional tests for application 'twelvesteps'
+# OBS! For this script to work, Geckodriver needs to be installed!
 
 from sys import exit, stderr
 from time import sleep

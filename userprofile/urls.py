@@ -6,7 +6,8 @@ app_name = 'userprofile'
 urlpatterns = [
     # ex: /polls/
     path('', views.profile_view, name='Profile'),
-    path('edit/', views.Editprofile_view, name='Edit-profile'),
+    
+    path('edit/', views.edit_profile_view, name='Edit-profile'),
     path('backupkey/', views.backup_key_view, name="Backupkey"),
     path('changepassword/', views.change_pass_view, name="Change-password"),
     path('relations/', views.relations_view, name="Relations"),
