@@ -1,7 +1,3 @@
-* {
-  -webkit-appearance: none;
-}
-
 body{
   padding-top: 100px; /*Padding is needed so nothing comes under navbar*/
   background-color: #e6fff4 !important;
@@ -42,3 +38,8 @@ body{
 .alert {
   text-align: center !important;
 }
+
+.btn {
+  -webkit-appearance: none !important;
+}
+
