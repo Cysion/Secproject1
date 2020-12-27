@@ -68,8 +68,8 @@ def green_case_view(request):
         user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
 
         today = datetime.date.today()
-        calendar['year'] = today.year
-        calendar['month'] = today.month
+        calendar['year'] = str(today.year)
+        calendar['month'] = str(today.month)
 
         first_date = datetime.date(today.year, today.month, 1) # First day in the month
         num_days = monthrange(today.year, today.month) # Number of days in month

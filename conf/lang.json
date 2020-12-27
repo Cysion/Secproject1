@@ -118,7 +118,7 @@
         "welcome":"Welcome to the 12 Steps App!",
         "goto_login":"Login or register here",
         "long_texts":{
-            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam."
+            "description":"Insert App description here."
         }
     },
     "login":{
@@ -363,18 +363,18 @@
             "in_crisis_part2":"CALL",
             "in_crisis_part3":"WE WILL GUIDE YOU!",
             "phone_numbers":{
-                "peer_support":"0708123456",
-                "specialist_consultation":"0708123456",
-                "hospital":"0708123456",
-                "crisis_center":"0708123456",
-                "profession_support_work_related":"0708123456",
-                "in_crisis":"0708123456",
-                "teenager":"0708123456",
-                "senior":"0708123456",
-                "church":"0708123456",
-                "parent":"0708123456",
-                "caregiver":"0708123456",
-                "police":"0708123456"
+                "peer_support":"XXXXXXXXXX",
+                "specialist_consultation":"XXXXXXXXXX",
+                "hospital":"XXXXXXXXXX",
+                "crisis_center":"XXXXXXXXXX",
+                "profession_support_work_related":"XXXXXXXXXX",
+                "in_crisis":"XXXXXXXXXX",
+                "teenager":"XXXXXXXXXX",
+                "senior":"XXXXXXXXXX",
+                "church":"XXXXXXXXXX",
+                "parent":"XXXXXXXXXX",
+                "caregiver":"XXXXXXXXXX",
+                "police":"XXXXXXXXXX"
             }
         },
         "diary":{
@@ -525,7 +525,7 @@
 
         "long_texts":{
             "text_to_long":"Your text was too on the previous step so it got choped to the maximum lenght of 64 characters.",
-            "chat":"You can press this button to start chatting or copy the phonenumber from the contacts bellow",
+            "chat":"Copy a text above and either press the button bellow to open a chat to send it to or send it to a contact below.",
             "describe_info":"You can either choose one of the following items or write your own in textarea bellow. If you press one of the following the textarea will be filled for you.",
             "old_session":"This is a old session of Save.me Plan. When navigating to a new step you will activate a new one.",
             "steps":[

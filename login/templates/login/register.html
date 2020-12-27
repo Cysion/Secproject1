@@ -2,11 +2,6 @@
 
 {% block title %}Register{% endblock %}
 
-{% block statics %}
-{% load static %}
-<link rel="stylesheet" href="{% static "login/register.css" %}">
-{% endblock %}
-
 {% block content %}
 
 <form action="/login/register/" class="was-validated" method="POST">
@@ -15,7 +10,7 @@
     <label for="first_name">{{ form.first_name }}: </label>
     <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.first_name }}..."
       maxlength="64" id="first_name" name="first_name" {% if POST %} value="{{POST.first_name}}" {% endif %}{# If post already has been submitted #} required>
-    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
+    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} {{ form.characters }} </div> {# Give feedback if input empty or longer then 64 chararacters #}
   </div>
   {% if alert.first_name %}
   <div class="alert alert-danger">
@@ -27,7 +22,7 @@
     <label for="last_name">{{ form.last_name }}: </label>
     <input type="text" class="form-control" placeholder="{{ form.placeholder }} {{ form.last_name }}..."
       maxlength="64" id="last_name" name="last_name" {% if POST %} value="{{POST.last_name}}" {% endif %} required>
-    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} 64 {{ form.characters }}</div>
+    <div class="invalid-feedback">{{ form.required }} {{ form.field_requirements }} {{ form.characters }}</div>
   </div>
   {% if alert.last_name %}
   <div class="alert alert-danger">
@@ -76,17 +71,16 @@
       id="email" name="email" {% if POST and not alert.email %} value="{{POST.email}}" {% endif %} required>
     <div class="invalid-feedback">{{ form.required }}.</div>
   </div>
-
   {% if alert.email == "badChar" %}
   <div class="alert alert-danger">
     <strong>{{ alerts.warning }}!</strong> {{ alerts.badChar }}
   </div>
-
   {% elif alert.email == "email_already_exists" %}
   <div class="alert alert-danger">
     <strong>{{ alerts.warning }}!</strong> {{ alerts.email_already_exists }}
   </div>
   {% endif %}
+
   <div class="form-group">
     <label for="password">{{ form.password }}: </label>
     <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.password }}..."
@@ -98,6 +92,7 @@
     <strong>{{ alerts.warning }}!</strong> {{ alerts.password_length }}
   </div>
   {% endif %}
+
   <div class="form-group">
     <label for="repassword">{{ form.repassword }}: </label>
     <input type="password" class="form-control" placeholder="{{ form.placeholder_pwd }} {{ form.repassword }}..."
@@ -109,6 +104,7 @@
     <strong>{{ alerts.warning }}!</strong> {{ alerts.repassword }}
   </div>
   {% endif %}
+  
   <div class="form-check">
     <label class="form-check-label">
       <input type="checkbox" class="form-check-input checkbox-size" name="professional" id="professional" value="1">
@@ -121,9 +117,12 @@
         {{ form.agree_terms }}<a href="/info/tos/" target="_blank">{{ form.terms }}</a>.
     </label>
   </div>
+
   <div class="form-group">
-    <input type="submit" class="btn btn-lg btn-success btn-block" value="{{ form.register }}" style="margin-top:10px;">
+    <input type="submit" class="btn btn-lg btn-success btn-block my-2" value="{{ form.register }}">
   </div>
 </form>
+
 <a href="/login/" class="btn btn-lg btn-danger btn-block">{{ back }}</a>
+
 {% endblock %}

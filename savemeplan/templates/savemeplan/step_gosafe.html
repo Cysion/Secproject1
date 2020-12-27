@@ -15,7 +15,7 @@ textarea:focus {
 </style>
 <section class="row p-2 align-items-center justify-content-between" style="background-color: white; border-style: solid; border-color: #ff66f0;">
     <div class="col-md-4 col page-title">
-        <h4 class="m-2 p-0 text-center"><i class="fas fa-umbrella"></i>Save.Me Plan!</h4>
+        <h4 class="m-2 p-0 text-center"><i class="fas fa-umbrella"></i>{{ feature_title }}!</h4>
     </div>
     <div class="col-md-8">
         <div class="row">
@@ -32,7 +32,7 @@ textarea:focus {
                 <a class="btn btn-outline-info btn-block part-button {% if content.part == 'D' %} active {% endif %}" name="page" href="/savemeplan/15/">D</a>
             </div>
             <div class="col-4 px-1">
-                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'history' %} active {% endif %}" name="page" href="/savemeplan/history/">History</a>
+                <a class="btn btn-outline-info btn-block part-button {% if content.part == 'history' %} active {% endif %}" name="page" href="/savemeplan/history/">{{ history }}</a>
             </div>
         </div>
     </div>
@@ -64,6 +64,5 @@ textarea:focus {
   </div>
   <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:20px;">{{ next_step }}</button>
 </form>
-
 
 {% endblock %}

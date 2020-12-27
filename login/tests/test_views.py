@@ -93,17 +93,16 @@ class TestViews(TestCase):
         response = self.client.post(self.url_Register, {
             'first_name': 'Göran',
             'last_name': 'Västervik',
-            'date_of_birth': '2020-03-28',
-            'gender': 'male',
+            'date_of_birth': '1999-03-28',
+            'gender': 'Male',
             'gender_other': '',
             'email': 'valid_mail.99@hotmail.com',
-            'password': 'god',
-            'repassword': 'god',
+            'password': 'testpassword',
+            'repassword': 'testpassword',
             'agree_terms': 'accept'
         })
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, '/userprofile/backupkey/')
+        self.assertEquals(response.status_code, 302)
         self.assertEqual(User.objects.count(), n_users + 1)
 
 

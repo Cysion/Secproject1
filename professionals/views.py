@@ -321,8 +321,8 @@ def check_view(request, UserId):
     else:
 
         today = datetime.date.today()
-        calendar['year'] = today.year
-        calendar['month'] = today.month
+        calendar['year'] = str(today.year)
+        calendar['month'] = str(today.month)
 
         first_date = datetime.date(today.year, today.month, 1) # First day in the month
         num_days = monthrange(today.year, today.month) # Number of days in month
@@ -350,7 +350,9 @@ def check_view(request, UserId):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'check': check_lang["check"],
         'calendar': calendar,
-        'template' : 'base_professionals.html'
+        'template': 'base_professionals.html',
+        'prof': True,
+        'UserId': UserId
     }
 
     return render(request, 'check/green_case.html', args)

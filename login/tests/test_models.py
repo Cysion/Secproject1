@@ -2,7 +2,7 @@
 from django.db import IntegrityError
 from django.test import TestCase
 
-from login.models import User, Action, ResearchData
+from login.models import User
 from tools.crypto import gen_rsa, secret_scrambler
 
 
@@ -101,8 +101,10 @@ class TestModels(TestCase):
             raise IntegrityError("Database allows creation of users with duplicate email")
 
 
+    """ Commented out due to removal of database tables
+    Saving code since it come in handy if implementing something similar
     def test_Action_ResearchData(self):
-        """ Tests basic functionality of object Action and ResearchData """
+        # Tests basic functionality of object Action and ResearchData
 
         # Creating Action-object
         description = "Hello world!"
@@ -121,5 +123,5 @@ class TestModels(TestCase):
         self.assertEqual(ResearchData.objects.count(), 1)
         self.assertEqual(research_data.ActionId, action)
         self.assertEqual(research_data.AnonId, self.anon_id)
-
+    """
 
