@@ -1,3 +1,6 @@
+* {
+}
+
 body {
   padding-top: 100px; /*Padding is needed so nothing comes under navbar*/
   padding-bottom: 100px;
@@ -38,4 +41,8 @@ body {
 
 .alert {
   text-align: center !important;
+}
+
+.btn {
+  -webkit-appearance: none !important;
 }

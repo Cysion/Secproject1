@@ -5,21 +5,87 @@ from django.urls import reverse
 
 
 from tools.confman import get_lang, get_conf
-from prepare.tools import delete_temp_files
 from science.tools import new_entry
+from calendar import monthrange
+from datetime import date
+
+import prepare.tools
 import login.models
 import tools.global_alerts
 import datetime
 import check.tools
+import check.models
 
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
-def GreenCaseView(request):
-    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
-        return HttpResponseRedirect(reverse('login:Login'))
+def green_case_view(request):
+    """View for checking how your month is going.
 
-    delete_temp_files(request.session)
+    post variables:
+    Used for showing this calender.
+    month = month as number.
+    year = Year in YYYY.
+
+    """
+    if 'UserId' not in request.session.keys():  # This is a check if a user is logged in.
+        return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
+
+    prepare.tools.delete_temp_files(request.session)
+
+
+    calendar = { # Calendar variables
+        'days': [],
+        'year': '',
+        'month': ''
+    }
+
+    if request.method == 'POST': # Searched month & year
+        if request.POST.keys():
+            if 'month' and 'year' in request.POST.keys():
+                user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+
+                calendar['year'] = request.POST['year']
+                calendar['month'] = request.POST['month']
+
+                first_date = datetime.date(int(request.POST['year']), int(request.POST['month']), 1) # First day in the month
+                num_days = monthrange(int(request.POST['year']), int(request.POST['month'])) # Number of days in month
+                last_date = datetime.date(int(request.POST['year']), int(request.POST['month']), num_days[1]) # Last day in month
+
+                calendar['days'].append(num_days[1]) # Provide number of days in month for calendar
+
+                for day in range(num_days[1]): # Prepare slots for each day
+                    calendar['days'].append('')
+
+                objects = user.check_set.filter(Date__range=(first_date, last_date)) # Retrieve data from database
+
+                for day in objects: # Fill in data into calendar
+                    calendar['days'].insert(day.getDate().day, day.getRating(user.getSymKey(request.session['PrivKey'])))
+
+    else:
+        user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+
+        today = datetime.date.today()
+        calendar['year'] = today.year
+        calendar['month'] = today.month
+
+        first_date = datetime.date(today.year, today.month, 1) # First day in the month
+        num_days = monthrange(today.year, today.month) # Number of days in month
+        last_date = datetime.date(today.year,today.month, num_days[1]) # Last day in month
+
+        calendar['days'].append(num_days[1]) # Provide number of days in month for calendar
+
+        for day in range(num_days[1]): # Prepare slots for each day
+            calendar['days'].append('')
+
+        objects = user.check_set.filter(Date__range=(first_date, last_date)) # Retrieve data from database
+
+        for day in objects: # Fill in data into calendar
+            calendar['days'].insert(day.getDate().day, day.getRating(user.getSymKey(request.session['PrivKey'])))
+
+
 
     check_lang = get_lang(sections=["check"])
 
@@ -32,18 +98,23 @@ def GreenCaseView(request):
         'menu_titles': UNIVERSAL_LANG["universal"]["titles"],
         'global_alerts': global_alerts,  # Sending the alerts to template.
         'back': UNIVERSAL_LANG["universal"]["back"],
-        'check': check_lang["check"]
+        'check': check_lang["check"],
+        'calendar': calendar,
+        'template': 'base.html'
     }
     user = login.models.User.objects.filter(pk=request.session['UserId'])[0]
     new_entry("g1", user.getAnonId(request.session['PrivKey']), "check", role=request.session['Role'])
     return render(request, 'check/green_case.html', args)
 
 
-def WellFeelingView(request):
-    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+def well_feeling_view(request):
+    """Not fully implented. View for checking how you are doing on daily checkup.
+    Shows graph"""
+    if 'UserId' not in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
-
-    delete_temp_files(request.session)
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
+    prepare.tools.delete_temp_files(request.session)
 
     check_lang = get_lang(sections=["check"])
 
@@ -62,11 +133,13 @@ def WellFeelingView(request):
     return render(request, 'check/well_feeling.html', args)
 
 
-def SaveMePlanView(request):
+def saveme_plan_view(request):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
-    delete_temp_files(request.session)
+    prepare.tools.delete_temp_files(request.session)
 
     check_lang = get_lang(sections=["check"])
 
@@ -85,11 +158,14 @@ def SaveMePlanView(request):
     return render(request, 'check/save_me_plan.html', args)
 
 
-def PracticeSelfCareView(request):
-    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+def practice_self_care_view(request):
+    """Not fully implemented. Check how your practive is going."""
+    if 'UserId' not in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
-    delete_temp_files(request.session)
+    prepare.tools.delete_temp_files(request.session)
 
     check_lang = get_lang(sections=["check"])
 
@@ -107,13 +183,18 @@ def PracticeSelfCareView(request):
 
     return render(request, 'check/practice_self_care.html', args)
 
-def CheckupView(request):
-    """Daily checkup page where user says how their day is. Using method GET for value."""
-    if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
+def checkup_view(request):
+    """Daily checkup page where user says how their day is. Using method GET for value.
+
+    get variables:
+    day = is either green, orange or red. Used to describe how your day is going
+    """
+    if 'UserId' not in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     check_lang = get_lang(sections=["check"])
-    day = datetime.date(2020, 12, 12)
 
     if request.GET:
         if 'day' in request.GET.keys():
@@ -143,12 +224,12 @@ def CheckupView(request):
                         check_entry.setRating(symkey, request.GET['day'])
                         check_entry.save()
                         tools.global_alerts.add_alert(request, 'success', UNIVERSAL_LANG['universal']['success'], check_lang['check']['could_save'])
+                        new_entry("c1", user.getAnonId(request.session['PrivKey']), request.GET['day'], role=request.session['Role'])
                         return HttpResponseRedirect(reverse('check:green-case'))
 
                     except Exception as e:
                         check_entry.delete()
                         tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['error'], check_lang['check']['could_not_save'])
-                new_entry("c1", user.getAnonId(request.session['PrivKey']), request.GET['day'], role=request.session['Role'])
             else:
                 tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['error'], check_lang['check']['could_not_save'])
 

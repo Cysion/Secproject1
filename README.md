@@ -15,7 +15,7 @@ password = database_user_password
 default-character-set = utf8
 ```
 After this is done, you should [generate a new django secret key](https://djecrety.ir/) which you should paste into **conf/secret_key**.  
-  
+
 After having setup surrounding dependencies, you should set up the virtual environment for the app. make sure you use python 3.8, or a later compatible version, as well as pip installed. Install python virtual environment manager with your package manager or with pip  
 `pip install virutalenv`  
 then use virtualenv to set up a virtual environment for the app
@@ -25,17 +25,21 @@ now, and in the future when launching the app, to use the environment
 now being all set you can either use the **makefile** to set up the project (recommended)  
 `make -f makefile all`  
 or follow this step by step guide (not recommended):  
-  
+
 update to the latest version of the repository and pip  
 `git pull`  
 `pip install --upgrade pip`  
-then install the required python libraries 
+then install the required python libraries
 **NOTE:** the version on most python libraries have been **FROZEN**, you will have to upgrade them **MANUALLY**  
 `pip install -r requirements.txt`  
 then you have to use the built in django database construction feature  
 `python manage.py migrate`  
-if the command succeds you can start the development server by executing  
-`python manage.py runserver`  
+
+#### Sessions
+
+Since we are using session cookies and django dont clear expired session you need to set up an cronjob. To do this you set the argument clearsessions when running python script manage.py in projekt root folder. You need to run from the virutal enviroment you just created. Exampel
+`/home/kevin/Programmering/Projekt/env/bin/python /home/kevin/Programmering/Projekt/env/twelvesteps/manage.py clearsessions`
+This needs to be executed atleast once a day.
 
 ## Deployment
 There are a couple of things that are vital to the deployment of a django webserver. Refer to the [django deployment checklist](https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/) as our implementation deploys as standard.  

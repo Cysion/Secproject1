@@ -8,8 +8,8 @@
 <form enctype="multipart/form-data" action="/prepare/memory/add/" method="POST"> {# enctype="multipart/form-data" is needed for file uploads to work. #}
   {% csrf_token %}
   <div class="form-group">
-    <label for="title">{{ prepare.title }}:</label>
-    <input type="text" class="form-control" placeholder="{{ prepare.placeholder }} {{ prepare.title|lower }}..."
+    <label for="title">{{ prepare.memory }}:</label>
+    <input type="text" class="form-control" placeholder="{{ prepare.add_a_memory|lower }}..."
     id="title" name="title" maxlength="64" {% if POST.title %} value="{{ POST.title }}" {% endif %}>
   </div>
   {% if alerts.title %}

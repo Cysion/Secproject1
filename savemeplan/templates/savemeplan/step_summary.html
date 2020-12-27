@@ -49,14 +49,16 @@ textarea:focus {
 {% endif %}
 
 {% for step in content.steps %}
-<div class="summary_item" style="background-color: {{ step.2 }}">
+<div class="summary_item" style="background-color: {{ step.3 }}">
   <div class="summary_step">
     <b>
-      {{ step.0 }} - {{ step.3 }}:
-    </b>
+      {{ step.0 }} - {{ step.4 }}:
+    </b>{% if step.2 != '-1' %}{{ content.rating }} : {{ step.2 }}{% endif %}
   </div>
   {{ step.1 }}
 </div>
 {% endfor %}
+
+<a href="/savemeplan/agreement.pdf" target="_blank" class="btn btn-primary btn-block btn-lg">{{ content.download }}</a>
 
 {% endblock %}

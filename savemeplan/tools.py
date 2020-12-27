@@ -150,7 +150,12 @@ def get_savemeplan_items(user, symkey, id=-1, b3_pritty=True):
     """Get all items from savemeplan. Returns a list with step data. Step data
     is a list with values in index order (0) Step, (1) Text and (2) Rating.
 
+    user = User object. The user which Save.Me Plan session which this function
+    retrieves.
+    symkey = Users AES-key used for decryption in this function.
     id = the Save.me Plan id. If none sent get from the latest item from user.
+    b3_pritty = If step B3 should return a more readable string. Instead of
+    bad;good it returns 'Replace bad with good'.
     """
     savemeplan_data = []
     if id == -1:
@@ -165,29 +170,50 @@ def get_savemeplan_items(user, symkey, id=-1, b3_pritty=True):
         for step in steps:
             smp_step = step.getStep(symkey)
             smp_text = step.getText(symkey)
+            smp_rating = step.getValue(symkey)
 
             if b3_pritty and smp_step == 'B3':  # Step B3 will have on the format <bad thing>;<good thing>
                 smp_lang = get_lang(sections=['savemeplan'])
                 smp_text = f"{smp_lang['savemeplan']['replace']} {smp_text}"
                 smp_text = smp_text.replace(';', f" {smp_lang['savemeplan']['with']} ")
 
-            savemeplan_data.append([smp_step, smp_text])
+            savemeplan_data.append([smp_step, smp_text, smp_rating])
 
         savemeplan_data.sort(key=lambda x: x[0])  # Sort by step.
 
     return savemeplan_data
 
 def get_step_data(SaveMePlanId, user, symkey, step):
+    """Decrpt data from a step on Save.Me Plan. Returns (text, rating) in tuple.
+
+    SaveMePlanId = Save.Me Plan session id
+    user = User object.
+    symkey = Users AES-key used for decryption in this function.
+    step = which step on Save.Me Plan
+    """
     data = ''
+    rating = ''
     done_steps = get_savemeplan_items(user, symkey, SaveMePlanId, False)
     for itt_step in done_steps:
         if itt_step[0] == step:
             data = itt_step[1]
+            rating = int(itt_step[2])
 
-    return data
+    return (data, rating)
 
 
 def get_all_savemeplan_items(user, symkey):
+    """Decrypt all Save.Me Plan saved inputs. Returns dictonary where keys are
+    Save.Me Plan session ids and value is a second dictonary. The second
+    dictonary keys are the step and element is decrypted data. The decrypted
+    data is a dictonary with keys
+    Key = Save.Me Plan step
+    Text = Saved input from user
+    Value = saved rating.
+
+    user = User object. The user which all data should be retrieved.
+    symkey = Users AES-key used for decryption in this function.
+    """
     entries = SaveMePlan.objects.filter(UserId=user)
     pageDict = dict()
     for entry in entries:
@@ -214,11 +240,17 @@ def get_all_savemeplan_items(user, symkey):
     return pageDict
 
 
-def reencrypt_savemeplan(user, oldSymkey, newSymkey):
+def reencrypt_savemeplan(user, old_symkey, new_symkey):
+    """Reencrypts all Save.Me Plan data.
+
+    user = User object. The user which all data should be reencrypted.
+    old_symkey = Old AES-key used for decryption in this function.
+    new_symkey = New AES-key used for encryption in this function.
+    """
     entries = SaveMePlan.objects.filter(UserId=user)
     for entry in entries:
-        entry.setStep(newSymkey, entry.getStep(oldSymkey))
-        entry.setText(newSymkey, entry.getText(oldSymkey))
-        entry.setValue(newSymkey, entry.getValue(oldSymkey))
-        entry.setTime(newSymkey, entry.getTime(oldSymkey))
+        entry.setStep(new_symkey, entry.getStep(old_symkey))
+        entry.setText(new_symkey, entry.getText(old_symkey))
+        entry.setValue(new_symkey, entry.getValue(old_symkey))
+        entry.setTime(new_symkey, entry.getTime(old_symkey))
         entry.save()

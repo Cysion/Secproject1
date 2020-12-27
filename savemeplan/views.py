@@ -1,17 +1,19 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 # Create your views here.
 
 from tools.confman import get_lang  # Needed for retrieving text from language file
 from savemeplan.models import SaveMePlan, Contacts
 from login.models import User
-from savemeplan.tools import top5_options, top_5_bad_good, extend_top5, decrypt_steps, get_savemeplan_items, get_step_data
-from prepare.tools import delete_temp_files
-from tools.global_alerts import add_alert
+import tools.global_alerts
 from science.tools import new_entry
+from twelvesteps.settings import MEDIA_ROOT
 import time
 import savemeplan.tools
+import mimetypes
+import prepare.tools
+
 
 UNIVERSAL_LANG = get_lang(sections=["universal"])  # Needed to get universal lang texts.
 
@@ -30,24 +32,45 @@ STEP_COLORS = {  # Main color for that step.
     'C4': '#ff4040',
 }
 
-def StartView(request):
-
+def start_view(request):
+    """Redirect to step_view with step=0"""
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
     return HttpResponseRedirect(reverse('savemeplan:Step', args=(0,)))  # Redirect user to savemeplan part A
 
-def StepView(request, step):
-    """
-    Main Save.me Plan view. Handles all interfaces and saving to database for each step.
+def step_view(request, step):
+    """Main Save.me Plan view. Handles all interfaces and saving to database for each step.
 
     step=Current step, is between 0-15. 0, 5, 10, 15 is Part A, B, C, D
     And those between is the actual steps for Save.me Plan ex 1=A1, 7=B2...
+
+    post variables:
+    step 1,2,3,4,5,6,7,9:
+    choosen_item = A text used for autofilling textarea.
+    describe = Text a user enters and want to save on step.
+    rating = A given rating to describe
+
+    step:8
+    bad = a bad thing to replace
+    good = A good thing to replace the the bad thing
+
+    if bad == other
+    use bad_other
+    if good = other
+    use good_other
+
+    step: 13
+    place = a place to go # TODO:
+    if place == other
+    use place_other
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
-    delete_temp_files(request.session)
+    prepare.tools.delete_temp_files(request.session)
 
     user = User.objects.filter(pk=request.session['UserId'])[0]
     symkey = user.getSymKey(request.session['PrivKey'])
@@ -91,134 +114,150 @@ def StepView(request, step):
                     request.session['SaveMePlanId'] = 0
 
             current_smp_session = user.savemeplan_set.filter(SaveMePlanId=request.session['SaveMePlanId'])
-            done_steps = decrypt_steps(current_smp_session, symkey)
+            done_steps = savemeplan.tools.decrypt_steps(current_smp_session, symkey)
 
-            foundId = -1
+            found_id = -1
             for item in done_steps:
                 if item[1] == steps[step]:
-                    foundId = item[0]
+                    found_id = item[0]
 
-            if foundId == -1:
+            if found_id == -1:
                 savemeplan_step = SaveMePlan(SaveMePlanId=request.session['SaveMePlanId'], UserId=user)
             else:  # User is changing on a previously saved step
-                savemeplan_step = SaveMePlan.objects.filter(pk=foundId)[0]
+                savemeplan_step = SaveMePlan.objects.filter(pk=found_id)[0]
 
             if step in [1, 2, 3, 4, 6, 7, 9]:  # Is using step_default.html template
+                if len(request.POST['describe']) != 0:
+                    if found_id == -1:
+                        savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
-                if foundId == -1:
-                    savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
-
-                if 'describe' in request.POST.keys():
-                    if len(request.POST['describe']) != 0:
-                        if len(request.POST['describe']) <= 64:
-                            savemeplan_step.setText(symkey,request.POST['describe'])
-                        else:
-                            savemeplan_step.setText(symkey, request.POST['describe'][:64])
-                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
-                    elif foundId == -1:
+                    if 'describe' in request.POST.keys():
+                        if len(request.POST['describe']) != 0:
+                            if len(request.POST['describe']) <= 64:
+                                savemeplan_step.setText(symkey,request.POST['describe'])
+                            else:
+                                savemeplan_step.setText(symkey, request.POST['describe'][:64])
+                                tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                        elif found_id == -1:
+                            savemeplan_step.setText(symkey, 'EMPTY')
+                    elif found_id == -1:
                         savemeplan_step.setText(symkey, 'EMPTY')
-                elif foundId == -1:
-                    savemeplan_step.setText(symkey, 'EMPTY')
 
-                if 'rating' in request.POST.keys():
-                    if len(request.POST['rating']) != 0:
-                        savemeplan_step.setValue(symkey, request.POST['rating'])
-                    elif foundId == -1:
+                    if 'rating' in request.POST.keys():
+                        if len(request.POST['rating']) != 0:
+                            savemeplan_step.setValue(symkey, request.POST['rating'])
+                        elif found_id == -1:
+                            savemeplan_step.setValue(symkey, '-1')
+                    elif found_id == -1:
                         savemeplan_step.setValue(symkey, '-1')
-                elif foundId == -1:
-                    savemeplan_step.setValue(symkey, '-1')
 
-                savemeplan_step.setTime(symkey, str(int(time.time())))
+                    savemeplan_step.setTime(symkey, str(int(time.time())))
 
-                savemeplan_step.save()
+                    savemeplan_step.save()
+                elif found_id != -1:
+                    savemeplan_step.delete()
 
             elif step == 8:  # Replace a bad thing with a good thing step.
+                if 'bad' and 'good' in request.POST.keys():
 
-                if foundId == -1:
-                    savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
+                    if (((request.POST['bad'] == 'bad_other'
+                        and len(request.POST['bad_other']) != 0)
+                        and (request.POST['good'] == 'good_other'
+                        and len(request.POST['good_other']) != 0))
+                        or request.POST['bad'] != 'bad_other'
+                        or request.POST['good'] != 'good_other'):
+                        if found_id == -1:
+                            savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
-                replace = ''  # Will have format <bad>;<good> IF one of them is empty they will be replaced by EMPTY
+                        replace = ''  # Will have format <bad>;<good> IF one of them is empty they will be replaced by EMPTY
 
-                if 'bad' in request.POST.keys():
-                    if request.POST['bad'] != 'other':
-                        if len(request.POST['bad']) <= 64:
-                            replace = f"{request.POST['bad']};"
-                        else:
-                            replace = f"{request.POST['bad'][:64]};"
-                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                        if 'bad' in request.POST.keys():
+                            if request.POST['bad'] != 'other':
+                                if len(request.POST['bad']) <= 64:
+                                    replace = f"{request.POST['bad']};"
+                                else:
+                                    replace = f"{request.POST['bad'][:64]};"
+                                    tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
-                    else:
-                        if len(request.POST['bad_other']) != 0:
-                            if len(request.POST['bad_other']) <= 64:
-                                replace = f"{request.POST['bad_other']};"
                             else:
-                                replace = f"{request.POST['bad_other'][:64]};"
-                                add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                                if len(request.POST['bad_other']) != 0:
+                                    if len(request.POST['bad_other']) <= 64:
+                                        replace = f"{request.POST['bad_other']};"
+                                    else:
+                                        replace = f"{request.POST['bad_other'][:64]};"
+                                        tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
+                                else:
+                                    replace = 'EMPTY;'
                         else:
                             replace = 'EMPTY;'
-                else:
-                    replace = 'EMPTY;'
 
-                if 'good' in request.POST.keys():
-                    if request.POST['good'] != 'other':
-                        if len(request.POST['good']) <= 64:
-                            replace = f"{replace}{request.POST['good']}"
-                        else:
-                            replace = f"{request.POST['good'][:64]};"
-                            add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                        if 'good' in request.POST.keys():
+                            if request.POST['good'] != 'other':
+                                if len(request.POST['good']) <= 64:
+                                    replace = f"{replace}{request.POST['good']}"
+                                else:
+                                    replace = f"{request.POST['good'][:64]};"
+                                    tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
-                    else:
-                        if len(request.POST['good_other']) != 0:
-                            if len(request.POST['good_other']) <= 64:
-                                replace = f"{replace}{request.POST['good_other']}"
                             else:
-                                replace = f"{request.POST['good_other'][:64]};"
-                                add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                                if len(request.POST['good_other']) != 0:
+                                    if len(request.POST['good_other']) <= 64:
+                                        replace = f"{replace}{request.POST['good_other']}"
+                                    else:
+                                        replace = f"{request.POST['good_other'][:64]};"
+                                        tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                                else:
+                                    replace = f"{replace}EMPTY"
+
                         else:
                             replace = f"{replace}EMPTY"
-
-                else:
-                    replace = f"{replace}EMPTY"
-
-                if replace != 'EMPTY;EMPTY':
-                    savemeplan_step.setText(symkey, replace)
-
-                savemeplan_step.setValue(symkey, '-1')
-                savemeplan_step.setTime(symkey, str(int(time.time())))
-                savemeplan_step.save()
+                        if replace != 'EMPTY;EMPTY':
+                            savemeplan_step.setText(symkey, replace)
+                            savemeplan_step.setValue(symkey, '-1')
+                            savemeplan_step.setTime(symkey, str(int(time.time())))
+                            savemeplan_step.save()
+                    elif found_id != -1:
+                        savemeplan_step.delete()
+                elif found_id != -1:
+                    savemeplan_step.delete()
 
             elif step == 13:  # Go to a safe place step
+                if ('place' in request.POST.keys()
+                    and (request.POST['place'] != 'other'
+                    or (request.POST['place'] == 'other'
+                    and len(request.POST['place_other']) != 0))):
+                    if found_id == -1:
+                        savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
 
-                if foundId == -1:
-                    savemeplan_step.setStep(symkey, steps[step])  # Save step as a user reads it
+                    goto = ''
 
-                goto = ''
+                    if 'place' in request.POST.keys():
+                        if request.POST['place'] != 'other':
+                            goto = request.POST['place']
 
-                if 'place' in request.POST.keys():
-                    if request.POST['place'] != 'other':
-                        goto = request.POST['place']
-
-                    else:
-                        if len(request.POST['place_other']) != 0:
-                            goto = request.POST['place_other']
                         else:
-                            goto = 'EMPTY'
+                            if len(request.POST['place_other']) != 0:
+                                goto = request.POST['place_other']
+                            else:
+                                goto = 'EMPTY'
 
-                else:
-                    goto = 'EMPTY'
-
-                if foundId == -1:
-                    if len(goto) <= 64:
-                        savemeplan_step.setText(symkey, goto)
                     else:
-                        savemeplan_step.setText(symkey, goto[:64])
-                        add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
+                        goto = 'EMPTY'
 
-                savemeplan_step.setValue(symkey, '-1')
-                savemeplan_step.setTime(symkey, str(int(time.time())))
+                    if found_id == -1:
+                        if len(goto) <= 64:
+                            savemeplan_step.setText(symkey, goto)
+                        else:
+                            savemeplan_step.setText(symkey, goto[:64])
+                            tools.global_alerts.add_alert(request, 'warning', UNIVERSAL_LANG['universal']['warning'], savemeplan_lang['savemeplan']['long_texts']['text_to_long'])
 
-                savemeplan_step.save()
+                    savemeplan_step.setValue(symkey, '-1')
+                    savemeplan_step.setTime(symkey, str(int(time.time())))
+
+                    savemeplan_step.save()
+                elif found_id != -1:
+                    savemeplan_step.delete()
 
             return HttpResponseRedirect(reverse('savemeplan:Step', args=(step+1,)))
 
@@ -245,13 +284,13 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['mysit']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['sitrate']
-        top_5 = top5_options(user, 'A1', symkey)  # Get most used options
+        top_5 = savemeplan.tools.top5_options(user, 'A1', symkey)  # Get most used options
         if len(top_5) < 5:
-            top_5 = extend_top5(top_5, default_options)
+            top_5 = savemeplan.tools.extend_top5(top_5, default_options)
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A1')
+            content['data'] = savemeplan.tools.get_step_data(request.session['SaveMePlanId'], user, symkey, 'A1')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['sittext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_sit']  # Rating text
@@ -270,13 +309,13 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['myemo']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['emorate']
-        top_5 = top5_options(user, 'A2', symkey)  # Get most used options
+        top_5 = savemeplan.tools.top5_options(user, 'A2', symkey)  # Get most used options
         if len(top_5) < 5:
-            top_5 = extend_top5(top_5, default_options)
+            top_5 = savemeplan.tools.extend_top5(top_5, default_options)
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A2')
+            content['data'] = savemeplan.tools.get_step_data(request.session['SaveMePlanId'], user, symkey, 'A2')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['emotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_emo']  # Rating text
@@ -291,18 +330,17 @@ def StepView(request, step):
         title = f"{title} - {savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][3]}"
         content['part'] = 'A'
 
-
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][3]} - {savemeplan_lang['savemeplan']['long_texts']['steps'][0]}"
-        content['step'] =  savemeplan_lang['savemeplan']['mytho']
+        content['step'] = savemeplan_lang['savemeplan']['mytho']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['thorate']
-        top_5 = top5_options(user, 'A3', symkey)  # Get most used options
+        top_5 = savemeplan.tools.top5_options(user, 'A3', symkey)  # Get most used options
         if len(top_5) < 5:
-            top_5 = extend_top5(top_5, default_options)
+            top_5 = savemeplan.tools.extend_top5(top_5, default_options)
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A3')
+            content['data'] = savemeplan.tools.get_step_data(request.session['SaveMePlanId'], user, symkey, 'A3')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['thotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_tho']
@@ -317,16 +355,16 @@ def StepView(request, step):
         content['part'] = 'A'
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][4]} - {savemeplan_lang['savemeplan']['long_texts']['steps'][0]}"
-        content['step'] =  savemeplan_lang['savemeplan']['mybeh']
+        content['step'] = savemeplan_lang['savemeplan']['mybeh']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['emorate']
-        top_5 = top5_options(user, 'A4', symkey)  # Get most used options
+        top_5 = savemeplan.tools.top5_options(user, 'A4', symkey)  # Get most used options
         if len(top_5) < 5:
-            top_5 = extend_top5(top_5, default_options)
+            top_5 = savemeplan.tools.extend_top5(top_5, default_options)
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'A4')
+            content['data'] = savemeplan.tools.get_step_data(request.session['SaveMePlanId'], user, symkey, 'A4')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['emotext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_beh']
@@ -356,16 +394,16 @@ def StepView(request, step):
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['calrate']
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][5]} - {savemeplan_lang['savemeplan']['calmtitle'].upper()}"
-        content['step'] =  savemeplan_lang['savemeplan']['calm_step']
+        content['step'] = savemeplan_lang['savemeplan']['calm_step']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['calrate']
-        top_5 = top5_options(user, 'B1', symkey)  # Get most used options
+        top_5 = savemeplan.tools.top5_options(user, 'B1', symkey)  # Get most used options
         if len(top_5) < 5:
-            top_5 = extend_top5(top_5, default_options)
+            top_5 = savemeplan.tools.extend_top5(top_5, default_options)
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B1')
+            content['data'] = savemeplan.tools.get_step_data(request.session['SaveMePlanId'], user, symkey, 'B1')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['calmtext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_calm']
@@ -383,13 +421,13 @@ def StepView(request, step):
         content['step'] = savemeplan_lang['savemeplan']['my_route']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['rourate']
-        top_5 = top5_options(user, 'B2', symkey)  # Get most used options
+        top_5 = savemeplan.tools.top5_options(user, 'B2', symkey)  # Get most used options
         if len(top_5) < 5:
-            top_5 = extend_top5(top_5, default_options)
+            top_5 = savemeplan.tools.extend_top5(top_5, default_options)
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B2')
+            content['data'] = savemeplan.tools.get_step_data(request.session['SaveMePlanId'], user, symkey, 'B2')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['routtext']
         content['rate'] = savemeplan_lang['savemeplan']['rate_rout']
@@ -405,24 +443,24 @@ def StepView(request, step):
         content['part'] = 'B'
 
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][3]} - {savemeplan_lang['savemeplan']['repltitle']}"
-        content['step'] =  savemeplan_lang['savemeplan']['repltitle']
+        content['step'] = savemeplan_lang['savemeplan']['repltitle']
 
-        default_bad =  savemeplan_lang['savemeplan']['long_texts']['repbad']
+        default_bad = savemeplan_lang['savemeplan']['long_texts']['repbad']
         default_good = savemeplan_lang['savemeplan']['long_texts']['repgood']
-        top_5 = top_5_bad_good(user, symkey)
+        top_5 = savemeplan.tools.top_5_bad_good(user, symkey)
         content['options'] = list()
 
         if 'SaveMePlanId' in request.session.keys():
-            text = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B3').split(';')
+            text = savemeplan.tools.get_step_data(request.session['SaveMePlanId'], user, symkey, 'B3')[0].split(';')
             if len(text) == 2:
                 content['text_bad'] = text[0]
                 content['text_good'] = text[1]
 
         if len(top_5[0]) < 5:
-            top_5[0] = extend_top5(top_5[0], default_bad)
+            top_5[0] = savemeplan.tools.extend_top5(top_5[0], default_bad)
 
         if len(top_5[1]) < 5:
-            top_5[1] = extend_top5(top_5[1], default_good)
+            top_5[1] = savemeplan.tools.extend_top5(top_5[1], default_good)
 
         for i in range(len(top_5[0])):
             content['options'].append((top_5[0][i], top_5[1][i]))
@@ -444,13 +482,13 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['my_values']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['protect']
-        top_5 = top5_options(user, 'B4', symkey)  # Get most used options
+        top_5 = savemeplan.tools.top5_options(user, 'B4', symkey)  # Get most used options
         if len(top_5) < 5:
-            top_5 = extend_top5(top_5, default_options)
+            top_5 = savemeplan.tools.extend_top5(top_5, default_options)
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():  # Check if user allready submittet a value.
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'B4')
+            content['data'] = savemeplan.tools.get_step_data(request.session['SaveMePlanId'], user, symkey, 'B4')
 
         content['describe_placeholder'] = savemeplan_lang['savemeplan']['name_values']
         content['rate'] = savemeplan_lang['savemeplan']['rate_values']
@@ -551,13 +589,13 @@ def StepView(request, step):
         content['step'] =  savemeplan_lang['savemeplan']['go_to_safe']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['safe']
-        top_5 = top5_options(user, 'C3', symkey)  # Get most used options
+        top_5 = savemeplan.tools.top5_options(user, 'C3', symkey)  # Get most used options
         if len(top_5) < 5:
-            top_5 = extend_top5(top_5, default_options)
+            top_5 = savemeplan.tools.extend_top5(top_5, default_options)
         content['options'] = top_5
 
         if 'SaveMePlanId' in request.session.keys():
-            content['text'] = get_step_data(request.session['SaveMePlanId'], user, symkey, 'C3')
+            content['data'] = savemeplan.tools.get_step_data(request.session['SaveMePlanId'], user, symkey, 'C3')
 
         content['other_placeholder'] = savemeplan_lang['savemeplan']['add_safe']
         content['other'] = savemeplan_lang['savemeplan']['other']
@@ -603,13 +641,15 @@ def StepView(request, step):
         }
 
         content['step_title'] = savemeplan_lang['savemeplan']['summary']
+        content['download'] = savemeplan_lang['savemeplan']['download']
 
         if 'SaveMePlanId' in request.session.keys():
-            content['steps'] = get_savemeplan_items(user, symkey, request.session['SaveMePlanId'])
+            content['steps'] = savemeplan.tools.get_savemeplan_items(user, symkey, request.session['SaveMePlanId'])
             del request.session['SaveMePlanId']  # User is now done with this session.
         else:
             content['old'] = savemeplan_lang['savemeplan']['long_texts']['old_session']
-            content['steps'] = get_savemeplan_items(user, symkey)
+            content['steps'] = savemeplan.tools.get_savemeplan_items(user, symkey)
+            content['rating'] = savemeplan_lang['savemeplan']['rating']
 
         for smp_step in content['steps']:
             smp_step.append(STEP_COLORS[smp_step[0]])
@@ -631,9 +671,12 @@ def StepView(request, step):
     new_entry("s3", user.getAnonId(request.session['PrivKey']), f"step {step}", role=request.session['Role'])
     return render(request, template, args)
 
-def HistoryView(request):
+def history_view(request):
+    """Diplay a users Save.Me Plan history"""
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
+    elif request.session["Role"] != "User":
+        return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     savemeplan_lang = get_lang(sections=['savemeplan'])
 
@@ -664,8 +707,7 @@ def HistoryView(request):
         'C3': savemeplan_lang['savemeplan']['gosafe'],
     }
 
-    delete_temp_files(request.session)
-
+    prepare.tools.delete_temp_files(request.session)
 
     title = savemeplan_lang['savemeplan']['title']
 
@@ -689,7 +731,20 @@ def HistoryView(request):
         'global_alerts': global_alerts,  # Sending the alerts to template.
         'content': entries,
         'title': title,
-        'template': 'base.html'
+        'template': 'base.html',
+        'history': savemeplan_lang['savemeplan']['history'],
+        'rating': savemeplan_lang['savemeplan']['rating']
     }
 
     return render(request, 'savemeplan/savemeplan_history.html', args)
+
+def download_contract_view(request):
+    """Download a empty contract."""
+    fl_path = MEDIA_ROOT + 'save.me_agreement.pdf'
+    filename = 'save.me_agreement.pdf'
+
+    fl = open(fl_path, 'rb')
+    mime_type, _ = mimetypes.guess_type(fl_path)
+    response = HttpResponse(fl, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    return response

@@ -4,125 +4,168 @@ import savemeplan.models
 from science.tools import new_entry
 from tools.mediaman import delete_file
 
-def addContact(uId, name, phonenumber, available, privKey):
-    user = login.models.User.objects.filter(UserId = uId)[0]
+def addContact(user_id, name, phonenumber, available, privkey):
+    """Adds a new contact entry to the database.
+    """
+
+    user = login.models.User.objects.filter(UserId = user_id)[0]
     contact = savemeplan.models.Contacts(UserId = user)
     contact.setName(name)
     contact.setPhonenumber(phonenumber)
     contact.setAvailable(available)
     contact.save()
     
-def showContacts(uId, PrivKey):
-    user = login.models.User.objects.filter(UserId=uId)[0]
-    contactsToReturn = []
+
+def show_contacts(user_id, privkey):
+    """Returns a list of dictionaries containing:
+        Id = Contact id in database
+        Name = Name of the contact
+        Phonenumber = Phonenumber of the contact
+        Available = When the contact is available
+    """
+
+    user = login.models.User.objects.filter(UserId=user_id)[0]
+    contacts_to_return = []
     contacts = savemeplan.models.Contacts.objects.filter(UserId=user)
     for contact in contacts:
-        contactInfo = dict({
+        contact_info = {
             'Id':contact.ContactsId,
-            'Name':contact.getName(PrivKey),
-            'Phonenumber':contact.getPhonenumber(PrivKey),
-            'Available':contact.getAvailable(PrivKey)
-        })
-        contactsToReturn.append(contactInfo)
-    return contactsToReturn
-
-def removeContact(uId, contactId):
-    user = login.models.User.objects.filter(UserId=uId)[0]
-    savemeplan.models.Contacts.objects.filter(ContactsId=contactId, UserId=user).delete()
+            'Name':contact.getName(privkey),
+            'Phonenumber':contact.getPhonenumber(privkey),
+            'Available':contact.getAvailable(privkey)
+        }
+        contacts_to_return.append(contact_info)
+    return contacts_to_return
 
 
-def showAllmemories(uId, PrivKey, memType):
-    if memType in 'sd':
-        memoryIdList=[]
-        user=login.models.User.objects.filter(UserId=uId)[0]
+def remove_contact(user_id, contact_id):
+    """Removes the contact with contact_id from the database.
+    """
+
+    user = login.models.User.objects.filter(UserId=user_id)[0]
+    savemeplan.models.Contacts.objects.filter(ContactsId=contact_id, UserId=user).delete()
+
+
+def show_all_memories(user_id, privkey, mem_type):
+    """Returns a list of dictionaries containing:
+        Title = Title of the memory entry
+        Id = Memory id in database
+        Size = Size of the media
+    """
+
+    if mem_type in 'sd':
+        memory_id_list=[]
+        user=login.models.User.objects.filter(UserId=user_id)[0]
         memories = prepare.models.Media.objects.filter(UserId=user)
         for memory in memories:
-            if memory.getMemory(PrivKey) == memType:
-                memoryInfo = dict({'Title':memory.getMediaTitle(PrivKey),'Id':memory.getMediaId(),'Size':memory.getMediaSize(PrivKey)})
-                memoryIdList.append(memoryInfo)
-        return memoryIdList
+            if memory.getMemory(privkey) == mem_type:
+                memoryInfo = {
+                    'Title':memory.getMediaTitle(privkey),
+                    'Id':memory.getMediaId(),
+                    'Size':memory.getMediaSize(privkey)
+                }
+                memory_id_list.append(memoryInfo)
+        return memory_id_list
     else:
         return -1
 
-def reencryptMedia(uId, oldPrivKey, newPubKey, newFileNames):
-    user=login.models.User.objects.filter(UserId=uId)[0]
+def reencrypt_media(user_id, old_privkey, new_pubkey, new_file_names):
+    """Reencrypts all of a users memories in the database. This should be done when the password is changed.
+    """
+
+    user=login.models.User.objects.filter(UserId=user_id)[0]
     media = prepare.models.Media.objects.filter(UserId=user)
-    for mediaObject in media:
+    for media_object in media:
         try:
-            mediaType = mediaObject.getMediaType(oldPrivKey)
+            mediaType = media_object.getMediaType(old_privkey)
         except ValueError:
             pass
         else:
-            mediaObject.setMediaType(newPubKey, mediaType)
+            media_object.setMediaType(new_pubkey, mediaType)
 
         try:
-            mediaTitle = mediaObject.getMediaTitle(oldPrivKey)
+            mediaTitle = media_object.getMediaTitle(old_privkey)
         except ValueError:
             pass
         else:
-            mediaObject.setMediaTitle(newPubKey, mediaTitle)
+            media_object.setMediaTitle(new_pubkey, mediaTitle)
 
         try:
-            mediaText = mediaObject.getMediaText(oldPrivKey)
+            mediaText = media_object.getMediaText(old_privkey)
         except ValueError:
             pass
         else:
-            mediaObject.setMediaText(newPubKey, mediaText)
+            media_object.setMediaText(new_pubkey, mediaText)
 
         try:
-            mediaLink = mediaObject.getLink(oldPrivKey)
+            mediaLink = media_object.getLink(old_privkey)
         except ValueError:
             pass
         else:
-            if mediaLink in newFileNames:
+            if mediaLink in new_file_names:
                 print(f"Medialink old: {mediaLink}")
 
-                mediaLink = newFileNames[mediaLink]
+                mediaLink = new_file_names[mediaLink]
                 print(f"MediaLink new: {mediaLink}")
-            mediaObject.setLink(newPubKey, mediaLink)
+            media_object.setLink(new_pubkey, mediaLink)
 
         try:
-            memory = mediaObject.getMemory(oldPrivKey)
+            memory = media_object.getMemory(old_privkey)
         except ValueError:
             pass
         else:
-            mediaObject.setMemory(newPubKey, memory)
+            media_object.setMemory(new_pubkey, memory)
 
         try:
-            mediaSize = mediaObject.getMediaSize(oldPrivKey)
+            mediaSize = media_object.getMediaSize(old_privkey)
         except ValueError:
             pass
         else:
-            mediaObject.setMediaSize(newPubKey, mediaSize)
+            media_object.setMediaSize(new_pubkey, mediaSize)
 
-        mediaObject.save()
+        media_object.save()
 
 
-def showDiary(uId, symKey, entryType, uIdSession):
-    user=login.models.User.objects.filter(UserId=uId)[0]
+def show_diary(user_id, symkey, entry_type, user_id_session):
+    """Returns a list containing dictionaries containing:
+        EntryDate = Date of the diary entry, used for sorting
+        Text = Content of the diary entry
+        TimestampCreated = Timestamp for when the entry was created, used for sorting
+        Id = Diary id in database
+        Author = Name of the user who wrote the entry
+        AuthorId = User id of the user who wrote the entry
+        Owner = True if the current user is the author, otherwise false
+        """
+
+    user=login.models.User.objects.filter(UserId=user_id)[0]
     diary = []
     entries = prepare.models.Diary.objects.filter(UserId=user)
-    entries = sortDiary(entries, symKey)
+    entries = sort_diary(entries, symkey)
     for entry in entries:
         print(entry.EntryType)
-        if entry.getEntryType(symKey) == entryType:
+        if entry.getEntryType(symkey) == entry_type:
             entry = {
-                'EntryDate' : entry.getDate(symKey),
-                'Text' : entry.getText(symKey),
-                'TimestampCreated' : entry.getTimestamp(symKey),
+                'EntryDate' : entry.getDate(symkey),
+                'Text' : entry.getText(symkey),
+                'TimestampCreated' : entry.getTimestamp(symkey),
                 'Id' : entry.getDiaryId(),
-                'Author' : entry.getAuthor(symKey),
-                'AuthorId' : entry.getAuthorId(symKey),
-                'Owner' : entry.getAuthorId(symKey) == uIdSession
+                'Author' : entry.getAuthor(symkey),
+                'AuthorId' : entry.getAuthorId(symkey),
+                'Owner' : entry.getAuthorId(symkey) == user_id_session
             }
             diary.append(entry)
     return diary
 
 
-def sortDiary(diary, symKey):
+def sort_diary(diary, symKey):
+    """Merge sort to sort diary entries first by EntryDate second by TimestampCreated.
+    
+    Returns a sorted diary.
+    """
+
     if len(diary) > 1:
-        low = sortDiary(diary[0:len(diary)//2], symKey)
-        high = sortDiary(diary[(len(diary)//2):len(diary)], symKey)
+        low = sort_diary(diary[0:len(diary)//2], symKey)
+        high = sort_diary(diary[(len(diary)//2):len(diary)], symKey)
         diary = []
         for value in low:
             while high and high[0].lessThan(value, symKey):
@@ -133,16 +176,20 @@ def sortDiary(diary, symKey):
     return diary
 
 
-def reencryptDiary(user, oldSymKey, newSymkey):
+def reencrypt_diary(user, old_symkey, new_symkey):
+    """Reencrypts all of a users diary entries in the database. This should be done when the password is changed.
+    """
+
     entries = prepare.models.Diary.objects.filter(UserId=user)
     for entry in entries:
-            entry.setAuthorId(newSymkey, entry.getAuthorId(oldSymKey))
-            entry.setAuthor(newSymkey, entry.getAuthor(oldSymKey))
-            entry.setDate(newSymkey, entry.getDate(oldSymKey))
-            entry.setEntryType(newSymkey, entry.getEntryType(oldSymKey))
-            entry.setText(newSymkey, entry.getText(oldSymKey))
-            entry.setTimestamp(newSymkey, entry.getTimestamp(oldSymKey))
+            entry.setAuthorId(new_symkey, entry.getAuthorId(old_symkey))
+            entry.setAuthor(new_symkey, entry.getAuthor(old_symkey))
+            entry.setDate(new_symkey, entry.getDate(old_symkey))
+            entry.setEntryType(new_symkey, entry.getEntryType(old_symkey))
+            entry.setText(new_symkey, entry.getText(old_symkey))
+            entry.setTimestamp(new_symkey, entry.getTimestamp(old_symkey))
             entry.save()
+
 
 def delete_temp_files(session):
     """Delete all temporary decrypted pictures and videos. Will delete

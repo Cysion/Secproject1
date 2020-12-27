@@ -33,10 +33,10 @@ readable for everyone.
 Change to a new SECRET_KEY on deployment server
 """
 
-with open('/home/infograf/12stepsapp/conf/secret_key') as f:
+with open('/home/kevin/Projekt/env/Secproject1/conf/secret_key') as f:
     SECRET_KEY = f.read().strip()
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURIfTY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
 ALLOWED_HOSTS = ['12steps.kengstrom.se']
@@ -45,15 +45,12 @@ ALLOWED_HOSTS = ['12steps.kengstrom.se']
 # Application definition
 
 INSTALLED_APPS = [
-    'breathe.apps.BreatheConfig',
     'call.apps.CallConfig',
     'chat.apps.ChatConfig',
     'check.apps.CheckConfig',
     'home.apps.HomeConfig',
-    'danger.apps.DangerConfig',
     'info.apps.InfoConfig',
     'login.apps.LoginConfig',
-    'practice.apps.PracticeConfig',
     'prepare.apps.PrepareConfig',
     'savemeplan.apps.SavemeplanConfig',
     'science.apps.ScienceConfig',
@@ -122,7 +119,7 @@ DATABASES = {
         'ENGINE': 'mysql.connector.django',
         'OPTIONS': {
             'autocommit': True,
-            'read_default_file': "/home/infograf/12stepsapp/conf/db.conf",
+            'read_default_file': "/home/kevin/Projekt/env/Secproject1/conf/db.cnf",
         },
     }
 }
@@ -176,3 +173,6 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = "/var/www/12steps/media/"
 MEDIA_URL = '/media/'
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True

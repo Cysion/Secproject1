@@ -8,9 +8,8 @@ import gzip
 import tools.logman as logman
 
 
-CONF = confman.get_conf()["media"]
 LOGGER = logman.get_logger("mediaman")
-
+CONF = confman.get_conf()['media']
 
 def get_filetype(filename: str) -> str:
     """simple function that handles exceptions thrown by trying to read the filetype from filename

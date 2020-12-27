@@ -56,11 +56,11 @@ textarea:focus {
   {% endfor %}
   <div class="form-check">
     <label class="form-check-label safe_place text-center">
-    <input type="radio" ckass="form-check-input" name="place" value="other" {% if content.text %}checked{% endif %}> {{ content.other }}</label>
+    <input type="radio" ckass="form-check-input" name="place" value="other" {% if content.data and content.data.0 != "" %}checked{% endif %}> {{ content.other }}</label>
   </div>
   <div class="form-group safe_place_text">
     <label for="place_other">{{ content.other }}:</label>
-    <input type="text" class="form-control" id="place_other" name="place_other" maxlength="32" placeholder="{{ content.other_placeholder }}..." {% if content.text %}value="{{ content.text }} {% endif %}">
+    <input type="text" class="form-control" id="place_other" name="place_other" maxlength="32" placeholder="{{ content.other_placeholder }}..." {% if content.data %}value="{{ content.data.0 }} {% endif %}">
   </div>
   <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:20px;">{{ next_step }}</button>
 </form>

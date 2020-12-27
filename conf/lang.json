@@ -35,7 +35,8 @@
           "Check",
           "Clients",
           "Practice",
-          "Breathe"
+          "Breathe",
+          "https://chat.mind.se/"
         ],
         "long_texts":{
           "survey":"We would like you to take a survey about how you think of 12 Steps."
@@ -117,7 +118,7 @@
         "welcome":"Welcome to the 12 Steps App!",
         "goto_login":"Login or register here",
         "long_texts":{
-            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam." 
+            "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eu ligula vitae tellus consectetur accumsan. Etiam placerat ante at risus porta aliquam."
         }
     },
     "login":{
@@ -142,7 +143,7 @@
         "not_registered":"No account? Register here",
         "characters":"characters.",
         "required":"This field is required",
-        "field_requirements":"and cannot be more then",
+        "field_requirements":"and cannot be less than 6 or more than 128",
         "save":"Save changes",
         "current":"Current",
         "new":"New",
@@ -159,7 +160,8 @@
             "wrong_pass":"Password is incorrect!",
             "badChar":"Field contains illegal character(s)",
             "changed_password_success":"You changed you password!",
-            "daily_checkup":"Remeber to do your daily checkup!"
+            "daily_checkup":"Remeber to do your daily checkup!",
+            "password_length":"Your password need to be between 6 and 128 in lenght!"
 
         },
         "failed_login":"Wrong email or password entered",
@@ -169,6 +171,12 @@
     "userprofile":{
       "unformat":[],
       "title":"userprofile",
+      "modal": {
+        "confirm_action":"Confirm your action",
+        "enter_password":"Enter your password to verify",
+        "close":"Close",
+        "confirm":"Confirm"
+      },
       "relations": {
         "manage": "Manage",
         "manage_relation":"Manage relation",
@@ -185,7 +193,7 @@
           "check":"Check",
           "prepare":"Prepare",
           "media":"Media",
-          "send_request":"Send relation request",
+          "share_selected_data":"Share selected data",
           "save_changes":"Save changes",
           "remove_relation":"Remove this relation"
         },
@@ -196,7 +204,10 @@
         }
     },
     "edit":{
-        "remove_account":"Remove account",
+        "research_data_title":"Your research data",
+        "show_research_data":"Show your research data",
+        "remove_research_data":"Remove all of your research data",
+        "remove_account":"Remove all of your data (remove account)",
         "modal": {
             "confirm_action":"Confirm your action",
             "confirm_remove_account":"Are you sure that you want to remove this account?",
@@ -213,12 +224,15 @@
         "save_backup":"Save backup key",
         "relations": "Relations",
         "logout":"Logout",
-        "backupkey":"This is your backup key if you forgot your password. Please save this on a save place!. Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
+        "backupkey":"This is your backup key if you forgot your password. Please save this on a save place! Without the key it's impossible to recover your password! This is because of how our encryptionsystem works.",
+        "wrongpass":"You have entered the wrong password so we cannot get your backup key!",
         "change_password_text":"If you change your password then you need to save your backup key again! When changeing password it may take a while since it need to decrypt and encrypt (with the new password) all data.",
         "alerts": {
           "alert_changed_password":"You successfully changed your password",
           "alert_error":"Something went wrong when trying to encrypt your data",
-          "changed_info_success":"You changed your info!"
+          "changed_info_success":"You changed your info!",
+          "email_does_not_exist":"This email is not connected to a user!",
+          "relation_allready_exists":"Relation allready exists!"
         }
       }
     },
@@ -400,7 +414,7 @@
             "ther_notes":"see p.21 in presentation",
             "media_info":"Do you want to attach a file or url to your memory? Press one of the following buttons.",
             "link_info":"Link can be anything. A youtube link will show the video when viewing the memory.",
-            "file_info":"File can be photo, video or music.",
+            "file_info":"File can be photo or video.",
             "memory_type":"What type of memory is it?",
             "allowed_extenssions":"These extenssions are allowed",
             "memory_size":"This memory takes %mb% MB in space.",
@@ -467,7 +481,7 @@
         "part_c":"If you need a support from someone...",
         "smsto":"SMS to: ...",
         "call":"Call ...",
-        "gosafe":"Go safe to ...",
+        "gosafe":"Go safe to",
         "indanger": "In a danger for your life call",
         "sms_chat":"Send SMS or chat",
         "codered":"Code Red?",
@@ -475,7 +489,7 @@
         "codeor":"Code Orange?",
         "codeblue":"Code blue?",
         "codegre":"Code Green?",
-        "chat_site":"https://chat.mind.se/ ",
+        "chat_site":"https://chat.mind.se/",
         "contacts":"Contacts",
         "callhelper":"Call your helper!",
         "safe":"Go Safe",
@@ -505,6 +519,9 @@
         "available":"Available",
         "replace":"Replace",
         "with": "with",
+        "download":"Download agreement",
+        "history":"History",
+        "rating":"Rating",
 
         "long_texts":{
             "text_to_long":"Your text was too on the previous step so it got choped to the maximum lenght of 64 characters.",

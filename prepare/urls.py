@@ -5,13 +5,13 @@ from . import views
 app_name = 'prepare'
 urlpatterns = [
     # ex: /polls/
-    path('contacts/', views.ContactsView, name='contacts'),
-    path('contacts/edit/<int:id>', views.editContactView, name='edit-contact'),
-    path('memory/add/', views.addMemoryView, name='add-memory'),
-    path('memory/<int:id>/', views.MemoryView, name='memory'),
-    path('<int:page>/', views.MenuView, name='menu-page'),
-    path('7/<int:id>/', views.removeDiaryView, name='removeDiary-page'),
-    path('', views.MenuView, name='menu'),
+    path('contacts/', views.contacts_view, name='contacts'),
+    path('contacts/edit/<int:id>', views.edit_contact_view, name='edit-contact'),
+    path('memory/add/', views.add_memory_view, name='add-memory'),
+    path('memory/<int:id>/', views.memory_view, name='memory'),
+    path('<int:page>/', views.menu_view, name='menu-page'),
+    path('7/<int:id>/', views.remove_diary_view, name='removeDiary-page'),
+    path('', views.menu_view, name='menu'),
     #path('1/', views.HowToView, name='How-To'),
     #path('2/', views.PracticeBreathingView, name='Practice-Breathing'),
     #path('3/', views.SupportiveMemoriesView, name='Supportive-Memories'),

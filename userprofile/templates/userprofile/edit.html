@@ -112,9 +112,7 @@ Edit User Profile
 </form>
 
 {% if not profView %}
-<div class="col-4 col-md-auto p-0 my-2">
-    <button class="btn btn-danger btn-block" data-toggle="modal" data-target="#confirmRemoveAccount">{{ userprofile.edit.remove_account }}</i></button>
-</div>
+<button class="btn btn-lg btn-danger btn-block my-2" data-toggle="modal" data-target="#confirmRemoveAccount">{{ userprofile.edit.remove_account }}</button>
 
 <div class="modal fade" id="confirmRemoveAccount" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -152,11 +150,11 @@ Edit User Profile
 {% endif %}
 
 {% if not profView %}
-<a type="button" class="btn btn-primary btn-block" href="/userprofile/">{{ back }}</a>
+<a type="button" class="btn btn-lg btn-primary btn-block my-2" href="/userprofile/">{{ back }}</a>
 {% endif %}
 
 {% if profView %}
-<a type="button" class="btn btn-primary btn-block" href="/professionals/">{{ back }}</a>
+<a type="button" class="btn btn-lg btn-primary btn-block my-2" href="/professionals/">{{ back }}</a>
 {% endif %}
 
 {% endblock %}
