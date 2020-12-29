@@ -330,6 +330,9 @@ def add_relations_view(request):
     if request.method == 'POST':
         if login.models.User.objects.filter(Email=request.POST['email'].lower()):
             recieverEmail= request.POST['email'].lower()
+            reciever = login.models.User.objects.filter(Email=recieverEmail)[0]
+            if reciever.getRole() != 'Professional':
+                alerts['email'] = 'email_does_not_exist'
         else:
             alerts['email'] = 'email_does_not_exist'
 
