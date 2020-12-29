@@ -20,8 +20,12 @@ def profile_view(request):
         return HttpResponseRedirect(reverse('login:Login'))
 
     delete_temp_files(request.session)
+    try:
+        user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
 
-    user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+
     if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
         if 'logout' in request.GET.keys():
             new_entry("u2", user.getAnonId(request.session['PrivKey']), "na", role=request.session['Role'])
