@@ -81,7 +81,10 @@ def edit_profile_view(request):
 
     wrong_pass = False
     account = {}
-    user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    try:
+        user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
     account['firstName']=user.getFirstName(request.session['PrivKey'])
     account['lastName']=user.getLastName(request.session['PrivKey'])
     account['gender']=user.getGender(request.session['PrivKey'])
@@ -330,14 +333,14 @@ def add_relations_view(request):
     if request.method == 'POST':
         if login.models.User.objects.filter(Email=request.POST['email'].lower()):
             recieverEmail= request.POST['email'].lower()
-            reciever = login.models.User.objects.filter(Email=recieverEmail)[0]
-            if reciever.getRole() != 'Professional':
-                alerts['email'] = 'email_does_not_exist'
         else:
             alerts['email'] = 'email_does_not_exist'
 
         if not alerts:
-            user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            try:
+                user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            except IndexError:
+                return HttpResponseRedirect(reverse('login:Login'))
             permissions = '1'
             permissions+='1' if 'share_savemeplan' in request.POST else '0'
             permissions+='1' if 'share_check' in request.POST else '0'
@@ -464,7 +467,10 @@ def research_data_view(request):
         if 'cleared' in request.GET.keys():
             print(request.GET['cleared'])
             if request.GET['cleared'] == 'true':
-                user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+                try:
+                    user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+                except IndexError:
+                    return HttpResponseRedirect(reverse('login:Login'))
                 forget_me(user.getAnonId(request.session['PrivKey']))
 
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]

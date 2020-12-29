@@ -67,8 +67,11 @@ def step_view(request, step):
         return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     prepare.tools.delete_temp_files(request.session)
+    try:
+        user = User.objects.filter(pk=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
 
-    user = User.objects.filter(pk=request.session['UserId'])[0]
     symkey = user.getSymKey(request.session['PrivKey'])
 
     savemeplan_lang = get_lang(sections=['savemeplan'])
@@ -711,7 +714,10 @@ def history_view(request):
 
     title = savemeplan_lang['savemeplan']['title']
 
-    user = User.objects.filter(pk=request.session['UserId'])[0]
+    try:
+        user = User.objects.filter(pk=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
     symkey = user.getSymKey(request.session['PrivKey'])
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
