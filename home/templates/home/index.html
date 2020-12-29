@@ -6,13 +6,12 @@
 <h2>{{ home.welcome }}</h2>
 <p>{{ home.long_texts.description }}</p>
 
-{% if not loged_in %}
+{% if not logged_in %}
 <a type="button" class="btn btn-lg btn-primary btn-block" name="logout" value="1" href="/login/">{{ home.goto_login }}</a>
 {% endif %}
 
 <div class="my-2 px-1 embed-responsive embed-responsive-16by9">
-    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> <!--REPLACE-->
+    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ooHXqKkkjgY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> <!-- REPLACE THIS VIDEO URL -->
 </div>
-
 
 {% endblock %}
