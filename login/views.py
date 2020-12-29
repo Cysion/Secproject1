@@ -97,7 +97,11 @@ def login_view(request):
         password - Users entered non hashed password
     """
     if 'UserId' in request.session:
-        return HttpResponseRedirect(reverse('userprofile:Profile'))
+        try:
+            user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            return HttpResponseRedirect(reverse('userprofile:Profile'))
+        except IndexError:
+            pass
 
     login_lang = get_lang(sections=["login"])
 
