@@ -26,6 +26,8 @@ def menu_view(request):
         user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
     except KeyError:
         pass
+    except IndexError:
+        pass
     else:
         new_entry("g1", user.getAnonId(request.session["PrivKey"]), "info")
     return render(request, 'info/menu.html', args)

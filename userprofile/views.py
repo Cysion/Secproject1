@@ -20,8 +20,12 @@ def profile_view(request):
         return HttpResponseRedirect(reverse('login:Login'))
 
     delete_temp_files(request.session)
+    try:
+        user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
 
-    user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+
     if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
         if 'logout' in request.GET.keys():
             new_entry("u2", user.getAnonId(request.session['PrivKey']), "na", role=request.session['Role'])
@@ -81,7 +85,10 @@ def edit_profile_view(request):
 
     wrong_pass = False
     account = {}
-    user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    try:
+        user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
     account['firstName']=user.getFirstName(request.session['PrivKey'])
     account['lastName']=user.getLastName(request.session['PrivKey'])
     account['gender']=user.getGender(request.session['PrivKey'])
@@ -334,7 +341,10 @@ def add_relations_view(request):
             alerts['email'] = 'email_does_not_exist'
 
         if not alerts:
-            user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            try:
+                user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            except IndexError:
+                return HttpResponseRedirect(reverse('login:Login'))
             permissions = '1'
             permissions+='1' if 'share_savemeplan' in request.POST else '0'
             permissions+='1' if 'share_check' in request.POST else '0'
@@ -461,7 +471,10 @@ def research_data_view(request):
         if 'cleared' in request.GET.keys():
             print(request.GET['cleared'])
             if request.GET['cleared'] == 'true':
-                user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+                try:
+                    user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+                except IndexError:
+                    return HttpResponseRedirect(reverse('login:Login'))
                 forget_me(user.getAnonId(request.session['PrivKey']))
 
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]

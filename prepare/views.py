@@ -47,7 +47,11 @@ def menu_view(request, page=0):
     memories = []
     contacts = []
     diary= []
-    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    try:
+        user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
+
 
     base_template = "base_professionals.html" if request.session["Role"] == "Professional" else "base.html"
 
@@ -180,7 +184,10 @@ def add_memory_view(request):
                 and len(request.POST["title"]) > 0):
 
             with transaction.atomic():
-                user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+                try:
+                    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+                except IndexError:
+                    return HttpResponseRedirect(reverse('login:Login'))
                 memory = user.media_set.create()  # Create a Media entry with foreignkey this user.
                 memory.setMediaTitle(user.getPubkey(), request.POST["title"])
                 memory.setMediaSize(user.getPubkey(), 0)
@@ -287,7 +294,10 @@ def memory_view(request, id):
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
 
-    user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    try:
+        user = login.models.User.objects.filter(pk=request.session["UserId"])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
     userPrivkey = request.session["PrivKey"]
     prepare_lang = get_lang(sections=["prepare"])
     profView = False

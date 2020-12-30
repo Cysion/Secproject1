@@ -242,7 +242,10 @@ def saveme_plan_view(request, UserId):
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
-    user = login.models.User.objects.filter(UserId=UserId)[0]
+    try:
+        user = login.models.User.objects.filter(UserId=UserId)[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
     symkey = user.getSymKey(userPrivKey)
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -288,7 +291,11 @@ def check_view(request, UserId):
         return HttpResponseRedirect(reverse('professionals:clients'))
 
     check_lang = get_lang(sections=["check"])
-    user = login.models.User.objects.filter(UserId=UserId)[0]
+    try:
+        user = login.models.User.objects.filter(UserId=UserId)[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
+
     symkey = user.getSymKey(userPrivKey)
 
     calendar = { # Calendar variables
