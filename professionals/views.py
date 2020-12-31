@@ -242,7 +242,10 @@ def saveme_plan_view(request, UserId):
         return HttpResponseRedirect(reverse('professionals:clients'))
     if not userPrivKey:
         return HttpResponseRedirect(reverse('professionals:clients'))
-    user = login.models.User.objects.filter(UserId=UserId)[0]
+    try:
+        user = login.models.User.objects.filter(UserId=UserId)[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
     symkey = user.getSymKey(userPrivKey)
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -288,7 +291,11 @@ def check_view(request, UserId):
         return HttpResponseRedirect(reverse('professionals:clients'))
 
     check_lang = get_lang(sections=["check"])
-    user = login.models.User.objects.filter(UserId=UserId)[0]
+    try:
+        user = login.models.User.objects.filter(UserId=UserId)[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
+
     symkey = user.getSymKey(userPrivKey)
 
     calendar = { # Calendar variables
@@ -321,8 +328,8 @@ def check_view(request, UserId):
     else:
 
         today = datetime.date.today()
-        calendar['year'] = today.year
-        calendar['month'] = today.month
+        calendar['year'] = str(today.year)
+        calendar['month'] = str(today.month)
 
         first_date = datetime.date(today.year, today.month, 1) # First day in the month
         num_days = monthrange(today.year, today.month) # Number of days in month
@@ -350,7 +357,9 @@ def check_view(request, UserId):
         'back': UNIVERSAL_LANG["universal"]["back"],
         'check': check_lang["check"],
         'calendar': calendar,
-        'template' : 'base_professionals.html'
+        'template': 'base_professionals.html',
+        'prof': True,
+        'UserId': UserId
     }
 
     return render(request, 'check/green_case.html', args)

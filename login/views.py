@@ -36,10 +36,10 @@ def register_view(request):
 
     if 'UserId' not in request.session:
         alerts = {}
-        
+
         # Get language text for form.
-        login_lang = get_lang(sections=["login"])  
-        
+        login_lang = get_lang(sections=["login"])
+
         # Check if a user has submitted a form.
         if request.method == 'POST':
             for index in ['first_name','last_name','gender','gender_other', 'email']:
@@ -97,7 +97,11 @@ def login_view(request):
         password - Users entered non hashed password
     """
     if 'UserId' in request.session:
-        return HttpResponseRedirect(reverse('userprofile:Profile'))
+        try:
+            user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            return HttpResponseRedirect(reverse('userprofile:Profile'))
+        except IndexError:
+            pass
 
     login_lang = get_lang(sections=["login"])
 
@@ -124,7 +128,6 @@ def login_view(request):
                         login_lang['login']['long_texts']['alerts']['daily_checkup'],
                         '/check/checkup/'
                     )
-                    print(user.getName(request.session['PrivKey']))
                     login.tools.survey_time(request, user, request.session['PrivKey'])
                 return HttpResponseRedirect(reverse('userprofile:Profile'))
             else:

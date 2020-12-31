@@ -42,3 +42,7 @@ body{
 .alert {
   text-align: center !important;
 }
+
+.btn {
+  -webkit-appearance: none !important;
+}

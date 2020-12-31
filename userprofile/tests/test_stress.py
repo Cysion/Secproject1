@@ -4,7 +4,7 @@ from time import time
 
 from django.test import TestCase
 from login.tools import register_user
-from userprofile.tools import createRelation, updateRelationTo, showAllRelationsFrom
+from userprofile.tools import create_relation, update_relation_to, show_all_relations_from
 
 
 class TestStress(TestCase):
@@ -72,7 +72,7 @@ class TestStress(TestCase):
             prof_users.append( (user_id, priv_key.decode("utf-8"), prof_credentials["email"]) )
 
         # Create relations from each normal to corresponding professional user
-        # > Using createRelation(user_id, priv_key, rec_email, perms): bool success
+        # > Using create_relation(user_id, priv_key, rec_email, perms): bool success
         print("\nCreating relations:")
         prev_prof_user = -1
         for i, user in enumerate(normal_users):
@@ -82,7 +82,7 @@ class TestStress(TestCase):
                 prev_prof_user = co_prof_user
 
             # Condition should be 'if not' but isn't due to incomplete coding. Will eventually fail with time
-            if createRelation(user[0], user[1], prof_users[co_prof_user][2], self.permissions):
+            if create_relation(user[0], user[1], prof_users[co_prof_user][2], self.permissions):
                 print("[ERROR] Could not relate normal user[" + str(i) + "] with professional[" + str(co_prof_user) + "]")
                 exit(1)
 
@@ -91,13 +91,13 @@ class TestStress(TestCase):
 
         print("\n-- Running stress-tests --\n")
 
-        # Stress-test function showAllRelationsFrom() for normal users
-        # > Using showAllRelationsFrom(receiver_id, receiver_priv_key): list userDict
+        # Stress-test function show_all_relations_from() for normal users
+        # > Using show_all_relations_from(receiver_id, receiver_priv_key): list userDict
         print("Measuring operation: showAllRelations() for " + str(self.n_norm_users) + " with 1 relation each")
 
         t0 = time()
         for user in normal_users:
-            related_user = showAllRelationsFrom(user[0], user[1])
+            related_user = show_all_relations_from(user[0], user[1])
         t1 = time()
         
         timing = t1 - t0
@@ -106,13 +106,13 @@ class TestStress(TestCase):
 
         print("")
 
-        # Stress-test function showAllRelationsFrom() for professional users
-        # > Using showAllRelationsFrom(receiver_id, receiver_priv_key): list userDict
+        # Stress-test function show_all_relations_from() for professional users
+        # > Using show_all_relations_from(receiver_id, receiver_priv_key): list userDict
         print("Measuring operation: showAllRelations() for " + str(self.n_professionals) + " with " + str(self.users_per_professional) + " relations each")
 
         t0 = time()
         for user in prof_users:
-            related_users = showAllRelationsFrom(user[0], user[1])
+            related_users = show_all_relations_from(user[0], user[1])
         t1 = time()
         
         timing = t1 - t0
@@ -121,13 +121,13 @@ class TestStress(TestCase):
 
         print("")
 
-        # Stress-test function updateRelationTo()
-        # > Using updateRelationTo(receiver_id, receiver_priv_key): bool success
-        print("Measuring operation: updateRelationTo() for " + str(self.n_norm_users) + " users")
+        # Stress-test function update_relation_to()
+        # > Using update_relation_to(receiver_id, receiver_priv_key): bool success
+        print("Measuring operation: update_relation_to() for " + str(self.n_norm_users) + " users")
 
         t0 = time()
         for user in prof_users:
-            updateRelationTo(user[0], user[1])
+            update_relation_to(user[0], user[1])
         t1 = time()
 
         timing = t1 - t0

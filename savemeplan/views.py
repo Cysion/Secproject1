@@ -61,9 +61,7 @@ def step_view(request, step):
     use good_other
 
     step: 13
-    place = a place to go # TODO:
-    if place == other
-    use place_other
+    place = a place to go
     """
     if not 'UserId' in request.session.keys():  # This is a check if a user is logged in.
         return HttpResponseRedirect(reverse('login:Login'))
@@ -71,17 +69,22 @@ def step_view(request, step):
         return HttpResponseRedirect(reverse('userprofile:Profile'))
 
     prepare.tools.delete_temp_files(request.session)
+    try:
+        user = User.objects.filter(pk=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
 
-    user = User.objects.filter(pk=request.session['UserId'])[0]
     symkey = user.getSymKey(request.session['PrivKey'])
 
     savemeplan_lang = get_lang(sections=['savemeplan'])
+    title = savemeplan_lang['savemeplan']['title']
     template = ''  # Diffrent step sets diffrent template
     content = {  # Main variable for each step content
         'describe_info': savemeplan_lang['savemeplan']['long_texts']['describe_info'],
-        'current_step': step
+        'current_step': step,
+        'history': savemeplan_lang['savemeplan']['history'],
     }
-    title = savemeplan_lang['savemeplan']['title']
+
     next_step = savemeplan_lang['savemeplan']['next_step']
 
     if step not in range(0, 17):  # If someone enters a non existing step
@@ -357,7 +360,7 @@ def step_view(request, step):
         content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][4]} - {savemeplan_lang['savemeplan']['long_texts']['steps'][0]}"
         content['step'] = savemeplan_lang['savemeplan']['mybeh']
 
-        default_options = savemeplan_lang['savemeplan']['long_texts']['emorate']
+        default_options = savemeplan_lang['savemeplan']['long_texts']['behrate']
         top_5 = savemeplan.tools.top5_options(user, 'A4', symkey)  # Get most used options
         if len(top_5) < 5:
             top_5 = savemeplan.tools.extend_top5(top_5, default_options)
@@ -642,6 +645,7 @@ def step_view(request, step):
 
         content['step_title'] = savemeplan_lang['savemeplan']['summary']
         content['download'] = savemeplan_lang['savemeplan']['download']
+        content['rating'] = savemeplan_lang['savemeplan']['rating']
 
         if 'SaveMePlanId' in request.session.keys():
             content['steps'] = savemeplan.tools.get_savemeplan_items(user, symkey, request.session['SaveMePlanId'])
@@ -649,7 +653,6 @@ def step_view(request, step):
         else:
             content['old'] = savemeplan_lang['savemeplan']['long_texts']['old_session']
             content['steps'] = savemeplan.tools.get_savemeplan_items(user, symkey)
-            content['rating'] = savemeplan_lang['savemeplan']['rating']
 
         for smp_step in content['steps']:
             smp_step.append(STEP_COLORS[smp_step[0]])
@@ -666,7 +669,9 @@ def step_view(request, step):
         'title': title,
         'content': content,
         'next_step': next_step,
-        'back': UNIVERSAL_LANG['universal']['back']
+        'back': UNIVERSAL_LANG['universal']['back'],
+        'history': savemeplan_lang['savemeplan']['history'],
+        'feature_title': savemeplan_lang['savemeplan']['title']
     }
     new_entry("s3", user.getAnonId(request.session['PrivKey']), f"step {step}", role=request.session['Role'])
     return render(request, template, args)
@@ -711,7 +716,10 @@ def history_view(request):
 
     title = savemeplan_lang['savemeplan']['title']
 
-    user = User.objects.filter(pk=request.session['UserId'])[0]
+    try:
+        user = User.objects.filter(pk=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
     symkey = user.getSymKey(request.session['PrivKey'])
     global_alerts = []  # The variable which is sent to template
     if "global_alerts" in request.session.keys():  # Check if there is global alerts
@@ -733,6 +741,7 @@ def history_view(request):
         'title': title,
         'template': 'base.html',
         'history': savemeplan_lang['savemeplan']['history'],
+        'feature_title': savemeplan_lang['savemeplan']['title'],
         'rating': savemeplan_lang['savemeplan']['rating']
     }
 

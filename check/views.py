@@ -45,7 +45,11 @@ def green_case_view(request):
     if request.method == 'POST': # Searched month & year
         if request.POST.keys():
             if 'month' and 'year' in request.POST.keys():
-                user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+                try:
+                    user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+                except IndexError:
+                    return HttpResponseRedirect(reverse('login:Login'))
+
 
                 calendar['year'] = request.POST['year']
                 calendar['month'] = request.POST['month']
@@ -65,11 +69,14 @@ def green_case_view(request):
                     calendar['days'].insert(day.getDate().day, day.getRating(user.getSymKey(request.session['PrivKey'])))
 
     else:
-        user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+        try:
+            user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+        except IndexError:
+            return HttpResponseRedirect(reverse('login:Login')) # Session info of user
 
         today = datetime.date.today()
-        calendar['year'] = today.year
-        calendar['month'] = today.month
+        calendar['year'] = str(today.year)
+        calendar['month'] = str(today.month)
 
         first_date = datetime.date(today.year, today.month, 1) # First day in the month
         num_days = monthrange(today.year, today.month) # Number of days in month
@@ -102,7 +109,10 @@ def green_case_view(request):
         'calendar': calendar,
         'template': 'base.html'
     }
-    user = login.models.User.objects.filter(pk=request.session['UserId'])[0]
+    try:
+        user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login')) # Session info of user
     new_entry("g1", user.getAnonId(request.session['PrivKey']), "check", role=request.session['Role'])
     return render(request, 'check/green_case.html', args)
 
@@ -199,7 +209,10 @@ def checkup_view(request):
     if request.GET:
         if 'day' in request.GET.keys():
             if request.GET['day'] in ['red', 'orange', 'green']:  # Check if user has manipulated values.
-                user = login.models.User.objects.filter(pk=request.session['UserId'])[0]
+                try:
+                    user = login.models.User.objects.filter(pk=request.session['UserId'])[0] # Session info of user
+                except IndexError:
+                    return HttpResponseRedirect(reverse('login:Login')) # Session info of user
                 symkey = user.getSymKey(request.session['PrivKey'])
                 today = datetime.date.today()
                 check.tools.fillcheck(user, symkey)

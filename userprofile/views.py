@@ -14,12 +14,18 @@ from prepare.tools import delete_temp_files
 UNIVERSAL_LANG = get_lang(sections=["universal"])
 
 def profile_view(request):
+    """Main profile view for a user. Used by users and professionals.
+    """
     if 'UserId' not in request.session.keys():  # Check if user is logged in
         return HttpResponseRedirect(reverse('login:Login'))
 
     delete_temp_files(request.session)
+    try:
+        user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
 
-    user = login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+
     if request.method == 'GET':  # Used for logout. logout is in GET keys with a value of 1.
         if 'logout' in request.GET.keys():
             new_entry("u2", user.getAnonId(request.session['PrivKey']), "na", role=request.session['Role'])
@@ -55,7 +61,20 @@ def profile_view(request):
 
     return render(request, 'userprofile/profile.html', args)
 
-def Editprofile_view(request):
+def edit_profile_view(request):
+    """Used to edit user data.
+    If submitting a change request.POST will contain the following keys:
+        first_name - Users first name
+        last_name - Users last name
+        gender - Gender of the user. Is one of the following
+            Male
+            Female
+            Other
+        gender_other - If user choose gender=Other this will contain a text.
+        email - Users email.
+        password - Users entered non hashed password, will be checked and needs to be correct for change to be done.
+    request.GET is used for deletion of the entire account.
+    """
     if not 'UserId' in request.session.keys():
         return HttpResponseRedirect(reverse('login:Login'))
 
@@ -66,7 +85,10 @@ def Editprofile_view(request):
 
     wrong_pass = False
     account = {}
-    user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    try:
+        user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+    except IndexError:
+        return HttpResponseRedirect(reverse('login:Login'))
     account['firstName']=user.getFirstName(request.session['PrivKey'])
     account['lastName']=user.getLastName(request.session['PrivKey'])
     account['gender']=user.getGender(request.session['PrivKey'])
@@ -319,7 +341,10 @@ def add_relations_view(request):
             alerts['email'] = 'email_does_not_exist'
 
         if not alerts:
-            user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            try:
+                user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+            except IndexError:
+                return HttpResponseRedirect(reverse('login:Login'))
             permissions = '1'
             permissions+='1' if 'share_savemeplan' in request.POST else '0'
             permissions+='1' if 'share_check' in request.POST else '0'
@@ -446,7 +471,10 @@ def research_data_view(request):
         if 'cleared' in request.GET.keys():
             print(request.GET['cleared'])
             if request.GET['cleared'] == 'true':
-                user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+                try:
+                    user=login.models.User.objects.filter(UserId=request.session['UserId'])[0]
+                except IndexError:
+                    return HttpResponseRedirect(reverse('login:Login'))
                 forget_me(user.getAnonId(request.session['PrivKey']))
 
     user = login.models.User.objects.filter(UserId=request.session["UserId"])[0]
