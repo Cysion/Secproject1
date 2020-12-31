@@ -33,7 +33,7 @@
           "Prepare",
           "Save.Me",
           "Check",
-          "Clients",
+          "Relations",
           "Practice",
           "Breathe",
           "https://chat.mind.se/"
@@ -149,7 +149,7 @@
         "new":"New",
         "change":"Change",
         "forgot_password":"Forgot password? Reset here!",
-        "professional":"Register as a professional"
+        "professional":"Register as a professional, friend, family member or volunteer"
       },
       "long_texts":{
         "alerts":{
@@ -438,7 +438,7 @@
         "title":"professionals",
         "media":"Media",
         "long_texts":{
-          "no_clients":"You don't have any clients who share data with you"
+          "no_clients":"You don't have any relations."
         }
     },
     "savemeplan":{
@@ -545,8 +545,8 @@
             "calrate":["I just breathe in and out", "I am mindful of my surroundings", "I listen to music", "I go for a walk", "I create a voo-doo doll"],
             "rourate":["Notice one nice thing", "Give someone a smile", "Go for a walk", "Take a shower", "Call a friend"],
             "repgood":["Water and juice", "Fruits and vegetables", "Virtual reality", "Make-up", "Trust"],
-            "repbad":["Alcohol", "Narcotics", "Firearms", "Blades", "Accusations"],
-            "protect":["Family & friends", "Faith & my personality", "Future & hope", "Safty/crisis plan", "Fear for unnecessary death"],
+            "repbad":["Alcohol", "Illegal drugs", "Firearms", "Blades", "Accusations"],
+            "protect":["Family & friends", "Faith & my personality", "Future & hope", "Safety/crisis plan", "Fear for unnecessary death"],
             "safe":["Bed", "Family", "Friends", "Church", "Hostpital"]
         }
     }

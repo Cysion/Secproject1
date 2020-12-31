@@ -85,6 +85,9 @@ def step_view(request, step):
 
     next_step = savemeplan_lang['savemeplan']['next_step']
 
+    if 'reset' in request.GET.keys() and 'SaveMePlanId' in request.session.keys():
+        del request.session['SaveMePlanId']  # User is now done with this session.
+
     if step not in range(0, 17):  # If someone enters a non existing step
         step = 0
 
@@ -443,7 +446,7 @@ def step_view(request, step):
         title = f"{title} - {savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][7]}"
         content['part'] = 'B'
 
-        content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][3]} - {savemeplan_lang['savemeplan']['repltitle']}"
+        content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][7]} - {savemeplan_lang['savemeplan']['repltitle']}"
         content['step'] = savemeplan_lang['savemeplan']['repltitle']
 
         default_bad = savemeplan_lang['savemeplan']['long_texts']['repbad']
@@ -479,7 +482,7 @@ def step_view(request, step):
         title = f"{title} - {savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][8]}"
         content['part'] = 'B'
 
-        content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][4]} - {savemeplan_lang['savemeplan']['prot_title']}"
+        content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][8]} - {savemeplan_lang['savemeplan']['prot_title']}"
         content['step'] =  savemeplan_lang['savemeplan']['my_values']
 
         default_options = savemeplan_lang['savemeplan']['long_texts']['protect']
@@ -555,10 +558,10 @@ def step_view(request, step):
     elif step == 12:  # Step C2
 
         template = 'savemeplan/step_call.html'
-        title = f"{title} - {savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][11]}"
+        title = f"{title} - {savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][10]}"
         content['part'] = 'C'
 
-        content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][2]} - {savemeplan_lang['savemeplan']['callhelper']}"
+        content['step_title'] = f"{savemeplan_lang['savemeplan']['steps'][0].upper()} {savemeplan_lang['savemeplan']['steps'][10]} - {savemeplan_lang['savemeplan']['callhelper']}"
 
         all_contacts_enc = user.contacts_set.all()
         all_contacts_dec = []
