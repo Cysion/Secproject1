@@ -47,16 +47,16 @@ migrate:
 
 makemigration_all:
 	@echo  --- making migrations ---
-	$(MAKEMIGRATION) breathe
-	$(MAKEMIGRATION) call
-	$(MAKEMIGRATION) chat
+	#$(MAKEMIGRATION) breathe
+	#$(MAKEMIGRATION) call
+	#$(MAKEMIGRATION) chat
+	#$(MAKEMIGRATION) check
 	$(MAKEMIGRATION) check
-	$(MAKEMIGRATION) check
-	$(MAKEMIGRATION) danger
+	#$(MAKEMIGRATION) danger
 	$(MAKEMIGRATION) home
 	$(MAKEMIGRATION) info
 	$(MAKEMIGRATION) login
-	$(MAKEMIGRATION) practice
+	#$(MAKEMIGRATION) practice
 	$(MAKEMIGRATION) prepare
 	$(MAKEMIGRATION) science
 	$(MAKEMIGRATION) savemeplan
