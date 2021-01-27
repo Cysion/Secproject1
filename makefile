@@ -1,5 +1,5 @@
-#this makefile is designed to have limited windows compatability, not full. 
-#Be cautious when using file under non-UNIX-like syntax as it may result in 
+#this makefile is designed to have limited windows compatability, not full.
+#Be cautious when using file under non-UNIX-like syntax as it may result in
 #undesired behaviour
 ifeq ($(OS), Windows_NT)
 	EXECUTE := py
@@ -50,16 +50,16 @@ migrate:
 
 makemigration_all:
 	@echo  --- making migrations ---
-	$(MAKEMIGRATION) breathe
-	$(MAKEMIGRATION) call
-	$(MAKEMIGRATION) chat
+	#$(MAKEMIGRATION) breathe
+	#$(MAKEMIGRATION) call
+	#$(MAKEMIGRATION) chat
+	#$(MAKEMIGRATION) check
 	$(MAKEMIGRATION) check
-	$(MAKEMIGRATION) check
-	$(MAKEMIGRATION) danger
+	#$(MAKEMIGRATION) danger
 	$(MAKEMIGRATION) home
 	$(MAKEMIGRATION) info
 	$(MAKEMIGRATION) login
-	$(MAKEMIGRATION) practice
+	#$(MAKEMIGRATION) practice
 	$(MAKEMIGRATION) prepare
 	$(MAKEMIGRATION) science
 	$(MAKEMIGRATION) savemeplan
@@ -77,7 +77,7 @@ full_clean: clean
 	$(RMRF) export-key.txt
 	$(RMRF) abs_path.cnf
 	$(RMRF) db.cnf
-	
+
 clean:
 	@echo  --- cleaning up ---
 	$(RMRF) */migrations
